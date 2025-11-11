@@ -6,6 +6,7 @@
   - [목차](#목차)
   - [GitHub Issue](#github-issue)
     - [Issue란](#issue란)
+    - [Issue 제목 네이밍 규칙](#issue-제목-네이밍-규칙)
     - [Issue 작성 \& PR 제출](#issue-작성--pr-제출)
       - [1. Issue 탭에서 이슈 생성](#1-issue-탭에서-이슈-생성)
       - [2. Assignees 할당 \& Create a branch](#2-assignees-할당--create-a-branch)
@@ -29,6 +30,10 @@ GitHub Issue는 간단히 말해 리포지토리에서 버그, 기능 제한, �
 아래는 기본적인 Issue 템플릿입니다. 기본적으로 Requirements, Task 정도만 작성해도 충분합니다.
 
 ```md
+## 🏷️ Title
+
+[FEAT] 음성 감정 기록 화면 추가
+
 ## 📌 Summary
 
 - 구글 로그인 버튼을 누르면 앱이 꺼지는 문제 해결
@@ -50,6 +55,16 @@ GitHub Issue는 간단히 말해 리포지토리에서 버그, 기능 제한, �
 - [Firebase Crashlytics Docs](https://firebase.google.com/docs/crashlytics)
 - [Google Sign-In for iOS](https://developers.google.com/identity/sign-in/ios/start)
 ```
+
+### Issue 제목 네이밍 규칙
+
+| Prefix     | 의미                               | 예시 제목                                 |
+| ---------- | ---------------------------------- | ----------------------------------------- |
+| [FEAT]     | 새로운 기능을 추가할 때            | `[FEAT] 음성 감정 기록 화면 추가`         |
+| [FIX]      | 버그·오작동을 해결할 때            | `[FIX] 감정 통계 그래프 렌더링 오류 수정` |
+| [REFACTOR] | 기능 변화 없이 구조를 개선할 때    | `[REFACTOR] 감정 분석 서비스 모듈 분리`   |
+| [CHORE]    | 빌드·설정·의존성 등 잡무 처리할 때 | `[CHORE] SwiftLint 설정 업데이트`         |
+| [DOCS]     | 문서화만 수정하거나 추가할 때      | `[DOCS] Issue 작성 가이드 보완`           |
 
 ### Issue 작성 & PR 제출
 
