@@ -8,8 +8,14 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 
 ## 기술
 
-- SwiftUI & Combine 기반 MVVM
-- Swift Concurrency(Swift 6)
+1. 디자인 및 아키텍처
+   - SwiftUI & Combine 기반 MVVM
+   - Swift Concurrency(Swift 6)
+2. 건강 데이터 관리
+   - HealthKit Wellbeing API
+   - SwiftData
+3. 감정 분석
+   - ESTSOFT Alan LLM API
 
 ## 개발 문서
 
