@@ -4,20 +4,35 @@
 
 Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 맞춤형 조언을 제공하는 멘탈 케어 iOS 앱입니다. 일기처럼 텍스트·이미지·채팅으로 감정을 남기거나 음성을 iOS Speech Framework로 전사해 기록할 수 있으며, 전사된 데이터는 LLM이 감정 상태를 해석하고 캐릭터 기반 위로 멘트와 실천 가능한 Todo까지 추천합니다.
 
-주간·월간 감정 통계, 감정 캘린더, Alert/리마인드, 하루 한 줄 조언, 감정 상태별 행사 추천 등으로 사용자가 스스로의 변화를 추적할 수 있고, SwiftData·iCloud·HealthKit 연동으로 안전한 백업과 헬스 데이터 확장이 가능합니다.
+주간·월간 감정 통계, 감정 캘린더, Alert/리마인드, 하루 한 줄 조언, 감정 상태별 행사 추천 등으로 사용자가 스스로의 변화를 추적할 수 있고, SwiftData·HealthKit 연동으로 안전한 백업과 헬스 데이터 확장이 가능합니다.
 
-## 기술
+## 사용 기술
 
-1. 디자인 및 아키텍처
+1. **소프트웨어 디자인**
    - SwiftUI & Combine 기반 MVVM
    - Swift Concurrency(Swift 6)
-2. 건강 데이터 관리
+2. **데이터 관리**
    - HealthKit Wellbeing API
    - SwiftData
-3. 감정 분석
+3. **데이터 분석**
    - ESTSOFT Alan LLM API
 
 ## 개발 문서
 
 - [이슈(Issue) 작성하기](docs/write-issue/README.md)
-- 브랜치 전략, Trunk-Based Development
+- [SwiftUI에서 Combine 기반 MVVM 사용하기](docs/swiftui-combine-mvvm/README.md)
+- [MVVM에 Swift Concurrency 도입하기](docs/mvvm-swift-concurrency/README.md)
+- 브랜치 전략, TBD(Trunk-Based Development)
+
+## 트러블슈팅 문서
+
+아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
+
+1. 박재이
+   - 작성된 문서 없음
+2. 송지석
+   - 작성된 문서 없음
+3. 구현모
+   - 작성된 문서 없음
+4. 김민우
+   - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
