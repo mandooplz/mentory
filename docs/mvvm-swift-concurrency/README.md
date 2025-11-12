@@ -8,6 +8,7 @@
     - [Swift Concurreny](#swift-concurreny)
   - [배경 지식](#배경-지식)
     - [세부 항목](#세부-항목)
+    - [동시성 문제](#동시성-문제)
     - [Swift 6.2 - Approachable Concurrency](#swift-62---approachable-concurrency)
     - [Approachable Concurrency](#approachable-concurrency)
   - [참고 자료](#참고-자료)
@@ -31,6 +32,74 @@ Swift Concurrency는 동시성을 활용해 작업을 비동기 처리하거나 
 1. Swift Concurrency와 코루틴, 동시성 구현 모델(Thread Pool, Continuation)
 2. iOS GUI 이벤트 루프, RunLoop
 3. 비즈니스 로직들로 구성된 하나의 작업(Flow)는 동시 실행(비동기 실행)될 수 있다.
+
+### 동시성 문제
+
+1. 객체의 갱신 충돌 - 10000번의 카운터
+
+   ```swift
+   // 동시성 문제 예시: 공유 데이터에 대한 경쟁 조건 (Race Condition)
+
+   final class Counter {
+       var value: Int = 0
+
+       func increment() {
+           let oldValue = value
+           // 동시에 여러 Task가 접근할 경우, 중간 상태가 덮어씌워질 수 있음
+           value = oldValue + 1
+       }
+   }
+
+   let counter = Counter()
+
+   await withTaskGroup(of: Void.self) { group in
+       for _ in 0..<10_000 {
+           group.addTask {
+               counter.increment()
+           }
+       }
+   }
+
+   print("최종 카운트: \(counter.value)") // 예상: 10000, 실제: 더 작을 수 있음
+   // 이 문제를 해결하려면 Actor 또는 Task-safe한 동시성 제어가 필요함
+   ```
+
+2. 객체들 간의 상태 일관성 - 은행 계좌
+
+   ```swift
+   // 동시성 문제 예시: 객체 간의 상태 불일치 (Inconsistent State)
+
+   final class BankAccount {
+       var balance: Int
+
+       init(balance: Int) {
+           self.balance = balance
+       }
+
+       func transfer(to target: BankAccount, amount: Int) {
+           if balance >= amount {
+               balance -= amount
+               // 동시에 다른 스레드가 같은 계좌에서 송금하면, 중간 상태에서 불일치 발생 가능
+               target.balance += amount
+           }
+       }
+   }
+
+   let accountA = BankAccount(balance: 1000)
+   let accountB = BankAccount(balance: 1000)
+
+   await withTaskGroup(of: Void.self) { group in
+       for _ in 0..<1000 {
+           group.addTask {
+               accountA.transfer(to: accountB, amount: 1)
+           }
+       }
+   }
+
+   print("A 잔액: \(accountA.balance), B 잔액: \(accountB.balance), 합계: \(accountA.balance + accountB.balance)")
+   // 예상: 합계 2000, 실제: 더 작을 수 있음
+   // 이 문제를 해결하려면 Actor, Lock, 또는 Serial Queue로 일관성 있는 접근이 필요함
+   ```
 
 ### Swift 6.2 - Approachable Concurrency
 
