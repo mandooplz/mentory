@@ -9,6 +9,7 @@ import Observation
 
 
 // MARK: Object
+@MainActor
 final class SampleCounter: ObservableObject {
     // MARK: core
     
