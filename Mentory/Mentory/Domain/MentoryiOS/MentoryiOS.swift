@@ -22,8 +22,8 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     @Published var userName: String? = nil
     @Published var onboardingFinished: Bool = false
-    @Published var onboarding: Onboarding? = nil
     
+    @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
     
     
