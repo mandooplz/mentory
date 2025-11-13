@@ -126,6 +126,19 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.todayBoard != nil)
         }
+        @Test func setIsUsedTrue() async throws {
+            // given
+            let testUserName = "TEST_USER_NAME"
+            await onboarding.setName(testUserName)
+            
+            try await #require(onboarding.isUsed == false)
+            
+            // when
+            await onboarding.next()
+            
+            // then
+            await #expect(onboarding.isUsed == true)
+        }
     }
 }
 

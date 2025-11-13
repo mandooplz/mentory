@@ -29,6 +29,7 @@ final class Onboarding: Sendable, ObservableObject {
     }
     
     @Published var validationResult: ValidationResult = .none
+    @Published private(set) var isUsed: Bool = false
     
     
     // MARK: action
@@ -59,6 +60,8 @@ final class Onboarding: Sendable, ObservableObject {
         mentoryiOS.userName = nameInput
         mentoryiOS.onboarding = nil
         mentoryiOS.todayBoard = TodayBoard(owner: self.owner)
+        
+        self.isUsed = true
     }
     
     
