@@ -70,36 +70,36 @@ GitHub Issue는 간단히 말해 리포지토리에서 버그, 기능 제한, �
 
 #### 1. Issue 탭에서 이슈 생성
 
-![alt text](image.png)
+<img src="image.png" alt="alt text">
 
-![alt text](image-4.png)
+<img src="image-4.png" alt="alt text">
 
 #### 2. Assignees 할당 & Create a branch
 
-![alt text](image-3.png)
+<img src="image-3.png" alt="alt text">
 
 #### 3. 로컬 리포지토리에 브랜치 생성
 
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-5.png)
+<img src="image-1.png" alt="alt text">
+<img src="image-2.png" alt="alt text">
+<img src="image-5.png" alt="alt text">
 
 #### 4. 작업 내용 푸시
 
-![alt text](image-6.png)
+<img src="image-6.png" alt="alt text">
 
 #### 5. 웹페이지에서 PR 생성
 
-![alt text](image-7.png)
+<img src="image-7.png" alt="alt text">
 
 #### 6. Reviewer & Assignees 할당
 
-![alt text](image-8.png)
+<img src="image-8.png" alt="alt text">
 
 #### 7. PR 병합
 
-![alt text](image-10.png)
-![alt text](image-11.png)
+<img src="image-10.png" alt="alt text">
+<img src="image-11.png" alt="alt text">
 
 #### 8. 로컬 브랜치 삭제
 
@@ -108,9 +108,9 @@ GitHub Issue는 간단히 말해 리포지토리에서 버그, 기능 제한, �
 git branch -d <branch-name>
 ```
 
-![alt text](image-12.png)
-![alt text](image-13.png)
-![alt text](image-14.png)
+<img src="image-12.png" alt="alt text">
+<img src="image-13.png" alt="alt text">
+<img src="image-14.png" alt="alt text">
 
 #### 9. 로컬에서 원격 추적 브랜치 삭제
 
@@ -119,8 +119,8 @@ git branch -d <branch-name>
 git fetch -p origin
 ```
 
-![alt text](image-15.png)
-![alt text](image-16.png)
+<img src="image-15.png" alt="alt text">
+<img src="image-16.png" alt="alt text">
 
 ## GitHub CLI 활용
 

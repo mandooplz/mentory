@@ -111,7 +111,7 @@ Swift 6.2의 Approachable Concurrency는 동시성을 더 쉽고 안전하게, �
 
 참고: [Swift 동시성 사용하기 - WWDC25 (Session 268)](https://developer.apple.com/kr/videos/play/wwdc2025/268)
 
-![alt text](image.png)
+<img src="image.png" alt="alt text">
 
 ### Approachable Concurrency
 

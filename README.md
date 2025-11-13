@@ -6,6 +6,12 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 
 주간·월간 감정 통계, 감정 캘린더, Alert/리마인드, 하루 한 줄 조언, 감정 상태별 행사 추천 등으로 사용자가 스스로의 변화를 추적할 수 있고, SwiftData·HealthKit 연동으로 안전한 백업과 헬스 데이터 확장이 가능합니다.
 
+## 소프트웨어 디자인
+
+<p align="center">
+  <img src="app-diagram.png" alt="소프트웨어 디자인 다이어그램" style="width: 70%; height: auto;">
+</p>
+
 ## 사용 기술
 
 1. **소프트웨어 디자인**
