@@ -9,7 +9,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 ## 소프트웨어 디자인
 
 <p align="center">
-  <img src="app-diagram.png" alt="소프트웨어 디자인 다이어그램" style="width: 70%; height: auto;">
+  <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
 
 ## 사용 기술
