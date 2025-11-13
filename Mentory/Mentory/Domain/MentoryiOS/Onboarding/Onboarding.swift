@@ -19,22 +19,51 @@ final class Onboarding: Sendable, ObservableObject {
     
     
     // MARK: state
-    nonisolated let id = UUID()
+    nonisolated private let id = UUID()
     nonisolated let owner: MentoryiOS
-    nonisolated let logger = Logger(subsystem: "Mentory", category: "Domain")
+    nonisolated private let logger = Logger(subsystem: "Mentory", category: "Domain")
     
     var nameInput: String = ""
+    func setName(_ newName: String) {
+        self.nameInput = newName
+    }
+    
+    var validationResult: ValidationResult = .none
     
     
     // MARK: action
-    func next() {
+    func validateInput() {
         // capture
-        
-        // process
+        let currentInput = self.nameInput
         
         // mutate
+        if currentInput.isEmpty {
+            self.validationResult = .nameInputIsEmpty
+            return
+        } else {
+            self.validationResult = .none
+            return
+        }
+    }
+    func next() {
+        // capture
+        guard nameInput.isEmpty == false else {
+            logger.error("Onboarding의 nameInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
+            return
+        }
+        let mentoryiOS = self.owner
+        let nameInput = self.nameInput
+        
+        // mutate
+        mentoryiOS.onboardingFinished = true
+        mentoryiOS.userName = nameInput
+        mentoryiOS.onboarding = nil
     }
     
     
     // MARK: value
+    nonisolated enum ValidationResult: String, Sendable, Hashable {
+        case none
+        case nameInputIsEmpty
+    }
 }
