@@ -126,6 +126,7 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.todayBoard != nil)
         }
+        
         @Test func setIsUsedTrue() async throws {
             // given
             let testUserName = "TEST_USER_NAME"
@@ -138,6 +139,24 @@ struct OnboardingTests {
             
             // then
             await #expect(onboarding.isUsed == true)
+        }
+        @Test func discardMutation_whenOnboardingIsUsed() async throws {
+            // given
+            let testUserName = "TEST_USER_NAME"
+            await onboarding.setName(testUserName)
+            
+            try await #require(onboarding.isUsed == false)
+            await onboarding.next()
+            try await #require(onboarding.isUsed == true)
+            
+            let oldBoard = try #require(await mentoryiOS.todayBoard)
+            
+            // when
+            await onboarding.next()
+            
+            // then
+            let newBoard = try #require(await mentoryiOS.todayBoard)
+            #expect(oldBoard.id == newBoard.id)
         }
     }
 }
