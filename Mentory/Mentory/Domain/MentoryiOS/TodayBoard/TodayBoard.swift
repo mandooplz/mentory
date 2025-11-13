@@ -23,13 +23,10 @@ final class TodayBoard: Sendable, ObservableObject {
     nonisolated let id = UUID()
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
     
-    
+    var recordForm: RecordForm? = nil
     
     
     // MARK: action
-    func setUpForm() {
-        // mutate
-    }
     
     
     // MARK: value
