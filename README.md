@@ -8,8 +8,10 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 
 ## 소프트웨어 디자인
 
+아래 사진을 통해 MentoryiOS, MentoryLLM, MentoryDB 도메인을 확인할 수 있습니다.
+
 <p align="center">
-  <img src="app-diagram.png" alt="소프트웨어 디자인 다이어그램" style="width: 70%; height: auto;">
+  <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
 
 ## 사용 기술
@@ -28,6 +30,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 - [이슈(Issue) 작성하기](docs/write-issue/README.md)
 - [SwiftUI에서 Combine 기반 MVVM 사용하기](docs/swiftui-combine-mvvm/README.md)
 - [MVVM에 Swift Concurrency 도입하기](docs/mvvm-swift-concurrency/README.md)
+- [Alan API 사용법](docs/alan-api/README.md)
 - 브랜치 전략, TBD(Trunk-Based Development)
 
 ## 트러블슈팅 문서

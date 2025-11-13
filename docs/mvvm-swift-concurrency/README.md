@@ -24,6 +24,7 @@ Swift Concurrency는 동시성을 활용해 작업을 비동기 처리하거나 
 - 공유 안정성: `Sendable`
 - 원자성 보장: `Actor`, `nonisolated`
 - 일관성 보장: `GlobalActor`, `MainActor`
+- 비동기 배열: `AsyncStream`
 
 ## 배경 지식
 

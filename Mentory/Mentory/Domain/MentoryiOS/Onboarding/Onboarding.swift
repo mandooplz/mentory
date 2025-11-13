@@ -21,14 +21,15 @@ final class Onboarding: Sendable, ObservableObject {
     // MARK: state
     nonisolated private let id = UUID()
     nonisolated let owner: MentoryiOS
-    nonisolated private let logger = Logger(subsystem: "Mentory", category: "Domain")
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     
-    var nameInput: String = ""
+    @Published var nameInput: String = ""
     func setName(_ newName: String) {
         self.nameInput = newName
     }
     
-    var validationResult: ValidationResult = .none
+    @Published var validationResult: ValidationResult = .none
+    @Published private(set) var isUsed: Bool = false
     
     
     // MARK: action
@@ -55,9 +56,19 @@ final class Onboarding: Sendable, ObservableObject {
         let nameInput = self.nameInput
         
         // mutate
+        guard isUsed == false else {
+            logger.error("이미 Onboarding이 사용된 상태입니다.")
+            return
+        }
         mentoryiOS.onboardingFinished = true
         mentoryiOS.userName = nameInput
         mentoryiOS.onboarding = nil
+        
+        let todayBoard = TodayBoard(owner: self.owner)
+        mentoryiOS.todayBoard = todayBoard
+        todayBoard.recordForm = RecordForm(owner: todayBoard)
+        
+        self.isUsed = true
     }
     
     

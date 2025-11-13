@@ -168,11 +168,7 @@ final class SampleObject: Sendable, ObservableObject {
 
 ### OSLog를 활용한 로깅
 
-Mentory-iOS에서는 액션의 흐름과 상태 변화를 추적하기 위해 [`OSLog`](https://developer.apple.com/documentation/os/oslog)를 활용합니다. OSLog는 시스템 전반에서 일관된 로그 포맷과 필터링 도구(Console.app, Instruments 등)를 제공하므로, 액션 실행 순서나 Combine 스트림에서 발생하는 이벤트를 분석할 때 유용합니다.
-
-- 뷰모델이나 객체에서 `Logger(subsystem:category:)`를 한 번만 선언하고 재사용합니다.
-- 액션 단위로 `info`/`debug`/`error` 레벨을 구분해 상태 변화를 기록합니다.
-- 민감한 값은 `.privacy(.private)`를 명시해 Console 출력 시 자동으로 마스킹되도록 합니다.
+Mentory에서는 사용자의 비즈니스 로직 호출에 의한 상태 변화를 파악하기 위해 로깅을 활용합니다. 로깅에는 [`OSLog`](https://developer.apple.com/documentation/os/oslog)를 활용합니다.
 
 ```swift
 import OSLog
