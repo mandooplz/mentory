@@ -10,6 +10,7 @@
   - [활용](#활용)
     - [객체와 비즈니스 로직](#객체와-비즈니스-로직)
     - [게터, 세터, 액션](#게터-세터-액션)
+    - [객체 템플릿](#객체-템플릿)
     - [객체의 트리 구조화](#객체의-트리-구조화)
     - [액션 검증하기](#액션-검증하기)
   - [참고 자료](#참고-자료)
@@ -135,6 +136,33 @@ final class SomeCounter {
         count -= 1
     }
 }
+```
+
+### 객체 템플릿
+
+아래는 MentoryiOS에서 사용하는 객체의 템플릿입니다.
+
+```swift
+import Foundation
+import Combine
+
+// MARK: Object
+@MainActor
+final class SampleObject: Sendable, ObservableObject {
+// MARK: core
+
+    // MARK: state
+
+
+    // MARK: action
+
+
+    // MARK: value
+    nonisolated struct ObjectValue: Sendable, Hashable {
+        let rawValue: String
+    }
+}
+
 ```
 
 ### 객체의 트리 구조화
