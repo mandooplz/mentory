@@ -6,6 +6,7 @@
 //
 import Foundation
 import Combine
+import OSLog
 
 
 // MARK: Object
@@ -19,9 +20,19 @@ final class Onboarding: Sendable, ObservableObject {
     
     // MARK: state
     nonisolated let owner: MentoryiOS
+    nonisolated let logger = Logger(subsystem: "Mentory", category: "Domain")
+    
+    var nameInput: String = ""
     
     
     // MARK: action
+    func next() {
+        // capture
+        
+        // process
+        
+        // mutate
+    }
     
     
     // MARK: value

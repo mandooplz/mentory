@@ -13,18 +13,28 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    init() {
-        
-    }
+    init() { }
     
     
     // MARK: state
     nonisolated let id: UUID = UUID()
+    nonisolated let logger = Logger(subsystem: "Mentory", category: "MentoryiOS")
+    
+    var userName: String? = nil
+    var onboardingFinished: Bool = false
+    var onboarding: Onboarding? = nil
     
     
     // MARK: action
     func setUp() {
+        // capture
+        guard onboarding == nil else {
+            logger.error("Onboarding 객체가 이미 존재합니다.")
+            return
+        }
         
+        // mutate
+        self.onboarding = Onboarding(owner: self)
     }
     
     
