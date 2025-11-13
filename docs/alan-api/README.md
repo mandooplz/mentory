@@ -13,13 +13,13 @@
 
 ## API 테스트
 
-![alt text](<스크린샷 2025-11-14 오전 3.13.08.png>)
+![set_variable](set_variable.png)
 
-![alt text](<스크린샷 2025-11-14 오전 3.12.24.png>)
+![question](question.png)
 
-![alt text](<스크린샷 2025-11-14 오전 3.12.53.png>)
+![sse_streaming](sse_streaming.png)
 
-![alt text](<스크린샷 2025-11-14 오전 3.12.59.png>)
+![reset_state](reset_state.png)
 
 ## 연동 가이드
 
