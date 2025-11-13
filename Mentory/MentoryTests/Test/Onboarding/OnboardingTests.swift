@@ -113,6 +113,19 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.onboardingFinished == true)
         }
+        @Test func MentoryiOS_createTodayBoard() async throws {
+            // given
+            let testUserName = "TEST_USER_NAME"
+            await onboarding.setName(testUserName)
+            
+            try await #require(mentoryiOS.todayBoard == nil)
+            
+            // when
+            await onboarding.next()
+            
+            // then
+            await #expect(mentoryiOS.todayBoard != nil)
+        }
     }
 }
 

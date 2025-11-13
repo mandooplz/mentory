@@ -21,7 +21,7 @@ final class Onboarding: Sendable, ObservableObject {
     // MARK: state
     nonisolated private let id = UUID()
     nonisolated let owner: MentoryiOS
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS", category: "Domain")
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     
     @Published var nameInput: String = ""
     func setName(_ newName: String) {
@@ -58,6 +58,7 @@ final class Onboarding: Sendable, ObservableObject {
         mentoryiOS.onboardingFinished = true
         mentoryiOS.userName = nameInput
         mentoryiOS.onboarding = nil
+        mentoryiOS.todayBoard = TodayBoard(owner: self.owner)
     }
     
     

@@ -21,7 +21,8 @@ final class TodayBoard: Sendable, ObservableObject {
     // MARK: state
     nonisolated let owner: MentoryiOS
     nonisolated private let id = UUID()
-    nonisolated private let logger = Logger(subsystem: "Mentory", category: "Domain")
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
+    
     
     // MARK: action
     
