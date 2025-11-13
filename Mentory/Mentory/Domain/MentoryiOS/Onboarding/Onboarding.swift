@@ -19,6 +19,7 @@ final class Onboarding: Sendable, ObservableObject {
     
     
     // MARK: state
+    nonisolated let id = UUID()
     nonisolated let owner: MentoryiOS
     nonisolated let logger = Logger(subsystem: "Mentory", category: "Domain")
     
