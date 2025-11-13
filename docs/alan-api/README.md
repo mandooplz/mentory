@@ -9,6 +9,7 @@
     - [REST 호출 빌더](#rest-호출-빌더)
     - [SSE 스트림 처리](#sse-스트림-처리)
     - [상태 초기화 요청](#상태-초기화-요청)
+  - [키 관리](#키-관리)
     - [Secrets.xcconfig](#secretsxcconfig)
 
 ## API 테스트
@@ -102,9 +103,19 @@ func resetState(clientID: String) async throws {
 
 초기화는 사용자가 계정을 로그아웃하거나 감정 히스토리를 삭제할 때 호출합니다. 호출 후 Mentory 내 캐시와 SwiftData 레코드도 함께 정리해야 합니다.
 
+## 키 관리
+
 ### Secrets.xcconfig
 
-1. `.xcconfig` 파일(예: `Config/Secrets.xcconfig`)에 `ALAN_API_KEY`를 정의합니다.
-2. 런타임에서는 `ProcessInfo.processInfo.environment["ALAN_API_KEY"]`로 값을 읽고, `URLRequest` 헤더에 `Authorization`을 설정합니다.
-3. 로컬 개발자는 `.xcconfig.local`을 사용하고 저장소에는 커밋하지 않습니다.
-4. CI/CD 파이프라인은 `xcodebuild` 실행 전 `export ALAN_API_KEY=...` 식으로 동일한 변수를 주입합니다.
+1. 프로젝트 루트에 `Config/Secrets.xcconfig`를 만든 뒤 Xcode 프로젝트에 드래그합니다(“Copy items if needed” 체크).
+2. 파일 안에 아래와 같이 키를 정의합니다. 값은 큰따옴표로 감싸 두는 편이 안전합니다.
+   ```xcconfig
+   ALAN_API_KEY = "sk-xxxx"
+   ```
+3. `Config/Secrets.xcconfig`와 개인별 오버라이드 파일(`*.xcconfig.local`)은 `.gitignore`에 추가하여 커밋되지 않도록 합니다.
+4. Xcode ▸ `Project` ▸ `Info` ▸ `Configurations`에서 Debug/Release 모두 `Secrets.xcconfig`를 추가로 include 하거나, `#include "Config/Secrets.xcconfig"`를 기존 설정 파일 상단에 넣어 빌드 설정이 키를 읽을 수 있게 합니다.
+5. 런타임에서는 `ProcessInfo.processInfo.environment["ALAN_API_KEY"]`를 통해 값을 읽고 `Secrets.alanAPIKey`와 같은 헬퍼로 감싼 뒤 `Authorization` 헤더에 설정합니다.
+6. 로컬 개발자는 민감한 값을 `Config/Secrets.xcconfig.local` 등에 유지하고, 팀과 공유할 필요가 있으면 1Password/Envault 등의 시크릿 볼트를 사용합니다.
+7. CI/CD 파이프라인은 `xcodebuild` 실행 전에 `export ALAN_API_KEY=...` 또는 `xcodebuild -xcconfig Config/ci.Secrets.xcconfig` 식으로 동일한 값을 주입하여 로컬과 동일한 경로로 전달합니다.
+
+> 참고: `Secrets.xcconfig`에 새로운 키를 추가했다면, 해당 키를 참조하는 Swift 타입(`Secrets`)이나 Build Settings(`OTHER_SWIFT_FLAGS`, `USER_DEFINED` 등)에서도 동일한 키 이름을 사용해야 합니다.
