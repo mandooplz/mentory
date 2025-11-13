@@ -21,7 +21,7 @@ final class Onboarding: Sendable, ObservableObject {
     // MARK: state
     nonisolated private let id = UUID()
     nonisolated let owner: MentoryiOS
-    nonisolated private let logger = Logger(subsystem: "Mentory", category: "Domain")
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS", category: "Domain")
     
     @Published var nameInput: String = ""
     func setName(_ newName: String) {
