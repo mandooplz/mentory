@@ -1,5 +1,5 @@
 //
-//  TodayBoard.swift
+//  RecordForm.swift
 //  Mentory
 //
 //  Created by 김민우 on 11/14/25.
@@ -11,25 +11,20 @@ import OSLog
 
 // MARK: Object
 @MainActor
-final class TodayBoard: Sendable, ObservableObject {
+final class RecordForm: Sendable, ObservableObject {
     // MARK: core
-    init(owner: MentoryiOS) {
+    init(owner: TodayBoard) {
         self.owner = owner
     }
     
     
     // MARK: state
-    nonisolated let owner: MentoryiOS
     nonisolated let id = UUID()
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
-    
-    
+    nonisolated let owner: TodayBoard
     
     
     // MARK: action
-    func setUpForm() {
-        // mutate
-    }
+    
     
     
     // MARK: value
