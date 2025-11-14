@@ -19,7 +19,7 @@ struct OnboardingView: View {
             // 타이틀
             HStack {
                 Text("감정 케어 앱, Mentory")
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.top, 60)
                     .padding(.leading, 30)
@@ -118,11 +118,12 @@ struct FeatureRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             // 클립보드 아이콘
-            Image(systemName: "clipboard.fill")
+            Image(systemName: "pencil.and.list.clipboard")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 50, height: 50)
+                .frame(width: 55, height: 55)
                 .foregroundColor(.black)
+            
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
@@ -134,6 +135,7 @@ struct FeatureRow: View {
                     .foregroundColor(.gray)
             }
         }
+        .padding(.bottom, 10)
     }
 }
 
