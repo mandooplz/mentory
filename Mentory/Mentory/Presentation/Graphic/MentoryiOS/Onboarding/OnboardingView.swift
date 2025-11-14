@@ -88,8 +88,8 @@ struct OnboardingView: View {
 
             // 계속 버튼
             Button(action: {
-                onboardingModel.validateInput()
-                if onboardingModel.validationResult == .none {
+                Task {
+                    onboardingModel.validateInput()
                     onboardingModel.next()
                 }
             }) {
