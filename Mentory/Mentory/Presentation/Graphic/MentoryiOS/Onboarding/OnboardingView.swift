@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @StateObject private var viewModel: OnboardingViewModel
-
-    init(onboardingModel: Onboarding) {
-        _viewModel = StateObject(wrappedValue: OnboardingViewModel(onboardingModel: onboardingModel))
-    }
+    @ObservedObject var onboardingModel: Onboarding
 
     var body: some View {
         VStack(spacing: 0) {
@@ -82,7 +78,7 @@ struct OnboardingView: View {
             Spacer()
 
             // 닉네임 입력 필드
-            TextField("이름(닉네임)을 적어주세요.", text: $viewModel.nickname)
+            TextField("이름(닉네임)을 적어주세요.", text: $onboardingModel.nameInput)
                 .padding()
                 .frame(height: 60)
                 .background(Color(white: 0.95))
@@ -92,17 +88,20 @@ struct OnboardingView: View {
 
             // 계속 버튼
             Button(action: {
-                viewModel.proceed()
+                onboardingModel.validateInput()
+                if onboardingModel.validationResult == .none {
+                    onboardingModel.next()
+                }
             }) {
                 Text("계속")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 60)
-                    .background(viewModel.canProceed() ? Color.blue : Color.gray)
+                    .background(onboardingModel.nameInput.isEmpty ? Color.gray : Color.blue)
                     .cornerRadius(16)
             }
-            .disabled(!viewModel.canProceed())
+            .disabled(onboardingModel.nameInput.isEmpty)
             .padding(.horizontal, 30)
             .padding(.bottom, 40)
         }
