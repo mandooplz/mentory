@@ -119,6 +119,95 @@ struct RecordFormTests {
         }
     }
 
+    struct Submit {
+        let mentoryiOS: MentoryiOS
+        let recordForm: RecordForm
+        let todayBoard: TodayBoard
+        
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.recordForm = try await getRecordFormForTest(mentoryiOS)
+            self.todayBoard = try #require(await mentoryiOS.todayBoard)
+        }
+
+        // MARK: 제출 기능 테스트
+
+        @Test("유효한 입력으로 제출하면 Record가 추가됨")
+        func whenValidInput_recordIsAdded() async throws {
+            // Given
+            await MainActor.run {
+                recordForm.titleInput = "테스트 제목"
+                recordForm.textInput = "테스트 내용"
+            }
+
+            let initialCount = await todayBoard.records.count
+
+            // When
+            await recordForm.submit()
+
+            // Then
+            let newCount = await todayBoard.records.count
+            #expect(newCount == initialCount + 1)
+        }
+
+        @Test("제출 후 폼이 초기화됨")
+        func afterSubmit_formIsReset() async throws {
+            // Given
+            await MainActor.run {
+                recordForm.titleInput = "테스트 제목"
+                recordForm.textInput = "테스트 내용"
+                recordForm.imageInput = Data([0x00, 0x01])
+                recordForm.voiceInput = URL(string: "file:///test.m4a")
+            }
+
+            // When
+            await recordForm.submit()
+
+            // Then
+            await #expect(recordForm.titleInput == "")
+            await #expect(recordForm.textInput == "")
+            await #expect(recordForm.imageInput == nil)
+            await #expect(recordForm.voiceInput == nil)
+            await #expect(recordForm.validationResult == .none)
+        }
+
+        @Test("유효하지 않은 입력으로 제출 시 Record가 추가되지 않음")
+        func whenInvalidInput_recordIsNotAdded() async throws {
+            // Given: 제목이 비어있음
+            await MainActor.run {
+                recordForm.titleInput = ""
+                recordForm.textInput = "내용"
+            }
+
+            let initialCount = await todayBoard.records.count
+
+            // When
+            await recordForm.submit()
+
+            // Then
+            let newCount = await todayBoard.records.count
+            #expect(newCount == initialCount)
+        }
+
+        @Test("빈 텍스트로 제출 시 Record의 text가 nil로 저장됨")
+        func whenTextIsEmpty_recordTextIsNil() async throws {
+            // Given
+            await MainActor.run {
+                recordForm.titleInput = "제목"
+                recordForm.textInput = ""
+                recordForm.imageInput = Data([0x00])
+            }
+
+            // When
+            await recordForm.submit()
+
+            // Then
+            let lastRecord = await todayBoard.records.last
+            let record = try #require(lastRecord)
+            await #expect(record.text == nil)
+            await #expect(record.title == "제목")
+        }
+    }
 }
 
 // MARK: Helpers
