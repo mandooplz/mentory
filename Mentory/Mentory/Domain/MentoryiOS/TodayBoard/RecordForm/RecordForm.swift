@@ -23,6 +23,7 @@ final class RecordForm: Sendable, ObservableObject {
     nonisolated let id = UUID()
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     weak var owner: TodayBoard?
+    var mindAnalyzer: MindAnalyzer? = nil
     
     @Published var titleInput: String = ""
     @Published var textInput: String = ""
@@ -30,7 +31,7 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
     
-    @Published var mindAnalyzer: MindAnalyzer? = nil
+    
     
     
     // MARK: action
@@ -86,12 +87,11 @@ final class RecordForm: Sendable, ObservableObject {
         logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
 
         // form 초기화
-        self.titleInput = ""
-        self.textInput = ""
-        self.imageInput = nil
-        self.voiceInput = nil
-        self.validationResult = .none
-
+//        self.titleInput = ""
+//        self.textInput = ""
+//        self.imageInput = nil
+//        self.voiceInput = nil
+//        self.validationResult = .none        
         logger.info("기록이 성공적으로 제출되었습니다.")
         
         self.mindAnalyzer = MindAnalyzer(owner: self)

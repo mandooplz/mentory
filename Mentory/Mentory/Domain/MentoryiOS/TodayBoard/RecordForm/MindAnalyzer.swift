@@ -4,21 +4,27 @@
 //
 //  Created by JAY on 11/17/25.
 //
-
 import Foundation
 import Combine
+import OSLog
+
+
 
 // MARK: Object
 @MainActor
 final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: core
-    init(owner: RecordForm) { self.owner = owner }
+    init(owner: RecordForm) {
+        self.owner = owner
+    }
     
     
     // MARK: state
     nonisolated let id = UUID()
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
     weak var owner: RecordForm?
-    @Published var isAnalyzing: Bool = true
+    
+    @Published var isAnalyzing: Bool = false
     @Published var selectedCharacter: CharacterType? = nil
     @Published var mindType: MindType? = nil
     @Published var analyzedResult: String? = nil
@@ -27,23 +33,24 @@ final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: action
     // 분석(LLM에게 보내서) >> 결과 기다려서 반환해야 하는지?(이파일에서 가지고 있어야하는지)
     // RecordForm에서 갖고있는 사용자가 입력한 여러 상태들을
-    func startAnalyzing() {
+    func startAnalyzing() async{
         // capture
-        let textInput = owner?.textInput ?? ""
+        guard let textInput = owner?.textInput else {
+            logger.error("TextInput이 비어있습니다.")
+            return
+        }
+
         guard textInput.isEmpty == false else {
+            logger.error("textInput이 비어있습니다.")
             return
         }
         //guard let imageInput = owner?.imageInput else { return }
         //guard let voiceInput = owner?.voiceInput else { return }
         
         // process
-        isAnalyzing = true
         analyzedResult = nil
         selectedCharacter = CharacterType.A
-        Task {
-            await self.callAPI(prompt: textInput, character: .A)
-            self.isAnalyzing = false
-        }
+        await callAPI(prompt: textInput, character: .A)
         
         // mutate
         
@@ -54,7 +61,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     func callAPI(prompt: String, character: CharacterType) async {
         // capture
         let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as Any
-            print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
+        print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
         
         print("ALAN_API_TOKEN =", alanClientKey)
         
@@ -80,7 +87,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             let text = String(data: data, encoding: .utf8) ?? ""
             print("요청 결과:", text)
             
-            mindType = MindType.slightlyUnpleasant
+            self.mindType = .slightlyUnpleasant
             self.analyzedResult = text
             
         } catch {
