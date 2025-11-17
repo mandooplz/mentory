@@ -32,7 +32,7 @@ final class AlanAPIService {
 
         urlComponents.queryItems = [
             URLQueryItem(name: "content", value: content),
-            URLQueryItem(name: "client_id", value: Config.alanAPIClientID)
+            URLQueryItem(name: "client_id", value: AlanLLM.AuthToken.current.value)
         ]
 
         guard let url = urlComponents.url else {
@@ -83,7 +83,7 @@ final class AlanAPIService {
         request.httpMethod = "DELETE"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let requestBody = ["client_id": Config.alanAPIClientID]
+        let requestBody = ["client_id": AlanLLM.AuthToken.current.value]
         request.httpBody = try JSONEncoder().encode(requestBody)
 
         logger.info("상태 초기화 요청")
