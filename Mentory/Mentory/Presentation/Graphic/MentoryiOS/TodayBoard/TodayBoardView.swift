@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TodayBoardView: View {
     @ObservedObject var todayBoardModel: TodayBoard
-    @State private var isShowingRecordForm = false
+    @State private var isShowingRecordFormView = false
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // 배경
@@ -113,7 +113,7 @@ struct TodayBoardView: View {
                         
                         Button {
                             // 기록하러가기 액션
-                            isShowingRecordForm.toggle()
+                            isShowingRecordFormView.toggle()
                         } label: {
                             Text("기록하러가기")
                                 .font(.system(size: 16, weight: .semibold))
@@ -125,7 +125,7 @@ struct TodayBoardView: View {
                                         .fill(Color.blue)
                                 )
                         }
-                        .fullScreenCover(isPresented: $isShowingRecordForm) {
+                        .fullScreenCover(isPresented: $isShowingRecordFormView) {
                             RecordFormView(recordFormModel: todayBoardModel.recordForm!)                                }
                         .padding(.horizontal, 32)
                     }
