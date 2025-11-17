@@ -56,10 +56,16 @@ final class RecordForm: Sendable, ObservableObject {
     
     func submit() {
         // capture
-        validateInput()
+        let title = self.titleInput
+        let text = self.textInput
+        let image = self.imageInput
+        let voice = self.voiceInput
 
-        guard validationResult == .none else {
-            logger.error("RecordForm의 입력값이 유효하지 않습니다.")
+        if titleInput.isEmpty {
+            logger.error("RecordForm의 titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
+            return
+        } else if textInput.isEmpty && voiceInput == nil && imageInput == nil {
+            logger.error("RecordForm의 내용 입력이 비어있습니다. 텍스트, 이미지, 음성 중 하나 이상의 값이 필요합니다.")
             return
         }
 
@@ -68,11 +74,11 @@ final class RecordForm: Sendable, ObservableObject {
         // mutate
         // Record 객체 생성 (입력받은 것만 포함)
         let record = Record(
-            title: titleInput,
+            title: title,
             date: Date(), // 오늘 날짜
-            text: textInput.isEmpty ? nil : textInput,
-            image: imageInput,
-            voice: voiceInput
+            text: text.isEmpty ? nil : text,
+            image: image,
+            voice: voice
         )
 
         // todayBoard에 저장
