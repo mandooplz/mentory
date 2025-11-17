@@ -60,7 +60,6 @@ struct RecordFormView: View {
                     .font(.title3)
                 Button(action: {
                     Task {
-                        cachedTextForAnalysis = recordFormModel.textInput
                         recordFormModel.submit()
                         isShowingMindAnalyzerView.toggle()
                     }

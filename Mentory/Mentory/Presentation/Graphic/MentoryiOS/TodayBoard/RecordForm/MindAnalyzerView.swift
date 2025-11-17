@@ -54,7 +54,9 @@ struct MindAnalyzerView: View {
     
     private var analyzerButton: some View {
         Button {
-            mindAnalyzerModel.startAnalyzing()
+            Task {
+                await mindAnalyzerModel.startAnalyzing()
+            }
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: mindAnalyzerModel.isAnalyzing ? "hourglass" : "paperplane")
@@ -65,17 +67,17 @@ struct MindAnalyzerView: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(canRequestAnalysis && mindAnalyzerModel.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
+                    .fill(mindAnalyzerModel.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
             )
             .foregroundColor(.white)
         }
-        .disabled(canRequestAnalysis == false || mindAnalyzerModel.isAnalyzing)
+        //        .disabled(canRequestAnalysis == false || mindAnalyzerModel.isAnalyzing)
     }
-    
-    private var canRequestAnalysis: Bool {
-        let text = mindAnalyzerModel.owner?.textInput ?? ""
-        return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-    }
+    //
+    //    private var canRequestAnalysis: Bool {
+    //        let text = mindAnalyzerModel.owner?.textInput ?? ""
+    //        return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+    //    }
     
     @ViewBuilder
     private var analysisStatus: some View {
@@ -301,6 +303,6 @@ private extension MindAnalyzer.CharacterType {
     let todayBoard = TodayBoard(owner: mentoryiOS)
     let recordForm = RecordForm(owner: todayBoard)
     let mindAnalyzer = MindAnalyzer(owner: recordForm)
-   mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
+    mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
     return MindAnalyzerView(mindAnalyzerModel: recordForm.mindAnalyzer!)
 }

@@ -30,7 +30,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: action
     // 분석(LLM에게 보내서) >> 결과 기다려서 반환해야 하는지?(이파일에서 가지고 있어야하는지)
     // RecordForm에서 갖고있는 사용자가 입력한 여러 상태들을
-    func startAnalyzing() {
+    func startAnalyzing() async{
         // capture
         let textInput = owner?.textInput ?? ""
         guard textInput.isEmpty == false else {
@@ -43,10 +43,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         isAnalyzing = true
         analyzedResult = nil
         selectedCharacter = CharacterType.A
-        Task {
-            await self.callAPI(prompt: textInput, character: .A)
-            self.isAnalyzing = false
-        }
+        await callAPI(prompt: textInput, character: .A)
         
         // mutate
         
