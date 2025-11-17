@@ -26,7 +26,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
-    
+    @Published var settingBoard: SettingBoard? = nil
     
     // MARK: action
     func saveUserName() {
