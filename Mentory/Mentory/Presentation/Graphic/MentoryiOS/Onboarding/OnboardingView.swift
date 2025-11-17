@@ -54,23 +54,27 @@ struct OnboardingView: View {
             // 기능 설명 리스트
             VStack(alignment: .leading, spacing: 20) {
                 FeatureRow(
-                    title: "여러분의 감정을 기록해보세요",
-                    subtitle: "매일매일 기록한 감정을 분석해드려요"
+                    title: "텍스트, 음성, 이미지로 감정 기록",
+                    subtitle: "당신이 편한 방식으로 일상을 기록해보세요",
+                    image: "pencil.and.list.clipboard"
                 )
 
                 FeatureRow(
-                    title: "여러분의 감정을 기록해보세요",
-                    subtitle: "매일매일 기록한 감정을 분석해드려요"
+                    title: "AI가 분석하는 나의 감정 상태",
+                    subtitle: "7단계 감정 분류로 내 마음 상태를 정확히 파악해요",
+                    image: "brain.head.profile"
                 )
 
                 FeatureRow(
-                    title: "여러분의 감정을 기록해보세요",
-                    subtitle: "매일매일 기록한 감정을 분석해드려요"
+                    title: "구름이, 분석이와 함께하는 감정 케어",
+                    subtitle: "당신의 성향에 맞는 캐릭터가 위로와 조언을 전해요",
+                    image: "message.fill"
                 )
 
                 FeatureRow(
-                    title: "여러분의 감정을 기록해보세요",
-                    subtitle: "매일매일 기록한 감정을 분석해드려요"
+                    title: "감정 캘린더와 맞춤형 행동 추천",
+                    subtitle: "통계로 감정을 추적하고 실천 가능한 활동을 받아보세요",
+                    image: "calendar"
                 )
             }
             .padding(.horizontal, 30)
@@ -113,25 +117,30 @@ struct OnboardingView: View {
 struct FeatureRow: View {
     let title: String
     let subtitle: String
+    let image: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: 12) {
             // 클립보드 아이콘
-            Image(systemName: "pencil.and.list.clipboard")
+            Image(systemName: image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 55, height: 55)
+                .frame(width: 40, height: 40)
                 .foregroundColor(.black)
-            
+
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.black)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Text(subtitle)
-                    .font(.system(size: 14))
+                    .font(.system(size: 13))
                     .foregroundColor(.gray)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding(.bottom, 10)
