@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		694B33002ECAC0810094E855 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */; };
+		694B33012ECAC0810094E855 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CE8EE8352EC5D1600006E5A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -17,13 +22,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		694B32FF2ECAC0810094E855 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		CE39BFBC2EC313F20090DF78 /* Mentory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mentory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MentoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		694B337D2ECB0A8D0094E855 /* Exceptions for "Mentory" folder in "Mentory" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CE39BFBB2EC313F20090DF78 /* Mentory */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CE39BFBE2EC313F20090DF78 /* Mentory */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				694B337D2ECB0A8D0094E855 /* Exceptions for "Mentory" folder in "Mentory" target */,
+			);
 			path = Mentory;
 			sourceTree = "<group>";
 		};
@@ -55,6 +74,7 @@
 		CE39BFB32EC313F20090DF78 = {
 			isa = PBXGroup;
 			children = (
+				694B32FF2ECAC0810094E855 /* Secrets.xcconfig */,
 				CE39BFBE2EC313F20090DF78 /* Mentory */,
 				CE8EE8322EC5D1600006E5A4 /* MentoryTests */,
 				CE39BFBD2EC313F20090DF78 /* Products */,
@@ -162,6 +182,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				694B33002ECAC0810094E855 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +190,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				694B33012ECAC0810094E855 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +224,7 @@
 /* Begin XCBuildConfiguration section */
 		CE39BFC52EC313F30090DF78 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -266,6 +289,7 @@
 		};
 		CE39BFC62EC313F30090DF78 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 694B32FF2ECAC0810094E855 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -331,6 +355,7 @@
 				DEVELOPMENT_TEAM = 3X262XJF5T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Mentory/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -363,6 +388,7 @@
 				DEVELOPMENT_TEAM = 3X262XJF5T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Mentory/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

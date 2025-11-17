@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TodayBoardView: View {
     @ObservedObject var todayBoardModel: TodayBoard
+    @State private var isShowingRecordForm = false
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // 배경
@@ -51,7 +52,7 @@ struct TodayBoardView: View {
                     
                     let userName = todayBoardModel.owner?.userName ?? "이름없음"
                     let count = todayBoardModel.records.count
-
+                    
                     if count == 0 {
                         Text("\(userName)님, 일기를 작성해보아요!")
                             .font(.system(size: 12))
@@ -112,6 +113,7 @@ struct TodayBoardView: View {
                         
                         Button {
                             // 기록하러가기 액션
+                            isShowingRecordForm.toggle()
                         } label: {
                             Text("기록하러가기")
                                 .font(.system(size: 16, weight: .semibold))
@@ -123,6 +125,8 @@ struct TodayBoardView: View {
                                         .fill(Color.blue)
                                 )
                         }
+                        .fullScreenCover(isPresented: $isShowingRecordForm) {
+                            RecordFormView(recordFormModel: todayBoardModel.recordForm!)                                }
                         .padding(.horizontal, 32)
                     }
                     .padding(.vertical, 24)
@@ -130,7 +134,7 @@ struct TodayBoardView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
-                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                     )
                     
                     // 오늘의 행동 추천
@@ -184,7 +188,7 @@ struct TodayBoardView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Color.white)
-                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                     )
                 }
                 .padding(.horizontal, 24)
