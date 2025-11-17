@@ -9,11 +9,17 @@ import SwiftUI
 
 struct TodayBoardView: View {
     @ObservedObject var todayBoardModel: TodayBoard
+    @State private var isShowingRecordFormView = false
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // 배경
             Color(.systemGray6)
                 .ignoresSafeArea()
+                .onAppear {
+                    Task {
+                        await todayBoardModel.fetchTodayString()
+                    }
+                }
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -46,7 +52,7 @@ struct TodayBoardView: View {
                     
                     let userName = todayBoardModel.owner?.userName ?? "이름없음"
                     let count = todayBoardModel.records.count
-
+                    
                     if count == 0 {
                         Text("\(userName)님, 일기를 작성해보아요!")
                             .font(.system(size: 12))
@@ -59,16 +65,31 @@ struct TodayBoardView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
 
-                    // "오늘의 명언" 버튼
-                    VStack(spacing: 16) {
+                    // "오늘의 명언" 카드
+                    VStack(alignment: .leading, spacing: 12) {
                         Text("오늘의 명언")
-                    }.padding(.vertical, 24)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 28)
-                                .fill(Color.white)
-                                //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
-                        )
+                            .font(.system(size: 18, weight: .semibold))
+
+                        if let todayString = todayBoardModel.todayString {
+                            Text(todayString)
+                                .font(.system(size: 16))
+                                .foregroundColor(.gray)
+                                .lineSpacing(4)
+                                .multilineTextAlignment(.leading)
+                        } else {
+                            Text("명언을 불러오는 중...")
+                                .font(.system(size: 16))
+                                .foregroundColor(.gray.opacity(0.6))
+                        }
+                    }
+                    .padding(.vertical, 24)
+                    .padding(.horizontal, 20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 28)
+                            .fill(Color.white)
+                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                    )
                     
                     // 기분 기록 카드
                     VStack(spacing: 16) {
@@ -87,11 +108,12 @@ struct TodayBoardView: View {
                                 .foregroundColor(.white)
                         }
                         
-                        Text("오늘 기분을 기록해볼까요??")
+                        Text("오늘 기분을 기록해볼까요?")
                             .font(.system(size: 16, weight: .medium))
                         
                         Button {
                             // 기록하러가기 액션
+                            isShowingRecordFormView.toggle()
                         } label: {
                             Text("기록하러가기")
                                 .font(.system(size: 16, weight: .semibold))
@@ -103,6 +125,8 @@ struct TodayBoardView: View {
                                         .fill(Color.blue)
                                 )
                         }
+                        .fullScreenCover(isPresented: $isShowingRecordFormView) {
+                            RecordFormView(recordFormModel: todayBoardModel.recordForm!)                                }
                         .padding(.horizontal, 32)
                     }
                     .padding(.vertical, 24)
@@ -110,7 +134,7 @@ struct TodayBoardView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 28)
                             .fill(Color.white)
-                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                     )
                     
                     // 오늘의 행동 추천
@@ -164,7 +188,7 @@ struct TodayBoardView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Color.white)
-                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                     )
                 }
                 .padding(.horizontal, 24)
