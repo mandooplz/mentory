@@ -1,5 +1,5 @@
 //
-//  MentoryLLM.swift
+//  AlanLLM.swift
 //  Mentory
 //
 //  Created by 김민우 on 11/14/25.
@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: External Object
 nonisolated
-struct MentoryLLM: Sendable {
+struct AlanLLM: Sendable {
     // MARK: core
     nonisolated let id: UUID
     init(_ id: UUID) {

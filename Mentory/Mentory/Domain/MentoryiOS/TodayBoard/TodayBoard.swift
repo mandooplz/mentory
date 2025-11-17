@@ -28,8 +28,16 @@ final class TodayBoard: Sendable, ObservableObject {
 
     @Published var todayString: String? = nil
 
+    
     // MARK: action
     func fetchTodayString() async {
+        // capture
+        
+        
+        // process
+        
+        
+        // mutate
         do {
             // Alan API를 통해 오늘의 명언 또는 속담 요청
             let response = try await AlanAPIService.shared.question(
