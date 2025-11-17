@@ -40,13 +40,6 @@ final class SettingBoard: Sendable, ObservableObject {
     
     // MARK: value
     
-    /// "반가워요, userName님!" 인사 문구
-    /// - MentoryiOS.userName 프로퍼티를 사용
-    var greetingText: String {
-        let name = owner?.userName ?? "userName"
-        return "반가워요, \(name)님!"
-    }
-    
     
     // MARK: action
     

@@ -52,6 +52,11 @@ final class MentoryiOS: Sendable, ObservableObject {
         }
     }
     
+    func getGreetingText() -> String {
+        let name = userName ?? "userName"
+        return "반가워요, \(name)님!"
+    }
+    
     func setUp() {
         if userName != nil {
             return

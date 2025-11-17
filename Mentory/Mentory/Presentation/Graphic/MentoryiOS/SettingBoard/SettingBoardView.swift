@@ -71,7 +71,7 @@ struct SettingBoardView: View {
                     }
                 }
             }
-            Text(settingBoard.greetingText)
+            Text(settingBoard.owner?.getGreetingText() ?? "반가워요, userName님!")
                 .font(.system(size: 20, weight: .bold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
