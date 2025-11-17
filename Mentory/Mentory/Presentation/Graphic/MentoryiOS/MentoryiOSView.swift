@@ -68,7 +68,7 @@ struct MentoryiOSView: View {
     
     @ViewBuilder
     private var SettingTab: some View {
-        if let settingBoard = mentoryiOS.settingBoard { 
+        if let settingBoard = mentoryiOS.settingBoard {
             SettingBoardView(settingBoard: settingBoard)
                 .tabItem {
                     Image(systemName: "gearshape")
@@ -86,7 +86,7 @@ struct MentoryiOSView: View {
     @ViewBuilder
     private var OnboardingTab: some View {
         if let onBoarding = mentoryiOS.onboarding {
-            OnboardingView(onboardingModel: onBoarding)
+            OnboardingView(onBoarding)
         } else {
             ProgressView()
         }
