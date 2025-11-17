@@ -30,6 +30,8 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
     
+    @Published var mindAnalyzer: MindAnalyzer? = nil
+    
     
     // MARK: action
     func validateInput() {
@@ -85,6 +87,8 @@ final class RecordForm: Sendable, ObservableObject {
         self.validationResult = .none
 
         logger.info("기록이 성공적으로 제출되었습니다.")
+        
+        self.mindAnalyzer = MindAnalyzer(owner: self)
     }
 
     // MARK: value
