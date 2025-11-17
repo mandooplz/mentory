@@ -12,13 +12,16 @@ import Combine
 @MainActor
 final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: core
-    init(owner: RecordForm) { self.owner = owner }
+    init(owner: RecordForm) {
+        self.owner = owner
+    }
     
     
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: RecordForm?
-    @Published var isAnalyzing: Bool = true
+    
+    @Published var isAnalyzing: Bool = false
     @Published var selectedCharacter: CharacterType? = nil
     @Published var mindType: MindType? = nil
     @Published var analyzedResult: String? = nil
@@ -54,11 +57,11 @@ final class MindAnalyzer: Sendable, ObservableObject {
     func callAPI(prompt: String, character: CharacterType) async {
         // capture
         let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as Any
-            print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
+        print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
         
         print("ALAN_API_TOKEN =", alanClientKey)
         
-        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as? String,
+        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "TOKEN") as? String,
               apiToken.isEmpty == false else {
             print("ALAN_API_TOKEN 없음")
             return

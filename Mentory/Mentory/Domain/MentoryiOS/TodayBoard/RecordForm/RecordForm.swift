@@ -23,6 +23,7 @@ final class RecordForm: Sendable, ObservableObject {
     nonisolated let id = UUID()
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     weak var owner: TodayBoard?
+    var mindAnalyzer: MindAnalyzer? = nil
     
     @Published var titleInput: String = ""
     @Published var textInput: String = ""
@@ -30,7 +31,7 @@ final class RecordForm: Sendable, ObservableObject {
     @Published var voiceInput: URL? = nil
     @Published var validationResult: ValidationResult = .none
     
-    @Published var mindAnalyzer: MindAnalyzer? = nil
+    
     
     
     // MARK: action
