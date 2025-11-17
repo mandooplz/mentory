@@ -1,6 +1,6 @@
 //
 //  RecordFormTests.swift
-//  MentoryTests
+//  MentoryiOSTests
 //
 //  Created by 구현모 on 11/15/25.
 //

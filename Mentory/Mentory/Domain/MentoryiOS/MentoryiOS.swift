@@ -29,8 +29,8 @@ final class MentoryiOS: Sendable, ObservableObject {
     }
     
     @Published var onboardingFinished: Bool = false
-    
     @Published var onboarding: Onboarding? = nil
+    
     @Published var todayBoard: TodayBoard? = nil
     @Published var settingBoard: SettingBoard? = nil
     
@@ -38,7 +38,11 @@ final class MentoryiOS: Sendable, ObservableObject {
     // MARK: action
     func setUp() {
         // capture
-        guard userName != nil else {
+        guard onboardingFinished == false else {
+            logger.error("Onboarding이 이미 완료되어 있어 종료됩니다.")
+            return
+        }
+        guard userName == nil else {
             logger.error("MentoryiOS의 userName이 현재 nil이서 종료됩니다.")
             return
         }
@@ -74,6 +78,4 @@ final class MentoryiOS: Sendable, ObservableObject {
             self.onboardingFinished = false
         }
     }
-    
-    
 }
