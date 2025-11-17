@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>ALAN_API_TOKEN</key>
-	<string>$(ALAN_API_TOKEN)</string>
+	<string>$(TOKEN)</string>
 </dict>
 </plist>
