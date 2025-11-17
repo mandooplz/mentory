@@ -7,3 +7,4 @@ Secrets.xcconfig
 *.xcconfig.local
 
 .DS_Store
+.xcuserstate
