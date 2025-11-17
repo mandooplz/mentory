@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */ = {isa = PBXBuildFile; fileRef = CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */; };
 		CED16A5F2ECB7FCD00CF012B /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */; };
 /* End PBXBuildFile section */
 
@@ -21,6 +22,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.sample; sourceTree = "<group>"; };
 		CE39BFBC2EC313F20090DF78 /* Mentory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mentory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MentoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */,
+				CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */,
 				CE39BFBE2EC313F20090DF78 /* Mentory */,
 				CE8EE8322EC5D1600006E5A4 /* MentoryTests */,
 				CE39BFBD2EC313F20090DF78 /* Products */,
@@ -182,6 +185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CED16A5F2ECB7FCD00CF012B /* Secrets.xcconfig in Resources */,
+				CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
