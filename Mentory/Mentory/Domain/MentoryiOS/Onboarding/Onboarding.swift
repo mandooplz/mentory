@@ -57,18 +57,20 @@ final class Onboarding: Sendable, ObservableObject {
             logger.error("이미 Onboarding이 사용된 상태입니다.")
             return
         }
-        let mentoryiOS = self.owner
+        let mentoryiOS = self.owner!
         let nameInput = self.nameInput
         
         
         // mutate
-        mentoryiOS?.onboardingFinished = true
-        mentoryiOS?.userName = nameInput
-        mentoryiOS?.onboarding = nil
+        mentoryiOS.onboardingFinished = true
+        mentoryiOS.userName = nameInput
+        mentoryiOS.onboarding = nil
         
         let todayBoard = TodayBoard(owner: self.owner ?? MentoryiOS())
-        mentoryiOS?.todayBoard = todayBoard
+        mentoryiOS.todayBoard = todayBoard
         todayBoard.recordForm = RecordForm(owner: todayBoard)
+        
+        mentoryiOS.settingBoard = SettingBoard(owner: mentoryiOS)
         
         self.isUsed = true
     }
