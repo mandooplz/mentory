@@ -25,7 +25,7 @@ struct AlanLLM: Sendable {
 
 enum Config {
     // MARK: - Alan API Configuration
-
+ 
     /// Alan API Client ID (Secrets.xcconfig의 TOKEN 값)
     /// Info.plist에 ALAN_API_TOKEN = $(TOKEN) 형태로 등록되어야 합니다.
     static var alanAPIClientID: String {
