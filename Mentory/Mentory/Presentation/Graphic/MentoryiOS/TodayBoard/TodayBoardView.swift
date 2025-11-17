@@ -43,13 +43,22 @@ struct TodayBoardView: View {
                     .padding(.top, 16)
                     
                     // 작은 설명 텍스트
-                    let userName = todayBoardModel.owner.userName ?? "이름없음"
                     
-                    Text("\(userName)님 20번째 기록하셨네요!")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
+                    let userName = todayBoardModel.owner?.userName ?? "이름없음"
+                    let count = todayBoardModel.records.count
+
+                    if count == 0 {
+                        Text("\(userName)님, 일기를 작성해보아요!")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        Text("\(userName)님 \(count)번째 기록하셨네요!")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+
                     // "오늘의 명언" 버튼
                     VStack(spacing: 16) {
                         Text("오늘의 명언")
