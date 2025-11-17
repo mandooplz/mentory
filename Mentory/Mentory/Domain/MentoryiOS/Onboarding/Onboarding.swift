@@ -19,7 +19,7 @@ final class Onboarding: Sendable, ObservableObject {
     
     
     // MARK: state
-    nonisolated private let id = UUID()
+    nonisolated let id = UUID()
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     weak var owner: MentoryiOS?
     
