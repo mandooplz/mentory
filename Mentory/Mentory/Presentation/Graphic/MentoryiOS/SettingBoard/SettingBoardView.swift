@@ -44,6 +44,9 @@ struct SettingBoardView: View {
         .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
             PrivacyPolicyView()
         }
+        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {   // 👈 추가
+            LicenseInfoView()
+        }
     }
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -124,7 +127,9 @@ struct SettingBoardView: View {
                 iconBackground: Color.green,
                 title: "라이센스 정보",
                 showDivider: true
-            )
+            ){
+                settingBoard.showLicenseInfo()  
+            }
             
             SettingRow(
                 iconName: "book.fill",

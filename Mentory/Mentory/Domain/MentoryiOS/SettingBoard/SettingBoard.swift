@@ -33,9 +33,9 @@ final class SettingBoard: Sendable, ObservableObject {
     /// 알림 시간 (알림 시간 표시 + DatePicker)
     @Published var reminderTime: Date = .now
     
-    // 세부 정책 화면
+    // 화면 클릭
     @Published var isShowingPrivacyPolicy: Bool = false
-    
+    @Published var isShowingLicenseInfo: Bool = false
     
     // MARK: value
     
@@ -63,5 +63,9 @@ final class SettingBoard: Sendable, ObservableObject {
     
     func showPrivacyPolicy() {
         isShowingPrivacyPolicy = true
+    }
+    
+    func showLicenseInfo() {                    
+        isShowingLicenseInfo = true
     }
 }
