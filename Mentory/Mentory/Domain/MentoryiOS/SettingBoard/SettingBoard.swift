@@ -20,7 +20,7 @@ final class SettingBoard: Sendable, ObservableObject {
     
     
     // MARK: state
-    nonisolated let owner: MentoryiOS
+    weak var owner: MentoryiOS?
     nonisolated let id = UUID()
     nonisolated private let logger = Logger(
         subsystem: "MentoryiOS.SettingBoard",
@@ -43,7 +43,7 @@ final class SettingBoard: Sendable, ObservableObject {
     /// "반가워요, userName님!" 인사 문구
     /// - MentoryiOS.userName 프로퍼티를 사용
     var greetingText: String {
-        let name = owner.userName ?? "userName"
+        let name = owner?.userName ?? "userName"
         return "반가워요, \(name)님!"
     }
     
