@@ -65,7 +65,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
         var urlBuilder = URLComponents(string: "https://kdt-api-function.azurewebsites.net/api/v1/question")!
         urlBuilder.queryItems = [
-            URLQueryItem(name: "client_key", value: clientKey),
+            URLQueryItem(name: "client_id", value: clientKey),
             URLQueryItem(name: "content", value: prompt)
         ]
         
