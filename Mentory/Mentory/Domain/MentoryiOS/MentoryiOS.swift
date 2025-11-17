@@ -26,8 +26,6 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
-    @Published var recordForm: RecordForm? = nil
-    @Published var mindAnalyzer: MindAnalyzer? = nil
     
     
     // MARK: action
