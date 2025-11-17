@@ -21,8 +21,8 @@ final class RecordForm: Sendable, ObservableObject {
     
     // MARK: state
     nonisolated let id = UUID()
-    nonisolated let owner: TodayBoard
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
+    weak var owner: TodayBoard?
     
     @Published var titleInput: String = ""
     @Published var textInput: String = ""
@@ -76,7 +76,7 @@ final class RecordForm: Sendable, ObservableObject {
         )
 
         // todayBoard에 저장
-        todayBoard.records.append(record)
+        todayBoard?.records.append(record)
         logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
 
         // form 초기화

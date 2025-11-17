@@ -1,5 +1,5 @@
 //
-//  MIndAnalyzer.swift
+//  MindAnalyzer.swift
 //  Mentory
 //
 //  Created by JAY on 11/17/25.
@@ -15,8 +15,8 @@ import Combine
     
     
     // MARK: state
-    nonisolated let owner: RecordForm
     nonisolated let id = UUID()
+    weak var owner: RecordForm?
     @Published var isAnalyzing: Bool = true
     @Published var selectedCharacter: CharacterType? = nil
     @Published var mindType: MindType? = nil
@@ -28,16 +28,16 @@ import Combine
     // RecordForm에서 갖고있는 사용자가 입력한 여러 상태들을
     func startAnalyzing() {
         // capture
-        let textInput = owner.textInput
+        let textInput = owner?.textInput ?? ""
         guard textInput.isEmpty == false else {
             return
         }
-        guard let imageInput = owner.imageInput else { return }
-        guard let voiceInput = owner.voiceInput else { return }
+        guard let imageInput = owner?.imageInput else { return }
+        guard let voiceInput = owner?.voiceInput else { return }
     
-        //process
-        //연산에 해당하는 부분 모든 상태를 읽어온다음에 그값으로 연산...
-        //ex)DB에 저장하거나 네트워크 호출
+        // process
+        // 연산에 해당하는 부분 모든 상태를 읽어온다음에 그값으로 연산...
+        // ex)DB에 저장하거나 네트워크 호출
         
         
         // mutate
