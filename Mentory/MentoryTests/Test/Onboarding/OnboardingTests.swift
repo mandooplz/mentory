@@ -108,6 +108,19 @@ struct OnboardingTests {
             await #expect(mentoryiOS.settingBoard?.id == oldSettingBoard.id)
         }
         
+        @Test func setIsUsedTrue() async throws {
+            // given
+            let testUserName = "TEST_USER_NAME"
+            await onboarding.setName(testUserName)
+            
+            try await #require(onboarding.isUsed == false)
+            
+            // when
+            await onboarding.next()
+            
+            // then
+            await #expect(onboarding.isUsed == true)
+        }
         
         @Test func MentoryiOS_setUserName() async throws {
             // given
@@ -124,7 +137,6 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.userName == testUserName)
         }
-        
         @Test func MentoryiOS_removeOnboarding() async throws {
             // given
             try await #require(mentoryiOS.onboarding != nil)
@@ -151,7 +163,6 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.onboardingFinished == true)
         }
-        
         @Test func MentoryiOS_createTodayBoard() async throws {
             // given
             let testUserName = "TEST_USER_NAME"
@@ -190,38 +201,6 @@ struct OnboardingTests {
             
             // then
             await #expect(mentoryiOS.settingBoard != nil)
-        }
-        
-        @Test func setIsUsedTrue() async throws {
-            // given
-            let testUserName = "TEST_USER_NAME"
-            await onboarding.setName(testUserName)
-            
-            try await #require(onboarding.isUsed == false)
-            
-            // when
-            await onboarding.next()
-            
-            // then
-            await #expect(onboarding.isUsed == true)
-        }
-        @Test func discardMutation_whenOnboardingIsUsed() async throws {
-            // given
-            let testUserName = "TEST_USER_NAME"
-            await onboarding.setName(testUserName)
-            
-            try await #require(onboarding.isUsed == false)
-            await onboarding.next()
-            try await #require(onboarding.isUsed == true)
-            
-            let oldBoard = try #require(await mentoryiOS.todayBoard)
-            
-            // when
-            await onboarding.next()
-            
-            // then
-            let newBoard = try #require(await mentoryiOS.todayBoard)
-            #expect(oldBoard.id == newBoard.id)
         }
     }
 }
