@@ -27,47 +27,41 @@ final class SettingBoard: Sendable, ObservableObject {
         category: "Domain"
     )
     
-    /// 알림 사용 여부 (예: 감정 기록 리마인드)
+    /// 알림 사용 여부 (알림 설정 토글)
     @Published var isReminderOn: Bool = true
     
-    /// 알림 시간 (예: 저녁 9시)
+    /// 알림 시간 (알림 시간 표시 + DatePicker)
     @Published var reminderTime: Date = .now
     
-    /// 앱 테마 (예시: T / F 테마)
-    enum AppTheme: String, CaseIterable, Sendable {
-        case tTheme
-        case fTheme
-    }
-    
-    @Published var selectedTheme: AppTheme = .tTheme
+    // 세부 정책 화면
+    @Published var isShowingPrivacyPolicy: Bool = false
     
     
     // MARK: value
     
-    /// "반가워요, 지석님!" 같은 인사 문구
+    /// "반가워요, userName님!" 인사 문구
+    /// - MentoryiOS.userName 프로퍼티를 사용
     var greetingText: String {
-        let name = owner.userName ?? "사용자"
+        let name = owner.userName ?? "userName"
         return "반가워요, \(name)님!"
     }
     
     
     // MARK: action
     
-    /// 리마인드 알림 on/off 토글
+    /// 알림 on/off 토글 액션
     func toggleReminder() {
         isReminderOn.toggle()
         logger.info("Reminder toggled: \(self.isReminderOn)")
     }
     
-    /// 리마인드 알림 시간 변경
+    /// 알림 시간 변경 액션
     func updateReminderTime(_ newTime: Date) {
         reminderTime = newTime
         logger.info("Reminder time updated: \(String(describing: newTime))")
     }
     
-    /// 앱 테마 변경
-    func updateTheme(_ theme: AppTheme) {
-        selectedTheme = theme
-        logger.info("App theme changed: \(theme.rawValue)")
+    func showPrivacyPolicy() {
+        isShowingPrivacyPolicy = true
     }
 }
