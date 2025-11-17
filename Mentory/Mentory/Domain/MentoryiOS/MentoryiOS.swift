@@ -15,22 +15,13 @@ final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
     init() { }
     
-    private let userNameDefaultsKey = "mentory.userName"
-    
+    private nonisolated let userNameDefaultsKey = "mentory.userName"
+
     // MARK: state
     nonisolated let id: UUID = UUID()
     nonisolated let logger = Logger(subsystem: "MentoryiOS", category: "Domain")
     
-    @Published var userName: String? = nil {
-        didSet {
-            // userName이 변경될 때마다 UserDefaults에 저장
-            if let name = userName {
-                UserDefaults.standard.set(name, forKey: userNameDefaultsKey)
-            } else {
-                UserDefaults.standard.removeObject(forKey: userNameDefaultsKey)
-            }
-        }
-    }
+    @Published var userName: String? = nil
     @Published var onboardingFinished: Bool = false
     
     @Published var onboarding: Onboarding? = nil
@@ -38,23 +29,15 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     
     // MARK: action
-    func setUp() {
-        loadUserName()
-        
-        if userName != nil {
+    func saveUserName() {
+        guard let name = userName else {
+            UserDefaults.standard.removeObject(forKey: userNameDefaultsKey)
             return
         }
-        
-        guard onboarding == nil else {
-            logger.error("Onboarding 객체가 이미 존재합니다.")
-            return
-        }
-        self.onboarding = Onboarding(owner: self)
+        UserDefaults.standard.set(name, forKey: userNameDefaultsKey)
     }
     
-    
     func loadUserName() {
-        
         if let savedName = UserDefaults.standard.string(forKey: userNameDefaultsKey) {
             self.userName = savedName
             self.onboardingFinished = true
@@ -67,5 +50,17 @@ final class MentoryiOS: Sendable, ObservableObject {
         } else {
             self.onboardingFinished = false
         }
+    }
+    
+    func setUp() {
+        loadUserName()
+        if userName != nil {
+            return
+        }
+        guard onboarding == nil else {
+            logger.error("Onboarding 객체가 이미 존재합니다.")
+            return
+        }
+        self.onboarding = Onboarding(owner: self)
     }
 }
