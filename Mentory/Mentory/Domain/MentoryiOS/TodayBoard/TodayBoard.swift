@@ -19,9 +19,9 @@ final class TodayBoard: Sendable, ObservableObject {
     
     
     // MARK: state
-    nonisolated let owner: MentoryiOS
     nonisolated let id = UUID()
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
+    weak var owner: MentoryiOS?
 
     var recordForm: RecordForm? = nil
     @Published var records: [RecordForm.Record] = []
