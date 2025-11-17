@@ -14,6 +14,11 @@ struct TodayBoardView: View {
             // 배경
             Color(.systemGray6)
                 .ignoresSafeArea()
+                .onAppear {
+                    Task {
+                        await todayBoardModel.fetchTodayString()
+                    }
+                }
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
@@ -59,16 +64,31 @@ struct TodayBoardView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
 
-                    // "오늘의 명언" 버튼
-                    VStack(spacing: 16) {
+                    // "오늘의 명언" 카드
+                    VStack(alignment: .leading, spacing: 12) {
                         Text("오늘의 명언")
-                    }.padding(.vertical, 24)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 28)
-                                .fill(Color.white)
-                                //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
-                        )
+                            .font(.system(size: 18, weight: .semibold))
+
+                        if let todayString = todayBoardModel.todayString {
+                            Text(todayString)
+                                .font(.system(size: 16))
+                                .foregroundColor(.gray)
+                                .lineSpacing(4)
+                                .multilineTextAlignment(.leading)
+                        } else {
+                            Text("명언을 불러오는 중...")
+                                .font(.system(size: 16))
+                                .foregroundColor(.gray.opacity(0.6))
+                        }
+                    }
+                    .padding(.vertical, 24)
+                    .padding(.horizontal, 20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 28)
+                            .fill(Color.white)
+                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                    )
                     
                     // 기분 기록 카드
                     VStack(spacing: 16) {
@@ -87,7 +107,7 @@ struct TodayBoardView: View {
                                 .foregroundColor(.white)
                         }
                         
-                        Text("오늘 기분을 기록해볼까요??")
+                        Text("오늘 기분을 기록해볼까요?")
                             .font(.system(size: 16, weight: .medium))
                         
                         Button {
