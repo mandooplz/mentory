@@ -17,7 +17,7 @@ final class MentoryiOS: Sendable, ObservableObject {
 
     // MARK: state
     nonisolated let id: UUID = UUID()
-    nonisolated let logger = Logger(subsystem: "MentoryiOS", category: "Domain")
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
     
     @Published var userName: String? = nil
     func getGreetingText() -> String {
@@ -36,6 +36,21 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     
     // MARK: action
+    func setUp() {
+        // capture
+        guard userName != nil else {
+            logger.error("MentoryiOS의 userName이 현재 nil이서 종료됩니다.")
+            return
+        }
+        guard onboarding == nil else {
+            logger.error("Onboarding 객체가 이미 존재합니다.")
+            return
+        }
+        
+        // mutate
+        self.onboarding = Onboarding(owner: self)
+    }
+    
     private nonisolated let userNameDefaultsKey = "mentory.userName"
     func saveUserName() {
         guard let name = userName else {
@@ -60,14 +75,5 @@ final class MentoryiOS: Sendable, ObservableObject {
         }
     }
     
-    func setUp() {
-        if userName != nil {
-            return
-        }
-        guard onboarding == nil else {
-            logger.error("Onboarding 객체가 이미 존재합니다.")
-            return
-        }
-        self.onboarding = Onboarding(owner: self)
-    }
+    
 }
