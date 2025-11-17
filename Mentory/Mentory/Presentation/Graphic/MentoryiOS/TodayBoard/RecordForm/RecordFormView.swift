@@ -43,7 +43,7 @@ struct RecordFormView: View {
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
-            MindAnalyzerView(mindAnalyzerModel: recordFormModel.mindAnalyzer!)                                }
+            MindAnalyzerView(mindAnalyzer: recordFormModel.mindAnalyzer!)                                }
     }
     
     private var recordTopBar: some View {
@@ -60,6 +60,7 @@ struct RecordFormView: View {
                     .font(.title3)
                 Button(action: {
                     Task {
+                        recordFormModel.validateInput()
                         recordFormModel.submit()
                         isShowingMindAnalyzerView.toggle()
                     }

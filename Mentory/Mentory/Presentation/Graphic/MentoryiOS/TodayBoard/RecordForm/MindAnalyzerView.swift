@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct MindAnalyzerView: View {
-    @ObservedObject var mindAnalyzerModel: MindAnalyzer
+    // MARK: model
+    @ObservedObject var mindAnalyzer: MindAnalyzer
+    
+    
+    // MARK: body
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -44,9 +48,9 @@ struct MindAnalyzerView: View {
             ForEach(MindAnalyzer.CharacterType.allCases, id: \.self) { character in
                 CharacterSelectionCard(
                     character: character,
-                    isSelected: character == (mindAnalyzerModel.selectedCharacter ?? .A)
+                    isSelected: character == (mindAnalyzer.selectedCharacter ?? .A)
                 ) {
-                    mindAnalyzerModel.selectedCharacter = character
+                    mindAnalyzer.selectedCharacter = character
                 }
             }
         }
@@ -55,19 +59,21 @@ struct MindAnalyzerView: View {
     private var analyzerButton: some View {
         Button {
             Task {
-                await mindAnalyzerModel.startAnalyzing()
+                mindAnalyzer.isAnalyzing = true
+                await mindAnalyzer.startAnalyzing()
+                mindAnalyzer.isAnalyzing = false
             }
         } label: {
             HStack(spacing: 8) {
-                Image(systemName: mindAnalyzerModel.isAnalyzing ? "hourglass" : "paperplane")
-                Text(mindAnalyzerModel.isAnalyzing ? "면담 요청 중" : "면담 요청하기")
+                Image(systemName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane")
+                Text(mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기")
                     .fontWeight(.semibold)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(mindAnalyzerModel.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
+                    .fill(mindAnalyzer.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
             )
             .foregroundColor(.white)
         }
@@ -81,11 +87,11 @@ struct MindAnalyzerView: View {
     
     @ViewBuilder
     private var analysisStatus: some View {
-        if mindAnalyzerModel.isAnalyzing {
+        if mindAnalyzer.isAnalyzing {
             StatusBadge(text: "선택한 멘토가 답변을 준비 중이에요…")
-        } else if let result = mindAnalyzerModel.analyzedResult, result.isEmpty == false {
+        } else if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
             VStack(alignment: .leading, spacing: 12) {
-                if let mindType = mindAnalyzerModel.mindType {
+                if let mindType = mindAnalyzer.mindType {
                     MindTypeResultView(mindType: mindType)
                 }
                 Text(result)
@@ -106,7 +112,7 @@ struct MindAnalyzerView: View {
     
     @ViewBuilder
     private var resultSection: some View {
-        if let result = mindAnalyzerModel.analyzedResult, result.isEmpty == false {
+        if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
             ResultView(text: result)
         }
     }
@@ -304,5 +310,5 @@ private extension MindAnalyzer.CharacterType {
     let recordForm = RecordForm(owner: todayBoard)
     let mindAnalyzer = MindAnalyzer(owner: recordForm)
     mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
-    return MindAnalyzerView(mindAnalyzerModel: recordForm.mindAnalyzer!)
+    return MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!)
 }

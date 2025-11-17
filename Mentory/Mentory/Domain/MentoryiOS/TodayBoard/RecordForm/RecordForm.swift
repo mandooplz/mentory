@@ -87,12 +87,11 @@ final class RecordForm: Sendable, ObservableObject {
         logger.info("새로운 기록이 추가되었습니다. ID: \(record.id)")
 
         // form 초기화
-        self.titleInput = ""
-        self.textInput = ""
-        self.imageInput = nil
-        self.voiceInput = nil
-        self.validationResult = .none
-
+//        self.titleInput = ""
+//        self.textInput = ""
+//        self.imageInput = nil
+//        self.voiceInput = nil
+//        self.validationResult = .none        
         logger.info("기록이 성공적으로 제출되었습니다.")
         
         self.mindAnalyzer = MindAnalyzer(owner: self)

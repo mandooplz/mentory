@@ -4,9 +4,11 @@
 //
 //  Created by JAY on 11/17/25.
 //
-
 import Foundation
 import Combine
+import OSLog
+
+
 
 // MARK: Object
 @MainActor
@@ -19,6 +21,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     // MARK: state
     nonisolated let id = UUID()
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
     weak var owner: RecordForm?
     
     @Published var isAnalyzing: Bool = false
@@ -32,15 +35,19 @@ final class MindAnalyzer: Sendable, ObservableObject {
     // RecordForm에서 갖고있는 사용자가 입력한 여러 상태들을
     func startAnalyzing() async{
         // capture
-        let textInput = owner?.textInput ?? ""
+        guard let textInput = owner?.textInput else {
+            logger.error("TextInput이 비어있습니다.")
+            return
+        }
+
         guard textInput.isEmpty == false else {
+            logger.error("textInput이 비어있습니다.")
             return
         }
         //guard let imageInput = owner?.imageInput else { return }
         //guard let voiceInput = owner?.voiceInput else { return }
         
         // process
-        isAnalyzing = true
         analyzedResult = nil
         selectedCharacter = CharacterType.A
         await callAPI(prompt: textInput, character: .A)
@@ -58,7 +65,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         print("ALAN_API_TOKEN =", alanClientKey)
         
-        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "TOKEN") as? String,
+        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as? String,
               apiToken.isEmpty == false else {
             print("ALAN_API_TOKEN 없음")
             return
@@ -80,7 +87,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             let text = String(data: data, encoding: .utf8) ?? ""
             print("요청 결과:", text)
             
-            mindType = MindType.slightlyUnpleasant
+            self.mindType = .slightlyUnpleasant
             self.analyzedResult = text
             
         } catch {
