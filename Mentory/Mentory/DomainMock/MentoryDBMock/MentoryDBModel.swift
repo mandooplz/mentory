@@ -11,9 +11,7 @@ import Foundation
 @MainActor
 final class MentoryDBModel: Sendable {
     // MARK: core
-    static let shared = MentoryDBModel()
-    init() { }
-    
+    nonisolated init() { }
     
     // MARK: state
     var userName: String? = nil

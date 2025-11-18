@@ -13,8 +13,7 @@ import OSLog
 @MainActor
 final class AlanLLMModel: Sendable {
     // MARK: core
-    static let shared: AlanLLMModel = .init()
-    private init() { }
+    nonisolated init() { }
     
     
     // MARK: state
