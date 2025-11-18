@@ -15,10 +15,15 @@ final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
     private(set) static var mentoryDB: (any MentoryDBInterface)!
     private(set) static var alanLLM: (any AlanLLMInterface)!
+    nonisolated let mentoryDB: any MentoryDBInterface
+    nonisolated let alanLLM: any AlanLLMInterface
     init(mentoryDB: any MentoryDBInterface = MentoryDBMock(),
          alanLLM: any AlanLLMInterface = AlanLLMMock()) {
         Self.mentoryDB = mentoryDB
         Self.alanLLM = alanLLM
+        
+        self.mentoryDB = mentoryDB
+        self.alanLLM = alanLLM
     }
 
     
@@ -62,23 +67,6 @@ final class MentoryiOS: Sendable, ObservableObject {
         // mutate
         self.onboarding = Onboarding(owner: self)
     }
-    
-    func saveUserName() async {
-        // capture
-        guard let userName else {
-            logger.error("MentoryiOS에 userName이 존재하지 않습니다.")
-            return
-        }
-        
-        // process
-        do {
-            try await MentoryiOS.mentoryDB.updateName(userName)
-        } catch {
-            logger.error("\(error)")
-            return
-        }
-    }
-    
     func loadUserName() async {
         // process
         let userNameFromDB: String
@@ -102,19 +90,21 @@ final class MentoryiOS: Sendable, ObservableObject {
         let todayBoard = TodayBoard(owner: self)
         self.todayBoard = todayBoard
         todayBoard.recordForm = RecordForm(owner: todayBoard)
-//        
-//        if let savedName = UserDefaults.standard.string(forKey: userNameDefaultsKey) {
-//            self.userName = savedName
-//            self.onboardingFinished = true
-//            
-//            if self.todayBoard == nil {
-//                let todayBoard = TodayBoard(owner: self)
-//                self.todayBoard = todayBoard
-//                todayBoard.recordForm = RecordForm(owner: todayBoard)
-//            }
-//        } else {
-//            // mutate ->
-//            self.onboardingFinished = false
-//        }
+    }
+    
+    func saveUserName() async {
+        // capture
+        guard let userName else {
+            logger.error("MentoryiOS에 userName이 존재하지 않습니다.")
+            return
+        }
+        
+        // process
+        do {
+            try await MentoryiOS.mentoryDB.updateName(userName)
+        } catch {
+            logger.error("\(error)")
+            return
+        }
     }
 }

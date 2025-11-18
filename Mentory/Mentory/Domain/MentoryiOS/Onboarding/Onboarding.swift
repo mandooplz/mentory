@@ -21,8 +21,7 @@ final class Onboarding: Sendable, ObservableObject {
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding",
-                                            category: "Domain")
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     
     
     @Published var nameInput: String = ""
