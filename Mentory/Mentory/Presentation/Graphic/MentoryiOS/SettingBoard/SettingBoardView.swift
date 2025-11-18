@@ -83,7 +83,7 @@ struct SettingBoardView: View {
                 iconName: "person.text.rectangle",
                 iconBackground: Color.orange,
                 title: "계정 관리",
-                subtitle: "이름 변경 / 비밀번호 변경 / 로그아웃 / 데이터 삭제",
+                subtitle: "이름 변경 / 데이터 삭제",
                 showDivider: true
             )
             
