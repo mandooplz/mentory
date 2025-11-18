@@ -15,6 +15,14 @@ struct RecordFormView: View {
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
 
+    // 이미지 관련
+    @State private var showingImagePicker = false
+    @State private var showingCamera = false
+
+    // 오디오 관련
+    @StateObject private var audioManager = AudioRecorderManager()
+    @State private var showingAudioRecorder = false
+
     var body: some View {
         ZStack {
             // iOS 26 스타일 배경
@@ -50,6 +58,62 @@ struct RecordFormView: View {
                                     .frame(minHeight: 300)
                                     .padding(.horizontal, 4)
                                     .padding(.vertical, 8)
+                            }
+                        }
+
+                        // 첨부된 이미지 미리보기
+                        if let imageData = recordFormModel.imageInput,
+                           let uiImage = UIImage(data: imageData) {
+                            LiquidGlassCard {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack {
+                                        Image(systemName: "photo")
+                                            .foregroundColor(.blue)
+                                        Text("첨부된 이미지")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        Spacer()
+                                        Button(action: {
+                                            recordFormModel.imageInput = nil
+                                        }) {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .cornerRadius(12)
+                                        .padding(.horizontal, 16)
+                                        .padding(.bottom, 16)
+                                }
+                            }
+                        }
+
+                        // 첨부된 음성 녹음
+                        if let _ = recordFormModel.voiceInput {
+                            LiquidGlassCard {
+                                HStack {
+                                    Image(systemName: "waveform")
+                                        .foregroundColor(.blue)
+                                    Text("음성 녹음 첨부됨")
+                                        .font(.subheadline)
+                                    Spacer()
+                                    Text(timeString(from: audioManager.recordingTime))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Button(action: {
+                                        audioManager.deleteRecording()
+                                        recordFormModel.voiceInput = nil
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                                .padding(16)
                             }
                         }
                     }
@@ -150,25 +214,31 @@ struct RecordFormView: View {
     private var bottomToolbar: some View {
         HStack(spacing: 0) {
             Spacer()
-            Button(action: {}) {
+            Button(action: {
+                showingImagePicker = true
+            }) {
                 Image(systemName: "photo")
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(recordFormModel.imageInput != nil ? .blue : .primary)
             }
             Spacer()
-            Button(action: {}) {
+            Button(action: {
+                showingCamera = true
+            }) {
                 Image(systemName: "camera")
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(recordFormModel.imageInput != nil ? .blue : .primary)
             }
             Spacer()
-            Button(action: {}) {
+            Button(action: {
+                showingAudioRecorder = true
+            }) {
                 Image(systemName: "waveform")
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(recordFormModel.voiceInput != nil ? .blue : .primary)
             }
             Spacer()
         }
@@ -185,6 +255,30 @@ struct RecordFormView: View {
         .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: -4)
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
+        .sheet(isPresented: $showingImagePicker) {
+            PhotosPicker(imageData: $recordFormModel.imageInput)
+        }
+        .sheet(isPresented: $showingCamera) {
+            ImagePicker(imageData: $recordFormModel.imageInput, sourceType: .camera)
+        }
+        .sheet(isPresented: $showingAudioRecorder) {
+            RecordingSheet(
+                audioManager: audioManager,
+                onComplete: { url in
+                    recordFormModel.voiceInput = url
+                    showingAudioRecorder = false
+                },
+                onCancel: {
+                    showingAudioRecorder = false
+                }
+            )
+        }
+    }
+
+    private func timeString(from timeInterval: TimeInterval) -> String {
+        let minutes = Int(timeInterval) / 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
     
 //    private func handleSubmitTapped() {
