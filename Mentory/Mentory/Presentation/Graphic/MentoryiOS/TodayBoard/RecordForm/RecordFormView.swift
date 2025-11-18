@@ -2,7 +2,7 @@
 //  RecordFormView.swift
 //  Mentory
 //
-//  Created by JAY on 11/17/25.
+//  Created by JAY, 구현모 on 11/17/25.
 //
 
 import SwiftUI
@@ -10,39 +10,62 @@ import SwiftUI
 struct RecordFormView: View {
     // Model -> 비즈니스 로직
     @ObservedObject var recordFormModel: RecordForm
-    
+
     // ViewModel -> 화면의 열고 닫고
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
-    
+
     var body: some View {
-        VStack(spacing: 0) {
-            recordTopBar
-            Divider()
+        ZStack {
+            // iOS 26 스타일 배경
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+
             VStack(spacing: 0) {
-                TextField("제목", text: $recordFormModel.titleInput)
-                    .font(.title3)
-                    .padding(.horizontal)
-                    .padding(.top, 12)
-                TextEditor(text: $recordFormModel.textInput)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .overlay(
-                        Group {
-                            if recordFormModel.textInput.isEmpty {
-                                Text("글쓰기 시작…")
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 12)
-                                    .allowsHitTesting(false)
+                recordTopBar
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // 제목 입력 카드
+                        LiquidGlassCard {
+                            TextField("제목", text: $recordFormModel.titleInput)
+                                .font(.title3)
+                                .padding()
+                        }
+
+                        // 본문 입력 카드
+                        LiquidGlassCard {
+                            ZStack(alignment: .topLeading) {
+                                if recordFormModel.textInput.isEmpty {
+                                    Text("글쓰기 시작…")
+                                        .foregroundColor(.gray.opacity(0.5))
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 12)
+                                        .allowsHitTesting(false)
+                                }
+
+                                TextEditor(text: $recordFormModel.textInput)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.clear)
+                                    .frame(minHeight: 300)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 8)
                             }
-                        },
-                        alignment: .topLeading
-                    )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 80)
+                }
+
                 Spacer()
             }
-            Divider()
-            bottomToolbar
+
+            // 하단 툴바를 floating 스타일로
+            VStack {
+                Spacer()
+                bottomToolbar
+            }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
@@ -51,17 +74,17 @@ struct RecordFormView: View {
     }
     
     private var recordTopBar: some View {
-        HStack {
-            Image(systemName: "bookmark")
-                .font(.title3)
-                .padding(.leading)
-            Spacer()
-            Text("11월 17일 월요일")
+        ZStack {
+            // 중앙 정렬된 날짜
+            Text(formattedDate)
                 .font(.headline)
-            Spacer()
-            HStack(spacing: 20) {
-                Image(systemName: "ellipsis.circle")
-                    .font(.title3)
+                .foregroundStyle(.primary)
+
+            // 오른쪽 정렬된 완료 버튼
+            HStack {
+                Spacer()
+
+                // 리퀴드 글래스 완료 버튼
                 Button(action: {
                     Task {
                         recordFormModel.validateInput()
@@ -70,27 +93,98 @@ struct RecordFormView: View {
                     }
                 }) {
                     Text("완료")
-                        .foregroundColor(.purple)
+                        .fontWeight(.semibold)
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                        .background(
+                            LinearGradient(
+                                colors: isSubmitEnabled
+                                    ? [Color.blue, Color.blue.opacity(0.8)]
+                                    : [Color.gray.opacity(0.3), Color.gray.opacity(0.2)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .stroke(Color.white.opacity(isSubmitEnabled ? 0.5 : 0.2), lineWidth: 1)
+                        )
+                        .shadow(
+                            color: isSubmitEnabled
+                                ? Color.blue.opacity(0.3)
+                                : Color.clear,
+                            radius: 8,
+                            x: 0,
+                            y: 4
+                        )
                 }
+                .disabled(!isSubmitEnabled)
+                .animation(.easeInOut(duration: 0.2), value: isSubmitEnabled)
+                .padding(.trailing)
             }
-            .padding(.trailing)
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
+        .background(
+            .ultraThinMaterial,
+            in: RoundedRectangle(cornerRadius: 0)
+        )
     }
-    
+
+    // 오늘 날짜 포맷팅
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M월 d일 EEEE"
+        return formatter.string(from: Date())
+    }
+
+    // 제출 가능 여부 계산
+    private var isSubmitEnabled: Bool {
+        !recordFormModel.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !recordFormModel.textInput.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     private var bottomToolbar: some View {
-        HStack {
+        HStack(spacing: 0) {
             Spacer()
-            Image(systemName: "photo")
+            Button(action: {}) {
+                Image(systemName: "photo")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+            }
             Spacer()
-            Image(systemName: "camera")
+            Button(action: {}) {
+                Image(systemName: "camera")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+            }
             Spacer()
-            Image(systemName: "waveform")
+            Button(action: {}) {
+                Image(systemName: "waveform")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+            }
             Spacer()
         }
-        .padding(.vertical, 10)
-        .foregroundColor(.gray)
-        .background(Color.gray.opacity(0.12))
+        .padding(.vertical, 16)
+        .padding(.horizontal, 20)
+        .background(
+            .ultraThinMaterial,
+            in: RoundedRectangle(cornerRadius: 28, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: -4)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
     }
     
 //    private func handleSubmitTapped() {
@@ -114,8 +208,36 @@ struct RecordFormView: View {
 //    }
 }
 
+// MARK: - 리퀴드 글래스 컴포넌트
+struct LiquidGlassCard<Content: View>: View {
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        content()
+            .background(
+                .ultraThinMaterial,
+                in: RoundedRectangle(cornerRadius: 28, style: .continuous)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .stroke(Color.white.opacity(0.4), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: 10)
+    }
+}
+
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    let todayBoard = TodayBoard(owner: mentoryiOS)
-    return RecordFormView(recordFormModel: todayBoard.recordForm!)
+    @MainActor
+    struct PreviewWrapper: View {
+        let recordForm: RecordForm
+        init() {
+            let mentoryiOS = MentoryiOS()
+            let todayBoard = TodayBoard(owner: mentoryiOS)
+            self.recordForm = RecordForm(owner: todayBoard)
+        }
+        var body: some View {
+            RecordFormView(recordFormModel: recordForm)
+        }
+    }
+    return PreviewWrapper()
 }
