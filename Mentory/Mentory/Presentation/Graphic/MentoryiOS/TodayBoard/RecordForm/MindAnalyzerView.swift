@@ -4,9 +4,10 @@
 //
 //  Created by JAY on 11/17/25.
 //
-
 import SwiftUI
 
+
+// MARK: View
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
@@ -302,11 +303,48 @@ private extension MindAnalyzer.CharacterType {
     }
 }
 
+
+//
+//#Preview {
+//    let mentoryiOS = MentoryiOS()
+//    let todayBoard = TodayBoard(owner: mentoryiOS)
+//    let recordForm = RecordForm(owner: todayBoard)
+//    let mindAnalyzer = MindAnalyzer(owner: recordForm)
+//    mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
+//    return MindAnalyzerView(recordForm.mindAnalyzer!)
+//}
+
+// MARK: Preview
+fileprivate struct MindAnalyzerPreview: View {
+    @StateObject private var mentoryiOS = MentoryiOS()
+    
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard,
+           let recordForm = todayBoard.recordForm,
+           let mindAnalyzer = recordForm.mindAnalyzer {
+            MindAnalyzerView(mindAnalyzer)
+        } else {
+            ProgressView("프리뷰 로딩 중입니다.")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김깝십"
+                    onboarding.next()
+                    
+                    let todayBoard = mentoryiOS.todayBoard!
+                    let recordForm = todayBoard.recordForm!
+                    
+                    recordForm.titleInput = "SAMPLE-TITLE"
+                    recordForm.textInput = "SAMPLE-TEXT"
+                    
+                    recordForm.submit()
+                }
+        }
+    }
+}
+
+
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    let todayBoard = TodayBoard(owner: mentoryiOS)
-    let recordForm = RecordForm(owner: todayBoard)
-    let mindAnalyzer = MindAnalyzer(owner: recordForm)
-    mindAnalyzer.analyzedResult = "긍정과 긴장이 함께 있는 하루였네요."
-    return MindAnalyzerView(recordForm.mindAnalyzer!)
+    MindAnalyzerPreview()
 }
