@@ -61,52 +61,11 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("\(error)")
             return
         }
-//        await callAPI(prompt: textInput)
         
         // mutate
         self.analyzedResult = answer.content
         self.mindType = .unPleasant
     }
-    
-    // 결과 오는지만 확인용
-//    func callAPI(prompt: String) async {
-//        // capture
-//        let alanClientKey = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as Any
-//        print("🔑 ALAN_API_TOKEN raw:", alanClientKey)
-//        
-//        print("ALAN_API_TOKEN =", alanClientKey)
-//        
-//        guard let apiToken = Bundle.main.object(forInfoDictionaryKey: "ALAN_API_TOKEN") as? String,
-//              apiToken.isEmpty == false else {
-//            print("ALAN_API_TOKEN 없음")
-//            return
-//        }
-//        var urlBuilder = URLComponents(string: "https://kdt-api-function.azurewebsites.net/api/v1/question")!
-//        urlBuilder.queryItems = [
-//            URLQueryItem(name: "client_id", value: apiToken),
-//            URLQueryItem(name: "content", value: prompt)
-//        ]
-//        
-//        guard let requestURL = urlBuilder.url else {
-//            print("URL 생성 실패")
-//            return
-//        }
-//        
-//        // process
-//        do {
-//            let (data, _) = try await URLSession.shared.data(from: requestURL)
-//            let text = String(data: data, encoding: .utf8) ?? ""
-//            print("요청 결과:", text)
-//            
-//            self.mindType = .slightlyUnpleasant
-//            self.analyzedResult = text
-//            
-//        } catch {
-//            print("요청 실패:", error)
-//        }
-//        
-//        // mutate
-//    }
     
     
     // MARK: value
