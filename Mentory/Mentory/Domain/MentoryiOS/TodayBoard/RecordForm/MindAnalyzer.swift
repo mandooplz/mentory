@@ -42,8 +42,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
         
-        let selectedCharacter = selectedCharacter ?? .A
-        
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!

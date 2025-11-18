@@ -54,7 +54,7 @@ struct MentoryiOSView: View {
     }
     
     
-    // MARK: sub-views
+    // MARK: component
     @ViewBuilder
     private var TodayBoardTab: some View {
         if let todayBoard = mentoryiOS.todayBoard {
