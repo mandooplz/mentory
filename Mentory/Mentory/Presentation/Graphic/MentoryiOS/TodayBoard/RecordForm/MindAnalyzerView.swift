@@ -10,6 +10,7 @@ import SwiftUI
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
+    
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
     }
@@ -80,13 +81,7 @@ struct MindAnalyzerView: View {
             )
             .foregroundColor(.white)
         }
-        //        .disabled(canRequestAnalysis == false || mindAnalyzerModel.isAnalyzing)
     }
-    //
-    //    private var canRequestAnalysis: Bool {
-    //        let text = mindAnalyzerModel.owner?.textInput ?? ""
-    //        return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
-    //    }
     
     @ViewBuilder
     private var analysisStatus: some View {
