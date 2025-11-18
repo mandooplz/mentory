@@ -10,12 +10,22 @@ import Foundation
 // MARK: Mock
 nonisolated
 struct AlanLLMMock: AlanLLMFlow {
-    
     // MARK: flow
-    func question(token: AlanLLM.AuthToken, question: AlanLLM.Question) async -> AlanLLM.Answer {
-        fatalError()
+    @concurrent
+    func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer {
+        return await MainActor.run {
+            let alanLLMModel = AlanLLMModel.shared
+            
+            alanLLMModel.questionQueue.append(question)
+            alanLLMModel.processQuestions()
+            
+            let myAnswer = alanLLMModel.answerBox[question.id]!
+            
+            return myAnswer
+        }
     }
     
+    @concurrent
     func resetState(token: AlanLLM.AuthToken) async {
         fatalError()
     }
