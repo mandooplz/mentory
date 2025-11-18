@@ -98,26 +98,6 @@ struct RecordFormView: View {
         .foregroundColor(.gray)
         .background(Color.gray.opacity(0.12))
     }
-    
-//    private func handleSubmitTapped() {
-//        recordFormModel.validateInput()
-//        guard recordFormModel.validationResult == .none else { return }
-//        cachedTextForAnalysis = recordFormModel.textInput
-//        recordFormModel.submit()
-//        recordFormModel.mindAnalyzer = mindAnalyzer
-//        recordFormModel.textInput = cachedTextForAnalysis
-//        isShowingMindAnalyzerView = true
-   // }
-    
-//    private func resetToEditor() {
-//        cachedTextForAnalysis = ""
-//        recordFormModel.titleInput = ""
-//        recordFormModel.textInput = ""
-//        recordFormModel.mindAnalyzer = mindAnalyzer
-//        mindAnalyzer.isAnalyzing = false
-//        mindAnalyzer.mindType = nil
-//        mindAnalyzer.analyzedResult = nil
-//    }
 }
 
 
