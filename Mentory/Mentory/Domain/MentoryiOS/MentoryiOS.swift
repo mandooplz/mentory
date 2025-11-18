@@ -88,6 +88,8 @@ final class MentoryiOS: Sendable, ObservableObject {
         let todayBoard = TodayBoard(owner: self)
         self.todayBoard = todayBoard
         todayBoard.recordForm = RecordForm(owner: todayBoard)
+        
+        self.settingBoard = SettingBoard(owner: self)
     }
     
     func saveUserName() async {
