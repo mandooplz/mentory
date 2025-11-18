@@ -46,7 +46,8 @@ struct RecordFormView: View {
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
-            MindAnalyzerView(mindAnalyzer: recordFormModel.mindAnalyzer!)                                }
+            MindAnalyzerView(mindAnalyzer: recordFormModel.mindAnalyzer!)
+        }
     }
     
     private var recordTopBar: some View {
