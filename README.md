@@ -136,7 +136,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 2. 송지석
    - 작성된 문서 없음
 3. 구현모
-   - 작성된 문서 없음
+   - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyunmo/20251117-app-icon.md)
 4. 김민우
    - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
 
