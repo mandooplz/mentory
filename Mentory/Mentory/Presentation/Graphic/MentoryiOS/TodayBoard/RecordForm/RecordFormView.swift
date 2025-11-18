@@ -4,32 +4,38 @@
 //
 //  Created by JAY on 11/17/25.
 //
-
 import SwiftUI
 
+
+// MARK: View
 struct RecordFormView: View {
-    // Model -> 비즈니스 로직
-    @ObservedObject var recordFormModel: RecordForm
+    // MARK: model
+    @ObservedObject var recordForm: RecordForm
     
-    // ViewModel -> 화면의 열고 닫고
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
     
+    init(_ recordForm: RecordForm) {
+        self.recordForm = recordForm
+    }
+    
+    
+    // MARK: body
     var body: some View {
         VStack(spacing: 0) {
             recordTopBar
             Divider()
             VStack(spacing: 0) {
-                TextField("제목", text: $recordFormModel.titleInput)
+                TextField("제목", text: $recordForm.titleInput)
                     .font(.title3)
                     .padding(.horizontal)
                     .padding(.top, 12)
-                TextEditor(text: $recordFormModel.textInput)
+                TextEditor(text: $recordForm.textInput)
                     .padding(.horizontal)
                     .padding(.top, 8)
                     .overlay(
                         Group {
-                            if recordFormModel.textInput.isEmpty {
+                            if recordForm.textInput.isEmpty {
                                 Text("글쓰기 시작…")
                                     .foregroundColor(.gray)
                                     .padding(.horizontal, 14)
@@ -46,7 +52,7 @@ struct RecordFormView: View {
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
-            MindAnalyzerView(mindAnalyzer: recordFormModel.mindAnalyzer!)
+            MindAnalyzerView(recordForm.mindAnalyzer!)
         }
     }
     
@@ -64,8 +70,8 @@ struct RecordFormView: View {
                     .font(.title3)
                 Button(action: {
                     Task {
-                        recordFormModel.validateInput()
-                        recordFormModel.submit()
+                        recordForm.validateInput()
+                        recordForm.submit()
                         isShowingMindAnalyzerView.toggle()
                     }
                 }) {
@@ -92,30 +98,30 @@ struct RecordFormView: View {
         .foregroundColor(.gray)
         .background(Color.gray.opacity(0.12))
     }
+}
+
+
+// MARK: Preview
+fileprivate struct RecordFormPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
     
-//    private func handleSubmitTapped() {
-//        recordFormModel.validateInput()
-//        guard recordFormModel.validationResult == .none else { return }
-//        cachedTextForAnalysis = recordFormModel.textInput
-//        recordFormModel.submit()
-//        recordFormModel.mindAnalyzer = mindAnalyzer
-//        recordFormModel.textInput = cachedTextForAnalysis
-//        isShowingMindAnalyzerView = true
-   // }
-    
-//    private func resetToEditor() {
-//        cachedTextForAnalysis = ""
-//        recordFormModel.titleInput = ""
-//        recordFormModel.textInput = ""
-//        recordFormModel.mindAnalyzer = mindAnalyzer
-//        mindAnalyzer.isAnalyzing = false
-//        mindAnalyzer.mindType = nil
-//        mindAnalyzer.analyzedResult = nil
-//    }
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard,
+           let recordForm = todayBoard.recordForm {
+            RecordFormView(recordForm)
+        } else {
+            ProgressView("프리뷰 로딩 중입니다.")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                }
+        }
+    }
 }
 
 #Preview {
-    let mentoryiOS = MentoryiOS()
-    let todayBoard = TodayBoard(owner: mentoryiOS)
-    return RecordFormView(recordFormModel: todayBoard.recordForm!)
+    RecordFormPreview()
 }
