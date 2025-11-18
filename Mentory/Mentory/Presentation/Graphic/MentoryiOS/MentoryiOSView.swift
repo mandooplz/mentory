@@ -10,7 +10,10 @@ import SwiftUI
 // MARK: View
 struct MentoryiOSView: View {
     // MARK: model
-    @StateObject var mentoryiOS = MentoryiOS()
+    @ObservedObject var mentoryiOS: MentoryiOS
+    init(_ mentoryiOS: MentoryiOS) {
+        self.mentoryiOS = mentoryiOS
+    }
     
     
     // MARK: body
@@ -96,5 +99,5 @@ struct MentoryiOSView: View {
 
 // MARK: Preview
 #Preview {
-    MentoryiOSView()
+    MentoryiOSView(.init())
 }

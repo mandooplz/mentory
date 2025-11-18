@@ -207,8 +207,8 @@ struct RecordFormTests {
             // Then
             let lastRecord = await todayBoard.records.last
             let record = try #require(lastRecord)
-            await #expect(record.text == nil)
-            await #expect(record.title == "제목")
+            #expect(record.text == nil)
+            #expect(record.title == "제목")
         }
     }
 }

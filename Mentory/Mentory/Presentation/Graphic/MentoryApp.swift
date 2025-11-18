@@ -10,9 +10,14 @@ import SwiftUI
 
 @main
 struct MentoryApp: App {
+    @State var mentoryiOS = MentoryiOS(
+        mentoryDB: MentoryDB(),
+        alanLLM: AlanLLM()
+    )
+    
     var body: some Scene {
         WindowGroup {
-            MentoryiOSView()
+            MentoryiOSView(mentoryiOS)
         }
     }
 }
