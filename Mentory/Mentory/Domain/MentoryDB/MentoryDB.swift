@@ -19,20 +19,28 @@ protocol MentoryDBFlow: Sendable {
 nonisolated
 struct MentoryDB: MentoryDBFlow {
     // MARK: core
-    nonisolated let id: UUID
-    nonisolated init(_ id: UUID) {
-        self.id = id
-    }
+    nonisolated let id: String = "mentoryDB"
+    nonisolated let nameKey = "mentoryDB.name"
     
     
     // MARK: flow
     @concurrent
     func updateName(_ newName: String) async throws -> Void {
-        fatalError()
+        UserDefaults.standard.set(newName, forKey: nameKey)
     }
     
     @concurrent
     func getName() async throws -> String {
-        fatalError()
+        guard let name = UserDefaults.standard.string(forKey: nameKey) else {
+           throw MentoryDBError.nameNotFound
+       }
+       return name
+    }
+    
+    
+    // MARK: Error
+    nonisolated
+    enum MentoryDBError: Error, Sendable {
+        case nameNotFound
     }
 }
