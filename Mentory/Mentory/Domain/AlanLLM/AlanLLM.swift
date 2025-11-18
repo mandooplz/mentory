@@ -19,14 +19,11 @@ protocol AlanLLMFlow: Sendable {
 nonisolated
 struct AlanLLM: AlanLLMFlow {
     // MARK: core
-    nonisolated let id: UUID
+    nonisolated let id = ID(URL(string: "https://kdt-api-function.azurewebsites.net/api/v1")!)
     nonisolated let logger = Logger(subsystem: "AlanLLM.AlanLLMFlow", category: "Domain")
-    init(_ id: UUID) {
-        self.id = id
-    }
     
     
-    // MARK: flow
+    // MARK: flows
     @concurrent
     func question(token: AuthToken, question: Question) async -> Answer {
         fatalError()
@@ -117,7 +114,7 @@ struct AlanLLM: AlanLLMFlow {
     struct ID: Sendable, Hashable {
         // MARK: core
         let value: URL
-        init(_ value: URL) {
+        fileprivate init(_ value: URL) {
             self.value = value
         }
     }
