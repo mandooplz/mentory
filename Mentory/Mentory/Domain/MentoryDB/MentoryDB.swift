@@ -10,7 +10,7 @@ import Foundation
 // MARK: Interface
 protocol MentoryDBFlow: Sendable {
     func updateName(_ newName: String) async throws -> Void
-    func getName() async throws -> String
+    func getName() async throws -> String?
 }
 
 
@@ -30,17 +30,10 @@ struct MentoryDB: MentoryDBFlow {
     }
     
     @concurrent
-    func getName() async throws -> String {
+    func getName() async throws -> String? {
         guard let name = UserDefaults.standard.string(forKey: nameKey) else {
-           throw MentoryDBError.nameNotFound
+           return nil
        }
        return name
-    }
-    
-    
-    // MARK: Error
-    nonisolated
-    enum MentoryDBError: Error, Sendable {
-        case nameNotFound
     }
 }

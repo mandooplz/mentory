@@ -8,3 +8,21 @@ import Foundation
 
 
 // MARK: Mock
+nonisolated
+struct MentoryDBMock: MentoryDBFlow {
+    @concurrent
+    func updateName(_ newName: String) async throws {
+        await MainActor.run {
+            MentoryDBModel.shared.userName = newName
+        }
+    }
+    
+    @concurrent
+    func getName() async throws -> String? {
+        return await MainActor.run {
+            MentoryDBModel.shared.userName
+        }
+    }
+    
+    
+}
