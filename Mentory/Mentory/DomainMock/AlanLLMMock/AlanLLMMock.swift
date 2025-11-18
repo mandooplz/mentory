@@ -10,16 +10,20 @@ import Foundation
 // MARK: Mock
 nonisolated
 struct AlanLLMMock: AlanLLMInterface {
+    // MARK: core
+    nonisolated let model = AlanLLMModel()
+    
+    
     // MARK: flow
     @concurrent
     func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer {
         return await MainActor.run {
-            let alanLLMModel = AlanLLMModel.shared
+            let alanLLM = model
             
-            alanLLMModel.questionQueue.append(question)
-            alanLLMModel.processQuestions()
+            alanLLM.questionQueue.append(question)
+            alanLLM.processQuestions()
             
-            let myAnswer = alanLLMModel.answerBox[question.id]!
+            let myAnswer = alanLLM.answerBox[question.id]!
             
             return myAnswer
         }

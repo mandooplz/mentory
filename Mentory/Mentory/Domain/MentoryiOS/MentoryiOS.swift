@@ -13,15 +13,10 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    private(set) static var mentoryDB: (any MentoryDBInterface)!
-    private(set) static var alanLLM: (any AlanLLMInterface)!
     nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
     init(mentoryDB: any MentoryDBInterface = MentoryDBMock(),
          alanLLM: any AlanLLMInterface = AlanLLMMock()) {
-        Self.mentoryDB = mentoryDB
-        Self.alanLLM = alanLLM
-        
         self.mentoryDB = mentoryDB
         self.alanLLM = alanLLM
     }
@@ -68,11 +63,14 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.onboarding = Onboarding(owner: self)
     }
     func loadUserName() async {
+        // capture
+        let mentoryDB = self.mentoryDB
+        
         // process
         let userNameFromDB: String
         
         do {
-            guard let name = try await MentoryiOS.mentoryDB.getName() else {
+            guard let name = try await mentoryDB.getName() else {
                 logger.error("현재 MentoryDB에 저장된 이름이 존재하지 않습니다.")
                 return
             }
@@ -101,7 +99,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         
         // process
         do {
-            try await MentoryiOS.mentoryDB.updateName(userName)
+            try await self.mentoryDB.updateName(userName)
         } catch {
             logger.error("\(error)")
             return

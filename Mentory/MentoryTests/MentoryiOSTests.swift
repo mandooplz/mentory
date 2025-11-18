@@ -95,6 +95,22 @@ struct MentoryiOSTests {
     
     struct LoadUserName {
         let mentoryiOS: MentoryiOS
+        let mentoryDB: any MentoryDBInterface
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.mentoryDB = mentoryiOS.mentoryDB
+        }
+        
+        @Test func setOnboardingNil() async throws {
+            // given
+            try await mentoryDB.updateName("TEST_USER_NAME")
+            
+            // when
+            await mentoryiOS.loadUserName()
+            
+            // then
+            await #expect(mentoryiOS.onboarding == nil)
+        }
     }
 }
 
