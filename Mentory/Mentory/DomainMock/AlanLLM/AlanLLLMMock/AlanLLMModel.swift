@@ -1,5 +1,5 @@
 //
-//  AlanLLMMock.swift
+//  AlanLLMModel.swift
 //  Mentory
 //
 //  Created by 김민우 on 11/18/25.
@@ -9,9 +9,9 @@ import Collections
 import OSLog
 
 
-// MARK: Mock
+// MARK: Model
 @MainActor
-final class AlanLLMMock: Sendable {
+final class AlanLLMModel: Sendable {
     // MARK: core
     init() { }
     
