@@ -111,6 +111,43 @@ struct MentoryiOSTests {
             // then
             await #expect(mentoryiOS.onboarding == nil)
         }
+        @Test func setOnboardingFinishedTrue() async throws {
+            // given
+            try await mentoryDB.updateName("TEST_USER_NAME")
+            
+            try await #require(mentoryiOS.onboardingFinished == false)
+            
+            // when
+            await mentoryiOS.loadUserName()
+            
+            // then
+            await #expect(mentoryiOS.onboardingFinished == true)
+        }
+        
+        @Test func createTodayBoard() async throws {
+            // given
+            try await mentoryDB.updateName("TEST_USER_NAME")
+            
+            try await #require(mentoryiOS.todayBoard == nil)
+            
+            // when
+            await mentoryiOS.loadUserName()
+            
+            // then
+            await #expect(mentoryiOS.todayBoard != nil)
+        }
+        @Test func createSettingBoard() async throws {
+            // given
+            try await mentoryDB.updateName("TEST_USER_NAME")
+            
+            try await #require(mentoryiOS.settingBoard == nil)
+            
+            // when
+            await mentoryiOS.loadUserName()
+            
+            // then
+            await #expect(mentoryiOS.settingBoard != nil)
+        }
     }
 }
 
