@@ -10,8 +10,8 @@ import OSLog
 
 // MARK: Flow
 protocol AlanLLMFlow: Sendable {
-    func question(token: AlanLLM.AuthToken, question: AlanLLM.Question) async -> AlanLLM.Answer
-    func resetState(token: AlanLLM.AuthToken) async
+    func question(token: AlanLLM.AuthToken, question: AlanLLM.Question) async throws -> AlanLLM.Answer
+    func resetState(token: AlanLLM.AuthToken) async throws
 }
 
 
@@ -25,13 +25,92 @@ struct AlanLLM: AlanLLMFlow {
     
     // MARK: flows
     @concurrent
-    func question(token: AuthToken, question: Question) async -> Answer {
-        fatalError()
+    func question(token: AuthToken = .current, question: Question) async throws -> Answer {
+        // configure url
+        guard var urlComponents = URLComponents(string: "\(id.value.absoluteString)/question") else {
+            logger.error("URL 생성 실패")
+            throw AlanLLM.Error.invalidURL
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "content", value: question.content),
+            URLQueryItem(name: "client_id", value: token.value)
+        ]
+        
+        guard let url = urlComponents.url else {
+            logger.error("URL Components로부터 URL 생성 실패")
+            throw AlanLLM.Error.invalidURL
+        }
+        
+        logger.info("API 요청: \(url.absoluteString, privacy: .public)")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                logger.error("HTTP 응답 변환 실패")
+                throw AlanLLM.Error.invalidResponse
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
+                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
+            }
+            
+            let decoder = JSONDecoder()
+            let apiResponse = try decoder.decode(AlanLLM.Answer.self, from: data)
+            
+            logger.info("API 응답 성공: \(apiResponse.content, privacy: .public)")
+            return apiResponse
+            
+        } catch let error as DecodingError {
+            logger.error("디코딩 오류: \(error.localizedDescription, privacy: .public)")
+            throw AlanLLM.Error.decodingError(error)
+        } catch let error as AlanLLM.Error {
+            throw error
+        } catch {
+            logger.error("네트워크 오류: \(error.localizedDescription, privacy: .public)")
+            throw AlanLLM.Error.networkError(error)
+        }
     }
     
     @concurrent
-    func resetState(token: AuthToken) async {
-        fatalError()
+    func resetState(token: AuthToken = .current) async throws {
+        guard let url = URL(string: "\(id.value.absoluteString)/reset-state") else {
+            logger.error("URL 생성 실패")
+            throw AlanLLM.Error.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody = ["client_id": token.value]
+        request.httpBody = try JSONEncoder().encode(requestBody)
+        
+        logger.info("상태 초기화 요청")
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                logger.error("HTTP 응답 변환 실패")
+                throw AlanLLM.Error.invalidResponse
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
+                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
+            }
+            
+            logger.info("상태 초기화 성공")
+            
+        } catch let error as AlanLLM.Error {
+            throw error
+        } catch {
+            logger.error("네트워크 오류: \(error.localizedDescription, privacy: .public)")
+            throw AlanLLM.Error.networkError(error)
+        }
     }
     
 

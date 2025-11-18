@@ -40,9 +40,8 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate
         do {
             // Alan API를 통해 오늘의 명언 또는 속담 요청
-            let response = try await AlanAPIService.shared.question(
-                content: "오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘."
-            )
+            let question = AlanLLM.Question("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
+            let response = try await AlanLLM().question(question: question)
 
             self.todayString = response.content
             logger.info("오늘의 명언 fetch 성공: \(response.content)")
