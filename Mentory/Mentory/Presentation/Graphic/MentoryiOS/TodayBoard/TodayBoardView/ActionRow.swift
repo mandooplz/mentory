@@ -37,3 +37,13 @@ struct ActionRow: View {
         )
     }
 }
+
+
+// MARK: Preview
+#Preview(traits: .sizeThatFitsLayout) {
+    ActionRow(checked: true, text: "안녕하세요")
+    
+    ActionRow(checked: false, text: "체크되지 않은 ActionRow입니다.")
+}
+
+
