@@ -13,10 +13,15 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    init() {
-        
+    private(set) static var mentoryDB: (any MentoryDBInterface)!
+    private(set) static var alanLLM: (any AlanLLMInterface)!
+    init(mentoryDB: any MentoryDBInterface = MentoryDBMock(),
+         alanLLM: any AlanLLMInterface = AlanLLMMock()) {
+        Self.mentoryDB = mentoryDB
+        Self.alanLLM = alanLLM
     }
 
+    
     // MARK: state
     nonisolated let id: UUID = UUID()
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS",
