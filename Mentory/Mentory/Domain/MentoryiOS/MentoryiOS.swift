@@ -63,29 +63,58 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.onboarding = Onboarding(owner: self)
     }
     
-    private nonisolated let userNameDefaultsKey = "mentory.userName"
-    func saveUserName() {
-        guard let name = userName else {
-            UserDefaults.standard.removeObject(forKey: userNameDefaultsKey)
+    func saveUserName() async {
+        // capture
+        guard let userName else {
+            logger.error("MentoryiOS에 userName이 존재하지 않습니다.")
             return
         }
-        UserDefaults.standard.set(name, forKey: userNameDefaultsKey)
+        
+        // process
+        do {
+            try await MentoryiOS.mentoryDB.updateName(userName)
+        } catch {
+            logger.error("\(error)")
+            return
+        }
     }
     
-    func loadUserName() {
+    func loadUserName() async {
         // process
-        if let savedName = UserDefaults.standard.string(forKey: userNameDefaultsKey) {
-            self.userName = savedName
-            self.onboardingFinished = true
-            
-            if self.todayBoard == nil {
-                let todayBoard = TodayBoard(owner: self)
-                self.todayBoard = todayBoard
-                todayBoard.recordForm = RecordForm(owner: todayBoard)
+        let userNameFromDB: String
+        
+        do {
+            guard let name = try await MentoryiOS.mentoryDB.getName() else {
+                logger.error("현재 MentoryDB에 저장된 이름이 존재하지 않습니다.")
+                return
             }
-        } else {
-            // mutate
-            self.onboardingFinished = false
+            
+            userNameFromDB = name
+        } catch {
+            logger.error("\(error)")
+            return
         }
+        
+        // mutate
+        self.userName = userNameFromDB
+        self.onboardingFinished = true
+        
+        let todayBoard = TodayBoard(owner: self)
+        self.todayBoard = todayBoard
+        todayBoard.recordForm = RecordForm(owner: todayBoard)
+//        
+//        if let savedName = UserDefaults.standard.string(forKey: userNameDefaultsKey) {
+//            self.userName = savedName
+//            self.onboardingFinished = true
+//            
+//            if self.todayBoard == nil {
+//                let todayBoard = TodayBoard(owner: self)
+//                self.todayBoard = todayBoard
+//                todayBoard.recordForm = RecordForm(owner: todayBoard)
+//            }
+//        } else {
+//            // mutate ->
+//            self.onboardingFinished = false
+//        }
     }
 }

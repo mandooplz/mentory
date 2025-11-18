@@ -45,7 +45,7 @@ struct MentoryiOSView: View {
                 }
             }.task {
                 mentoryiOS.setUp()
-                mentoryiOS.loadUserName()
+                await mentoryiOS.loadUserName()
             }
         }
     }
