@@ -65,10 +65,6 @@ final class Onboarding: Sendable, ObservableObject {
         mentoryiOS.onboardingFinished = true
         mentoryiOS.userName = nameInput
         
-        Task {
-            await mentoryiOS.saveUserName()
-        }
-        
         mentoryiOS.onboarding = nil
         
         let todayBoard = TodayBoard(owner: self.owner ?? MentoryiOS())
