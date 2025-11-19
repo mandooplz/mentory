@@ -515,4 +515,4 @@ func checkConnectionStatus() {
 5. **디버깅 팁**
    - 실제 기기에서 테스트 (시뮬레이터는 제한적)
    - Xcode의 Device & Simulators에서 Watch 로그 확인
-   - `print` 문으로 각 단계 추적
+   - `print` 문 또는 OSLog로 각 단계 추적
