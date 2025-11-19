@@ -24,10 +24,8 @@ struct TodayBoardView: View {
             // 배경
             Color(.systemGray6)
                 .ignoresSafeArea()
-                .onAppear {
-                    Task {
-                        await todayBoard.fetchTodayString()
-                    }
+                .task {
+                    await todayBoard.fetchTodayString()
                 }
             
             ScrollView {
