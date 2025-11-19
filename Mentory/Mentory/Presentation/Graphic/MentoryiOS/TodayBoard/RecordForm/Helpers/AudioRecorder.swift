@@ -97,6 +97,7 @@ class AudioRecorderManager: NSObject, ObservableObject, AVAudioRecorderDelegate 
 // MARK: - 녹음 시트
 struct RecordingSheet: View {
     @ObservedObject var audioManager: AudioRecorderManager
+    @StateObject private var sttManager = SpeechToTextManager()
     var onComplete: (URL) -> Void
     var onCancel: () -> Void
 
@@ -121,7 +122,9 @@ struct RecordingSheet: View {
                 Spacer()
                     .frame(height: 80)
             }
-
+            Text(sttManager.recognizedText.isEmpty ? "" : sttManager.recognizedText)
+                .font(.subheadline)
+                .padding()
             Spacer()
 
             // 녹음 컨트롤
@@ -146,8 +149,10 @@ struct RecordingSheet: View {
                 Button(action: {
                     if audioManager.isRecording {
                         audioManager.stopRecording()
+                        sttManager.stopRecognizing()
                     } else {
                         audioManager.startRecording()
+                        sttManager.startRecognizing()
                     }
                 }) {
                     Image(systemName: audioManager.isRecording ? "stop.fill" : "mic.fill")
