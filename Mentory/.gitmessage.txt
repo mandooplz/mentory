@@ -1,0 +1,18 @@
+# <type>(scope?): Short summary in Korean or English (max 50 chars)
+#
+# 설명: 왜 이 변경을 하는지 배경을 적으세요.
+# 접근: 핵심 변경 방법을 bullet로 정리하세요.
+# 테스트: 실행한 테스트나 검증 단계.
+
+feat: 
+
+설명:
+- 
+
+접근:
+- 
+
+테스트:
+- [ ] Not tested
+- [ ] `xcodebuild test`
+- [ ] 기타: 
