@@ -92,6 +92,7 @@ struct TodayBoardView: View {
                                 .fill(Color.white)
                                 //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
                         )
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
                     }
                     
                     // 기분 기록 카드
@@ -196,6 +197,7 @@ struct TodayBoardView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: todayBoard.todayString != nil)
             }
         }
     }
