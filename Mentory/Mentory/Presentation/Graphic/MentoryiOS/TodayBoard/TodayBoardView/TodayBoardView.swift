@@ -73,30 +73,26 @@ struct TodayBoardView: View {
                     }
 
                     // "오늘의 명언" 카드
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("오늘의 명언")
-                            .font(.system(size: 18, weight: .semibold))
+                    if let todayString = todayBoard.todayString {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("오늘의 명언")
+                                .font(.system(size: 18, weight: .semibold))
 
-                        if let todayString = todayBoard.todayString {
                             Text(todayString)
                                 .font(.system(size: 16))
                                 .foregroundColor(.gray)
                                 .lineSpacing(4)
                                 .multilineTextAlignment(.leading)
-                        } else {
-                            Text("명언을 불러오는 중...")
-                                .font(.system(size: 16))
-                                .foregroundColor(.gray.opacity(0.6))
                         }
+                        .padding(.vertical, 24)
+                        .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28)
+                                .fill(Color.white)
+                                //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        )
                     }
-                    .padding(.vertical, 24)
-                    .padding(.horizontal, 20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(Color.white)
-                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
-                    )
                     
                     // 기분 기록 카드
                     VStack(spacing: 16) {
