@@ -30,7 +30,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     
     // MARK: action
-    func startAnalyzing() async{
+    func startAnalyzing() async {
         // capture
         guard let textInput = owner?.textInput else {
             logger.error("TextInput이 비어있습니다.")
