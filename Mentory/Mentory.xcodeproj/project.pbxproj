@@ -12,6 +12,8 @@
 		7B13376A2ECD63A2009931A4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337692ECD63A2009931A4 /* SwiftUI.framework */; };
 		7B13377B2ECD63A4009931A4 /* MentoryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */ = {isa = PBXBuildFile; fileRef = CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */; };
+		CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = CE29032F2ECD9EDD00AC403C /* FirebaseAI */; };
+		CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = CE2903312ECD9EDD00AC403C /* FirebaseAILogic */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
 		CED16A5F2ECB7FCD00CF012B /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */; };
@@ -144,8 +146,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE2903322ECD9EDD00AC403C /* FirebaseAILogic in Frameworks */,
 				CEB755832ECB9FF900FCE15A /* Collections in Frameworks */,
 				CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */,
+				CE2903302ECD9EDD00AC403C /* FirebaseAI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +267,8 @@
 			packageProductDependencies = (
 				CEB755822ECB9FF900FCE15A /* Collections */,
 				CEB755842ECB9FF900FCE15A /* DequeModule */,
+				CE29032F2ECD9EDD00AC403C /* FirebaseAI */,
+				CE2903312ECD9EDD00AC403C /* FirebaseAILogic */,
 			);
 			productName = Mentory;
 			productReference = CE39BFBC2EC313F20090DF78 /* Mentory.app */;
@@ -327,6 +333,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */,
+				CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CE39BFBD2EC313F20090DF78 /* Products */;
@@ -832,6 +839,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.6.0;
+			};
+		};
 		CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -843,6 +858,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CE29032F2ECD9EDD00AC403C /* FirebaseAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAI;
+		};
+		CE2903312ECD9EDD00AC403C /* FirebaseAILogic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE29032E2ECD9EDD00AC403C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAILogic;
+		};
 		CEB755822ECB9FF900FCE15A /* Collections */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */;
