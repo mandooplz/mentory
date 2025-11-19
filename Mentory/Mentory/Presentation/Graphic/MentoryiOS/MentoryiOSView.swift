@@ -47,8 +47,11 @@ struct MentoryiOSView: View {
                     OnboardingTab
                 }
             }.task {
-                mentoryiOS.setUp()
                 await mentoryiOS.loadUserName()
+                if mentoryiOS.userName == nil {
+                    mentoryiOS.setUp()
+                }
+                
             }
         }
     }
