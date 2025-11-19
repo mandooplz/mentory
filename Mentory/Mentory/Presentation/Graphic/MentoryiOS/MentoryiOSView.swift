@@ -48,10 +48,7 @@ struct MentoryiOSView: View {
                 }
             }.task {
                 await mentoryiOS.loadUserName()
-                if mentoryiOS.userName == nil {
                     mentoryiOS.setUp()
-                }
-                
             }
         }
     }
