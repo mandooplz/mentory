@@ -31,6 +31,30 @@ struct TodayBoardTests {
             // then
             await #expect(todayBoard.todayString != nil)
         }
+        
+        @Test func setIsFetchedTodayStringTrue() async throws {
+            // given
+            try await #require(todayBoard.isFetchedTodayString == false)
+            
+            // when
+            await todayBoard.fetchTodayString()
+            
+            // then
+            await #expect(todayBoard.isFetchedTodayString == true)
+        }
+        
+        @Test func whenIsFetchedTodayStringIsTrue() async throws {
+            // given
+            await todayBoard.fetchTodayString()
+            let oldString = try #require(await todayBoard.todayString)
+            try await #require(todayBoard.isFetchedTodayString == true)
+            
+            // when
+            await todayBoard.fetchTodayString()
+            
+            // then
+            await #expect(todayBoard.todayString == oldString)
+        }
     }
 }
 

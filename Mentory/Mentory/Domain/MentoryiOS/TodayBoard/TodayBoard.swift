@@ -27,11 +27,16 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var records: [RecordForm.Record] = []
 
     @Published var todayString: String? = nil
+    @Published var isFetchedTodayString: Bool = false
 
     
     // MARK: action
     func fetchTodayString() async {
         // capture
+        guard isFetchedTodayString == false else {
+            logger.error("오늘의 명언이 이미 fetch되었습니다.")
+            return
+        }
         let alanLLM = owner!.alanLLM
         
         // process
@@ -50,6 +55,7 @@ final class TodayBoard: Sendable, ObservableObject {
         
         // mutate
         self.todayString = contentFromAlanLLM
+        self.isFetchedTodayString = true
     }
 
 

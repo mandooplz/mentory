@@ -24,10 +24,8 @@ struct TodayBoardView: View {
             // 배경
             Color(.systemGray6)
                 .ignoresSafeArea()
-                .onAppear {
-                    Task {
-                        await todayBoard.fetchTodayString()
-                    }
+                .task {
+                    await todayBoard.fetchTodayString()
                 }
             
             ScrollView {
@@ -75,30 +73,27 @@ struct TodayBoardView: View {
                     }
 
                     // "오늘의 명언" 카드
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("오늘의 명언")
-                            .font(.system(size: 18, weight: .semibold))
+                    if let todayString = todayBoard.todayString {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("오늘의 명언")
+                                .font(.system(size: 18, weight: .semibold))
 
-                        if let todayString = todayBoard.todayString {
                             Text(todayString)
                                 .font(.system(size: 16))
                                 .foregroundColor(.gray)
                                 .lineSpacing(4)
                                 .multilineTextAlignment(.leading)
-                        } else {
-                            Text("명언을 불러오는 중...")
-                                .font(.system(size: 16))
-                                .foregroundColor(.gray.opacity(0.6))
                         }
+                        .padding(.vertical, 24)
+                        .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28)
+                                .fill(Color.white)
+                                //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
+                        )
+                        .transition(.scale(scale: 0.95).combined(with: .opacity))
                     }
-                    .padding(.vertical, 24)
-                    .padding(.horizontal, 20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(Color.white)
-                            //.shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 4)
-                    )
                     
                     // 기분 기록 카드
                     VStack(spacing: 16) {
@@ -202,6 +197,7 @@ struct TodayBoardView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
+                .animation(.spring(response: 0.6, dampingFraction: 0.8), value: todayBoard.todayString != nil)
             }
         }
     }
