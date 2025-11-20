@@ -5,14 +5,16 @@
 //  Created by JAY on 11/14/25.
 //
 import SwiftUI
+import SwiftData
 
 
 // MARK: View
 struct TodayBoardView: View {
     // MARK: core
     @ObservedObject var todayBoard: TodayBoard
+    @Query var allRecords: [MentoryRecord]
     @State private var isShowingRecordFormView = false
-    
+
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
     }
@@ -57,17 +59,17 @@ struct TodayBoardView: View {
                     .padding(.top, 16)
                     
                     // 작은 설명 텍스트
-                    
+
                     let userName = todayBoard.owner?.userName ?? "이름없음"
-                    let count = todayBoard.records.count
-                    
-                    if count == 0 {
+                    let totalCount = allRecords.count
+
+                    if totalCount == 0 {
                         Text("\(userName)님, 일기를 작성해보아요!")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .center)
                     } else {
-                        Text("\(userName)님 \(count)번째 기록하셨네요!")
+                        Text("\(userName)님 총 \(totalCount)건 기록하셨네요!")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .center)
