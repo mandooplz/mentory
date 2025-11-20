@@ -64,7 +64,6 @@ class AudioRecorderManager: NSObject, ObservableObject, AVAudioRecorderDelegate 
             print("Could not start recording: \(error)")
         }
     }
-
     func stopRecording() {
         audioRecorder?.stop()
         timer?.invalidate()

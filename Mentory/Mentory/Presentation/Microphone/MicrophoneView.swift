@@ -138,6 +138,7 @@ struct MicrophoneView: View {
             Task {
                 // 리스닝 시작
                 await microphone.startListening()
+                microphone.startTimer()
             }
         }
     }
