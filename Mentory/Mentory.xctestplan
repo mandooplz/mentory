@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "E56DB7EB-ED2E-464E-A23B-EDF458CF2E3E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Mentory.xcodeproj",
+      "identifier" : "CE39BFBB2EC313F20090DF78",
+      "name" : "Mentory"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Mentory.xcodeproj",
+        "identifier" : "CE8EE8302EC5D1600006E5A4",
+        "name" : "MentoryTests"
+      }
+    }
+  ],
+  "version" : 1
+}
