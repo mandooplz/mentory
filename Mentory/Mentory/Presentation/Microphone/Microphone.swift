@@ -29,8 +29,8 @@ final class Microphone: Sendable {
     
     // MARK: state
     private(set) var isSetUp: Bool = false
+    private var engine: AudioEngine? = nil
 
-    
     private(set) var isRecording: Bool = false
     private(set) var audioURL: URL? = nil
     private(set) var recordingTime: TimeInterval = 0
@@ -42,6 +42,10 @@ final class Microphone: Sendable {
         // capture
         guard isSetUp == false else {
             logger.error("이미 Microphone이 setUp되어 있습니다.")
+            return
+        }
+        guard engine == nil else {
+            logger.error("이미 Microphone의 AudioEngine이 존재합니다.")
             return
         }
         
@@ -58,8 +62,9 @@ final class Microphone: Sendable {
         }
         
         self.isSetUp = true
+        self.engine = AudioEngine()
     }
-    func startSesstion() async {
+    func startSession() async {
         // capture
         guard isSetUp == true else {
             logger.error("Microphone이 setUp되지 않았습니다.")

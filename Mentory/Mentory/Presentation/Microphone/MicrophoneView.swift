@@ -134,7 +134,7 @@ struct MicrophoneView: View {
         } else {
             Task {
                 // 1. 세션 활성화
-                await microphone.startSesstion()
+                await microphone.startSession()
                 
                 // 2. 녹음 및 STT 시작 (UI 업데이트를 위해 MainActor 보장)
                 microphone.recordAndConvertToText()
