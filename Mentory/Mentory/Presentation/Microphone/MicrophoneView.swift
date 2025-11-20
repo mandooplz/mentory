@@ -129,15 +129,15 @@ struct MicrophoneView: View {
     
     // MARK: - Logic Helpers
     private func handleRecordAction() {
-        if microphone.isRecording {
-            microphone.stop()
+        if microphone.isListening {
+            Task {
+                await microphone.stopListening()
+                microphone.stopTimer()
+            }
         } else {
             Task {
-                // 1. 세션 활성화
-                await microphone.startSession()
-                
-                // 2. 녹음 및 STT 시작 (UI 업데이트를 위해 MainActor 보장)
-                microphone.recordAndConvertToText()
+                // 리스닝 시작
+                await microphone.startListening()
             }
         }
     }
