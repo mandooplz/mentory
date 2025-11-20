@@ -26,8 +26,39 @@ actor AudioEngine {
     private var audioFile: AVAudioFile?
     private var timer: Timer?
     
+    var isSessionRunning: Bool = false
+    
     
     // MARK: action
+    func startSession() {
+        // capture
+        guard isSessionRunning == false else {
+            logger.error("이미 세션이 실행 중입니다.")
+            return
+        }
+        
+        // process
+        do {
+            let session = AVAudioSession.sharedInstance()
+            
+            try session.setCategory(.playAndRecord,
+                                    mode: .measurement,
+                                    options: [.duckOthers, .defaultToSpeaker])
+            
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            logger.error("\(error)")
+            return
+        }
+        
+        // mutate
+        logger.debug("AudioEngine 세션 시작")
+        self.isSessionRunning = true
+    }
+    
+    func startEngineAndRecognition() {
+        
+    }
     
     
     // MARK: value

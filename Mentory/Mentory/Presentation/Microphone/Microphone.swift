@@ -73,18 +73,17 @@ final class Microphone: Sendable {
         
         // process
         do {
-            try setupAudioSession()
+            let session = AVAudioSession.sharedInstance()
+            
+            try session.setCategory(.playAndRecord,
+                                    mode: .measurement,
+                                    options: [.duckOthers, .defaultToSpeaker])
+            
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             logger.error("\(error)")
             return
         }
-    }
-    private func setupAudioSession() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord,
-                                mode: .measurement,
-                                options: [.duckOthers, .defaultToSpeaker])
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
     }
     
     func recordAndConvertToText() {
