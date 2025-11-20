@@ -130,6 +130,20 @@ final class MindAnalyzer: Sendable, ObservableObject {
     }
 
     func saveRecord() async {
+        // 분석 결과 검증
+        guard let _ = firstAnalysisResult else {
+            logger.error("1차 분석 결과가 없습니다. 저장을 중단합니다.")
+            return
+        }
+        guard let _ = secondAnalysisResult else {
+            logger.error("2차 분석 결과가 없습니다. 저장을 중단합니다.")
+            return
+        }
+        guard let analyzedContent = self.analyzedResult, !analyzedContent.isEmpty else {
+            logger.error("분석된 내용이 비어있습니다. 저장을 중단합니다.")
+            return
+        }
+
         // capture
         guard let recordForm = owner else {
             logger.error("RecordForm owner가 없습니다.")
@@ -147,7 +161,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // MentoryRecord 생성
         let record = MentoryRecord(
             recordDate: Date(),
-            analyzedContent: self.analyzedResult,
+            analyzedContent: analyzedContent,
             emotionType: self.mindType?.rawValue,
             completionTimeInSeconds: recordForm.completionTime
         )
