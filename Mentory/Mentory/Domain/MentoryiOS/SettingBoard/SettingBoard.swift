@@ -16,7 +16,6 @@ final class SettingBoard: Sendable, ObservableObject {
     // MARK: core
     init(owner: MentoryiOS) {
         self.owner = owner
-        loadSavedReminderTime()
     }
     
     
@@ -104,9 +103,9 @@ final class SettingBoard: Sendable, ObservableObject {
     }
     
     // MARK: private
-    private func loadSavedReminderTime() {
+    func loadSavedReminderTime() {
         guard let savedTime = UserDefaults.standard.object(forKey: Self.reminderTimeKey) as? Date else {
-            logger.info("Saved reminder time not found. Keep default: \(String(describing: self.reminderTime))")
+            logger.info("저장된 알림 시간이 없습니다. 기본값: \(String(describing: self.reminderTime))")
             return
         }
         isApplyingSavedReminderTime = true
@@ -116,6 +115,6 @@ final class SettingBoard: Sendable, ObservableObject {
     
     private func persistReminderTime() {
         UserDefaults.standard.set(reminderTime, forKey: Self.reminderTimeKey)
-        logger.info("Reminder time persisted: \(String(describing: self.reminderTime))")
+        logger.info("알림 시간이 저장되었습니다: \(String(describing: self.reminderTime))")
     }
 }

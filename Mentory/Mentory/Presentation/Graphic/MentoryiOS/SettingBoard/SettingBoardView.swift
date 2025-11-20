@@ -16,7 +16,7 @@ struct SettingBoardView: View {
     @State private var isShowingInformationView = false
     @State private var isShowingPrivacyPolicy = false
     @State private var isShowingLicenseInfo = false
-
+    
     @FocusState private var isRenameFieldFocused: Bool
     
     private static let reminderFormatter: DateFormatter = {
@@ -98,6 +98,9 @@ struct SettingBoardView: View {
                 Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
             }
         )
+        .task {
+            settingBoard.loadSavedReminderTime()
+        }
     }
     
     private var header: some View {
