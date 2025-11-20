@@ -60,25 +60,6 @@ final class TodayBoard: Sendable, ObservableObject {
         self.isFetchedTodayString = true
     }
 
-    func saveRecord(_ record: MentoryRecord) async {
-        // capture
-        guard let repository = recordRepository else {
-            logger.error("RecordRepository가 설정되지 않았습니다.")
-            return
-        }
-
-        // process
-        do {
-            try await repository.save(record)
-            logger.info("레코드 저장 성공: \(record.id)")
-
-            // 저장 후 오늘의 레코드 다시 로드
-            await loadTodayRecords()
-        } catch {
-            logger.error("레코드 저장 실패: \(error)")
-        }
-    }
-
     func loadTodayRecords() async {
         // capture
         guard let repository = recordRepository else {
