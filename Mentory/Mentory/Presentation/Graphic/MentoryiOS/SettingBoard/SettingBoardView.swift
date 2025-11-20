@@ -202,7 +202,10 @@ struct SettingBoardView: View {
             VStack(spacing: 16) {
                 DatePicker(
                     "알림 시간",
-                    selection: $settingBoard.reminderTime,
+                    selection: Binding(
+                        get: { settingBoard.reminderTime },
+                        set: { settingBoard.updateReminderTime($0) }
+                    ),
                     displayedComponents: .hourAndMinute
                 )
                 .datePickerStyle(.wheel)
@@ -443,7 +446,7 @@ struct SettingIcon: View {
     let mentory = MentoryiOS()
     mentory.userName = "지석"
     let board = SettingBoard(owner: mentory)
-    board.reminderTime = .now
+    board.updateReminderTime(.now)
     
     return SettingBoardView(settingBoard: board)
 }
