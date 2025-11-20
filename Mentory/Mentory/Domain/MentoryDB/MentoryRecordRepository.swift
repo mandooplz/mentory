@@ -11,7 +11,10 @@ import Foundation
 
 // MARK: Domain Interface
 protocol MentoryRecordRepositoryInterface: Sendable {
+    // Record를 저장
     func save(_ record: MentoryRecord) async throws
+    
+    // 저장된 Record를 불러옴
     func fetchAll() async throws -> [MentoryRecord]
     func fetchToday() async throws -> [MentoryRecord]
     func fetchByDateRange(from: Date, to: Date) async throws -> [MentoryRecord]

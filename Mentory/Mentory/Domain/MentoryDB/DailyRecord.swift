@@ -9,7 +9,16 @@ import Foundation
 
 
 // MARK: Domain Interface
-
+protocol DailyRecordInterface: Sendable {
+    
+}
 
 
 // MARK: Domain
+nonisolated
+struct DailyRecord {
+    // MARK: flow
+    
+    
+    
+}
