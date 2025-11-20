@@ -75,6 +75,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("TodayBoard owner가 없습니다.")
             return
         }
+        guard let repository = todayBoard.recordRepository else {
+            logger.error("RecordRepository가 설정되지 않았습니다.")
+            return
+        }
 
         // MentoryRecord 생성
         let record = MentoryRecord(
@@ -84,8 +88,16 @@ final class MindAnalyzer: Sendable, ObservableObject {
             completionTimeInSeconds: recordForm.completionTime
         )
 
-        // TodayBoard를 통해 저장
-        await todayBoard.saveRecord(record)
+        // process
+        do {
+            try await repository.save(record)
+            logger.info("레코드 저장 성공: \(record.id)")
+
+            // 저장 후 오늘의 레코드 다시 로드
+            await todayBoard.loadTodayRecords()
+        } catch {
+            logger.error("레코드 저장 실패: \(error)")
+        }
     }
     
     
