@@ -33,6 +33,7 @@ class SpeechToTextManager: NSObject, ObservableObject {
         recognizedText = ""
         logger.debug("startRecognizing() 호출됨")
         
+        // 권한 체크
         SFSpeechRecognizer.requestAuthorization { authStatus in
             if authStatus != .authorized {
                 self.logger.error("음성 인식 권한 거부됨")
@@ -40,6 +41,7 @@ class SpeechToTextManager: NSObject, ObservableObject {
             }
             
             DispatchQueue.main.async {
+                // 오디오스트림 생성
                 self.logger.debug("음성 인식 권한 허용됨 → startRecognitionStream() 호출")
                 self.startRecognitionStream()
             }

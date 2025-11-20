@@ -20,9 +20,11 @@ final class Microphone: Sendable {
     private nonisolated let logger = Logger(subsystem: "MentoryiOS.Microphone", category: "Presentation")
     var isSetUp: Bool = false
     
-    var isRecording: Bool = false
-    var audioURL: URL? = nil
+    private(set) var isRecording: Bool = false
+    private(set) var audioURL: URL? = nil
     var recordingTime: TimeInterval = 0
+    
+    private(set) var recognizedTest: String? = nil
     
     
     // MARK: action
@@ -31,7 +33,7 @@ final class Microphone: Sendable {
         
     }
     
-    func record() {
+    func startRecording() {
         
     }
     
