@@ -37,6 +37,8 @@ final class Microphone: Sendable {
     private(set) var recordingTime: TimeInterval = 0
     private(set) var recognizedText: String = ""
     
+    private(set) var isListening: Bool = false
+    
     
     // MARK: action
     func setUp() async {
@@ -195,6 +197,51 @@ final class Microphone: Sendable {
 
         isRecording = false
     }
+    
+    func startListening() async {
+        // capture
+        guard isListening == false else {
+            logger.error("이미 음성 인식 중입니다.")
+            return
+        }
+        guard let engine else {
+            logger.error("AudioEngine이 현재 존재하지 않습니다.")
+            return
+        }
+        
+        // process
+        await engine.setHandler { [weak self] speechText in
+            Task { @MainActor in
+                self?.recognizedText = speechText
+            }
+        }
+        
+        await engine.setUpEngine()
+        await engine.setUpAudioFile()
+        
+        await engine.startAudioProcessing()
+        
+        // mutate
+        self.isListening = true
+    }
+    func stopListening() async {
+        // capture
+        guard isListening == true else {
+            logger.error("현재 음성 인식 중인 상태가 아닙니다.")
+            return
+        }
+        guard let engine else {
+            logger.error("AudioEngine이 현재 존재하지 않습니다.")
+            return
+        }
+        
+        // process
+        await engine.stopAudioProcessing()
+        
+        // mutate
+        self.isListening = false
+    }
+    
     func startTimer() {
         // capture
         let currentTimer = self.timer
@@ -210,6 +257,13 @@ final class Microphone: Sendable {
         
         // mutate
         self.timer = newTimer
+    }
+    func stopTimer() {
+        // process
+        timer?.invalidate()
+        
+        // mutate
+        self.timer = nil
     }
     
     
