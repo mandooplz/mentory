@@ -25,6 +25,7 @@ struct TodayBoardView: View {
             Color(.systemGray6)
                 .ignoresSafeArea()
                 .task {
+                    await todayBoard.loadTodayRecords()
                     await todayBoard.fetchTodayString()
                 }
             
