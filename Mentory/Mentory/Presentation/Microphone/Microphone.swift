@@ -29,6 +29,7 @@ final class Microphone: Sendable {
     
     // MARK: state
     private(set) var isSetUp: Bool = false
+
     
     private(set) var isRecording: Bool = false
     private(set) var audioURL: URL? = nil
@@ -38,15 +39,19 @@ final class Microphone: Sendable {
     
     // MARK: action
     func setUp() async {
+        // capture
         guard isSetUp == false else {
             logger.error("이미 Microphone이 setUp되어 있습니다.")
             return
         }
         
+        // proces
         let userDevice = UserDevice()
+        
         let micGranted = await userDevice.getRecordPermission()
         let speechGranted = await userDevice.getSpeechPermission()
         
+        // mutate
         guard micGranted && speechGranted else {
             logger.error("사용자의 녹음 및 음성 인식 권한이 없습니다.")
             return
@@ -54,18 +59,27 @@ final class Microphone: Sendable {
         
         self.isSetUp = true
     }
-    
     func startSesstion() async {
+        // capture
         guard isSetUp == true else {
             logger.error("Microphone이 setUp되지 않았습니다.")
             return
         }
+        
+        // process
         do {
             try setupAudioSession()
         } catch {
             logger.error("\(error)")
             return
         }
+    }
+    private func setupAudioSession() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord,
+                                mode: .measurement,
+                                options: [.duckOthers, .defaultToSpeaker])
+        try session.setActive(true, options: .notifyOthersOnDeactivation)
     }
     
     func recordAndConvertToText() {
@@ -84,17 +98,6 @@ final class Microphone: Sendable {
             stop()
         }
     }
-    
-    
-    // MARK: Helpher
-    private func setupAudioSession() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord,
-                                mode: .measurement,
-                                options: [.duckOthers, .defaultToSpeaker])
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
-    }
-    
     private func startEngineAndRecognition() throws {
         
         recognitionTask?.cancel()
@@ -138,6 +141,7 @@ final class Microphone: Sendable {
         }
     }
     
+    // MARK: Helpher
     // ✅ [추가됨] 탭 설치를 위한 Non-isolated 함수
     // 이 함수는 MainActor의 제약을 받지 않으므로, 내부 클로저가 백그라운드에서 실행되어도 안전합니다.
     private nonisolated func attachAudioTap(
