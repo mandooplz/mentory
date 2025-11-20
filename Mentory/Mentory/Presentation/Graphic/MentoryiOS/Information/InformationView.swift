@@ -13,7 +13,7 @@ struct InformationView: View {
 
     var body: some View {
         WebView(url: informationURL)
-            .navigationTitle("Information")
+            .navigationTitle("멘토리 앱 소개")
             .navigationBarTitleDisplayMode(.inline)
     }
 }
