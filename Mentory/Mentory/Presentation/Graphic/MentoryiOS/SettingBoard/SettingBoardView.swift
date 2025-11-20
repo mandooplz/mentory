@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @State private var showingReminderPicker = false
+    @State private var selectedDate: Date = Date()
     @State private var isShowingRenameSheet = false
     @State private var isShowingTermsOfService = false
     @State private var isShowingDataDeletionAlert = false
@@ -207,14 +208,18 @@ struct SettingBoardView: View {
             VStack(spacing: 16) {
                 DatePicker(
                     "알림 시간",
-                    selection: Binding(
-                        get: { settingBoard.reminderTime },
-                        set: { settingBoard.updateReminderTime($0) }
-                    ),
+                    selection: $selectedDate,
                     displayedComponents: .hourAndMinute
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
+                .onAppear {
+                    selectedDate = settingBoard.reminderTime
+                }
+                .onChange(of: selectedDate) { newDate in
+                    settingBoard.reminderTime = newDate
+                    settingBoard.persistReminderTime()
+                }
                 
                 Button("완료") {
                     showingReminderPicker = false

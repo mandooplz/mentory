@@ -34,13 +34,7 @@ final class SettingBoard: Sendable, ObservableObject {
     @Published var isReminderOn: Bool = true
     
     /// 알림 시간 (알림 시간 표시 + DatePicker)
-    @Published var reminderTime: Date = .now {
-        didSet {
-            guard reminderTime != oldValue else { return }
-            guard isApplyingSavedReminderTime == false else { return }
-            persistReminderTime()
-        }
-    }
+    @Published var reminderTime: Date = .now
     
     // 화면 클릭
     @Published var editingName: String = ""
@@ -113,7 +107,8 @@ final class SettingBoard: Sendable, ObservableObject {
         isApplyingSavedReminderTime = false
     }
     
-    private func persistReminderTime() {
+    func persistReminderTime() {
+        guard isApplyingSavedReminderTime == false else { return }
         UserDefaults.standard.set(reminderTime, forKey: Self.reminderTimeKey)
         logger.info("알림 시간이 저장되었습니다: \(String(describing: self.reminderTime))")
     }
