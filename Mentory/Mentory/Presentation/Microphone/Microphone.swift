@@ -64,6 +64,7 @@ final class Microphone: Sendable {
         self.isSetUp = true
         self.engine = AudioEngine()
     }
+    
     func startSession() async {
         // capture
         guard isSetUp == true else {
@@ -193,10 +194,13 @@ final class Microphone: Sendable {
 
         isRecording = false
     }
-    
     func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+        // capture
+        let currentTimer = self.timer
+        
+        // process
+        currentTimer?.invalidate()
+        let newTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             Task { @MainActor in
                 if self.audioEngine.isRunning {
@@ -204,6 +208,9 @@ final class Microphone: Sendable {
                 }
             }
         }
+        
+        // mutate
+        self.timer = newTimer
     }
     
     
