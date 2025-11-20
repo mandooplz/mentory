@@ -14,7 +14,9 @@ struct SettingBoardView: View {
     @State private var isShowingTermsOfService = false
     @State private var isShowingDataDeletionAlert = false
     @State private var isShowingInformationView = false
-    
+    @State private var isShowingPrivacyPolicy = false
+    @State private var isShowingLicenseInfo = false
+
     @FocusState private var isRenameFieldFocused: Bool
     
     private static let reminderFormatter: DateFormatter = {
@@ -73,10 +75,10 @@ struct SettingBoardView: View {
                 }
             }
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
+        .navigationDestination(isPresented: $isShowingPrivacyPolicy) {
             PrivacyPolicyView()
         }
-        .navigationDestination(isPresented: $settingBoard.isShowingLicenseInfo) {
+        .navigationDestination(isPresented: $isShowingLicenseInfo) {
             LicenseInfoView()
         }
         .navigationDestination(isPresented: $isShowingTermsOfService) {
@@ -160,7 +162,7 @@ struct SettingBoardView: View {
                 title: "개인정보 처리 방침",
                 showDivider: true
             ){
-                settingBoard.showPrivacyPolicy()
+                isShowingPrivacyPolicy = true
             }
             
             SettingRow(
@@ -169,7 +171,7 @@ struct SettingBoardView: View {
                 title: "라이센스 정보",
                 showDivider: true
             ){
-                settingBoard.showLicenseInfo()
+                isShowingLicenseInfo = true
             }
             
             SettingRow(

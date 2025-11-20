@@ -44,8 +44,6 @@ final class SettingBoard: Sendable, ObservableObject {
     }
     
     // 화면 클릭
-    @Published var isShowingPrivacyPolicy: Bool = false
-    @Published var isShowingLicenseInfo: Bool = false
     @Published var editingName: String = ""
     
     // MARK: value
@@ -64,15 +62,7 @@ final class SettingBoard: Sendable, ObservableObject {
         reminderTime = newTime
         logger.info("Reminder time updated: \(String(describing: newTime))")
     }
-    
-    func showPrivacyPolicy() {
-        isShowingPrivacyPolicy = true
-    }
-    
-    func showLicenseInfo() {
-        isShowingLicenseInfo = true
-    }
-    
+
     func startRenaming() {
         editingName = owner?.userName ?? ""
     }
