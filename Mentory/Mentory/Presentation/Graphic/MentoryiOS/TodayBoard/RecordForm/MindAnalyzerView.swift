@@ -77,6 +77,8 @@ struct MindAnalyzerView: View {
             Task {
                 mindAnalyzer.isAnalyzing = true
                 await mindAnalyzer.startAnalyzing()
+                // MentoryRecord 생성 및 저장
+                await mindAnalyzer.saveRecord()
                 mindAnalyzer.isAnalyzing = false
             }
         } label: {

@@ -49,7 +49,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
 
         // process
-        self.isAnalyzing = true
         let answer: AlanLLM.Answer
         do {
             let question = AlanLLM.Question(textInput)
@@ -58,20 +57,15 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
         } catch {
             logger.error("\(error)")
-            self.isAnalyzing = false
             return
         }
 
         // mutate
         self.analyzedResult = answer.content
         self.mindType = .unPleasant
-        self.isAnalyzing = false
-
-        // MentoryRecord 생성 및 저장
-        await saveRecord()
     }
 
-    private func saveRecord() async {
+    func saveRecord() async {
         // capture
         guard let recordForm = owner else {
             logger.error("RecordForm owner가 없습니다.")
