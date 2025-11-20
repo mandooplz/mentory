@@ -71,13 +71,14 @@ struct RecordFormView: View {
             Button {
                 closeRecordFormView()
             } label: {
-                ActionButtonLabel(text: "취소", type: .cancel)
+                ActionButtonLabel(text: "취소", usage: .cancel)
             }
             Spacer()
             Text(formattedDate)
                 .font(.headline)
                 .foregroundStyle(.primary)
             Spacer()
+            
             Button {
                 Task {
                     recordForm.validateInput()
@@ -85,8 +86,8 @@ struct RecordFormView: View {
                     isShowingMindAnalyzerView.toggle()
                 }
             } label: {
-                ActionButtonLabel(text: "완료", type: .submit(enabled: isSubmitEnabled))
-            }
+                ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
+            }.disabled(!isSubmitEnabled)
         }
         .padding(.horizontal)
     }
