@@ -30,7 +30,7 @@ final class TodayBoard: Sendable, ObservableObject {
 
     @Published var todayString: String? = nil
     @Published var isFetchedTodayString: Bool = false
-
+    @Published var actionKeyWordItems: [(String, Bool)] = []
     
     // MARK: action
     func fetchTodayString() async {
