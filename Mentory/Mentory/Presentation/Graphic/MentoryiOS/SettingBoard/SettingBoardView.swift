@@ -13,6 +13,7 @@ struct SettingBoardView: View {
     @State private var isShowingRenameSheet = false
     @State private var isShowingTermsOfService = false
     @State private var isShowingDataDeletionAlert = false
+    @State private var isShowingInformationView = false
     
     @FocusState private var isRenameFieldFocused: Bool
     
@@ -51,12 +52,24 @@ struct SettingBoardView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        InformationView()
+                    Button {
+                        isShowingInformationView = true
                     } label: {
                         Image(systemName: "info.circle")
                             .font(.system(size: 18, weight: .semibold))
                     }
+                }
+            }
+            .fullScreenCover(isPresented: $isShowingInformationView) {
+                NavigationStack {
+                    InformationView()
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("닫기") {
+                                    isShowingInformationView = false
+                                }
+                            }
+                        }
                 }
             }
         }
