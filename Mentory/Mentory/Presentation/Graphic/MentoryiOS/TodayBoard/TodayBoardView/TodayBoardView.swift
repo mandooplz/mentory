@@ -7,10 +7,27 @@
 import SwiftUI
 
 
+@MainActor @Observable
+final class TodayBoardViewModel {
+    // MARK: core
+    
+    
+    // MARK: state
+    
+    
+    // MARK: action
+    
+    
+    // MARK: value
+}
+
+
 // MARK: View
 struct TodayBoardView: View {
-    // MARK: core
+    // MARK: model
     @ObservedObject var todayBoard: TodayBoard
+    
+    // MARK: viewModel
     @State private var isShowingRecordFormView = false
     @State private var isShowingInformationView = false
     @State private var selections = [false, false, false]
@@ -18,6 +35,8 @@ struct TodayBoardView: View {
     var progress: Double {
         Double(selections.filter { $0 }.count) / 3.0
     }
+    
+    
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
     }

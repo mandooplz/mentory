@@ -8,6 +8,7 @@ import Foundation
 
 
 // MARK: value
+nonisolated
 struct RecordData: Sendable, Hashable, Codable {
     // MARK: core
     let id: UUID
@@ -25,6 +26,7 @@ struct RecordData: Sendable, Hashable, Codable {
     
     
     // MARK: value
+    nonisolated
     enum Emotion: String, Codable {
         case happy, sad, neutral, surprised, scared
     }

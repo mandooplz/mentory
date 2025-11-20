@@ -45,5 +45,10 @@ struct MentoryDB: MentoryDBInterface {
         @Attribute(.unique) var id: UUID
         
         var userName: String? = nil
+        
+        init(id: UUID = UUID(), userName: String? = nil) {
+            self.id = id
+            self.userName = userName
+        }
     }
 }
