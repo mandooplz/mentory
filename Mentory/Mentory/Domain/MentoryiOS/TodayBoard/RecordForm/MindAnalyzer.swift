@@ -41,28 +41,63 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("textInput이 비어있습니다.")
             return
         }
-        
+
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         let alanLLM = mentoryiOS.alanLLM
-        
-        
+
+
         // process
         let answer: AlanLLM.Answer
         do {
             let question = AlanLLM.Question(textInput)
             answer = try await alanLLM.question(question)
-            
-            
+
+
         } catch {
             logger.error("\(error)")
             return
         }
-        
+
         // mutate
         self.analyzedResult = answer.content
         self.mindType = .unPleasant
+    }
+
+    func saveRecord() async {
+        // capture
+        guard let recordForm = owner else {
+            logger.error("RecordForm owner가 없습니다.")
+            return
+        }
+        guard let todayBoard = recordForm.owner else {
+            logger.error("TodayBoard owner가 없습니다.")
+            return
+        }
+        guard let repository = todayBoard.recordRepository else {
+            logger.error("RecordRepository가 설정되지 않았습니다.")
+            return
+        }
+
+        // MentoryRecord 생성
+        let record = MentoryRecord(
+            recordDate: Date(),
+            analyzedContent: self.analyzedResult,
+            emotionType: self.mindType?.rawValue,
+            completionTimeInSeconds: recordForm.completionTime
+        )
+
+        // process
+        do {
+            try await repository.save(record)
+            logger.info("레코드 저장 성공: \(record.id)")
+
+            // 저장 후 오늘의 레코드 다시 로드
+            await todayBoard.loadTodayRecords()
+        } catch {
+            logger.error("레코드 저장 실패: \(error)")
+        }
     }
     
     
@@ -72,7 +107,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         case B
     }
     
-    enum MindType: Sendable {
+    enum MindType: String, Sendable {
         case veryUnpleasant
         case unPleasant
         case slightlyUnpleasant

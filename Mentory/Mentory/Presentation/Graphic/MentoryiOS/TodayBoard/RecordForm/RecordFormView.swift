@@ -11,6 +11,7 @@ import SwiftUI
 struct RecordFormView: View {
     // MARK: model
     @ObservedObject var recordForm: RecordForm
+    @Environment(\.dismiss) private var dismiss
 
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
@@ -22,7 +23,7 @@ struct RecordFormView: View {
     // 오디오 관련
     @StateObject private var audioManager = AudioRecorderManager()
     @State private var showingAudioRecorder = false
-    
+
     init(_ recordForm: RecordForm) {
         self.recordForm = recordForm
     }
@@ -136,8 +137,15 @@ struct RecordFormView: View {
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .task {
+            // 기록 시작 시간 설정
+            recordForm.startTime = Date()
+        }
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
-            MindAnalyzerView(recordForm.mindAnalyzer!)
+            MindAnalyzerView(recordForm.mindAnalyzer!) {
+                // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기
+                dismiss()
+            }
         }
     }
     

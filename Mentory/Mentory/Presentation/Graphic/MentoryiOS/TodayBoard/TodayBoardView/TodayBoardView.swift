@@ -5,13 +5,16 @@
 //  Created by JAY on 11/14/25.
 //
 import SwiftUI
+import SwiftData
 
 
 // MARK: View
 struct TodayBoardView: View {
     // MARK: core
     @ObservedObject var todayBoard: TodayBoard
+    @Query var allRecords: [MentoryRecord]
     @State private var isShowingRecordFormView = false
+
     @State private var isShowingInformationView = false
     
     init(_ todayBoard: TodayBoard) {
@@ -21,17 +24,22 @@ struct TodayBoardView: View {
     
     // MARK: body
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .topTrailing) {
-                // 배경
-                Color(.systemGray6)
-                    .ignoresSafeArea()
-                    .task {
-                        await todayBoard.fetchTodayString()
-                    }
-                
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+        ZStack(alignment: .topTrailing) {
+            // 배경
+            Color(.systemGray6)
+                .ignoresSafeArea()
+                .task {
+                    await todayBoard.loadTodayRecords()
+                    await todayBoard.fetchTodayString()
+                }
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    
+                    // 상단 타이틀 & 인포 버튼
+                    HStack(alignment: .top) {
+                        Text("기록")
+                            .font(.system(size: 34, weight: .bold))
                         
                         // 상단 타이틀
                         HStack(alignment: .top) {
@@ -58,6 +66,25 @@ struct TodayBoardView: View {
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
+                    }
+                    .padding(.top, 16)
+                    
+                    // 작은 설명 텍스트
+
+                    let userName = todayBoard.owner?.userName ?? "이름없음"
+                    let totalCount = allRecords.count
+
+                    if totalCount == 0 {
+                        Text("\(userName)님, 일기를 작성해보아요!")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        Text("\(userName)님 총 \(totalCount)건 기록하셨네요!")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
 
                         // "오늘의 명언" 카드
                         if let todayString = todayBoard.todayString {
