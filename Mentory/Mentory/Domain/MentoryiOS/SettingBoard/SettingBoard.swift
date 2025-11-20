@@ -16,6 +16,7 @@ final class SettingBoard: Sendable, ObservableObject {
     // MARK: core
     init(owner: MentoryiOS) {
         self.owner = owner
+        loadSavedReminderTime()
     }
     
     
@@ -27,11 +28,20 @@ final class SettingBoard: Sendable, ObservableObject {
         category: "Domain"
     )
     
+    private static let reminderTimeKey = "mentory.settingBoard.reminderTime"
+    private var isApplyingSavedReminderTime = false
+    
     /// 알림 사용 여부 (알림 설정 토글)
     @Published var isReminderOn: Bool = true
     
     /// 알림 시간 (알림 시간 표시 + DatePicker)
-    @Published var reminderTime: Date = .now
+    @Published var reminderTime: Date = .now {
+        didSet {
+            guard reminderTime != oldValue else { return }
+            guard isApplyingSavedReminderTime == false else { return }
+            persistReminderTime()
+        }
+    }
     
     // 화면 클릭
     @Published var isShowingPrivacyPolicy: Bool = false
@@ -101,5 +111,21 @@ final class SettingBoard: Sendable, ObservableObject {
     func confirmDataDeletion() {
         logger.info("데이터 삭제를 진행합니다. 실제 삭제 로직은 추후 구현 예정")
         // TODO: 추후 담당자가 삭제 로직 구현
+    }
+    
+    // MARK: private
+    private func loadSavedReminderTime() {
+        guard let savedTime = UserDefaults.standard.object(forKey: Self.reminderTimeKey) as? Date else {
+            logger.info("Saved reminder time not found. Keep default: \(String(describing: self.reminderTime))")
+            return
+        }
+        isApplyingSavedReminderTime = true
+        reminderTime = savedTime
+        isApplyingSavedReminderTime = false
+    }
+    
+    private func persistReminderTime() {
+        UserDefaults.standard.set(reminderTime, forKey: Self.reminderTimeKey)
+        logger.info("Reminder time persisted: \(String(describing: self.reminderTime))")
     }
 }
