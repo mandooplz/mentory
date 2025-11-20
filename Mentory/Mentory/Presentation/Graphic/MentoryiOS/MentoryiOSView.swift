@@ -8,7 +8,7 @@ import SwiftUI
 
 
 // MARK: View
-struct MentoryiOSView: View {
+struct MentoryiOSView: View {  
     // MARK: model
     @ObservedObject var mentoryiOS: MentoryiOS
     init(_ mentoryiOS: MentoryiOS) {
