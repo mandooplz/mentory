@@ -269,6 +269,9 @@ struct TodayBoardView: View {
                     }
                 }
             }
+        .task {
+            await todayBoard.loadTodayRecords()
+        }
     }
     
 }

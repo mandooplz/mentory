@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftData
+import OSLog
 
 
 // MARK: Domain Interface
@@ -17,17 +18,18 @@ protocol MentoryDBInterface: Sendable {
 
 
 // MARK: Domain
-nonisolated
 struct MentoryDB: MentoryDBInterface {
     // MARK: core
     nonisolated let id: String = "mentoryDB"
     nonisolated let nameKey = "mentoryDB.name"
     
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryDB", category: "Domain")
+    
     
     // MARK: flow
     @concurrent
     func updateName(_ newName: String) async throws -> Void {
-        UserDefaults.standard.set(newName, forKey: nameKey)
+         UserDefaults.standard.set(newName, forKey: nameKey)
     }
     
     @concurrent
@@ -36,19 +38,5 @@ struct MentoryDB: MentoryDBInterface {
            return nil
        }
        return name
-    }
-    
-    
-    // MARK: model
-    @Model
-    final class Model {
-        @Attribute(.unique) var id: UUID
-        
-        var userName: String? = nil
-        
-        init(id: UUID = UUID(), userName: String? = nil) {
-            self.id = id
-            self.userName = userName
-        }
     }
 }
