@@ -125,6 +125,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         self.secondAnalysisResult = secondResult
         self.mindType = firstResult.mindType
         self.analyzedResult = secondResult.empathyMessage
+//        self.actionKeyWordItems = secondResult.actionKeywords.map{($0, false)}
 
         logger.info("분석 완료")
     }

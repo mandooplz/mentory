@@ -13,7 +13,11 @@ struct TodayBoardView: View {
     @ObservedObject var todayBoard: TodayBoard
     @State private var isShowingRecordFormView = false
     @State private var isShowingInformationView = false
-    @State private var selections = [false, true, false]
+    @State private var selections = [false, false, false]
+    @State private var actionRowEmpty = false
+    var progress: Double {
+        Double(selections.filter { $0 }.count) / 3.0
+    }
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
     }
@@ -177,7 +181,7 @@ struct TodayBoardView: View {
                                                         endPoint: .bottomTrailing
                                                     )
                                                 )
-                                                .frame(width: geo.size.width * (7.0 / 9.0))
+                                                .frame(width: geo.size.width * progress)
                                                 .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
                                         }
                                     }
@@ -201,13 +205,16 @@ struct TodayBoardView: View {
                                 
                                 
                                 // MARK: - Action Items
-
-                                VStack(spacing: 12) {
-                                    ActionRow(checked: selections[0], text: "Swift Concurrency 이해하기")
-                                    ActionRow(checked: selections[1], text: "산책")
-                                    ActionRow(checked: selections[2], text: "소금빵 먹기")
+                                if todayBoard.actionKeyWordItems.isEmpty {
+                                    ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
+                                } else {
+                                    VStack(spacing: 12) {
+                                        ActionRow(checked: $selections[0], text: "Swift Concurrency 이해하기")
+                                        ActionRow(checked: $selections[1], text: "산책")
+                                        ActionRow(checked: $selections[2], text: "소금빵 먹기")
+                                    }
+                                    .padding(.top, 20)
                                 }
-                                .padding(.top, 20)
                             }
                             .padding(.vertical, 22)
                             .padding(.horizontal, 18)
