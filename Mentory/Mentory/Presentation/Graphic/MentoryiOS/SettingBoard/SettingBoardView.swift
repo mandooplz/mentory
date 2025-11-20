@@ -49,6 +49,16 @@ struct SettingBoardView: View {
             .sheet(isPresented: $isShowingRenameSheet) {
                 renameSheet
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        InformationView()
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 18, weight: .semibold))
+                    }
+                }
+            }
         }
         .navigationDestination(isPresented: $settingBoard.isShowingPrivacyPolicy) {
             PrivacyPolicyView()
@@ -81,19 +91,6 @@ struct SettingBoardView: View {
                 Text("설정")
                     .font(.system(size: 34, weight: .black))
                 Spacer()
-                Button {
-                    // info 버튼 액션
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white)
-                            .shadow(radius: 3)
-                            .frame(width: 36, height: 36)
-                        Text("i")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.black)
-                    }
-                }
             }
             Text(settingBoard.owner?.getGreetingText() ?? "반가워요, userName님!")
                 .font(.system(size: 20, weight: .bold))
