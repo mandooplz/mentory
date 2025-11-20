@@ -15,8 +15,8 @@ struct RecordingSheet: View {
     // MARK: core
     nonisolated let logger = Logger(subsystem: "Mentory.RecordForm", category: "Presentation")
     
-    @State var microphone = Microphone.shared
-    @StateObject private var sttManager = SpeechToTextManager()
+    // 싱글톤 마이크 인스턴스를 사용 (iOS 17 @Observable은 StateObject 없이 바로 관찰 가능)
+    var microphone = Microphone.shared
     
     var onComplete: (URL) -> Void
     var onCancel: () -> Void
@@ -42,9 +42,16 @@ struct RecordingSheet: View {
                 Spacer()
                     .frame(height: 80)
             }
-            Text(sttManager.recognizedText.isEmpty ? "" : sttManager.recognizedText)
+            Text(microphone.recognizedText.isEmpty ? "" : microphone.recognizedText)
                 .font(.subheadline)
                 .padding()
+            if let url = microphone.audioURL {
+                Text(url.absoluteString)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
+            }
             Spacer()
 
             // 녹음 컨트롤
@@ -54,6 +61,7 @@ struct RecordingSheet: View {
                     Task {
                         if microphone.isListening {
                             await microphone.stopListening()
+                            microphone.stopTimer()
                         }
                     }
                     onCancel()
@@ -69,10 +77,19 @@ struct RecordingSheet: View {
                 // 녹음/정지 버튼
                 Button(action: {
                     Task {
+                        // 권한 및 초기 설정
+                        if !microphone.isSetUp {
+                            await microphone.setUp()
+                        }
+                        
                         if microphone.isListening {
-                            await microphone.startListening()
-                        } else {
+                            // 녹음 중지
                             await microphone.stopListening()
+                            microphone.stopTimer()
+                        } else {
+                            // 녹음 시작
+                            await microphone.startListening()
+                            microphone.startTimer()
                         }
                     }
                 }) {
@@ -86,11 +103,14 @@ struct RecordingSheet: View {
 
                 // 완료 버튼
                 Button(action: {
-                    if microphone.isListening {
-                        Task { await microphone.stopListening() }
-                    }
-                    if let url = microphone.audioURL {
-                        onComplete(url)
+                    Task {
+                        if microphone.isListening {
+                            await microphone.stopListening()
+                            microphone.stopTimer()
+                        }
+                        if let url = microphone.audioURL {
+                            onComplete(url)
+                        }
                     }
                 }) {
                     Image(systemName: "checkmark")
@@ -109,6 +129,7 @@ struct RecordingSheet: View {
                 if microphone.isListening {
                     await microphone.stopListening()
                 }
+                microphone.stopTimer()
             }
         }
     }
@@ -118,4 +139,14 @@ struct RecordingSheet: View {
         let seconds = Int(timeInterval) % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
+}
+
+
+#Preview {
+    RecordingSheet { url in
+        Logger().debug("\(url)")
+    } onCancel: {
+        Logger().debug("Recording이 취소되었습니다.")
+    }
+
 }

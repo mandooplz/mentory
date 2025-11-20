@@ -88,10 +88,8 @@ final class Microphone: Sendable {
     }
     func stopListening() async {
         // capture
-        guard isListening == true else {
-            logger.error("현재 음성 인식 중인 상태가 아닙니다.")
-            return
-        }
+        logger.debug("현재 Microphone.isListening: \(self.isListening)")
+        
         guard let engine else {
             logger.error("AudioEngine이 현재 존재하지 않습니다.")
             return
