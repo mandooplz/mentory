@@ -4,17 +4,20 @@
 //
 //  Created by 김민우 on 11/20/25.
 //
-
-
 import SwiftUI
 import Combine
 import AVFoundation
 import OSLog
 
+
+// MARK: View
 struct RecordingSheet: View {
+    // MARK: core
     nonisolated let logger = Logger(subsystem: "Mentory.RecordForm", category: "Presentation")
-    @ObservedObject var audioManager: AudioRecorderManager
+    
+    @State var microphone = Microphone.shared
     @StateObject private var sttManager = SpeechToTextManager()
+    
     var onComplete: (URL) -> Void
     var onCancel: () -> Void
 
@@ -26,12 +29,12 @@ struct RecordingSheet: View {
                 .padding(.top, 30)
 
             // 녹음 시간 표시
-            Text(timeString(from: audioManager.recordingTime))
+            Text(timeString(from: microphone.recordingTime))
                 .font(.system(size: 48, weight: .light, design: .monospaced))
-                .foregroundColor(audioManager.isRecording ? .red : .primary)
+                .foregroundColor(microphone.isListening ? .red : .primary)
 
             // 녹음 파형 애니메이션 (시각적 효과)
-            if audioManager.isRecording {
+            if microphone.isListening {
                 WaveformView()
                     .frame(height: 80)
                     .padding(.horizontal, 40)
@@ -48,10 +51,11 @@ struct RecordingSheet: View {
             HStack(spacing: 40) {
                 // 취소 버튼
                 Button(action: {
-                    if audioManager.isRecording {
-                        audioManager.stopRecording()
+                    Task {
+                        if microphone.isListening {
+                            await microphone.stopListening()
+                        }
                     }
-                    audioManager.deleteRecording()
                     onCancel()
                 }) {
                     Image(systemName: "xmark")
@@ -64,30 +68,28 @@ struct RecordingSheet: View {
 
                 // 녹음/정지 버튼
                 Button(action: {
-                    logger.debug("녹음 버튼 시작 \(audioManager.isRecording)")
-                    
-                    if audioManager.isRecording {
-//                        audioManager.stopRecording()
-                        sttManager.stopRecognizing()
-                    } else {
-//                        audioManager.startRecording()
-                        sttManager.startRecognizing()
+                    Task {
+                        if microphone.isListening {
+                            await microphone.startListening()
+                        } else {
+                            await microphone.stopListening()
+                        }
                     }
                 }) {
-                    Image(systemName: audioManager.isRecording ? "stop.fill" : "mic.fill")
+                    Image(systemName: microphone.isListening ? "stop.fill" : "mic.fill")
                         .font(.title)
                         .foregroundColor(.white)
                         .frame(width: 80, height: 80)
-                        .background(audioManager.isRecording ? Color.red : Color.blue)
+                        .background(microphone.isListening ? Color.red : Color.blue)
                         .clipShape(Circle())
                 }
 
                 // 완료 버튼
                 Button(action: {
-                    if audioManager.isRecording {
-                        audioManager.stopRecording()
+                    if microphone.isListening {
+                        Task { await microphone.stopListening() }
                     }
-                    if let url = audioManager.audioURL {
+                    if let url = microphone.audioURL {
                         onComplete(url)
                     }
                 }) {
@@ -95,16 +97,18 @@ struct RecordingSheet: View {
                         .font(.title2)
                         .foregroundColor(.white)
                         .frame(width: 60, height: 60)
-                        .background(audioManager.audioURL != nil ? Color.green : Color.gray)
+                        .background(microphone.audioURL != nil ? Color.green : Color.gray)
                         .clipShape(Circle())
                 }
-                .disabled(audioManager.audioURL == nil)
+                .disabled(microphone.audioURL == nil)
             }
             .padding(.bottom, 50)
         }
         .onDisappear {
-            if audioManager.isRecording {
-                audioManager.stopRecording()
+            Task {
+                if microphone.isListening {
+                    await microphone.stopListening()
+                }
             }
         }
     }
