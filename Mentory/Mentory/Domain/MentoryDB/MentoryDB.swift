@@ -5,6 +5,7 @@
 //  Created by 김민우 on 11/14/25.
 //
 import Foundation
+import SwiftData
 
 
 // MARK: Domain Interface
@@ -35,5 +36,14 @@ struct MentoryDB: MentoryDBInterface {
            return nil
        }
        return name
+    }
+    
+    
+    // MARK: model
+    @Model
+    final class Model {
+        @Attribute(.unique) var id: UUID
+        
+        var userName: String? = nil
     }
 }

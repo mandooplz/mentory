@@ -59,6 +59,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.todayString = contentFromAlanLLM
         self.isFetchedTodayString = true
     }
+    
     func loadTodayRecords() async {
         // capture
         guard let repository = recordRepository else {
