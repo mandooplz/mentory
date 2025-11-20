@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: View
 struct RecordFormView: View {
-    // MARK: model
+    // MARK: core
     @ObservedObject var recordForm: RecordForm
     @Environment(\.dismiss) var closeRecordFormView
     
@@ -21,7 +21,7 @@ struct RecordFormView: View {
     @State private var showingCamera = false
     
     // 오디오 관련
-    @StateObject private var audioManager = AudioRecorderManager()
+    @State private var microphone = Microphone.shared
     @State private var showingAudioRecorder = false
 
     init(_ recordForm: RecordForm) {
@@ -144,7 +144,7 @@ struct RecordFormView: View {
         }
         .sheet(isPresented: $showingAudioRecorder) {
             RecordingSheet(
-                audioManager: audioManager,
+                microphone: microphone,
                 onComplete: { url in
                     recordForm.voiceInput = url
                     showingAudioRecorder = false
@@ -231,13 +231,15 @@ struct RecordFormView: View {
                         
                         Spacer()
                         
-                        Text(timeString(from: audioManager.recordingTime))
+                        Text(timeString(from: microphone.recordingTime))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
                         Button {
-                            audioManager.deleteRecording()
-                            recordForm.voiceInput = nil
+                            Task {
+                                await microphone.stopListening()
+                                recordForm.voiceInput = nil
+                            }
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.gray)
