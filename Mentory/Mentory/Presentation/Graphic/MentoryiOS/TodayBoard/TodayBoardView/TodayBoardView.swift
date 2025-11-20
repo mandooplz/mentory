@@ -13,7 +13,7 @@ struct TodayBoardView: View {
     @ObservedObject var todayBoard: TodayBoard
     @State private var isShowingRecordFormView = false
     @State private var isShowingInformationView = false
-    
+    @State private var selections = [false, true, false]
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
     }
@@ -201,10 +201,11 @@ struct TodayBoardView: View {
                                 
                                 
                                 // MARK: - Action Items
+
                                 VStack(spacing: 12) {
-                                    ActionRow(checked: false, text: "Swift Concurrency 이해하기")
-                                    ActionRow(checked: true, text: "산책")
-                                    ActionRow(checked: false, text: "소금빵 먹기")
+                                    ActionRow(checked: selections[0], text: "Swift Concurrency 이해하기")
+                                    ActionRow(checked: selections[1], text: "산책")
+                                    ActionRow(checked: selections[2], text: "소금빵 먹기")
                                 }
                                 .padding(.top, 20)
                             }
