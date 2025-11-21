@@ -1,0 +1,24 @@
+name: "📝 Docs"
+description: 문서 작성 및 수정 작업을 위한 템플릿
+title: "[DOCS] "
+labels: ["docs"]
+body:
+  - type: textarea
+    id: target
+    attributes:
+      label: 📚 어떤 문서를 작성/수정하나요?
+      placeholder: |
+        예) README 업데이트, API 문서 작성, 개발 가이드 개선
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: ✏️ 상세 내용
+      placeholder: |
+        - 문서의 구조 또는 챕터
+        - 예시 코드
+        - 변경된 업데이트 사항
+    validations:
+      required: true
