@@ -1,0 +1,24 @@
+name: "🧹 Chore"
+description: 유지보수, 설정 변경, 환경 구성 등 비기능 작업 템플릿
+title: "[CHORE] "
+labels: ["chore"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 📌 작업 설명
+      placeholder: |
+        예) SwiftLint 규칙 업데이트, GitHub Actions 수정 등
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 🛠 작업 목록
+      placeholder: |
+        - [ ] 패키지 업데이트
+        - [ ] 설정 파일 정리
+        - [ ] 환경 스크립트 수정
+    validations:
+      required: false
