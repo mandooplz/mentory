@@ -1,0 +1,31 @@
+name: "🔧 Refactor"
+description: 코드 품질 향상 및 구조 개선을 위한 리팩토링 템플릿
+title: "[REFACTOR] "
+labels: ["refactor"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: 🧩 배경 (Context)
+      placeholder: 현재 코드의 문제점 또는 개선할 이유를 설명하세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 🎯 리팩토링 범위 (Scope)
+      placeholder: |
+        - 리팩토링하려는 모듈/파일
+        - 영향을 받는 기능
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 🛠 작업 항목 (Tasks)
+      placeholder: |
+        - [ ] 구조 단순화
+        - [ ] 공통 컴포넌트 분리
+        - [ ] 미사용 코드 제거
