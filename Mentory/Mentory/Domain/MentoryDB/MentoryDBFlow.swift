@@ -1,5 +1,5 @@
 //
-//  MentoryDB.swift
+//  MentoryDBFlow.swift
 //  Mentory
 //
 //  Created by 김민우 on 11/14/25.
@@ -10,7 +10,7 @@ import OSLog
 
 
 // MARK: Domain Interface
-protocol MentoryDBInterface: Sendable {
+protocol MentoryDBFlowInterface: Sendable {
     func updateName(_ newName: String) async throws -> Void
     func getName() async throws -> String?
 }
@@ -18,7 +18,7 @@ protocol MentoryDBInterface: Sendable {
 
 
 // MARK: Domain
-struct MentoryDB: MentoryDBInterface {
+struct MentoryDBFlow: MentoryDBFlowInterface {
     // MARK: core
     nonisolated let id: String = "mentoryDB"
     nonisolated let nameKey = "mentoryDB.name"
