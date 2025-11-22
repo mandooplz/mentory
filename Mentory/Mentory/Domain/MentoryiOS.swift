@@ -13,6 +13,7 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
     nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
 
@@ -27,8 +28,6 @@ final class MentoryiOS: Sendable, ObservableObject {
     
     // MARK: state
     nonisolated let id: UUID = UUID()
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS",
-                                    category: "Domain")
     
     @Published var userName: String? = nil
     func getGreetingText() -> String {
