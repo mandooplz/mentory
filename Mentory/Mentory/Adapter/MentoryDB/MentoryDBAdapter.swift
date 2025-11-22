@@ -29,11 +29,11 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     }
     
     
-    func fetchAll() async throws -> [Values.RecordData] {
+    func fetchAll() async throws -> [RecordData] {
         fatalError()
     }
     
-    func fetchToday() async throws -> [Values.RecordData] {
+    func fetchToday() async throws -> [RecordData] {
         fatalError()
     }
     

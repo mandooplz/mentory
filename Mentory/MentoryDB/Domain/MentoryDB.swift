@@ -95,9 +95,13 @@ actor MentoryDB: Sendable {
         @Attribute(.unique) var id: String
         var userName: String
         
+        var records: [DailyRecord.Model] = []
+        
         init(id: ID, userName: String) {
             self.id = id
             self.userName = userName
         }
     }
 }
+
+
