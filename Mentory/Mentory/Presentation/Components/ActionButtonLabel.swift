@@ -4,45 +4,15 @@
 //
 //  Created by JAY,김민우 on 11/20/25.
 //
-
 import Foundation
 import SwiftUI
 
-struct ButtonUsage: Equatable {
-    // MARK: core
-    let gradientColors: [Color]
-    let strokeOpacity: Double
-    let shadowColor: Color
-    
-    private init(gradientColors: [Color], strokeOpacity: Double, shadowColoe: Color) {
-        self.gradientColors = gradientColors
-        self.strokeOpacity = strokeOpacity
-        self.shadowColor = shadowColoe
-    }
-    
-    static let cancel: Self = ButtonUsage(
-        gradientColors: [Color.red, Color.red.opacity(0.8)],
-        strokeOpacity: 0.5,
-        shadowColoe: Color.red.opacity(0.3)
-    )
-    
-    static let submitEnabled: Self = ButtonUsage(
-        gradientColors: [Color.blue, Color.blue.opacity(0.8)],
-        strokeOpacity: 0.5,
-        shadowColoe: Color.blue.opacity(0.3)
-    )
-    
-    static let submitDisabled: Self = ButtonUsage(
-        gradientColors: [Color.gray.opacity(0.3), Color.gray.opacity(0.2)],
-        strokeOpacity: 0.2,
-        shadowColoe: .clear
-    )
-}
 
+// MARK: Component
 struct ActionButtonLabel: View {
-    // MARK: model
+    // MARK: variable
     let text: String
-    let usage: ButtonUsage
+    let usage: Usage
     
     
     // MARK: body
@@ -73,8 +43,45 @@ struct ActionButtonLabel: View {
             )
             .animation(.easeInOut(duration: 0.2), value: usage)
     }
+    
+    
+    // MARK: value
+    struct Usage: Equatable {
+        // MARK: core
+        let gradientColors: [Color]
+        let strokeOpacity: Double
+        let shadowColor: Color
+        
+        private init(gradientColors: [Color], strokeOpacity: Double, shadowColoe: Color) {
+            self.gradientColors = gradientColors
+            self.strokeOpacity = strokeOpacity
+            self.shadowColor = shadowColoe
+        }
+        
+        static let cancel: Self = Usage(
+            gradientColors: [Color.red, Color.red.opacity(0.8)],
+            strokeOpacity: 0.5,
+            shadowColoe: Color.red.opacity(0.3)
+        )
+        
+        static let submitEnabled: Self = Usage(
+            gradientColors: [Color.blue, Color.blue.opacity(0.8)],
+            strokeOpacity: 0.5,
+            shadowColoe: Color.blue.opacity(0.3)
+        )
+        
+        static let submitDisabled: Self = Usage(
+            gradientColors: [Color.gray.opacity(0.3), Color.gray.opacity(0.2)],
+            strokeOpacity: 0.2,
+            shadowColoe: .clear
+        )
+    }
+
 }
 
+
+
+// MARK: Preview
 #Preview {
     ActionButtonLabel(text: "완료", usage: .submitDisabled)
 }

@@ -11,8 +11,6 @@ import Values
 // MARK: Mock
 nonisolated
 struct MentoryDBMock: MentoryDBInterface {
-    
-    
     // MARK: core
     nonisolated let model = MentoryDBModel()
     
@@ -32,19 +30,33 @@ struct MentoryDBMock: MentoryDBInterface {
         }
     }
     
-    func saveRecord(_ data: Values.RecordData) async throws {
-        fatalError()
+    @concurrent
+    func saveRecord(_ data: RecordData) async throws {
+        await MainActor.run {
+            model.createRecordQueue.append(data)
+            
+            model.createDailyRecords()
+        }
     }
     
+    @concurrent
     func fetchAll() async throws -> [RecordData] {
-        fatalError()
+        await MainActor.run {
+            model.getAllRecords()
+        }
     }
     
+    @concurrent
     func fetchToday() async throws -> [RecordData] {
-        fatalError()
+        await MainActor.run {
+            model.getTodayRecords()
+        }
     }
     
+    @concurrent
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
-        fatalError()
+        await MainActor.run {
+            model.getRecords(from: from, to: to)
+        }
     }
 }
