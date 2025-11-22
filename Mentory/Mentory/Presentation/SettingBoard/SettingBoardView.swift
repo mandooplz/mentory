@@ -7,6 +7,8 @@
 import SwiftUI
 import WebKit
 
+
+// MARK: View
 struct SettingBoardView: View {
     @ObservedObject var settingBoard: SettingBoard
     @State private var showingReminderPicker = false
@@ -37,9 +39,6 @@ struct SettingBoardView: View {
                     .padding(.vertical, 28)
                 }
             }
-            .sheet(isPresented: $showingReminderPicker) {
-                reminderPickerSheet
-            }
             .sheet(isPresented: $isShowingRenameSheet) {
                 renameSheet
             }
@@ -64,15 +63,6 @@ struct SettingBoardView: View {
                     }
             }
         }
-        .navigationDestination(isPresented: $isShowingPrivacyPolicy) {
-            PrivacyPolicyView()
-        }
-        .navigationDestination(isPresented: $isShowingLicenseInfo) {
-            LicenseInfoView()
-        }
-        .navigationDestination(isPresented: $isShowingTermsOfService) {
-            TermsOfServiceView()
-        }
         .alert(
             "데이터를 삭제하시겠습니까?",
             isPresented: $isShowingDataDeletionAlert,
@@ -92,15 +82,7 @@ struct SettingBoardView: View {
         }
     }
     
-    private static let reminderFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
     
-    private var userName: String {
-        settingBoard.owner?.userName ?? "사용자"
-    }
     
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -148,10 +130,13 @@ struct SettingBoardView: View {
                 iconName: "clock.fill",
                 iconBackground: Color.purple,
                 title: "알림 시간",
-                value: reminderTimeText,
+                value: settingBoard.formattedReminderTime(),
                 showDivider: false
             ) {
                 showingReminderPicker = true
+            }
+            .sheet(isPresented: $showingReminderPicker) {
+                reminderPickerSheet
             }
         }
     }
@@ -166,6 +151,9 @@ struct SettingBoardView: View {
             ){
                 isShowingPrivacyPolicy = true
             }
+            .navigationDestination(isPresented: $isShowingPrivacyPolicy) {
+                PrivacyPolicyView()
+            }
             
             SettingRow(
                 iconName: "doc.text.fill",
@@ -175,6 +163,9 @@ struct SettingBoardView: View {
             ){
                 isShowingLicenseInfo = true
             }
+            .navigationDestination(isPresented: $isShowingLicenseInfo) {
+                LicenseInfoView()
+            }
             
             SettingRow(
                 iconName: "book.fill",
@@ -183,6 +174,9 @@ struct SettingBoardView: View {
                 showDivider: false
             ){
                 isShowingTermsOfService = true
+            }
+            .navigationDestination(isPresented: $isShowingTermsOfService) {
+                TermsOfServiceView()
             }
         }
     }
@@ -243,9 +237,14 @@ struct SettingBoardView: View {
         .presentationDetents([.height(320)])
     }
     
-    private var reminderTimeText: String {
-        Self.reminderFormatter.string(from: settingBoard.reminderTime)
-    }
+//    private var reminderTimeText: String {
+//        Self.reminderFormatter.string(from: settingBoard.reminderTime)
+//    }
+//    private static let reminderFormatter: DateFormatter = {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "HH:mm"
+//        return formatter
+//    }()
     
     private var renameSheet: some View {
         NavigationStack {

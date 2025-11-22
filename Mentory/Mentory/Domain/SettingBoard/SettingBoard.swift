@@ -31,6 +31,14 @@ final class SettingBoard: Sendable, ObservableObject {
     
     /// 알림 시간 (알림 시간 표시 + DatePicker)
     @Published var reminderTime: Date = .now
+    func formattedReminderTime() -> String {
+        self.reminderTime
+            .formatted(
+            .dateTime
+            .hour(.twoDigits(amPM: .omitted)) // 'HH' 및 AM/PM 제거 효과
+            .minute(.twoDigits)               // 'mm'
+        )
+    }
     
     // 화면 클릭
     @Published var editingName: String = ""
