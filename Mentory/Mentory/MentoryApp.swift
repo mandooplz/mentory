@@ -15,7 +15,11 @@ struct MentoryApp: App {
 //    let modelContainer: ModelContainer
 
     // MARK: model
-    @State var mentoryiOS: MentoryiOS
+    @State var mentoryiOS = MentoryiOS(
+        mentoryDB: MentoryDBAdapter(),
+        alanLLM: AlanLLM(),
+        recordRepository: nil
+    )
 
     init() {
         // ModelContainer 초기화
@@ -27,13 +31,6 @@ struct MentoryApp: App {
 //
 //        // Repository 생성
 //        let repository = MentoryRecordRepository(modelContext: modelContainer.mainContext)
-
-        // MentoryiOS 초기화
-        mentoryiOS = MentoryiOS(
-            mentoryDB: MentoryDBAdapter(),
-            alanLLM: AlanLLM(),
-            recordRepository: nil
-        )
     }
 
 

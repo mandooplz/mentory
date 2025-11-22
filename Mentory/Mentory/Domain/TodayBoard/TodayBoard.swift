@@ -13,9 +13,8 @@ import OSLog
 @MainActor
 final class TodayBoard: Sendable, ObservableObject {
     // MARK: core
-    init(owner: MentoryiOS, recordRepository: MentoryRecordRepositoryInterface? = nil) {
+    init(owner: MentoryiOS) {
         self.owner = owner
-        self.recordRepository = recordRepository
     }
 
 
