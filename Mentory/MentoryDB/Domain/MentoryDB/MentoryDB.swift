@@ -10,10 +10,9 @@ import OSLog
 
 
 // MARK: Object
-public actor MentoryDB: Sendable {
-    
+actor MentoryDB: Sendable {
     // MARK: core
-    public init(id: String = "MentoryDB.UniqueKey.shared") {
+    init(id: String = "MentoryDB.UniqueKey.shared") {
         self.id = id
     }
     
@@ -30,7 +29,7 @@ public actor MentoryDB: Sendable {
     // MARK: state
     nonisolated public let id: String
     
-    public func setName(_ newName: String) {
+    func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -66,7 +65,7 @@ public actor MentoryDB: Sendable {
             return
         }
     }
-    public func getName() -> String? {
+    func getName() -> String? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -77,7 +76,6 @@ public actor MentoryDB: Sendable {
         do {
             guard let model = try context.fetch(descriptor).first else {
                 fatalError("MentoryDB가 존재하지 않습니다.")
-                return nil
             }
             
             logger.debug("MentoryDB에서 이름을 조회했습니다.")

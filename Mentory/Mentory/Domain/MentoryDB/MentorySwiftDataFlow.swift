@@ -18,6 +18,4 @@ nonisolated struct MentorySwiftDataFlow: MentoryDBFlowInterface {
     func getName() async throws -> String? {
         fatalError()
     }
-    
-    
 }
