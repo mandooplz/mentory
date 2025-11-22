@@ -58,7 +58,6 @@ final class TodayBoard: Sendable, ObservableObject {
         self.todayString = contentFromAlanLLM
         self.isFetchedTodayString = true
     }
-    
     func loadTodayRecords() async {
         // capture
         let mentoryDB = owner!.mentoryDB
