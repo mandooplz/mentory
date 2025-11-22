@@ -36,7 +36,7 @@ struct TodayBoardView: View {
             // 상단 타이틀
             Title(title)
             
-            // 환경
+            // 환영 인사 헤더
             GreetingHeader(
                 userName: mentoryiOS.userName ?? "익명",
                 recordCount: todayBoard.records.count
@@ -49,65 +49,14 @@ struct TodayBoardView: View {
             )
             
             // 기분 기록 카드
-            LiquidGlassCard {
-                VStack(spacing: 16) {
-                    // 이미지
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.systemTeal).opacity(0.5))
-                            .frame(width: 170, height: 170)
-                        
-                        // 실제 이미지를 사용한다면 아래에 넣으면 됨
-                        // Image("yourImageName")
-                        //   .resizable()
-                        //   .scaledToFit()
-                        //   .frame(width: 170, height: 170)
-                        Text("이미지")
-                            .foregroundColor(.white)
-                    }
-                    
-                    Text("오늘 기분을 기록해볼까요?")
-                        .font(.system(size: 16, weight: .medium))
-                    
-                    Button {
-                        // 기록하러가기 액션
-                        isShowingRecordFormView.toggle()
-                    } label: {
-                        Text("기록하러가기")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(
-                                LinearGradient(
-                                    colors: [Color.blue, Color.blue.opacity(0.8)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                in: RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                            )
-                            .shadow(
-                                color: Color.blue.opacity(0.3),
-                                radius: 8,
-                                x: 0,
-                                y: 4
-                            )
-                        
-                    }
-                    .fullScreenCover(isPresented: $isShowingRecordFormView) {
-                        RecordFormView(todayBoard.recordForm!)
-                    }
-                    .padding(.horizontal, 32)
+            RecordStatCard(
+                image: "greeting",
+                content: "SSS",
+                navLabel: "기록하러 가기",
+                navDestination: {
+                    RecordFormView(todayBoard.recordForm!)
                 }
-                .padding(.vertical, 24)
-                .frame(maxWidth: .infinity)
-            }
-            
-            // 오늘의 행동 추천
+            )
             
             // 오늘의 행동 추천 - LiquidGlass 스타일 개선
             LiquidGlassCard {
@@ -283,6 +232,78 @@ fileprivate struct PopupCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .transition(.scale(scale: 0.95).combined(with: .opacity))
+        }
+    }
+}
+
+fileprivate struct RecordStatCard<Content: View>: View {
+    @State var showFullScreenCover: Bool = false
+    
+    let imageName: String
+    let content: String
+    let navLabel: String
+    let navDestination: Content
+    
+    
+    init(image: String,
+         content: String,
+         navLabel: String,
+         @ViewBuilder navDestination: () -> Content) {
+        self.imageName = image
+        self.content = content
+        self.navLabel = navLabel
+        self.navDestination = navDestination()
+    }
+    
+    var body: some View {
+        LiquidGlassCard {
+            VStack(spacing: 16) {
+                // 이미지
+                ZStack {
+                    Image(imageName)
+                       .resizable()
+                       .scaledToFit()
+                       .frame(width: 170, height: 170)
+                }
+                
+                Text(content)
+                    .font(.system(size: 16, weight: .medium))
+                
+                Button {
+                    showFullScreenCover = true
+                } label: {
+                    Text(self.navLabel)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.blue, Color.blue.opacity(0.8)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            in: RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        )
+                        .shadow(
+                            color: Color.blue.opacity(0.3),
+                            radius: 8,
+                            x: 0,
+                            y: 4
+                        )
+                    
+                }
+                .padding(.horizontal, 32)
+            }
+            .padding(.vertical, 24)
+            .frame(maxWidth: .infinity)
+            .fullScreenCover(isPresented: $showFullScreenCover) {
+                navDestination
+            }
         }
     }
 }
