@@ -8,6 +8,13 @@ import Foundation
 
 
 // MARK: Value
+@frozen
 nonisolated public enum Emotion: String, Codable, Sendable {
-    case happy, sad, neutral, surprised, scared
+    case veryUnpleasant
+    case unPleasant
+    case slightlyUnpleasant
+    case neutral
+    case slightlyPleasant
+    case pleasant
+    case veryPleasant
 }

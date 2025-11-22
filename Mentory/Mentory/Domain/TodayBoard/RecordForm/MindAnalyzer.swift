@@ -5,6 +5,7 @@
 //  Created by JAY on 11/17/25.
 //
 import Foundation
+import Values
 import Combine
 import OSLog
 
@@ -25,10 +26,9 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
     @Published var isAnalyzing: Bool = false
     @Published var selectedCharacter: CharacterType? = nil
-    @Published var mindType: MindType? = nil
-    @Published var analyzedResult: String? = nil
 
-    // 분석 결과
+    @Published var analyzedResult: String? = nil
+    @Published var mindType: Emotion? = nil
     @Published var firstAnalysisResult: FirstAnalysisResult? = nil
     @Published var secondAnalysisResult: SecondAnalysisResult? = nil
     
@@ -140,10 +140,12 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("2차 분석 결과가 없습니다. 저장을 중단합니다.")
             return
         }
-        guard let analyzedContent = self.analyzedResult, !analyzedContent.isEmpty else {
+        guard let analyzedContent = self.analyzedResult,
+                !analyzedContent.isEmpty else {
             logger.error("분석된 내용이 비어있습니다. 저장을 중단합니다.")
             return
         }
+        
 
         // capture
         guard let recordForm = owner else {
@@ -154,23 +156,22 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("TodayBoard owner가 없습니다.")
             return
         }
-        guard let repository = todayBoard.recordRepository else {
-            logger.error("RecordRepository가 설정되지 않았습니다.")
-            return
-        }
+        let mentoryDB = todayBoard.owner!.mentoryDB
+
 
         // MentoryRecord 생성
-        let record = MentoryRecord(
-            recordDate: Date(),
-            analyzedContent: analyzedContent,
-            emotionType: self.mindType?.rawValue,
-            completionTimeInSeconds: recordForm.completionTime
-        )
+        let recordData = RecordData(
+            id: UUID(),
+            createdAt: Date(),
+            content: "",
+            analyzedResult: analyzedContent,
+            emotion: self.mindType!)
 
         // process
         do {
-            try await repository.save(record)
-            logger.info("레코드 저장 성공: \(record.id)")
+            try await mentoryDB.saveRecord(recordData)
+            
+            logger.info("레코드 저장 성공: \(recordData.id)")
 
             // 저장 후 오늘의 레코드 다시 로드
             await todayBoard.loadTodayRecords()
@@ -186,16 +187,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
         case B
     }
 
-    enum MindType: String, Sendable, Codable {
-        case veryUnpleasant
-        case unPleasant
-        case slightlyUnpleasant
-        case neutral
-        case slightlyPleasant
-        case pleasant
-        case veryPleasant
-    }
-
     enum RiskLevel: String, Sendable, Codable {
         case low
         case medium
@@ -206,7 +197,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     struct FirstAnalysisResult: Sendable, Codable {
         let riskLevel: RiskLevel
         let topic: String
-        let mindType: MindType
+        let mindType: Emotion
     }
 
     // 2차 분석 결과

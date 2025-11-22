@@ -17,8 +17,7 @@ struct MentoryApp: App {
     // MARK: model
     @State var mentoryiOS = MentoryiOS(
         mentoryDB: MentoryDBAdapter(),
-        alanLLM: AlanLLM(),
-        recordRepository: nil
+        alanLLM: AlanLLM()
     )
 
     init() {
