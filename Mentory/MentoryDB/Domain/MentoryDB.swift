@@ -20,7 +20,7 @@ actor MentoryDB: Sendable {
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
         do {
-            return try ModelContainer(for: Model.self)
+            return try ModelContainer(for: MentoryDB.Model.self, DailyRecord.Model.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }

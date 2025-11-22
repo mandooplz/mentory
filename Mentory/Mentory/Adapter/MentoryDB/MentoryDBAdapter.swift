@@ -12,37 +12,37 @@ import Values
 
 // MARK: Domain
 nonisolated struct MentoryDBAdapter: MentoryDBInterface {
+    nonisolated let api = MentoryDBAPI()
     
     @concurrent
     func updateName(_ newName: String) async throws {
-        let api = MentoryDBAPI()
-        
         try await api.updateName(newName)
     }
     
     @concurrent
     func getName() async throws -> String? {
-        let api = MentoryDBAPI()
-        
         let name = try await api.getName()
         
         return name
     }
     
+    @concurrent
     func saveRecord(_ data: Values.RecordData) async throws {
-        fatalError()
+        try await api.saveRecord(data)
     }
     
-    
+    @concurrent
     func fetchAll() async throws -> [RecordData] {
-        fatalError()
+        try await api.fetchAll()
     }
     
+    @concurrent
     func fetchToday() async throws -> [RecordData] {
-        fatalError()
+        try await api.fetchToday()
     }
     
+    @concurrent
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
-        fatalError()
+        try await api.fetchToday(from: from, to: to)
     }
 }
