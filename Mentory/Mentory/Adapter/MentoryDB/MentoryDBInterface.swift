@@ -10,7 +10,7 @@ import OSLog
 import Values
 
 
-// MARK: Domain Interface
+// MARK: Interface
 protocol MentoryDBInterface: Sendable {
     func updateName(_ newName: String) async throws -> Void
     func getName() async throws -> String?
@@ -18,6 +18,4 @@ protocol MentoryDBInterface: Sendable {
     func fetchAll() async throws -> [RecordData]
     func fetchToday() async throws -> [RecordData]
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData]
-    
-    func delete(_ id: RecordID) async throws
 }

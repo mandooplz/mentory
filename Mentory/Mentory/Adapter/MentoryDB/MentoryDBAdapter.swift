@@ -40,8 +40,4 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
         fatalError()
     }
-    
-    func delete(_ id: Values.RecordID) async throws {
-        fatalError()
-    }
 }
