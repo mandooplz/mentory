@@ -7,6 +7,8 @@
 import Foundation
 import SwiftUI
 
+
+// MARK: View
 struct LiquidGlassCard<Content: View>: View {
     var cornerRadius: CGFloat = 28
     var shadowRadius: CGFloat = 18

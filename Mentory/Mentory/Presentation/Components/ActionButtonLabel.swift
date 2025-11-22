@@ -75,6 +75,9 @@ struct ActionButtonLabel: View {
     }
 }
 
+
+
+// MARK: Preview
 #Preview {
     ActionButtonLabel(text: "완료", usage: .submitDisabled)
 }
