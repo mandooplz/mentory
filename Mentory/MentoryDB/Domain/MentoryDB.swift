@@ -18,7 +18,7 @@ actor MentoryDB: Sendable {
     }
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
-    fileprivate static let container: ModelContainer = {
+    static let container: ModelContainer = {
         do {
             return try ModelContainer(for: Model.self)
         } catch {
@@ -90,10 +90,11 @@ actor MentoryDB: Sendable {
     
     func getAllRecords() async -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
+        let id = self.id
         
         let descriptor = FetchDescriptor<Model>(
             predicate: #Predicate {
-                $0.id == self.id
+                $0.id == id
             }
         )
         
@@ -117,9 +118,10 @@ actor MentoryDB: Sendable {
     }
     func getTodayRecordDatas() async -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
+        let id = self.id
         
         let descriptor = FetchDescriptor<Model>(
-            predicate: #Predicate { $0.id == self.id }
+            predicate: #Predicate { $0.id == id }
         )
         
         do {
@@ -145,9 +147,10 @@ actor MentoryDB: Sendable {
     }
     func getRecords(from: Date, to: Date) -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
+        let id = self.id
         
         let descriptor = FetchDescriptor<Model>(
-            predicate: #Predicate { $0.id == self.id }
+            predicate: #Predicate { $0.id == id }
         )
         
         do {

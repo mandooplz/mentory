@@ -13,6 +13,11 @@ import OSLog
 // MARK: Object
 actor DailyRecord: Sendable {
     // MARK: core
+    init(id: UUID) {
+        self.id = id
+    }
+    nonisolated let id: UUID
+    nonisolated let logger = Logger(subsystem: "MentoryDB.DailyRecord", category: "Domain")
     
     
     // MARK: state
@@ -20,7 +25,28 @@ actor DailyRecord: Sendable {
     
     // MARK: action
     func delete() async {
+        let contanier = MentoryDB.container
+        let context = ModelContext(contanier)
+        let id = self.id
         
+        do {
+            // 1) DailyRecord.Model 을 id 로 조회
+            let descriptor = FetchDescriptor<Model>(
+                predicate: #Predicate<Model> { $0.id == id }
+            )
+            
+            if let target = try context.fetch(descriptor).first {
+                context.delete(target)
+                try context.save()
+            } else {
+                logger.error("⚠️ DailyRecord: 삭제할 모델을 찾지 못했습니다.")
+                return
+            }
+
+        } catch {
+            logger.error("❌ DailyRecord 삭제 실패: \(error)")
+            return
+        }
     }
     
     
@@ -35,11 +61,12 @@ actor DailyRecord: Sendable {
         var analyzedResult: String
         var emotion: RecordData.Emotion
         
-        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String) {
+        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String, emotion: RecordData.Emotion) {
             self.id = id
             self.createdAt = createdAt
             self.content = content
             self.analyzedResult = analyzedResult
+            self.emotion = emotion
         }
         
         
