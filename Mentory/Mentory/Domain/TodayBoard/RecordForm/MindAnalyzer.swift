@@ -14,6 +14,7 @@ import OSLog
 @MainActor
 final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: core
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
     init(owner: RecordForm) {
         self.owner = owner
     }
@@ -21,7 +22,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     // MARK: state
     nonisolated let id = UUID()
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
     weak var owner: RecordForm?
 
     @Published var isAnalyzing: Bool = false
