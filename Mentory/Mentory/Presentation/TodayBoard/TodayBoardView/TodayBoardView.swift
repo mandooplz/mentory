@@ -20,8 +20,6 @@ struct TodayBoardView: View {
     
     
     // MARK: viewModel
-    let title: String = "기록"
-    @State private var isShowingRecordFormView = false
     @State private var isShowingInformationView = false
     @State private var selections = [false, false, false]
     var progress: Double {
@@ -34,7 +32,7 @@ struct TodayBoardView: View {
     var body: some View {
         TodayBoardLayout {
             // 상단 타이틀
-            Title(title)
+            Title("기록")
             
             // 환영 인사 헤더
             GreetingHeader(
@@ -162,6 +160,33 @@ struct TodayBoardView: View {
         }
     }
 }
+
+
+
+// MARK: Preview
+fileprivate struct TodayBoardPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
+    
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard {
+            TodayBoardView(todayBoard)
+        } else {
+            ProgressView("프리뷰 준비 중")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                }
+        }
+    }
+}
+
+#Preview {
+    TodayBoardPreview()
+}
+
 
 
 // MARK: Component
@@ -308,29 +333,12 @@ fileprivate struct RecordStatCard<Content: View>: View {
     }
 }
 
-
-
-
-// MARK: Preview
-fileprivate struct TodayBoardPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
-    
+fileprivate struct SuggestionCard: View {
     var body: some View {
-        if let todayBoard = mentoryiOS.todayBoard {
-            TodayBoardView(todayBoard)
-        } else {
-            ProgressView("프리뷰 준비 중")
-                .task {
-                    mentoryiOS.setUp()
-                    
-                    let onboarding = mentoryiOS.onboarding!
-                    onboarding.nameInput = "김철수"
-                    onboarding.next()
-                }
-        }
+        
     }
 }
 
-#Preview {
-    TodayBoardPreview()
-}
+
+
+
