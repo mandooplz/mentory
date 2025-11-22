@@ -13,10 +13,10 @@ import OSLog
 @MainActor
 final class SettingBoard: Sendable, ObservableObject {
     // MARK: core
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.SettingBoard", category: "Domain")
     init(owner: MentoryiOS) {
         self.owner = owner
     }
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.SettingBoard", category: "Domain")
     
     
     // MARK: state

@@ -442,11 +442,24 @@ struct SettingIcon: View {
 
 
 // MARK: Preview
-#Preview {
-    let mentory = MentoryiOS()
-    mentory.userName = "지석"
-    let board = SettingBoard(owner: mentory)
-    board.updateReminderTime(.now)
+fileprivate struct SettingBoardPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
     
-    return SettingBoardView(settingBoard: board)
+    var body: some View {
+        if let settingBoard = mentoryiOS.settingBoard {
+            SettingBoardView(settingBoard: settingBoard)
+        } else {
+            ProgressView("프리뷰 준비 중")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                }
+        }
+    }
+}
+#Preview {
+    SettingBoardPreview()
 }
