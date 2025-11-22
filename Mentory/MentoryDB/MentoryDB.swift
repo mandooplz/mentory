@@ -10,14 +10,14 @@ import OSLog
 
 
 // MARK: Object
-nonisolated actor MentoryDB: Sendable {
+public actor MentoryDB: Sendable {
+    
     // MARK: core
-    init(id: ID = .shared) {
+    public init(id: String = "MentoryDB.UniqueKey.shared") {
         self.id = id
     }
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
-    
     fileprivate static let container: ModelContainer = {
         do {
             return try ModelContainer(for: Model.self)
@@ -28,14 +28,15 @@ nonisolated actor MentoryDB: Sendable {
     
     
     // MARK: state
-    nonisolated let id: ID
+    nonisolated public let id: String
     
-    func setName(_ newName: String) {
+    public func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
+        let id = self.id
         
         // sharedUUID 에 해당하는 Model을 찾거나, 없으면 새로 생성
        let descriptor = FetchDescriptor<Model>(
-         predicate: #Predicate { $0.id == self.id }
+         predicate: #Predicate { $0.id == id }
        )
         
         let model: Model
@@ -65,12 +66,12 @@ nonisolated actor MentoryDB: Sendable {
             return
         }
     }
-    func getName() -> String? {
+    public func getName() -> String? {
         let context = ModelContext(MentoryDB.container)
-        
+        let id = self.id
         
         let descriptor = FetchDescriptor<Model>(
-            predicate: #Predicate { $0.id == self.id }
+            predicate: #Predicate { $0.id == id }
         )
         
         do {
@@ -90,25 +91,14 @@ nonisolated actor MentoryDB: Sendable {
     
     // MARK: value
     @Model
-    final class Model: Sendable {
+    final class Model {
         // MARK: core
-        @Attribute(.unique) var id: ID
+        @Attribute(.unique) var id: String
         var userName: String
         
         init(id: ID, userName: String) {
             self.id = id
             self.userName = userName
         }
-    }
-    
-    struct ID: Sendable, Hashable {
-        // MARK: core
-        let rawValue: String
-        
-        init(_ rawValue: String) {
-            self.rawValue = rawValue
-        }
-        
-        static let shared = ID("MentoryDB.UniqueKey.shared")
     }
 }
