@@ -11,8 +11,6 @@ import Values
 // MARK: Mock
 nonisolated
 struct MentoryDBMock: MentoryDBInterface {
-    
-    
     // MARK: core
     nonisolated let model = MentoryDBModel()
     

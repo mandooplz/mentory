@@ -12,8 +12,10 @@ import WebKit
 struct TodayBoardView: View {
     // MARK: model
     @ObservedObject var todayBoard: TodayBoard
+    @ObservedObject var mentoryiOS: MentoryiOS
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
+        self.mentoryiOS = todayBoard.owner!
     }
     
     
@@ -34,41 +36,17 @@ struct TodayBoardView: View {
             // 상단 타이틀
             Title(title)
             
-            // 작은 설명 텍스트
-            let userName = todayBoard.owner?.userName ?? "이름없음"
-            let count = todayBoard.records.count
-            
-            if count == 0 {
-                Text("\(userName)님, 일기를 작성해보세요!")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            } else {
-                Text("\(userName)님 \(count)번째 기록하셨네요!")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
+            // 환경
+            GreetingHeader(
+                userName: mentoryiOS.userName ?? "익명",
+                recordCount: todayBoard.records.count
+            )
             
             // "오늘의 명언" 카드
-            if let todayString = todayBoard.todayString {
-                LiquidGlassCard {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("오늘의 명언")
-                            .font(.system(size: 18, weight: .semibold))
-                        
-                        Text(todayString)
-                            .font(.system(size: 16))
-                            .foregroundColor(.gray)
-                            .lineSpacing(4)
-                            .multilineTextAlignment(.leading)
-                    }
-                    .padding(.vertical, 24)
-                    .padding(.horizontal, 20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .transition(.scale(scale: 0.95).combined(with: .opacity))
-            }
+            PopupCard(
+                title: "오늘의 명언",
+                content: todayBoard.todayString
+            )
             
             // 기분 기록 카드
             LiquidGlassCard {
@@ -233,25 +211,6 @@ struct TodayBoardView: View {
             await todayBoard.fetchTodayString()
             await todayBoard.loadTodayRecords()
         }
-
-//        NavigationStack {
-//            ZStack(alignment: .topTrailing) {
-//                
-//                
-//                ScrollView {
-//                    VStack(alignment: .leading, spacing: 24) {
-//                      
-//                    }
-//                    .padding(.horizontal, 24)
-//                    .padding(.bottom, 40)
-//                    
-//                }
-//            }
-//            .toolbar {
-//                
-//            }
-//        }
-
     }
 }
 
@@ -274,6 +233,59 @@ fileprivate struct Title: View {
     }
 }
 
+fileprivate struct GreetingHeader: View {
+    let userName: String
+    let recordCount: Int
+    init(userName: String, recordCount: Int) {
+        self.userName = userName
+        self.recordCount = recordCount
+    }
+    
+    var body: some View {
+        // 작은 설명 텍스트
+        if recordCount == 0 {
+            Text("\(userName)님, 일기를 작성해보세요!")
+                .font(.system(size: 12))
+                .foregroundColor(.gray)
+                .frame(maxWidth: .infinity, alignment: .center)
+        } else {
+            Text("\(userName)님 \(recordCount)번째 기록하셨네요!")
+                .font(.system(size: 12))
+                .foregroundColor(.gray)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
+    }
+}
+
+fileprivate struct PopupCard: View {
+    let title: String
+    let content: String?
+    init(title: String, content: String? = nil) {
+        self.title = title
+        self.content = content
+    }
+    
+    var body: some View {
+        if let content {
+            LiquidGlassCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(title)
+                        .font(.system(size: 18, weight: .semibold))
+                    
+                    Text(content)
+                        .font(.system(size: 16))
+                        .foregroundColor(.gray)
+                        .lineSpacing(4)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.vertical, 24)
+                .padding(.horizontal, 20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .transition(.scale(scale: 0.95).combined(with: .opacity))
+        }
+    }
+}
 
 
 
