@@ -11,11 +11,17 @@ import MentoryDB
 nonisolated struct MentorySwiftDataFlow: MentoryDBFlowInterface {
     @concurrent
     func updateName(_ newName: String) async throws {
-        fatalError()
+        let api = MentoryDBAPI()
+        
+        try await api.updateName(newName)
     }
     
     @concurrent
     func getName() async throws -> String? {
-        fatalError()
+        let api = MentoryDBAPI()
+        
+        let name = try await api.getName()
+        
+        return name
     }
 }
