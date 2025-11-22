@@ -12,6 +12,9 @@ struct OnboardingView: View {
     // MARK: model
     @ObservedObject var onboarding: Onboarding
     
+    // MARK: viewModel
+    @FocusState var isEditing: Bool // TextField에 포커스가 맞춰지면 true로 변경됨
+    
     init(_ onboarding: Onboarding) {
         self.onboarding = onboarding
     }
@@ -65,6 +68,7 @@ struct OnboardingView: View {
             
             // 닉네임 입력 필드
             TextField("이름(닉네임)을 적어주세요.", text: $onboarding.nameInput)
+                .focused($isEditing)
                 .padding()
                 .frame(height: 60)
                 .background(Color(white: 0.95))
