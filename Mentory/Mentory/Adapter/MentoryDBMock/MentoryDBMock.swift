@@ -11,6 +11,8 @@ import Values
 // MARK: Mock
 nonisolated
 struct MentoryDBMock: MentoryDBInterface {
+    
+    
     // MARK: core
     nonisolated let model = MentoryDBModel()
     
@@ -28,6 +30,10 @@ struct MentoryDBMock: MentoryDBInterface {
         return await MainActor.run {
             model.userName
         }
+    }
+    
+    func saveRecord(_ data: Values.RecordData) async throws {
+        fatalError()
     }
     
     func fetchAll() async throws -> [RecordData] {

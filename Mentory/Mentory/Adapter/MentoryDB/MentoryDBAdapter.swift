@@ -12,6 +12,7 @@ import Values
 
 // MARK: Domain
 nonisolated struct MentoryDBAdapter: MentoryDBInterface {
+    
     @concurrent
     func updateName(_ newName: String) async throws {
         let api = MentoryDBAPI()
@@ -26,6 +27,10 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         let name = try await api.getName()
         
         return name
+    }
+    
+    func saveRecord(_ data: Values.RecordData) async throws {
+        fatalError()
     }
     
     

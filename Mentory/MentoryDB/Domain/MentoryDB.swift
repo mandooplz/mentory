@@ -171,6 +171,83 @@ actor MentoryDB: Sendable {
         }
     }
     
+    func insertDataInQueue(_ recordData: RecordData) {
+        let context = ModelContext(Self.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<Model>(
+            predicate: #Predicate {
+                $0.id == id
+            }
+        )
+        
+        do {
+            if let db = try context.fetch(descriptor).first {
+                db.createRecordQueue.append(recordData)
+                logger.debug("RecordData를 큐에 추가했습니다. 현재 큐 크기: \(db.createRecordQueue.count)")
+            } else {
+                logger.debug("MentoryDB가 존재하지 않습니다. 새로운 MentoryDB를 생성한 뒤 큐에 추가합니다.")
+                let newDb = Model(id: id, userName: nil)
+                context.insert(newDb)
+            }
+            
+            try context.save()
+        } catch {
+            logger.error("RecordData 큐 추가 오류: \(error.localizedDescription)")
+            return
+        }
+    }
+    
+    
+    // MARK: action
+    func createDailyRecords() async {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<Model>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("DB가 존재하지 않아 큐를 플러시할 수 없습니다.")
+                return
+            }
+
+            guard db.createRecordQueue.isEmpty == false else {
+                logger.debug("큐에 변환할 RecordData가 없습니다.")
+                return
+            }
+
+            // 1) 새 레코드 생성
+            let newModels = db.createRecordQueue.map { data in
+                DailyRecord.Model(
+                    id: data.id,
+                    createdAt: data.createdAt,
+                    content: data.content,
+                    analyzedResult: data.analyzedResult,
+                    emotion: data.emotion
+                )
+            }
+
+            // 2) 관계 추가 (insert는 SwiftData가 자동 처리)
+            for model in newModels {
+                db.records.append(model)
+            }
+
+            // 3) 큐 비우기
+            db.createRecordQueue.removeAll()
+
+            // 4) 단일 save()로 트랜잭션 처리
+            try context.save()
+
+            logger.debug("RecordData \(newModels.count)개를 DailyRecord로 변환했습니다.")
+
+        } catch {
+            logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
+        }
+    }
+    
     
     
     // MARK: value
@@ -178,11 +255,12 @@ actor MentoryDB: Sendable {
     final class Model {
         // MARK: core
         @Attribute(.unique) var id: String
-        var userName: String
+        var userName: String?
         
+        var createRecordQueue: [RecordData] = []
         @Relationship var records: [DailyRecord.Model] = []
         
-        init(id: ID, userName: String) {
+        init(id: ID, userName: String?) {
             self.id = id
             self.userName = userName
         }
