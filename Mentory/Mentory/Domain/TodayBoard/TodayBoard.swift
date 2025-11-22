@@ -6,6 +6,7 @@
 //
 import Foundation
 import Combine
+import Values
 import OSLog
 
 
@@ -13,6 +14,7 @@ import OSLog
 @MainActor
 final class TodayBoard: Sendable, ObservableObject {
     // MARK: core
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
     init(owner: MentoryiOS) {
         self.owner = owner
     }
@@ -21,11 +23,9 @@ final class TodayBoard: Sendable, ObservableObject {
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
-    var recordRepository: MentoryRecordRepositoryInterface?
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
 
     @Published var recordForm: RecordForm? = nil
-    @Published var records: [MentoryRecord] = []
+    @Published var records: [RecordData] = []
 
     @Published var todayString: String? = nil
     @Published var isFetchedTodayString: Bool = false
@@ -61,14 +61,11 @@ final class TodayBoard: Sendable, ObservableObject {
     
     func loadTodayRecords() async {
         // capture
-        guard let repository = recordRepository else {
-            logger.error("RecordRepository가 설정되지 않았습니다.")
-            return
-        }
+        let mentoryDB = owner!.mentoryDB
 
         // process
         do {
-            let todayRecords = try await repository.fetchToday()
+            let todayRecords = try await mentoryDB.fetchToday()
             logger.info("오늘의 레코드 \(todayRecords.count)개 로드 성공")
 
             // mutate
@@ -77,7 +74,4 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("레코드 로드 실패: \(error)")
         }
     }
-
-
-    // MARK: value
 }
