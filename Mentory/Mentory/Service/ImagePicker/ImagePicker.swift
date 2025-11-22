@@ -4,10 +4,11 @@
 //
 //  Created by 구현모 on 11/18/25.
 //
-
 import SwiftUI
 import PhotosUI
 
+
+// MARK: UIKit에서 제공하는 Source를
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var imageData: Data?
     @Environment(\.dismiss) var dismiss

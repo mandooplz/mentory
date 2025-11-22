@@ -13,25 +13,21 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    nonisolated let mentoryDB: any MentoryDBFlowInterface
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
+    nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
-    var recordRepository: MentoryRecordRepositoryInterface?
 
     init(
-        mentoryDB: any MentoryDBFlowInterface = MentoryDBMock(),
-        alanLLM: any AlanLLMInterface = AlanLLMMock(),
-        recordRepository: MentoryRecordRepositoryInterface? = nil
+        mentoryDB: any MentoryDBInterface = MentoryDBMock(),
+        alanLLM: any AlanLLMInterface = AlanLLMMock()
     ) {
         self.mentoryDB = mentoryDB
         self.alanLLM = alanLLM
-        self.recordRepository = recordRepository
     }
 
     
     // MARK: state
     nonisolated let id: UUID = UUID()
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS",
-                                    category: "Domain")
     
     @Published var userName: String? = nil
     func getGreetingText() -> String {
@@ -91,7 +87,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.userName = userNameFromDB
         self.onboardingFinished = true
 
-        let todayBoard = TodayBoard(owner: self, recordRepository: self.recordRepository)
+        let todayBoard = TodayBoard(owner: self)
         self.todayBoard = todayBoard
         todayBoard.recordForm = RecordForm(owner: todayBoard)
 

@@ -5,6 +5,7 @@
 //  Created by JAY on 11/17/25.
 //
 import SwiftUI
+import Values
 
 
 // MARK: View
@@ -212,7 +213,7 @@ fileprivate struct StatusBadge: View {
 }
 
 fileprivate struct MindTypeResultView: View {
-    let mindType: MindAnalyzer.MindType
+    let mindType: Emotion
     
     var body: some View {
         HStack(spacing: 12) {
@@ -248,7 +249,7 @@ fileprivate struct ResultView: View {
     }
 }
 
-fileprivate extension MindAnalyzer.MindType {
+fileprivate extension Emotion {
     var title: String {
         switch self {
         case .veryUnpleasant: return "매우 불편한 하루"
