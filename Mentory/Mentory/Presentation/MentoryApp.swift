@@ -12,27 +12,27 @@ import SwiftData
 @main
 struct MentoryApp: App {
     // MARK: SwiftData
-    let modelContainer: ModelContainer
+//    let modelContainer: ModelContainer
 
     // MARK: model
     @State var mentoryiOS: MentoryiOS
 
     init() {
         // ModelContainer 초기화
-        do {
-            modelContainer = try ModelContainer(for: MentoryRecord.self)
-        } catch {
-            fatalError("Failed to initialize ModelContainer: \(error)")
-        }
-
-        // Repository 생성
-        let repository = MentoryRecordRepository(modelContext: modelContainer.mainContext)
+//        do {
+//            modelContainer = try ModelContainer(for: MentoryRecord.self)
+//        } catch {
+//            fatalError("Failed to initialize ModelContainer: \(error)")
+//        }
+//
+//        // Repository 생성
+//        let repository = MentoryRecordRepository(modelContext: modelContainer.mainContext)
 
         // MentoryiOS 초기화
         mentoryiOS = MentoryiOS(
-            mentoryDB: MentoryDBFlow(),
+            mentoryDB: MentorySwiftDataFlow(),
             alanLLM: AlanLLM(),
-            recordRepository: repository
+            recordRepository: nil
         )
     }
 
@@ -42,6 +42,6 @@ struct MentoryApp: App {
         WindowGroup {
             MentoryiOSView(mentoryiOS)
         }
-        .modelContainer(modelContainer)
+//        .modelContainer(modelContainer)
     }
 }

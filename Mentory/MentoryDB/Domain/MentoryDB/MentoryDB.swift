@@ -65,6 +65,7 @@ actor MentoryDB: Sendable {
             return
         }
     }
+    
     func getName() -> String? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
@@ -75,7 +76,8 @@ actor MentoryDB: Sendable {
         
         do {
             guard let model = try context.fetch(descriptor).first else {
-                fatalError("MentoryDB가 존재하지 않습니다.")
+                logger.error("저장소 내부에 MentoryDB가 존재하지 않아 nil을 반환합니다.")
+                return nil
             }
             
             logger.debug("MentoryDB에서 이름을 조회했습니다.")
