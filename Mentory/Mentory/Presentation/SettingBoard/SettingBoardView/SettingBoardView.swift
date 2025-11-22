@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import WebKit
+import OSLog
 
 
 // MARK: View
