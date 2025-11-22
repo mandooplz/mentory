@@ -56,82 +56,20 @@ struct TodayBoardView: View {
                 }
             )
             
-            // 오늘의 행동 추천 - LiquidGlass 스타일 개선
-            LiquidGlassCard {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        // 제목
-                        Text("오늘은 이런 행동 어떨까요?")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        
-                        Text("7/9")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.gray)
-                            .frame(alignment: .trailing)
+            // 행동 추천 카드
+            SuggestionCard {
+                if todayBoard.actionKeyWordItems.isEmpty {
+                    ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
+                } else {
+                    VStack(spacing: 12) {
+                        ActionRow(checked: $selections[0], text: "Swift Concurrency 이해하기")
+                        ActionRow(checked: $selections[1], text: "산책")
+                        ActionRow(checked: $selections[2], text: "소금빵 먹기")
                     }
-                    // MARK: - Progress Section
-                    HStack {
-                        ZStack {
-                            Capsule()
-                                .fill(.gray.opacity(0.12))
-                                .frame(height: 10)
-                                .overlay(
-                                    Capsule()
-                                        .stroke(.white.opacity(0.25), lineWidth: 1)
-                                )
-                            GeometryReader { geo in
-                                Capsule()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [
-                                                .purple,
-                                                .purple.opacity(0.55)
-                                            ],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
-                                    .frame(width: geo.size.width * progress)
-                                    .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
-                            }
-                        }
-                        .frame(height: 10)
-                        Button {
-                            // 새로고침 액션
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.gray)
-                                .padding(6)
-                        }
-                    }
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 6)
-                    .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(.white.opacity(0.1), lineWidth: 1)
-                    )
-                    
-                    
-                    // MARK: - Action Items
-                    if todayBoard.actionKeyWordItems.isEmpty {
-                        ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
-                    } else {
-                        VStack(spacing: 12) {
-                            ActionRow(checked: $selections[0], text: "Swift Concurrency 이해하기")
-                            ActionRow(checked: $selections[1], text: "산책")
-                            ActionRow(checked: $selections[2], text: "소금빵 먹기")
-                        }
-                        .padding(.top, 20)
-                    }
+                    .padding(.top, 20)
                 }
-                .padding(.vertical, 22)
-                .padding(.horizontal, 18)
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            
         } toolbarContent: {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -333,9 +271,81 @@ fileprivate struct RecordStatCard<Content: View>: View {
     }
 }
 
-fileprivate struct SuggestionCard: View {
+fileprivate struct SuggestionCard<Content: View>: View {
+    let header: String = "오늘은 이런 행동 어떨까요?"
+    let counter: String = "7/9"
+    let progress: Double = 7/9
+    let content: Content
+    
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    
     var body: some View {
-        
+        LiquidGlassCard {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    // 제목
+                    Text(header)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    
+                    Text(counter)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.gray)
+                        .frame(alignment: .trailing)
+                }
+                // MARK: - Progress Section
+                HStack {
+                    ZStack {
+                        Capsule()
+                            .fill(.gray.opacity(0.12))
+                            .frame(height: 10)
+                            .overlay(
+                                Capsule()
+                                    .stroke(.white.opacity(0.25), lineWidth: 1)
+                            )
+                        GeometryReader { geo in
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            .purple,
+                                            .purple.opacity(0.55)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: geo.size.width * progress)
+                                .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
+                        }
+                    }
+                    .frame(height: 10)
+                    Button {
+                        // 새로고침 액션
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.gray)
+                            .padding(6)
+                    }
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 6)
+                .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(.white.opacity(0.1), lineWidth: 1)
+                )
+                
+                self.content
+            }
+            .padding(.vertical, 22)
+            .padding(.horizontal, 18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
 
