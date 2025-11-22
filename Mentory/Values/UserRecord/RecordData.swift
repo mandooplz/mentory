@@ -25,11 +25,4 @@ public struct RecordData: Sendable, Hashable, Codable {
         self.analyzedResult = analyzedResult
         self.emotion = emotion
     }
-    
-    
-    // MARK: value
-    nonisolated
-    public enum Emotion: String, Codable, Sendable {
-        case happy, sad, neutral, surprised, scared
-    }
 }

@@ -59,9 +59,9 @@ actor DailyRecord: Sendable {
         
         var content: String
         var analyzedResult: String
-        var emotion: RecordData.Emotion
+        var emotion: Emotion
         
-        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String, emotion: RecordData.Emotion) {
+        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String, emotion: Emotion) {
             self.id = id
             self.createdAt = createdAt
             self.content = content
