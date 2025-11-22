@@ -2,14 +2,15 @@
 //  DailyRecord.swift
 //  Mentory
 //
-//  Created by 김민우 on 11/20/25.
+//  Created by 김민우 on 11/22/25.
 //
 import SwiftData
 import Foundation
+import OSLog
 
 
 // MARK: Object
-actor DailyRecord {
+actor DailyRecord: Sendable {
     // MARK: core
     
     
@@ -24,8 +25,8 @@ actor DailyRecord {
     final class Model {
         // MARK: core
         @Attribute(.unique) var id: UUID
-        
         var createdAt: Date
+        
         var content: String
         var analyzedResult: String
         
