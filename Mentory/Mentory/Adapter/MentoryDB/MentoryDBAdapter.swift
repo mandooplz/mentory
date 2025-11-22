@@ -8,7 +8,7 @@ import MentoryDB
 
 
 // MARK: Domain
-nonisolated struct MentorySwiftDataFlow: MentoryDBFlowInterface {
+nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     @concurrent
     func updateName(_ newName: String) async throws {
         let api = MentoryDBAPI()

@@ -13,12 +13,12 @@ import OSLog
 @MainActor
 final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    nonisolated let mentoryDB: any MentoryDBFlowInterface
+    nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
     var recordRepository: MentoryRecordRepositoryInterface?
 
     init(
-        mentoryDB: any MentoryDBFlowInterface = MentoryDBMock(),
+        mentoryDB: any MentoryDBInterface = MentoryDBMock(),
         alanLLM: any AlanLLMInterface = AlanLLMMock(),
         recordRepository: MentoryRecordRepositoryInterface? = nil
     ) {

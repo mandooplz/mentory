@@ -10,7 +10,7 @@ import SwiftData
 
 
 // MARK: Domain
-nonisolated actor MentorySD: MentoryDBFlowInterface {
+nonisolated actor MentorySD: MentoryDBInterface {
     // MARK: core
     private let context: ModelContext
     private let logger = Logger(subsystem: "MentoryiOS.MentorySD",

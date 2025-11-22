@@ -37,5 +37,4 @@ struct DailyRecord {
             self.analyzedResult = analyzedResult
         }
     }
-    
 }

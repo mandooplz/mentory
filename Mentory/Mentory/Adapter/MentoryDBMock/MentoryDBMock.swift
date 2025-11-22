@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Mock
 nonisolated
-struct MentoryDBMock: MentoryDBFlowInterface {
+struct MentoryDBMock: MentoryDBInterface {
     // MARK: core
     nonisolated let model = MentoryDBModel()
     

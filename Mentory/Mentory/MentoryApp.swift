@@ -30,7 +30,7 @@ struct MentoryApp: App {
 
         // MentoryiOS 초기화
         mentoryiOS = MentoryiOS(
-            mentoryDB: MentorySwiftDataFlow(),
+            mentoryDB: MentoryDBAdapter(),
             alanLLM: AlanLLM(),
             recordRepository: nil
         )
