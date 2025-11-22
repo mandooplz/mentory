@@ -12,8 +12,8 @@ import OSLog
 // MARK: Object
 @MainActor
 final class SettingBoard: Sendable, ObservableObject {
-    
     // MARK: core
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.SettingBoard", category: "Domain")
     init(owner: MentoryiOS) {
         self.owner = owner
     }
@@ -22,10 +22,7 @@ final class SettingBoard: Sendable, ObservableObject {
     // MARK: state
     weak var owner: MentoryiOS?
     nonisolated let id = UUID()
-    nonisolated private let logger = Logger(
-        subsystem: "MentoryiOS.SettingBoard",
-        category: "Domain"
-    )
+    public nonisolated let informationURL = URL(string: "https://www.notion.so/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!
     
     private static let reminderTimeKey = "mentory.settingBoard.reminderTime"
     private var isApplyingSavedReminderTime = false
