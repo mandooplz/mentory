@@ -15,16 +15,13 @@ final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
     nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
-    var recordRepository: MentoryRecordRepositoryInterface?
 
     init(
         mentoryDB: any MentoryDBInterface = MentoryDBMock(),
-        alanLLM: any AlanLLMInterface = AlanLLMMock(),
-        recordRepository: MentoryRecordRepositoryInterface? = nil
+        alanLLM: any AlanLLMInterface = AlanLLMMock()
     ) {
         self.mentoryDB = mentoryDB
         self.alanLLM = alanLLM
-        self.recordRepository = recordRepository
     }
 
     
@@ -91,7 +88,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.userName = userNameFromDB
         self.onboardingFinished = true
 
-        let todayBoard = TodayBoard(owner: self, recordRepository: self.recordRepository)
+        let todayBoard = TodayBoard(owner: self)
         self.todayBoard = todayBoard
         todayBoard.recordForm = RecordForm(owner: todayBoard)
 
