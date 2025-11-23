@@ -79,10 +79,10 @@ final class RecordForm: Sendable, ObservableObject {
     
     func removeForm() {
         // capture
-        let todayBoard = self.owner
+        let todayBoard = self.owner!
         
         // mutate
-        todayBoard?.recordForm = nil
+        todayBoard.recordForm = nil
     }
     
 

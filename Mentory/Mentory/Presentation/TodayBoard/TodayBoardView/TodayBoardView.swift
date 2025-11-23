@@ -51,7 +51,7 @@ struct TodayBoardView: View {
             RecordStatCard(
                 todayBoard: todayBoard,
                 imageName: "greeting",
-                content: "SSS",
+                content: "오늘 기분을 기록해볼까요?",
                 navLabel: "기록하러 가기",
                 navDestination: { recordForm in
                     RecordFormView(recordForm: recordForm)
@@ -229,7 +229,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                     .font(.system(size: 16, weight: .medium))
                 
                 Button {
-                    showFullScreenCover = true
+                    todayBoard.setUpForm()
                 } label: {
                     Text(self.navLabel)
                         .font(.system(size: 16, weight: .semibold))
@@ -267,7 +267,13 @@ fileprivate struct RecordStatCard<Content: View>: View {
             }
         }
         .onReceive(todayBoard.$recordForm) { recordForm in
-            self.recordForm = recordForm
+            if recordForm == nil {
+                self.showFullScreenCover = false
+                self.recordForm = recordForm
+            } else {
+                self.showFullScreenCover = true
+                self.recordForm = recordForm
+            }
         }
     }
 }
