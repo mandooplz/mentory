@@ -11,6 +11,8 @@
 		69765AE42ECEADFF00776A5F /* MentoryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7B1337682ECD63A2009931A4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337672ECD63A2009931A4 /* WidgetKit.framework */; };
 		7B13376A2ECD63A2009931A4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337692ECD63A2009931A4 /* SwiftUI.framework */; };
+		7BAE5F192ED3656D00BD1DDD /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; platformFilter = ios; };
+		7BAE5F1A2ED3656D00BD1DDD /* Values.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE00287A2ECF8D3B003324B0 /* MentoryDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */; };
 		CE00287B2ECF8D3B003324B0 /* MentoryDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028742ECF8D3B003324B0 /* MentoryDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0028872ECF906E003324B0 /* Values.framework */; };
@@ -39,6 +41,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7B1337642ECD63A2009931A4;
 			remoteInfo = MentoryWidgetExtension;
+		};
+		7BAE5F1B2ED3656D00BD1DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE0028862ECF906E003324B0;
+			remoteInfo = Values;
 		};
 		CE0028782ECF8D3B003324B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -84,6 +93,17 @@
 				69765AE42ECEADFF00776A5F /* MentoryWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BAE5F1D2ED3656D00BD1DDD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7BAE5F1A2ED3656D00BD1DDD /* Values.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CE0027B62ECF528B003324B0 /* Embed Frameworks */ = {
@@ -204,6 +224,7 @@
 			files = (
 				CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */,
 				CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */,
+				7BAE5F192ED3656D00BD1DDD /* Values.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,10 +371,12 @@
 				CE0028702ECF8D3B003324B0 /* Sources */,
 				CE0028712ECF8D3B003324B0 /* Frameworks */,
 				CE0028722ECF8D3B003324B0 /* Resources */,
+				7BAE5F1D2ED3656D00BD1DDD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7BAE5F1C2ED3656D00BD1DDD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				CE0028752ECF8D3B003324B0 /* MentoryDB */,
@@ -607,6 +630,12 @@
 			isa = PBXTargetDependency;
 			target = 7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */;
 			targetProxy = 69765AE52ECEADFF00776A5F /* PBXContainerItemProxy */;
+		};
+		7BAE5F1C2ED3656D00BD1DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = CE0028862ECF906E003324B0 /* Values */;
+			targetProxy = 7BAE5F1B2ED3656D00BD1DDD /* PBXContainerItemProxy */;
 		};
 		CE0028792ECF8D3B003324B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
