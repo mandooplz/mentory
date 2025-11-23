@@ -32,7 +32,21 @@ struct TodayBoardTests {
             // then
             await #expect(todayBoard.recordForm != nil)
         }
+        
+        @Test func whenAlreadySetUp() async throws {
+            // given
+            await todayBoard.setUpForm()
+            
+            let recordForm = try #require(await todayBoard.recordForm)
+            
+            // when
+            await todayBoard.setUpForm()
+            
+            // then
+            await #expect(todayBoard.recordForm?.id == recordForm.id)
+        }
     }
+    
     struct FetchTodayString {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
