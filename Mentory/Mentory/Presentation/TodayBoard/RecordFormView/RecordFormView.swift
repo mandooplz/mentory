@@ -7,6 +7,7 @@
 import Foundation
 import SwiftUI
 import OSLog
+import Combine
 
 
 // MARK: View
@@ -71,26 +72,22 @@ struct RecordFormView: View {
     
     private var recordFormTopBar: some View {
         HStack {
-            Button {
-                recordForm.removeForm()
-            } label: {
-                ActionButtonLabel(text: "취소", usage: .cancel)
-            }
-            Spacer()
-            Text(formattedDate)
-                .font(.headline)
-                .foregroundStyle(.primary)
+            CancelButton(
+                label: "취소",
+                action: {
+                    recordForm.removeForm()
+                })
+            
             Spacer()
             
-            Button {
-                Task {
-                    recordForm.validateInput()
-                    recordForm.submit()
-                    isShowingMindAnalyzerView.toggle()
-                }
-            } label: {
-                ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
-            }.disabled(!isSubmitEnabled)
+            TodayDate()
+            
+            Spacer()
+            
+            SubmitButton(
+                recordForm: recordForm,
+                label: "완료"
+            )
         }
         .padding(.horizontal)
     }
@@ -252,8 +249,37 @@ struct RecordFormView: View {
             }
         }
     }
+    private func timeString(from timeInterval: TimeInterval) -> String {
+        let minutes = Int(timeInterval) / 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
     
-    // 오늘 날짜 포맷팅
+    // 제출 가능 여부 계산
+    private var isSubmitEnabled: Bool {
+        // 2개의 상태에 의존한다.
+        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+}
+
+
+// MARK: Component
+fileprivate struct CancelButton: View {
+    let label: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button {
+            action()
+        } label: {
+            ActionButtonLabel(text: self.label,
+                              usage: .cancel)
+        }
+    }
+}
+
+fileprivate struct TodayDate: View {
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -261,17 +287,43 @@ struct RecordFormView: View {
         return formatter.string(from: Date())
     }
     
-    // 제출 가능 여부 계산
-    private var isSubmitEnabled: Bool {
-        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
+    var body: some View {
+        Text(formattedDate)
+            .font(.headline)
+            .foregroundStyle(.primary)
     }
+}
+
+fileprivate struct SubmitButton: View {
+    @ObservedObject var recordForm: RecordForm
+    let label: String
     
+    @State var isSubmitEnabled: Bool = false
+    @State var mindAnalyzer: MindAnalyzer? = nil
+    @State var showMindAnalyzerView: Bool = false
     
-    private func timeString(from timeInterval: TimeInterval) -> String {
-        let minutes = Int(timeInterval) / 60
-        let seconds = Int(timeInterval) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+    var body: some View {
+        Button {
+            Task {
+                recordForm.validateInput()
+                recordForm.submit()
+            }
+        } label: {
+            ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
+        }.disabled(!isSubmitEnabled)
+        
+            .task {
+                let stream = recordForm.$mindAnalyzer.values
+                    .map { ($0, $0 != nil) }
+                
+                for await (form, isPresented) in stream {
+                    self.mindAnalyzer = form
+                    self.showMindAnalyzerView = isPresented
+                }
+            }
+            .task {
+                
+            }
     }
 }
 
