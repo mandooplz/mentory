@@ -33,6 +33,10 @@ final class TodayBoard: Sendable, ObservableObject {
     
     
     // MARK: action
+    func setUpForm() {
+        
+    }
+    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
