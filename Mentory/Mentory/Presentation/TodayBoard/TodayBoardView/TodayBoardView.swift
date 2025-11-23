@@ -52,7 +52,9 @@ struct TodayBoardView: View {
                 content: "SSS",
                 navLabel: "기록하러 가기",
                 navDestination: {
-                    RecordFormView(todayBoard.recordForm!)
+                    RecordFormView(
+                        recordForm: todayBoard.recordForm!
+                    )
                 }
             )
             

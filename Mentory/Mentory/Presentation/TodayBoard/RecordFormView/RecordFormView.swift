@@ -26,10 +26,7 @@ struct RecordFormView: View {
     // 오디오 관련
     @State private var microphone = Microphone.shared
     @State private var showingAudioRecorder = false
-
-    init(_ recordForm: RecordForm) {
-        self.recordForm = recordForm
-    }
+    
     
     // MARK: - Body
     var body: some View {
@@ -287,7 +284,9 @@ fileprivate struct RecordFormPreview: View {
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
            let recordForm = todayBoard.recordForm {
-            RecordFormView(recordForm)
+            RecordFormView(
+                recordForm: recordForm,
+            )
         } else {
             ProgressView("프리뷰 로딩 중입니다.")
                 .task {

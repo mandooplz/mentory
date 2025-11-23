@@ -17,11 +17,11 @@ final class RecordForm: Sendable, ObservableObject {
     init(owner: TodayBoard) {
         self.owner = owner
     }
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     
     
     // MARK: state
     nonisolated let id = UUID()
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard.RecordForm", category: "Domain")
     weak var owner: TodayBoard?
     var mindAnalyzer: MindAnalyzer? = nil
 
