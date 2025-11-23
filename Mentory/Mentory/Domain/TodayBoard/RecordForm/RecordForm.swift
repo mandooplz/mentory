@@ -77,7 +77,7 @@ final class RecordForm: Sendable, ObservableObject {
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
     
-    func remove() {
+    func removeForm() {
         
     }
     
