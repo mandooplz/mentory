@@ -34,7 +34,14 @@ final class TodayBoard: Sendable, ObservableObject {
     
     // MARK: action
     func setUpForm() {
+        // capture
+        guard self.recordForm == nil else {
+            logger.error("이미 TodayBoard에 RecordForm이 존재합니다.")
+            return
+        }
         
+        // mutate
+        self.recordForm = RecordForm(owner: self)
     }
     
     func fetchTodayString() async {

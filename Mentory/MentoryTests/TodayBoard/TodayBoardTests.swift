@@ -14,6 +14,13 @@ import Values
 // MARK: Tests
 @Suite("TodayBoard")
 struct TodayBoardTests {
+    struct SetUpForm {
+        let mentoryiOS: MentoryiOS
+        let todayBoard: TodayBoard
+        init() async throws {
+            self.
+        }
+    }
     struct FetchTodayString {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
