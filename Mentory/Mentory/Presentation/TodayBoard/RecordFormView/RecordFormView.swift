@@ -298,7 +298,6 @@ fileprivate struct SubmitButton<Content: View>: View {
     @ViewBuilder let destination: (MindAnalyzer) -> Content
     
     @State var isSubmitEnabled: Bool = false
-    @State var mindAnalyzer: MindAnalyzer? = nil
     @State var showMindAnalyzerView: Bool = false
     
     var body: some View {
@@ -311,16 +310,15 @@ fileprivate struct SubmitButton<Content: View>: View {
             ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
         }.disabled(!isSubmitEnabled)
             .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
-                if let mindAnalyzer {
+                if let mindAnalyzer = recordForm.mindAnalyzer {
                     destination(mindAnalyzer)
-                } 
+                }
             })
             .task {
                 let stream = recordForm.$mindAnalyzer.values
-                    .map { ($0, $0 != nil) }
+                    .map { $0 != nil }
                 
-                for await (form, isPresented) in stream {
-                    self.mindAnalyzer = form
+                for await isPresented in stream {
                     self.showMindAnalyzerView = isPresented
                 }
             }

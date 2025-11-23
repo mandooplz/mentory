@@ -203,7 +203,6 @@ fileprivate struct PopupCard: View {
 
 fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
-    @State var recordForm: RecordForm? = nil
     @State var showFullScreenCover: Bool = false
     
     let imageName: String
@@ -259,18 +258,16 @@ fileprivate struct RecordStatCard<Content: View>: View {
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
             .fullScreenCover(isPresented: $showFullScreenCover) {
-                if let recordForm {
+                if let recordForm = todayBoard.recordForm {
                     navDestination(recordForm)
                 }
             }
         }
         .task {
             let stream = todayBoard.$recordForm.values
-                .map { ($0, $0 != nil)}
+                .map { $0 != nil }
             
-            for await (form, isPresent) in stream {
-                print("전달되 값: \(isPresent)")
-                self.recordForm = form
+            for await isPresent in stream {
                 self.showFullScreenCover = isPresent
             }
             
