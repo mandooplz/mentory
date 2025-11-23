@@ -18,7 +18,6 @@ struct RecordFormView: View {
     
     
     // MARK: viewModel
-    @Environment(\.dismiss) var closePresentation
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
     
@@ -65,7 +64,7 @@ struct RecordFormView: View {
             MindAnalyzerView(recordForm.mindAnalyzer!) {
                 // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기
                 // dismiss가 구현되어야 한다.
-                closePresentation()
+                recordForm.removeForm()
             }
         }
     }
@@ -295,6 +294,9 @@ fileprivate struct RecordFormPreview: View {
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김철수"
                     onboarding.next()
+                    
+                    let todayBoard = mentoryiOS.todayBoard!
+                    todayBoard.setUpForm()
                 }
         }
     }
