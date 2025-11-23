@@ -4,18 +4,21 @@
 //
 //  Created by JAY, 구현모 on 11/17/25.
 //
+import Foundation
 import SwiftUI
+import OSLog
 
 
 // MARK: View
 struct RecordFormView: View {
-    // MARK: model
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
+    
+    // MARK: core
     @ObservedObject var recordForm: RecordForm
     
     
     // MARK: viewModel
-    @Environment(\.dismiss) var closeRecordFormView
-    
+    @Environment(\.dismiss) var closePresentation
     @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
     
@@ -61,7 +64,8 @@ struct RecordFormView: View {
         .fullScreenCover(isPresented: $isShowingMindAnalyzerView) {
             MindAnalyzerView(recordForm.mindAnalyzer!) {
                 // MindAnalyzerView에서 확인 버튼을 누르면 RecordFormView도 닫기
-                closeRecordFormView()
+                // dismiss가 구현되어야 한다.
+                closePresentation()
             }
         }
     }
@@ -69,7 +73,7 @@ struct RecordFormView: View {
     private var recordFormTopBar: some View {
         HStack {
             Button {
-                closeRecordFormView()
+                logger.info("RecordForm을 닫는 액션이 구현되어야 합니다.")
             } label: {
                 ActionButtonLabel(text: "취소", usage: .cancel)
             }
@@ -249,10 +253,6 @@ struct RecordFormView: View {
             }
         }
     }
-    
-    
-    
-    
     
     // 오늘 날짜 포맷팅
     private var formattedDate: String {

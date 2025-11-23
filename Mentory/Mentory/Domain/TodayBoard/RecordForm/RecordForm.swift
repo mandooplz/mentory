@@ -55,7 +55,6 @@ final class RecordForm: Sendable, ObservableObject {
             self.validationResult = .none
         }
     }
-    
     func submit() {
         if titleInput.isEmpty {
             logger.error("RecordForm의 titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
@@ -77,6 +76,11 @@ final class RecordForm: Sendable, ObservableObject {
         // MindAnalyzer에게 분석 요청
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
+    
+    func remove() {
+        
+    }
+    
 
     // MARK: value
     nonisolated struct Record: Identifiable, Sendable, Hashable {
