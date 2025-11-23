@@ -7,7 +7,9 @@
 import Foundation
 import SwiftUI
 import OSLog
-import Combine
+import Collections
+import AsyncAlgorithms
+@preconcurrency import Combine
 
 
 // MARK: View
@@ -254,13 +256,6 @@ struct RecordFormView: View {
         let seconds = Int(timeInterval) % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-    
-    // 제출 가능 여부 계산
-    private var isSubmitEnabled: Bool {
-        // 2개의 상태에 의존한다.
-        !recordForm.titleInput.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !recordForm.textInput.trimmingCharacters(in: .whitespaces).isEmpty
-    }
 }
 
 
@@ -322,7 +317,13 @@ fileprivate struct SubmitButton: View {
                 }
             }
             .task {
+                let titleInputStream = recordForm.$titleInput.values
+                let textInputStream = recordForm.$textInput.values
                 
+                for await (title, text) in zip(titleInputStream, textInputStream) {
+                    self.isSubmitEnabled = !title.trimmingCharacters(in: .whitespaces).isEmpty &&
+                    !text.trimmingCharacters(in: .whitespaces).isEmpty
+                }
             }
     }
 }
