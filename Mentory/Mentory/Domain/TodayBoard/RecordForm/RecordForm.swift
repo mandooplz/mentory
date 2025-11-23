@@ -23,7 +23,7 @@ final class RecordForm: Sendable, ObservableObject {
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: TodayBoard?
-    var mindAnalyzer: MindAnalyzer? = nil
+    @Published var mindAnalyzer: MindAnalyzer? = nil
 
     @Published var titleInput: String = ""
     @Published var textInput: String = ""
@@ -36,6 +36,10 @@ final class RecordForm: Sendable, ObservableObject {
     
     
     // MARK: action
+    func setUpAnalyzer() {
+        
+    }
+    
     func validateInput() {
         // capture
         let currentTitleInput = self.titleInput
