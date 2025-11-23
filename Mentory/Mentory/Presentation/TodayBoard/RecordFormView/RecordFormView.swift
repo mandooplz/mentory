@@ -72,7 +72,7 @@ struct RecordFormView: View {
     private var recordFormTopBar: some View {
         HStack {
             Button {
-                logger.info("RecordForm을 닫는 액션이 구현되어야 합니다.")
+                recordForm.removeForm()
             } label: {
                 ActionButtonLabel(text: "취소", usage: .cancel)
             }
