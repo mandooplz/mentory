@@ -52,9 +52,11 @@ struct TodayBoardView: View {
                 content: "SSS",
                 navLabel: "기록하러 가기",
                 navDestination: {
-                    RecordFormView(
-                        recordForm: todayBoard.recordForm!
-                    )
+                    if let recordForm = todayBoard.recordForm {
+                        RecordFormView(
+                            recordForm: recordForm
+                        )
+                    }
                 }
             )
             
@@ -93,6 +95,9 @@ struct TodayBoardView: View {
                             }
                         }
                     }
+        }
+        .task {
+            todayBoard.setUpForm()
         }
         .task {
             await todayBoard.fetchTodayString()
