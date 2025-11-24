@@ -25,12 +25,15 @@ final class MindAnalyzer: Sendable, ObservableObject {
     weak var owner: RecordForm?
 
     @Published var isAnalyzing: Bool = false
+    @Published var isAnalyzeFinished: Bool = false
     @Published var selectedCharacter: CharacterType = .A
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
     @Published var firstAnalysisResult: FirstAnalysisResult? = nil
     @Published var secondAnalysisResult: SecondAnalysisResult? = nil
+    
+    
     
     
     // MARK: action
@@ -126,6 +129,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         self.secondAnalysisResult = secondResult
         self.mindType = firstResult.mindType
         self.analyzedResult = secondResult.empathyMessage
+        self.isAnalyzeFinished = true
 
         // TodayBoard의 actionKeyWordItems 업데이트 (체크되지 않은 상태로 초기화, owner: MindAnalyzer -> RecordForm -> TodayBoard)
         self.owner!.owner!.actionKeyWordItems = secondResult.actionKeywords.map { ($0, false) }

@@ -58,7 +58,7 @@ struct MindAnalyzerView: View {
             ConfirmButton(
                 icon: "checkmark.circle.fill",
                 label: "확인",
-                isPresented: mindAnalyzer.isAnalyzing == false,
+                isPresented: mindAnalyzer.isAnalyzeFinished,
                 action: {
                     let recordForm = mindAnalyzer.owner!
                     
