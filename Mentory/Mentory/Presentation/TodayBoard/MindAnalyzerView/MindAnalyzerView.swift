@@ -12,12 +12,9 @@ import Values
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
-    @Environment(\.dismiss) private var dismiss
-    var onComplete: (() -> Void)?
 
-    init(_ mindAnalyzer: MindAnalyzer, onComplete: (() -> Void)? = nil) {
+    init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
-        self.onComplete = onComplete
     }
 
 
@@ -100,11 +97,9 @@ struct MindAnalyzerView: View {
 
     private var confirmButton: some View {
         Button {
-            dismiss()
-            // RecordFormView도 닫기
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                onComplete?()
-            }
+            let recordForm = mindAnalyzer.owner!
+            
+            recordForm.removeForm()
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
