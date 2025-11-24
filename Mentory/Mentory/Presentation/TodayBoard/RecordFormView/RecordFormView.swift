@@ -20,9 +20,6 @@ struct RecordFormView: View {
 
 
     // MARK: viewModel
-    @State private var isShowingMindAnalyzerView = false
-    
-    // 이미지 관련
     @State private var showingImagePicker = false
     @State private var showingCamera = false
     
