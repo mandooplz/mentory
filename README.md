@@ -18,7 +18,6 @@
 
   <p>
     <img src="https://img.shields.io/badge/SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white" />
-    <img src="https://img.shields.io/badge/Combine-333333?style=for-the-badge&logo=swift&logoColor=white" />
     <img src="https://img.shields.io/badge/Swift%206-FA7343?style=for-the-badge&logo=swift&logoColor=white" />
   </p>
 </div>
@@ -195,6 +194,54 @@ Xcode에서 타겟 선택 → `Cmd + R` 실행
 <p align="center">
   <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
+
+## 프로젝트 구조
+
+```text
+Mentory/                          # 레포지토리 루트
+├─ Mentory/                       # Xcode 프로젝트 루트
+│  ├─ Mentory/                    # iOS 앱 타깃
+│  │  ├─ Domain/
+│  │  │  ├─ Onboarding/
+│  │  │  ├─ TodayBoard/
+│  │  │  └─ SettingBoard/
+│  │  ├─ Presentation/
+│  │  │  ├─ Onboarding/
+│  │  │  ├─ TodayBoard/
+│  │  │  ├─ SettingBoard/
+│  │  │  └─ Components/
+│  │  ├─ Adapter/
+│  │  │  ├─ AlanLLM/              # LLM 연동 어댑터
+│  │  │  ├─ AlanLLMMock/          # LLM 목 구현
+│  │  │  ├─ MentoryDB/            # DB 연동 어댑터
+│  │  │  └─ MentoryDBMock/        # DB 목 구현
+│  │  ├─ Service/
+│  │  │  ├─ ImagePicker/          # 이미지 선택 서비스
+│  │  │  └─ Microphone/           # 마이크/녹음 서비스
+│  │  ├─ TestSample/              # 예제/샘플 코드
+│  │  └─ Assets.xcassets/
+│  ├─ MentoryDB/                  # 데이터베이스 모듈
+│  │  ├─ Domain/
+│  │  └─ Presentation/             # DB 관련 UI (프로젝트 폴더명 기준)
+│  ├─ MentoryWidget/              # 위젯 타깃
+│  │  ├─ Presentation/
+│  │  └─ Assets.xcassets/
+│  ├─ MentoryWatch Watch App/     # watchOS 타깃
+│  │  ├─ Domain/
+│  │  └─ Presentation/
+│  └─ Values/                     # DomainValues 등 공통 값
+├─ docs/                          # 개발 문서
+│  ├─ write-issue/
+│  ├─ swiftui-combine-mvvm/
+│  ├─ mvvm-swift-concurrency/
+│  ├─ swiftdata/
+│  ├─ alan-api/
+│  ├─ firebase-ai/
+│  ├─ watchos/
+│  ├─ Widget-Extension/
+│  └─ troubleshooting/
+└─ mentory.png, mentory.drawio 등 도메인 다이어그램 파일
+```
 
 ## 개발 문서
 
