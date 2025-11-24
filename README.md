@@ -1,65 +1,141 @@
-# MentoryiOS
+<!-- 프로젝트 개요 -->
+<div align="center">
+  <a href="https://github.com/EST-iOS4/Mentory">
+    <img src="./mentory-icon.png" alt="Logo" width="150" height="150">
+  </a>
 
-![Swift](https://img.shields.io/badge/Swift-6.0-orange?style=flat-square&logo=swift)
-![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey?style=flat-square)
-![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-blue?style=flat-square)
+  <h3>Mentory</h3>
+
+  <p>
+    텍스트·음성·사진 기반 감정 기록을 분석하여, AI가 감정과 사고 패턴을 파악하고 개인화된 리프레이밍 조언을 제공하는 멘탈 케어 앱
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/iOS-1A1A1A?style=for-the-badge&logo=apple&logoColor=white" />
+    <img src="https://img.shields.io/badge/watchOS-000000?style=for-the-badge&logo=apple&logoColor=white" />
+    <img src="https://img.shields.io/badge/Widget-FF7F2A?style=for-the-badge&logo=swift&logoColor=white" />
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white" />
+    <img src="https://img.shields.io/badge/Swift%206-FA7343?style=for-the-badge&logo=swift&logoColor=white" />
+  </p>
+</div>
 
 ## 목차
+- [앱 주요 기능](#앱-주요-기능)
+- [스크린샷](#스크린샷)
+- [사용 기술](#사용-기술)
+- [시작하기](#시작하기)
+  - [필요 조건](#필요-조건)
+  - [설치](#설치)
+  - [환경 설정](#환경-설정)
+  - [실행](#실행)
+- [소프트웨어 디자인](#소프트웨어-디자인)
+- [프로젝트 구조](#프로젝트-구조)
+- [개발 문서](#개발-문서)
+- [트러블슈팅 문서](#트러블슈팅-문서)
+- [팀원](#팀원)
 
-- [MentoryiOS](#mentoryios)
-  - [목차](#목차)
-  - [개요](#개요)
-  - [사용 기술](#사용-기술)
-    - [🏗️ 아키텍처 \& 디자인 패턴](#️-아키텍처--디자인-패턴)
-    - [💾 데이터 관리](#-데이터-관리)
-    - [🎤 음성 처리](#-음성-처리)
-    - [🤖 AI \& LLM](#-ai--llm)
-    - [📊 헬스케어 연동](#-헬스케어-연동)
-    - [🔧 기타](#-기타)
-  - [시작하기](#시작하기)
-    - [필요 조건](#필요-조건)
-    - [설치](#설치)
-    - [환경 설정](#환경-설정)
-    - [실행](#실행)
-  - [소프트웨어 디자인](#소프트웨어-디자인)
-  - [개발 문서](#개발-문서)
-  - [트러블슈팅 문서](#트러블슈팅-문서)
-  - [팀원](#팀원)
 
-## 개요
+---
 
-Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 맞춤형 조언을 제공하는 멘탈 케어 iOS 앱입니다. 일기처럼 텍스트·이미지·채팅으로 감정을 남기거나 음성을 iOS Speech Framework로 전사해 기록할 수 있으며, 전사된 데이터는 LLM이 감정 상태를 해석하고 캐릭터 기반 위로 멘트와 실천 가능한 Todo까지 추천합니다.
+## 앱 주요 기능
 
-월간 감정 통계, 감정 캘린더, Alert/리마인드, 하루 한 줄 명언, 맞춤 행동 추천 등으로 사용자가 스스로의 변화를 추적할 수 있고, SwiftData·HealthKit 연동으로 안전한 백업과 헬스 데이터 확장이 가능합니다.
+### ✏️ 감정 기록 (텍스트 / 음성 / 사진)
+- 텍스트로 감정 기록
+- 음성 입력 → 자동 텍스트 변환
+- 사진 기반 상황 단서 감지
+
+### 🧠 AI 감정 분석 & 사고 패턴 탐지
+- ESTsoft Alan API 기반 감정/사고 패턴 분석
+- Firebase AI Logic 기반 개인화 조언
+
+### 👥 AI 분석 스타일 선택
+- **냉철한 분석 캐릭터** (직설적·해결 중심)
+- **따뜻한 분석 캐릭터** (공감 기반 리프레이밍)
+
+### 📊 감정 변화 통계
+- 일/주/월 감정 변화 그래프 제공
+- 자주 등장하는 감정·사고 패턴 시각화
+
+### 🔔 감정 기록 알림(Reminder)
+- 원하는 시간에 기록 리마인드
+- UserNotificationCenter 기반
+
+### ⌚ WatchOS & Widget 지원
+- WatchOS에서 빠르게 감정 기록
+- 홈 위젯에서 기록/확인
+
+---
+
+## 스크린샷
+> 실제 화면 캡처본을 아래 이미지 자리에 넣기
+
+<div align="center">
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/d575e1c2-9296-4f9c-86a7-a19dd72ce242" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/e354d1a4-7e63-490d-b508-3320f72969b5" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/f8aa52b9-7296-4a04-a3c7-d99f8f816fa4" />
+</div>
+
+<div align="center" style="margin-top: 20px;">
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/e19a491b-c8d9-4177-9332-a1505aa48587" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/52e48fcf-6f25-4a74-936b-36bd641a5f46" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/d616b7f5-d5fb-49d5-9cc1-dd74a515df7c" />
+</div>
+
+---
 
 ## 사용 기술
 
-### 🏗️ 아키텍처 & 디자인 패턴
+<table>
+  <thead>
+    <tr>
+      <th>카테고리</th>
+      <th>기술</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🏗️ 아키텍처</td>
+      <td>
+        <ul>
+          <li><strong>SwiftUI + MVVM</strong></li>
+          <li><strong>Swift Concurrency</strong></li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>💾 데이터 관리</td>
+      <td>
+        <ul>
+          <li><strong>SwiftData</strong></li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>🎤 음성 처리</td>
+      <td>
+        <ul>
+          <li><strong>Speech Framework</strong></li>
+          <li><strong>AVFoundation</strong></li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>🤖 LLM</td>
+      <td>
+        <ul>
+          <li><strong>ESTSOFT Alan API</strong></li>
+          <li><strong>Firebase AI Logic</strong></li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-- **SwiftUI** - 선언형 UI 프레임워크
-- **MVVM** - Combine 기반 반응형 아키텍처
-- **Swift Concurrency** - async/await 및 Task 기반 비동기 처리 (Swift 6)
 
-### 💾 데이터 관리
-
-- **SwiftData** - 안전한 로컬 데이터 영속화 및 백업
-- **UserDefaults** - 사용자 설정 및 간단한 데이터 저장
-
-### 🎤 음성 처리
-
-- **Speech Framework** - iOS 기본 음성 인식 및 전사(STT)
-
-### 🤖 AI & LLM
-
-- **ESTSOFT Alan LLM API** - 감정 분석 및 맞춤형 조언 생성
-
-### 📊 헬스케어 연동
-
-- **HealthKit** - 건강 데이터 확장 및 통합
-
-### 🔧 기타
-
-- **Combine** - 반응형 프로그래밍 및 이벤트 처리
+---
 
 ## 시작하기
 
@@ -68,66 +144,47 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 <table>
   <tr>
     <td align="center" width="120">
-      <img src="https://img.shields.io/badge/-26.1+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS">
-    </td>
-    <td>
-      <b>macOS 26.1 이상</b>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
       <img src="https://img.shields.io/badge/-26.1+-147EFB?style=for-the-badge&logo=xcode&logoColor=white" alt="Xcode">
     </td>
-    <td>
-      <b>Xcode 26.1 이상</b>
-    </td>
+    <td><b>Xcode 26.1 이상</b></td>
   </tr>
   <tr>
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-18.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
     </td>
-    <td>
-      <b>iOS 18.0 이상</b> (시뮬레이터 또는 실제 디바이스)
-    </td>
+    <td><b>iOS 18.0 이상</b></td>
   </tr>
   <tr>
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-6.0-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift">
     </td>
-    <td>
-      <b>Swift 6.0</b>
-    </td>
+    <td><b>Swift 6.0</b></td>
   </tr>
 </table>
 
 ### 설치
 
-1. 저장소를 클론합니다.
-   ```bash
-   git clone https://github.com/EST-iOS4/Mentory-iOS.git
-   cd Mentory-iOS
-   ```
+```bash
+git clone https://github.com/EST-iOS4/Mentory-iOS.git
+cd Mentory-iOS
+```
 
 ### 환경 설정
 
-1. 저장소 루트에 있는 `Secrets.xcconfig.sample`을 복사하여 `Secrets.xcconfig`를 생성합니다.
-   ```bash
-   cp Secrets.xcconfig.sample Secrets.xcconfig
-   ```
-2. 새로 생성된 `Secrets.xcconfig`에 Alan API 키 등 민감한 값을 채웁니다.
-   ```
-   ALAN_API_KEY = your_api_key_here
-   ```
-   해당 파일은 `.gitignore`에 포함되어 있으니 저장소에 커밋되지 않습니다.
+```bash
+cp Secrets.xcconfig.sample Secrets.xcconfig
+```
+
+- `Secrets.xcconfig`에 Alan API Key 등 민감한 값을 입력합니다.  
+- 해당 파일은 `.gitignore`로 관리되어 저장소에 커밋되지 않습니다.
 
 ### 실행
 
-1. Xcode에서 `Mentory/Mentory.xcodeproj`를 엽니다.
-   ```bash
-   open Mentory/Mentory.xcodeproj
-   ```
-2. 타겟 디바이스를 선택합니다 (시뮬레이터 또는 실제 디바이스).
-3. `Cmd + R`을 눌러 앱을 빌드하고 실행합니다.
+```bash
+open Mentory/Mentory.xcodeproj
+```
+
+Xcode에서 타겟 선택 → `Cmd + R` 실행
 
 ## 소프트웨어 디자인
 
@@ -136,6 +193,54 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 <p align="center">
   <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
+
+## 프로젝트 구조
+
+```text
+Mentory/                          # 레포지토리 루트
+├─ Mentory/                       # Xcode 프로젝트 루트
+│  ├─ Mentory/                    # iOS 앱 타깃
+│  │  ├─ Domain/
+│  │  │  ├─ Onboarding/
+│  │  │  ├─ TodayBoard/
+│  │  │  └─ SettingBoard/
+│  │  ├─ Presentation/
+│  │  │  ├─ Onboarding/
+│  │  │  ├─ TodayBoard/
+│  │  │  ├─ SettingBoard/
+│  │  │  └─ Components/
+│  │  ├─ Adapter/
+│  │  │  ├─ AlanLLM/              # LLM 연동 어댑터
+│  │  │  ├─ AlanLLMMock/          # LLM 목 구현
+│  │  │  ├─ MentoryDB/            # DB 연동 어댑터
+│  │  │  └─ MentoryDBMock/        # DB 목 구현
+│  │  ├─ Service/
+│  │  │  ├─ ImagePicker/          # 이미지 선택 서비스
+│  │  │  └─ Microphone/           # 마이크/녹음 서비스
+│  │  ├─ TestSample/              # 예제/샘플 코드
+│  │  └─ Assets.xcassets/
+│  ├─ MentoryDB/                  # 데이터베이스 모듈
+│  │  ├─ Domain/
+│  │  └─ Presentation/             # DB 관련 UI (프로젝트 폴더명 기준)
+│  ├─ MentoryWidget/              # 위젯 타깃
+│  │  ├─ Presentation/
+│  │  └─ Assets.xcassets/
+│  ├─ MentoryWatch Watch App/     # watchOS 타깃
+│  │  ├─ Domain/
+│  │  └─ Presentation/
+│  └─ Values/                     # DomainValues 등 공통 값
+├─ docs/                          # 개발 문서
+│  ├─ write-issue/
+│  ├─ swiftui-combine-mvvm/
+│  ├─ mvvm-swift-concurrency/
+│  ├─ swiftdata/
+│  ├─ alan-api/
+│  ├─ firebase-ai/
+│  ├─ watchos/
+│  ├─ Widget-Extension/
+│  └─ troubleshooting/
+└─ mentory.png, mentory.drawio 등 도메인 다이어그램 파일
+```
 
 ## 개발 문서
 
@@ -153,7 +258,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 
 ## 트러블슈팅 문서
 
-아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
+아래는 팀원별로 개발 과정에서 발생한 문제를 정리한 트러블슈팅 문서입니다.
 
 1. 박재이
    - 작성된 문서 없음
@@ -162,7 +267,7 @@ Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 �
 3. 구현모
    - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyunmo/20251117-app-icon.md)
 4. 김민우
-   - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
+   - 작성된 문서 없음
 
 ## 팀원
 
