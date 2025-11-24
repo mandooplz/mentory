@@ -329,6 +329,14 @@ fileprivate extension MindAnalyzer.CharacterType {
 }
 
 
+// MARK: Component
+fileprivate struct Header: View {
+    var body: some View {
+        
+    }
+}
+
+
 // MARK: Preview
 fileprivate struct MindAnalyzerPreview: View {
     @StateObject private var mentoryiOS = MentoryiOS()
@@ -348,6 +356,8 @@ fileprivate struct MindAnalyzerPreview: View {
                     onboarding.next()
                     
                     let todayBoard = mentoryiOS.todayBoard!
+                    
+                    todayBoard.setUpForm()
                     let recordForm = todayBoard.recordForm!
                     
                     recordForm.titleInput = "SAMPLE-TITLE"
