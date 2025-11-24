@@ -73,33 +73,13 @@ struct RecordFormView: View {
                     model: recordForm
                 )
                 
-                self.bottomToolBar
+                AudioButton(
+                    model: recordForm
+                )
             })
         .task {
             // 기록 시작 시간 설정
             recordForm.startTime = Date()
-        }
-    }
-    
-    @ViewBuilder var bottomToolBar: some View {
-        Button(action: {
-            showingAudioRecorder = true
-        }) {
-            Image(systemName: "waveform")
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundStyle(recordForm.voiceInput != nil ? .blue : .primary)
-        }
-        .sheet(isPresented: $showingAudioRecorder) {
-            RecordingSheet(
-                onComplete: { url in
-                    recordForm.voiceInput = url
-                    showingAudioRecorder = false
-                },
-                onCancel: {
-                    showingAudioRecorder = false
-                }
-            )
         }
     }
 }
@@ -313,6 +293,33 @@ fileprivate struct CameraButton: View {
         }
         .sheet(isPresented: $showCameraSheet) {
             ImagePicker(imageData: $model.imageInput, sourceType: .camera)
+        }
+    }
+}
+
+fileprivate struct AudioButton: View {
+    @ObservedObject var model: RecordForm
+    @State private var showingAudioRecorder = false
+    
+    var body: some View {
+        Button(action: {
+            showingAudioRecorder = true
+        }) {
+            Image(systemName: "waveform")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundStyle(model.voiceInput != nil ? .blue : .primary)
+        }
+        .sheet(isPresented: $showingAudioRecorder) {
+            RecordingSheet(
+                onComplete: { url in
+                    model.voiceInput = url
+                    showingAudioRecorder = false
+                },
+                onCancel: {
+                    showingAudioRecorder = false
+                }
+            )
         }
     }
 }
