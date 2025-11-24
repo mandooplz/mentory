@@ -14,15 +14,12 @@ import AsyncAlgorithms
 
 // MARK: View
 struct RecordFormView: View {
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
-    
     // MARK: core
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
     @ObservedObject var recordForm: RecordForm
-    @Environment(\.dismiss) var dismiss
 
 
     // MARK: viewModel
-    @State private var cachedTextForAnalysis: String = ""
     @State private var isShowingMindAnalyzerView = false
     
     // 이미지 관련
@@ -40,7 +37,9 @@ struct RecordFormView: View {
             Color(.systemGroupedBackground)
                 .ignoresSafeArea()
             VStack(spacing: 0) {
+                
                 recordFormTopBar
+                
                 ScrollView {
                     VStack(spacing: 16) {
                         titleInputCard
