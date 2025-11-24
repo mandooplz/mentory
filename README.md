@@ -1,7 +1,7 @@
 <!-- 프로젝트 개요 -->
 <div align="center">
   <a href="https://github.com/EST-iOS4/Mentory">
-    <img src="https://user-images.githubusercontent.com/33917774/199519767-60590904-b15a-4464-ab21-e3a424649d5c.svg" alt="Logo" width="70" height="70">
+    <img src="./mentory-icon.png" alt="Logo" width="110" height="110">
   </a>
 
   <h3>Mentory</h3>
