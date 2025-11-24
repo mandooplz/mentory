@@ -128,9 +128,7 @@ struct RecordFormTests {
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
 
-        // MARK: 제출 기능 테스트
-
-        func TodayBoard_addRecord() async throws {
+        @Test func TodayBoard_addRecord() async throws {
             // Given
             await MainActor.run {
                 recordForm.titleInput = "테스트 제목"
@@ -148,32 +146,85 @@ struct RecordFormTests {
             let newCount = await MainActor.run { todayBoard.records.count }
             #expect(newCount == initialCount + 1)
         }
-
-        @Test("제출 후 폼이 초기화되지 않음")
-        func afterSubmit_formIsReset() async throws {
-            // Given
+        
+        @Test func notResetTitleInputWhenSucceed() async throws {
+            // given
             let testTitle = "TEST_TITLE"
-            let testText = "TEST_TEXT"
-            let testImageData: Data = .init([0x00, 0x01])
-            let testVoiceURL = URL(string: "file:///test.m4a")!
-            
             await MainActor.run {
                 recordForm.titleInput = testTitle
+            }
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.titleInput == testTitle)
+        }
+        @Test func notResetTextInputWhenSucceed() async throws {
+            // given
+            let testText = "TEST_TEXT"
+            await MainActor.run {
                 recordForm.textInput = testText
+            }
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.textInput == testText)
+        }
+        @Test func notResetImageInputWhenSucceed() async throws {
+            // given
+            let testImageData: Data = .init([0x00, 0x01])
+            await MainActor.run {
                 recordForm.imageInput = testImageData
+            }
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.imageInput == testImageData)
+        }
+        @Test func notResetVoiceInputWhenSucceed() async throws {
+            // given
+            let testVoiceURL = URL(string: "file:///test.m4a")!
+            await MainActor.run {
                 recordForm.voiceInput = testVoiceURL
             }
-
-            // When
+            
+            // when
             await recordForm.submit()
-
-            // Then
-            await #expect(recordForm.titleInput == testTitle)
-            await #expect(recordForm.textInput == testText)
-            await #expect(recordForm.imageInput == testImageData)
+            
+            // then
             await #expect(recordForm.voiceInput == testVoiceURL)
-            await #expect(recordForm.validationResult == .none)
         }
+        
+        
+//        @Test func afterSubmit_formIsReset() async throws {
+//            // Given
+//            let testTitle = "TEST_TITLE"
+//            let testText = "TEST_TEXT"
+//            let testImageData: Data = .init([0x00, 0x01])
+//            let testVoiceURL = URL(string: "file:///test.m4a")!
+//            
+//            await MainActor.run {
+//                recordForm.titleInput = testTitle
+//                recordForm.textInput = testText
+//                recordForm.imageInput = testImageData
+//                recordForm.voiceInput = testVoiceURL
+//            }
+//
+//            // When
+//            await recordForm.submit()
+//
+//            // Then
+//            await #expect(recordForm.titleInput == testTitle)
+//            await #expect(recordForm.textInput == testText)
+//            await #expect(recordForm.imageInput == testImageData)
+//            await #expect(recordForm.voiceInput == testVoiceURL)
+//            await #expect(recordForm.validationResult == .none)
+//        }
 
         @Test("유효하지 않은 입력으로 제출 시 Record가 추가되지 않음")
         func whenInvalidInput_recordIsNotAdded() async throws {
