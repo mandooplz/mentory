@@ -60,13 +60,19 @@ actor DailyRecord: Sendable {
         var content: String
         var analyzedResult: String
         var emotion: Emotion
-        
-        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String, emotion: Emotion) {
+
+        // 행동 추천 (무조건 3개)
+        var actionTexts: [String]
+        var actionCompletionStatus: [Bool]
+
+        init(id: UUID = UUID(), createdAt: Date, content: String, analyzedResult: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
             self.id = id
             self.createdAt = createdAt
             self.content = content
             self.analyzedResult = analyzedResult
             self.emotion = emotion
+            self.actionTexts = actionTexts
+            self.actionCompletionStatus = actionCompletionStatus
         }
         
         
@@ -76,7 +82,9 @@ actor DailyRecord: Sendable {
                          createdAt: self.createdAt,
                          content: self.content,
                          analyzedResult: self.analyzedResult,
-                         emotion: self.emotion)
+                         emotion: self.emotion,
+                         actionTexts: self.actionTexts,
+                         actionCompletionStatus: self.actionCompletionStatus)
         }
     }
 }
