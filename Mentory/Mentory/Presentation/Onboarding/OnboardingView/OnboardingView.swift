@@ -106,6 +106,7 @@ struct OnboardingView: View {
                     .frame(height: 60)
                     .background(Color(white: 0.95))
                     .cornerRadius(16)
+                    .submitLabel(.done)
                 
                 // 계속 버튼
                 Button(action: {
