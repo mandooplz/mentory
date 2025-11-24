@@ -54,7 +54,11 @@ struct RecordFormView: View {
                 )
             },
             main: {
-                self.titleInputCard
+                TitleField(
+                    prompt: "제목",
+                    text: $recordForm.titleInput
+                )
+                
                 self.textInputCard
                 self.imagePreviewCard
                 self.voicePreviewCard
@@ -111,13 +115,6 @@ struct RecordFormView: View {
                     showingAudioRecorder = false
                 }
             )
-        }
-    }
-    private var titleInputCard: some View {
-        LiquidGlassCard {
-            TextField("제목", text: $recordForm.titleInput)
-                .font(.title3)
-                .padding()
         }
     }
     
@@ -348,5 +345,18 @@ fileprivate struct TopBarLayout<L:View, C: View, R: View>: View {
             self.right()
         }
         .padding(.horizontal)
+    }
+}
+
+fileprivate struct TitleField: View {
+    let prompt: String
+    @Binding var text: String
+    
+    var body: some View {
+        LiquidGlassCard {
+            TextField(prompt, text: $text)
+                .font(.title3)
+                .padding()
+        }
     }
 }
