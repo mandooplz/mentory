@@ -7,6 +7,7 @@
 import SwiftUI
 import WebKit
 import Combine
+import Values
 
 
 // MARK: View
@@ -60,7 +61,7 @@ struct TodayBoardView: View {
             )
             
             // 행동 추천 카드
-            SuggestionCard {
+            SuggestionCard(todayBoard: todayBoard) {
                 if todayBoard.actionKeyWordItems.isEmpty {
                     ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
                 } else {
@@ -80,6 +81,7 @@ struct TodayBoardView: View {
                                         // 체크 상태 변경 시 DB에 실시간 업데이트
                                         Task {
                                             await todayBoard.updateActionCompletion()
+                                            await todayBoard.loadTodayRecords()
                                         }
                                     }
                                 ),
@@ -112,8 +114,10 @@ struct TodayBoardView: View {
                     }
         }
         .task {
-            await todayBoard.fetchTodayString()
+            // 레코드 로드를 먼저 실행 (DB에서 가져오므로 빠름)
             await todayBoard.loadTodayRecords()
+            // 명언은 나중에 로드 (API 호출이므로 시간 걸림)
+            await todayBoard.fetchTodayString()
         }
     }
 }
@@ -294,12 +298,31 @@ fileprivate struct RecordStatCard<Content: View>: View {
 }
 
 fileprivate struct SuggestionCard<Content: View>: View {
+    @ObservedObject var todayBoard: TodayBoard
     let header: String = "오늘은 이런 행동 어떨까요?"
-    let counter: String = "7/9"
-    let progress: Double = 7/9
     let content: Content
-    
-    init(@ViewBuilder content: () -> Content) {
+
+    var counter: String {
+        // 모든 레코드에서 행동 추천 수 합산
+        let totalActions = todayBoard.records.reduce(0) { $0 + $1.actionTexts.count }
+        let completedActions = todayBoard.records.reduce(0) { sum, record in
+            sum + record.actionCompletionStatus.filter { $0 }.count
+        }
+        return "\(completedActions)/\(totalActions)"
+    }
+
+    var progress: Double {
+        // 모든 레코드에서 행동 완료율 계산
+        let totalActions = todayBoard.records.reduce(0) { $0 + $1.actionTexts.count }
+        guard totalActions > 0 else { return 0 }
+        let completedActions = todayBoard.records.reduce(0) { sum, record in
+            sum + record.actionCompletionStatus.filter { $0 }.count
+        }
+        return Double(completedActions) / Double(totalActions)
+    }
+
+    init(todayBoard: TodayBoard, @ViewBuilder content: () -> Content) {
+        self.todayBoard = todayBoard
         self.content = content()
     }
     
@@ -342,6 +365,7 @@ fileprivate struct SuggestionCard<Content: View>: View {
                                 )
                                 .frame(width: geo.size.width * progress)
                                 .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
+                                .animation(.spring(response: 0.6, dampingFraction: 0.7), value: progress)
                         }
                     }
                     .frame(height: 10)
