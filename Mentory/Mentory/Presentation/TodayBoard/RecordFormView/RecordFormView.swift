@@ -68,6 +68,14 @@ struct RecordFormView: View {
                 self.voicePreviewCard
             },
             bottomBar: {
+                ImageButton(
+                    model: recordForm
+                )
+                
+                CameraButton(
+                    model: recordForm
+                )
+                
                 self.bottomToolBar
             })
         .task {
@@ -77,29 +85,29 @@ struct RecordFormView: View {
     }
     
     @ViewBuilder var bottomToolBar: some View {
-        Button(action: {
-            showingImagePicker = true
-        }) {
-            Image(systemName: "photo")
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
-        }
-        .sheet(isPresented: $showingImagePicker) {
-            PhotosPicker(imageData: $recordForm.imageInput)
-        }
+//        Button(action: {
+//            showingImagePicker = true
+//        }) {
+//            Image(systemName: "photo")
+//                .font(.title2)
+//                .fontWeight(.medium)
+//                .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
+//        }
+//        .sheet(isPresented: $showingImagePicker) {
+//            PhotosPicker(imageData: $recordForm.imageInput)
+//        }
         
-        Button(action: {
-            showingCamera = true
-        }) {
-            Image(systemName: "camera")
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
-        }
-        .sheet(isPresented: $showingCamera) {
-            ImagePicker(imageData: $recordForm.imageInput, sourceType: .camera)
-        }
+//        Button(action: {
+//            showingCamera = true
+//        }) {
+//            Image(systemName: "camera")
+//                .font(.title2)
+//                .fontWeight(.medium)
+//                .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
+//        }
+//        .sheet(isPresented: $showingCamera) {
+//            ImagePicker(imageData: $recordForm.imageInput, sourceType: .camera)
+//        }
         
         Button(action: {
             showingAudioRecorder = true
@@ -121,24 +129,6 @@ struct RecordFormView: View {
             )
         }
     }
-    
-//    private var textInputCard: some View {
-//        LiquidGlassCard {
-//            ZStack(alignment: .topLeading) {
-//                if recordForm.textInput.isEmpty {
-//                    Text("글쓰기 시작…")
-//                        .foregroundColor(.gray.opacity(0.5))
-//                        .padding()
-//                        .allowsHitTesting(false)
-//                }
-//                
-//                TextEditor(text: $recordForm.textInput)
-//                    .scrollContentBackground(.hidden)
-//                    .frame(minHeight: 300)
-//                    .padding()
-//            }
-//        }
-//    }
     
     private var imagePreviewCard: some View {
         Group {
@@ -384,4 +374,45 @@ fileprivate struct BodyField: View {
             }
         }
     }
+}
+
+fileprivate struct ImageButton: View {
+    @ObservedObject var model: RecordForm
+    
+    @State private var showImagePicker: Bool = false
+    
+    var body: some View {
+        Button(action: {
+            showImagePicker = true
+        }) {
+            Image(systemName: "photo")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundStyle(model.imageInput != nil ? .blue : .primary)
+        }
+        .sheet(isPresented: $showImagePicker) {
+            PhotosPicker(imageData: $model.imageInput)
+        }
+    }
+}
+
+fileprivate struct CameraButton: View {
+    @ObservedObject var model: RecordForm
+    
+    @State private var showCameraSheet: Bool = false
+    
+    var body: some View {
+        Button(action: {
+            showCameraSheet = true
+        }) {
+            Image(systemName: "camera")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundStyle(model.imageInput != nil ? .blue : .primary)
+        }
+        .sheet(isPresented: $showCameraSheet) {
+            ImagePicker(imageData: $model.imageInput, sourceType: .camera)
+        }
+    }
+    
 }
