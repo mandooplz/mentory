@@ -18,7 +18,6 @@ struct RecordFormView: View {
     nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
     @ObservedObject var recordForm: RecordForm
     
-    @State private var showingAudioRecorder = false
 
     // MARK: - Body
     var body: some View {
