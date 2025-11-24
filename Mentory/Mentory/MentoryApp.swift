@@ -11,9 +11,6 @@ import SwiftData
 // MARK: App
 @main
 struct MentoryApp: App {
-    // MARK: SwiftData
-//    let modelContainer: ModelContainer
-
     // MARK: model
     @State var mentoryiOS = MentoryiOS(
         mentoryDB: MentoryDBMock(),
@@ -26,6 +23,5 @@ struct MentoryApp: App {
         WindowGroup {
             MentoryiOSView(mentoryiOS)
         }
-//        .modelContainer(modelContainer)
     }
 }
