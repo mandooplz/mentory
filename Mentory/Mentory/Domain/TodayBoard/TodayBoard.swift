@@ -30,6 +30,7 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var todayString: String? = nil
     @Published var isFetchedTodayString: Bool = false
     @Published var actionKeyWordItems: [(String, Bool)] = []
+    @Published var latestRecordId: UUID? = nil // 가장 최근 저장된 레코드 ID (행동 추천 업데이트용)
     
     
     // MARK: action
@@ -85,6 +86,24 @@ final class TodayBoard: Sendable, ObservableObject {
             self.records = todayRecords
         } catch {
             logger.error("레코드 로드 실패: \(error)")
+        }
+    }
+
+    func updateActionCompletion() async {
+        // capture
+        guard let recordId = latestRecordId else {
+            logger.error("업데이트할 레코드 ID가 없습니다.")
+            return
+        }
+        let mentoryDB = owner!.mentoryDB
+        let completionStatus = actionKeyWordItems.map { $0.1 }
+
+        // process
+        do {
+            try await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
+            logger.debug("행동 추천 완료 상태가 업데이트되었습니다.")
+        } catch {
+            logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
         }
     }
 }

@@ -65,9 +65,27 @@ struct TodayBoardView: View {
                     ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
                 } else {
                     VStack(spacing: 12) {
-                        ActionRow(checked: $selections[0], text: "Swift Concurrency 이해하기")
-                        ActionRow(checked: $selections[1], text: "산책")
-                        ActionRow(checked: $selections[2], text: "소금빵 먹기")
+                        // 예시
+//                        ActionRow(checked: $selections[0], text: "Swift Concurrency 이해하기")
+//                        ActionRow(checked: $selections[1], text: "산책")
+//                        ActionRow(checked: $selections[2], text: "소금빵 먹기")
+
+                        // 동적으로 행동 추천 생성
+                        ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
+                            ActionRow(
+                                checked: Binding(
+                                    get: { todayBoard.actionKeyWordItems[index].1 },
+                                    set: { newValue in
+                                        todayBoard.actionKeyWordItems[index].1 = newValue
+                                        // 체크 상태 변경 시 DB에 실시간 업데이트
+                                        Task {
+                                            await todayBoard.updateActionCompletion()
+                                        }
+                                    }
+                                ),
+                                text: todayBoard.actionKeyWordItems[index].0
+                            )
+                        }
                     }
                     .padding(.top, 20)
                 }

@@ -47,4 +47,9 @@ public struct MentoryDBAPI: Sendable {
         
         await mentoryDB.createDailyRecords()
     }
+
+    @concurrent
+    public func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws {
+        await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
+    }
 }
