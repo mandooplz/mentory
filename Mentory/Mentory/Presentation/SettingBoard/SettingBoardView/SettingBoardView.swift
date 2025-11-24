@@ -324,7 +324,7 @@ struct SettingBoardView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("취소") {
                         settingBoard.cancelRenaming()
-                        settingBoardViewModel.openRenameSheet()
+                        settingBoardViewModel.closeRenameSheet()
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
