@@ -1,79 +1,103 @@
-# MentoryiOS
+<!-- 프로젝트 개요 -->
+<div align="center">
+  <a href="https://github.com/EST-iOS4/Mentory">
+    <img src="https://user-images.githubusercontent.com/33917774/199519767-60590904-b15a-4464-ab21-e3a424649d5c.svg" alt="Logo" width="70" height="70">
+  </a>
 
-![Swift](https://img.shields.io/badge/Swift-6.0-orange?style=flat-square&logo=swift)
-![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey?style=flat-square)
-![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-blue?style=flat-square)
+  <h3>Mentory</h3>
+
+  <p>
+    매일매일 사용자의 감정을 기록하고 LLM을 통해 이를 분석하여 적절한 활동을 추천해주는 멘탈 케어 앱
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/iOS-1A1A1A?style=for-the-badge&logo=apple&logoColor=white" />
+    <img src="https://img.shields.io/badge/watchOS-000000?style=for-the-badge&logo=apple&logoColor=white" />
+    <img src="https://img.shields.io/badge/Widget-FF7F2A?style=for-the-badge&logo=swift&logoColor=white" />
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white" />
+    <img src="https://img.shields.io/badge/Combine-333333?style=for-the-badge&logo=swift&logoColor=white" />
+    <img src="https://img.shields.io/badge/Swift%206-FA7343?style=for-the-badge&logo=swift&logoColor=white" />
+  </p>
+</div>
 
 ## 목차
 
-- [MentoryiOS](#mentoryios)
-  - [목차](#목차)
-  - [개요](#개요)
-  - [사용 기술](#사용-기술)
-    - [🏗️ 아키텍처 \& 디자인 패턴](#️-아키텍처--디자인-패턴)
-    - [💾 데이터 관리](#-데이터-관리)
-    - [🎤 음성 처리](#-음성-처리)
-    - [🤖 AI \& LLM](#-ai--llm)
-    - [📊 헬스케어 연동](#-헬스케어-연동)
-    - [🔧 기타](#-기타)
-  - [시작하기](#시작하기)
-    - [필요 조건](#필요-조건)
-    - [설치](#설치)
-    - [환경 설정](#환경-설정)
-    - [실행](#실행)
-  - [소프트웨어 디자인](#소프트웨어-디자인)
-  - [개발 문서](#개발-문서)
-  - [트러블슈팅 문서](#트러블슈팅-문서)
-  - [팀원](#팀원)
-
-## 개요
-
-Mentory는 STT와 LLM을 활용해 사용자의 감정을 기록·분석하고 맞춤형 조언을 제공하는 멘탈 케어 iOS 앱입니다. 일기처럼 텍스트·이미지·채팅으로 감정을 남기거나 음성을 iOS Speech Framework로 전사해 기록할 수 있으며, 전사된 데이터는 LLM이 감정 상태를 해석하고 캐릭터 기반 위로 멘트와 실천 가능한 Todo까지 추천합니다.
-
-월간 감정 통계, 감정 캘린더, Alert/리마인드, 하루 한 줄 명언, 맞춤 행동 추천 등으로 사용자가 스스로의 변화를 추적할 수 있고, SwiftData·HealthKit 연동으로 안전한 백업과 헬스 데이터 확장이 가능합니다.
+- [목차](#목차)
+- [사용 기술](#사용-기술)
+- [시작하기](#시작하기)
+  - [필요 조건](#필요-조건)
+  - [설치](#설치)
+  - [환경 설정](#환경-설정)
+  - [실행](#실행)
+- [소프트웨어 디자인](#소프트웨어-디자인)
+- [개발 문서](#개발-문서)
+- [트러블슈팅 문서](#트러블슈팅-문서)
+- [팀원](#팀원)
 
 ## 사용 기술
 
-### 🏗️ 아키텍처 & 디자인 패턴
-
-- **SwiftUI** - 선언형 UI 프레임워크
-- **MVVM** - Combine 기반 반응형 아키텍처
-- **Swift Concurrency** - async/await 및 Task 기반 비동기 처리 (Swift 6)
-
-### 💾 데이터 관리
-
-- **SwiftData** - 안전한 로컬 데이터 영속화 및 백업
-- **UserDefaults** - 사용자 설정 및 간단한 데이터 저장
-
-### 🎤 음성 처리
-
-- **Speech Framework** - iOS 기본 음성 인식 및 전사(STT)
-
-### 🤖 AI & LLM
-
-- **ESTSOFT Alan LLM API** - 감정 분석 및 맞춤형 조언 생성
-
-### 📊 헬스케어 연동
-
-- **HealthKit** - 건강 데이터 확장 및 통합
-
-### 🔧 기타
-
-- **Combine** - 반응형 프로그래밍 및 이벤트 처리
+<table>
+  <thead>
+    <tr>
+      <th>카테고리</th>
+      <th>기술</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🏗️ 아키텍처</td>
+      <td>
+        <ul>
+          <li><strong>SwiftUI</strong> - 선언형 UI 프레임워크</li>
+          <li><strong>MVVM</strong> - Combine 기반 반응형 아키텍처</li>
+          <li><strong>Swift Concurrency</strong> - async/await 및 Task 기반 비동기 처리 (Swift 6)</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>💾 데이터 관리</td>
+      <td>
+        <ul>
+          <li><strong>SwiftData</strong> - 안전한 로컬 데이터 영속화 및 백업</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>🎤 음성 처리</td>
+      <td>
+        <ul>
+          <li><strong>AVFoundation</strong> -</li>
+          <li><strong>Speech Framework</strong> - iOS 기본 음성 인식 및 전사(STT)</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>🤖 LLM</td>
+      <td>
+        <ul>
+          <li><strong>ESTSOFT Alan LLM API</strong> - 감정 분석 및 맞춤형 조언 생성</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>📊 헬스케어 연동</td>
+      <td>
+        <ul>
+          <li><strong>HealthKit</strong> - 건강 데이터 확장 및 통합</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ## 시작하기
 
 ### 필요 조건
 
 <table>
-  <tr>
-    <td align="center" width="120">
-      <img src="https://img.shields.io/badge/-26.1+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS">
-    </td>
-    <td>
-      <b>macOS 26.1 이상</b>
-    </td>
-  </tr>
   <tr>
     <td align="center" width="120">
       <img src="https://img.shields.io/badge/-26.1+-147EFB?style=for-the-badge&logo=xcode&logoColor=white" alt="Xcode">
