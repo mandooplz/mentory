@@ -21,7 +21,12 @@ struct MindAnalyzerView: View {
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
-            header
+            
+            Header(
+                title: "누구에게 면담을 요청할까요?",
+                description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
+            )
+            
             characterList
             analyzerButton
             analysisStatus
@@ -36,15 +41,15 @@ struct MindAnalyzerView: View {
         }
     }
     
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("누구에게 면담을 요청할까요?")
-                .font(.title3.bold())
-            Text("오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요.")
-                .font(.footnote)
-                .foregroundColor(.secondary)
-        }
-    }
+//    private var header: some View {
+//        VStack(alignment: .leading, spacing: 8) {
+//            Text("누구에게 면담을 요청할까요?")
+//                .font(.title3.bold())
+//            Text("오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요.")
+//                .font(.footnote)
+//                .foregroundColor(.secondary)
+//        }
+//    }
     
     private var characterList: some View {
         VStack(spacing: 16) {
@@ -320,8 +325,17 @@ fileprivate extension MindAnalyzer.CharacterType {
 
 // MARK: Component
 fileprivate struct Header: View {
+    let title: String
+    let description: String
+    
     var body: some View {
-        
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.title3.bold())
+            Text(description)
+                .font(.footnote)
+                .foregroundColor(.secondary)
+        }
     }
 }
 
