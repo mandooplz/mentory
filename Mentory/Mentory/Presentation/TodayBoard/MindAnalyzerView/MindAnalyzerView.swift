@@ -26,7 +26,6 @@ struct MindAnalyzerView: View {
                 characterList
                 analyzerButton
                 analysisStatus
-                resultSection
 
                 // 분석 완료 후 확인 버튼
                 if let result = mindAnalyzer.analyzedResult,
@@ -141,12 +140,6 @@ struct MindAnalyzerView: View {
         }
     }
     
-    @ViewBuilder
-    private var resultSection: some View {
-        if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
-            ResultView(text: result)
-        }
-    }
 }
 
 fileprivate struct CharacterSelectionCard: View {
@@ -233,16 +226,6 @@ fileprivate struct MindTypeResultView: View {
     }
 }
 
-fileprivate struct ResultView: View {
-    let text: String
-    
-    var body: some View {
-        Text(text)
-            .font(.body)
-            .foregroundColor(.primary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
 
 fileprivate extension Emotion {
     var title: String {
