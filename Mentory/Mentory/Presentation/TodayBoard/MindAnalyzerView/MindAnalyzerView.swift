@@ -54,10 +54,6 @@ struct MindAnalyzerView: View {
                 mindType: mindAnalyzer.mindType
             )
             
-            
-            
-            
-            resultSection
 
             // 분석 완료 후 확인 버튼
             if let result = mindAnalyzer.analyzedResult,
@@ -88,38 +84,6 @@ struct MindAnalyzerView: View {
             .foregroundColor(.white)
         }
     }
-    
-//    @ViewBuilder
-//    private var analysisStatus: some View {
-//        if mindAnalyzer.isAnalyzing {
-//            StatusBadge(text: "선택한 멘토가 답변을 준비 중이에요…")
-//        } else if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
-//            VStack(alignment: .leading, spacing: 12) {
-//                if let mindType = mindAnalyzer.mindType {
-//                    MindTypeResultView(mindType: mindType)
-//                }
-//                Text(result)
-//                    .font(.body)
-//                    .foregroundColor(.primary)
-//                    .fixedSize(horizontal: false, vertical: true)
-//            }
-//            .padding(18)
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//            .background(
-//                RoundedRectangle(cornerRadius: 24, style: .continuous)
-//                    .fill(Color(.secondarySystemBackground))
-//            )
-//        } else {
-//            StatusBadge(text: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.")
-//        }
-//    }
-    
-    @ViewBuilder
-    private var resultSection: some View {
-        if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
-            ResultView(text: result)
-        }
-    }
 }
 
 
@@ -143,16 +107,7 @@ fileprivate struct StatusBadge: View {
     }
 }
 
-fileprivate struct ResultView: View {
-    let text: String
-    
-    var body: some View {
-        Text(text)
-            .font(.body)
-            .foregroundColor(.primary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
+
 
 fileprivate extension Emotion {
     var title: String {
