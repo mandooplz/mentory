@@ -9,9 +9,33 @@ import SwiftUI
 
 // MARK: Layout
 struct RecordFormLayout<Content: View>: View {
-    @ViewBuilder let content: () -> Content
+    @ViewBuilder let topBar: () -> Content
+    @ViewBuilder let main: () -> Content
+    @ViewBuilder let bottomBar: () -> Content
     
     var body: some View {
-        
+        ZStack {
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+            VStack(spacing: 0) {
+                
+                self.topBar()
+                
+                ScrollView {
+                    VStack(spacing: 16) {
+                        self.main()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 80)
+                }
+                Spacer()
+            }
+            VStack {
+                Spacer()
+                self.bottomBar()
+            }
+        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }
