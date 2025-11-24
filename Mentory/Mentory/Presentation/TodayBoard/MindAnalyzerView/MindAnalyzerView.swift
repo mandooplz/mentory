@@ -41,27 +41,11 @@ struct MindAnalyzerView: View {
         }
     }
     
-//    private var header: some View {
-//        VStack(alignment: .leading, spacing: 8) {
-//            Text("누구에게 면담을 요청할까요?")
-//                .font(.title3.bold())
-//            Text("오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요.")
-//                .font(.footnote)
-//                .foregroundColor(.secondary)
-//        }
-//    }
-    
     private var characterList: some View {
-        VStack(spacing: 16) {
-            ForEach(MindAnalyzer.CharacterType.allCases, id: \.self) { character in
-                CharacterSelectionCard(
-                    character: character,
-                    isSelected: character == (mindAnalyzer.selectedCharacter ?? .A)
-                ) {
-                    mindAnalyzer.selectedCharacter = character
-                }
-            }
-        }
+        CharacterPicker(
+            characters: MindAnalyzer.CharacterType.allCases,
+            selection: $mindAnalyzer.selectedCharacter
+        )
     }
     
     private var analyzerButton: some View {
@@ -143,44 +127,7 @@ struct MindAnalyzerView: View {
     }
 }
 
-fileprivate struct CharacterSelectionCard: View {
-    let character: MindAnalyzer.CharacterType
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                Image(character.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 110)
-                
-                Text(character.displayName)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                Text(character.description)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .padding(.horizontal, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(Color.white)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(isSelected ? Color.black : Color(.systemGray4), lineWidth: isSelected ? 2 : 1)
-            )
-            .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
-        }
-        .buttonStyle(.plain)
-    }
-}
+
 
 fileprivate struct StatusBadge: View {
     let text: String
@@ -335,6 +282,63 @@ fileprivate struct Header: View {
             Text(description)
                 .font(.footnote)
                 .foregroundColor(.secondary)
+        }
+    }
+}
+
+fileprivate struct CharacterPicker: View {
+    let characters: [MindAnalyzer.CharacterType]
+    @Binding var selection: MindAnalyzer.CharacterType?
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            ForEach(characters, id: \.self) { character in
+                SelectableCard(
+                    character: character,
+                    isSelected: character == selection
+                ) {
+                    selection = character
+                }
+            }
+        }
+    }
+    
+    fileprivate struct SelectableCard: View {
+        let character: MindAnalyzer.CharacterType
+        let isSelected: Bool
+        let action: () -> Void
+        
+        var body: some View {
+            Button(action: action) {
+                VStack(spacing: 12) {
+                    Image(character.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 110)
+                    
+                    Text(character.displayName)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text(character.description)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .fill(Color.white)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .stroke(isSelected ? Color.black : Color(.systemGray4), lineWidth: isSelected ? 2 : 1)
+                )
+                .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
+            }
+            .buttonStyle(.plain)
         }
     }
 }
