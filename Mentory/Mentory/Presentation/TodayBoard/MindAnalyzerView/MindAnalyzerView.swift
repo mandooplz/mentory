@@ -20,30 +20,19 @@ struct MindAnalyzerView: View {
 
     // MARK: body
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                header
-                characterList
-                analyzerButton
-                analysisStatus
-                resultSection
+        MindAnalyzerLayout {
+            header
+            characterList
+            analyzerButton
+            analysisStatus
+            resultSection
 
-                // 분석 완료 후 확인 버튼
-                if let result = mindAnalyzer.analyzedResult,
-                   result.isEmpty == false,
-                   mindAnalyzer.isAnalyzing == false {
-                    confirmButton
-                }
+            // 분석 완료 후 확인 버튼
+            if let result = mindAnalyzer.analyzedResult,
+               result.isEmpty == false,
+               mindAnalyzer.isAnalyzing == false {
+                confirmButton
             }
-            .padding(24)
-            .background(
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 6)
-            )
-            .padding(.horizontal)
-            .padding(.top, 32)
-            .padding(.bottom, 40)
         }
     }
     
