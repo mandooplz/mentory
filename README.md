@@ -53,7 +53,7 @@
 - ESTsoft Alan API 기반 감정/사고 패턴 분석
 - Firebase AI Logic 기반 개인화 조언
 
-### 👥 두 가지 AI 캐릭터 선택
+### 👥 AI 분석 스타일 선택
 - **냉철한 분석 캐릭터** (직설적·해결 중심)
 - **따뜻한 분석 캐릭터** (공감 기반 리프레이밍)
 
@@ -72,7 +72,7 @@
 ---
 
 ## 스크린샷
-> 실제 화면을 캡처해서 밑에다 넣기.
+> 실제 화면 캡처본을 아래 이미지 자리에 넣기
 
 <div align="center">
   <img width="240" alt="image" src="https://github.com/user-attachments/assets/d575e1c2-9296-4f9c-86a7-a19dd72ce242" />
@@ -84,7 +84,6 @@
   <img width="240" alt="image" src="https://github.com/user-attachments/assets/e19a491b-c8d9-4177-9332-a1505aa48587" />
   <img width="240" alt="image" src="https://github.com/user-attachments/assets/52e48fcf-6f25-4a74-936b-36bd641a5f46" />
   <img width="240" alt="image" src="https://github.com/user-attachments/assets/d616b7f5-d5fb-49d5-9cc1-dd74a515df7c" />
-
 </div>
 
 ---
@@ -175,12 +174,11 @@ cd Mentory-iOS
 ### 환경 설정
 
 ```bash
-git clone https://github.com/EST-iOS4/Mentory-iOS.git
-cd Mentory-iOS
+cp Secrets.xcconfig.sample Secrets.xcconfig
 ```
 
-- `Secrets.xcconfig`에 Alan API Key 등 민감한 값 입력  
-- 해당 파일은 `.gitignore` 처리됨
+- `Secrets.xcconfig`에 Alan API Key 등 민감한 값을 입력합니다.  
+- 해당 파일은 `.gitignore`로 관리되어 저장소에 커밋되지 않습니다.
 
 ### 실행
 
