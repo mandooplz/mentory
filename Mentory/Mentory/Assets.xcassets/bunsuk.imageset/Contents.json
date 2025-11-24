@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "bunsuk@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "bunsuk.PNG",
+      "filename" : "bunsuk@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "bunsuk@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
