@@ -201,6 +201,28 @@ actor MentoryDB: Sendable {
     }
     
     
+    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async {
+        let context = ModelContext(MentoryDB.container)
+
+        let descriptor = FetchDescriptor<DailyRecord.DailyRecordModel>(
+            predicate: #Predicate<DailyRecord.DailyRecordModel> { $0.id == recordId }
+        )
+
+        do {
+            guard let record = try context.fetch(descriptor).first else {
+                logger.error("레코드 ID \(recordId)를 찾을 수 없습니다.")
+                return
+            }
+
+            record.actionCompletionStatus = completionStatus
+            try context.save()
+
+            logger.debug("레코드 \(recordId)의 행동 추천 완료 상태가 업데이트되었습니다.")
+        } catch {
+            logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
+        }
+    }
+
     // MARK: action
     func createDailyRecords() async {
         let context = ModelContext(MentoryDB.container)
@@ -228,7 +250,9 @@ actor MentoryDB: Sendable {
                     createdAt: data.createdAt,
                     content: data.content,
                     analyzedResult: data.analyzedResult,
-                    emotion: data.emotion
+                    emotion: data.emotion,
+                    actionTexts: data.actionTexts,
+                    actionCompletionStatus: data.actionCompletionStatus
                 )
             }
 
@@ -277,6 +301,8 @@ actor MentoryDB: Sendable {
         var content: String
         var analyzedResult: String
         var emotion: Emotion
+        var actionTexts: [String]
+        var actionCompletionStatus: [Bool]
 
         init(data: RecordData) {
             self.id = data.id
@@ -284,6 +310,8 @@ actor MentoryDB: Sendable {
             self.content = data.content
             self.analyzedResult = data.analyzedResult
             self.emotion = data.emotion
+            self.actionTexts = data.actionTexts
+            self.actionCompletionStatus = data.actionCompletionStatus
         }
 
         func toRecordData() -> RecordData {
@@ -292,7 +320,9 @@ actor MentoryDB: Sendable {
                 createdAt: createdAt,
                 content: content,
                 analyzedResult: analyzedResult,
-                emotion: emotion
+                emotion: emotion,
+                actionTexts: actionTexts,
+                actionCompletionStatus: actionCompletionStatus
             )
         }
     }

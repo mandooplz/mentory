@@ -160,6 +160,9 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
         let mentoryDB = todayBoard.owner!.mentoryDB
 
+        // 행동 추천 데이터 가져오기
+        let actionTexts = todayBoard.actionKeyWordItems.map { $0.0 }
+        let actionCompletionStatus = todayBoard.actionKeyWordItems.map { $0.1 }
 
         // MentoryRecord 생성
         let recordData = RecordData(
@@ -167,13 +170,18 @@ final class MindAnalyzer: Sendable, ObservableObject {
             createdAt: Date(),
             content: "",
             analyzedResult: analyzedContent,
-            emotion: self.mindType!)
+            emotion: self.mindType!,
+            actionTexts: actionTexts,
+            actionCompletionStatus: actionCompletionStatus)
 
         // process
         do {
             try await mentoryDB.saveRecord(recordData)
             
             logger.info("레코드 저장 성공: \(recordData.id)")
+
+            // 저장된 레코드 ID를 TodayBoard에 저장 (체크 상태 업데이트용)
+            todayBoard.latestRecordId = recordData.id
 
             // 저장 후 오늘의 레코드 다시 로드
             await todayBoard.loadTodayRecords()
