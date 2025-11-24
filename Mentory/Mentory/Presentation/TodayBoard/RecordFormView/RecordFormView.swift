@@ -17,13 +17,9 @@ struct RecordFormView: View {
     // MARK: core
     nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
     @ObservedObject var recordForm: RecordForm
-
-
-    // MARK: viewModel
-    @State private var microphone = Microphone.shared
+    
     @State private var showingAudioRecorder = false
-    
-    
+
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
@@ -64,7 +60,9 @@ struct RecordFormView: View {
                     model: recordForm
                 )
                 
-                self.voicePreviewCard
+                VoicePreviewCard(
+                    model: recordForm
+                )
             },
             bottomBar: {
                 ImageButton(
@@ -103,78 +101,6 @@ struct RecordFormView: View {
                 }
             )
         }
-    }
-    
-//    private var imagePreviewCard: some View {
-//        Group {
-//            if let imageData = recordForm.imageInput,
-//               let uiImage = UIImage(data: imageData) {
-//                
-//                LiquidGlassCard {
-//                    VStack(alignment: .leading, spacing: 12) {
-//                        HStack {
-//                            Image(systemName: "photo")
-//                                .foregroundColor(.blue)
-//                            Text("첨부된 이미지")
-//                                .font(.subheadline)
-//                                .foregroundColor(.secondary)
-//                            Spacer()
-//                            Button {
-//                                recordForm.imageInput = nil
-//                            } label: {
-//                                Image(systemName: "xmark.circle.fill")
-//                                    .foregroundColor(.gray)
-//                            }
-//                        }
-//                        .padding([.horizontal, .top], 16)
-//                        
-//                        Image(uiImage: uiImage)
-//                            .resizable()
-//                            .scaledToFit()
-//                            .cornerRadius(12)
-//                            .padding(.horizontal, 16)
-//                            .padding(.bottom, 16)
-//                    }
-//                }
-//            }
-//        }
-//    }
-    private var voicePreviewCard: some View {
-        Group {
-            if recordForm.voiceInput != nil {
-                LiquidGlassCard {
-                    HStack {
-                        Image(systemName: "waveform")
-                            .foregroundColor(.blue)
-                        
-                        Text("음성 녹음 첨부됨")
-                            .font(.subheadline)
-                        
-                        Spacer()
-                        
-                        Text(timeString(from: microphone.recordingTime))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Button {
-                            Task {
-                                await microphone.stopListening()
-                                recordForm.voiceInput = nil
-                            }
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    .padding(16)
-                }
-            }
-        }
-    }
-    private func timeString(from timeInterval: TimeInterval) -> String {
-        let minutes = Int(timeInterval) / 60
-        let seconds = Int(timeInterval) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
 
@@ -431,7 +357,46 @@ fileprivate struct ImagePreviewCard: View {
 }
 
 fileprivate struct VoicePreviewCard: View {
+    @ObservedObject var model: RecordForm
+    
+    @State private var microphone = Microphone.shared
+    
     var body: some View {
-        
+        Group {
+            if model.voiceInput != nil {
+                LiquidGlassCard {
+                    HStack {
+                        Image(systemName: "waveform")
+                            .foregroundColor(.blue)
+                        
+                        Text("음성 녹음 첨부됨")
+                            .font(.subheadline)
+                        
+                        Spacer()
+                        
+                        Text(timeString(from: microphone.recordingTime))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Button {
+                            Task {
+                                await microphone.stopListening()
+                                model.voiceInput = nil
+                            }
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .padding(16)
+                }
+            }
+        }
+    }
+    
+    private func timeString(from timeInterval: TimeInterval) -> String {
+        let minutes = Int(timeInterval) / 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
