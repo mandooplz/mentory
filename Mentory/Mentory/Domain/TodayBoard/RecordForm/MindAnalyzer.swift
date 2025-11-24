@@ -53,7 +53,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let mentoryiOS = todayBoard.owner!
         let alanLLM = mentoryiOS.alanLLM
 
-        // MARK: 1차 분석 - 위험도, 주제, mindtype 분류
+        
+        // process
         logger.info("1차 분석 시작")
         let firstResult: FirstAnalysisResult
         do {
@@ -119,7 +120,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
 
-        // MARK: 결과 저장
+        
+        // mutate
         self.firstAnalysisResult = firstResult
         self.secondAnalysisResult = secondResult
         self.mindType = firstResult.mindType
