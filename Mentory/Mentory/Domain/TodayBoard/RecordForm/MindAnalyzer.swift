@@ -25,7 +25,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     weak var owner: RecordForm?
 
     @Published var isAnalyzing: Bool = false
-    @Published var selectedCharacter: CharacterType? = nil
+    @Published var selectedCharacter: CharacterType = .A
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
@@ -46,8 +46,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
 
-        // selectedCharacter가 없으면 기본값 .A 사용
-        let character = selectedCharacter ?? .A
+        let character = selectedCharacter
 
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!

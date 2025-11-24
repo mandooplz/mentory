@@ -258,7 +258,7 @@ fileprivate struct Header: View {
 
 fileprivate struct CharacterPicker: View {
     let characters: [MindAnalyzer.CharacterType]
-    @Binding var selection: MindAnalyzer.CharacterType?
+    @Binding var selection: MindAnalyzer.CharacterType
     
     var body: some View {
         VStack(spacing: 16) {
