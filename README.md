@@ -75,15 +75,16 @@
 > 실제 화면을 캡처해서 밑에다 넣기.
 
 <div align="center">
-  <img src="./screenshots/onboarding.png" width="240">
-  <img src="./screenshots/home.png" width="240">
-  <img src="./screenshots/record.png" width="240">
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/d575e1c2-9296-4f9c-86a7-a19dd72ce242" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/e354d1a4-7e63-490d-b508-3320f72969b5" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/f8aa52b9-7296-4a04-a3c7-d99f8f816fa4" />
 </div>
 
 <div align="center" style="margin-top: 20px;">
-  <img src="./screenshots/analysis.png" width="240">
-  <img src="./screenshots/stats.png" width="240">
-  <img src="./screenshots/settings.png" width="240">
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/e19a491b-c8d9-4177-9332-a1505aa48587" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/52e48fcf-6f25-4a74-936b-36bd641a5f46" />
+  <img width="240" alt="image" src="https://github.com/user-attachments/assets/d616b7f5-d5fb-49d5-9cc1-dd74a515df7c" />
+
 </div>
 
 ---
@@ -212,7 +213,7 @@ Xcode에서 타겟 선택 → `Cmd + R` 실행
 
 ## 트러블슈팅 문서
 
-아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
+아래는 팀원별로 개발 과정에서 발생한 문제를 정리한 트러블슈팅 문서입니다.
 
 1. 박재이
    - 작성된 문서 없음
