@@ -7,7 +7,7 @@
   <h3>Mentory</h3>
 
   <p>
-    매일매일 사용자의 감정을 기록하고 LLM을 통해 이를 분석하여 적절한 활동을 추천해주는 멘탈 케어 앱
+    텍스트·음성·사진 기반 감정 기록을 분석하여, AI가 감정과 사고 패턴을 파악하고 개인화된 리프레이밍 조언을 제공하는 멘탈 케어 앱
   </p>
 
   <p>
@@ -26,6 +26,8 @@
 ## 목차
 
 - [목차](#목차)
+- [앱 주요 기능](#앱-주요-기능)
+- [스크린샷](#스크린샷)
 - [사용 기술](#사용-기술)
 - [시작하기](#시작하기)
   - [필요 조건](#필요-조건)
@@ -36,6 +38,55 @@
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
+
+
+---
+
+## 앱 주요 기능
+
+### ✏️ 감정 기록 (텍스트 / 음성 / 사진)
+- 텍스트로 감정 기록
+- 음성 입력 → 자동 텍스트 변환
+- 사진 기반 상황 단서 감지
+
+### 🧠 AI 감정 분석 & 사고 패턴 탐지
+- ESTsoft Alan API 기반 감정/사고 패턴 분석
+- Firebase AI Logic 기반 개인화 조언
+
+### 👥 두 가지 AI 캐릭터 선택
+- **냉철한 분석 캐릭터** (직설적·해결 중심)
+- **따뜻한 분석 캐릭터** (공감 기반 리프레이밍)
+
+### 📊 감정 변화 통계
+- 일/주/월 감정 변화 그래프 제공
+- 자주 등장하는 감정·사고 패턴 시각화
+
+### 🔔 감정 기록 알림(Reminder)
+- 원하는 시간에 기록 리마인드
+- UserNotificationCenter 기반
+
+### ⌚ WatchOS & Widget 지원
+- WatchOS에서 빠르게 감정 기록
+- 홈 위젯에서 기록/확인
+
+---
+
+## 스크린샷
+> 실제 화면을 캡처해서 밑에다 넣기.
+
+<div align="center">
+  <img src="./screenshots/onboarding.png" width="240">
+  <img src="./screenshots/home.png" width="240">
+  <img src="./screenshots/record.png" width="240">
+</div>
+
+<div align="center" style="margin-top: 20px;">
+  <img src="./screenshots/analysis.png" width="240">
+  <img src="./screenshots/stats.png" width="240">
+  <img src="./screenshots/settings.png" width="240">
+</div>
+
+---
 
 ## 사용 기술
 
@@ -85,6 +136,8 @@
     </tr>
   </tbody>
 </table>
+
+---
 
 ## 시작하기
 
