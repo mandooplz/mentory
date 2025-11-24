@@ -10,53 +10,83 @@ import SwiftUI
 
 // MARK: View
 struct EditingNameSheet: View {
+    // MARK: model
     @Environment(\.dismiss) var closeEditingNameSheet
     @ObservedObject var editingName: EditingName
-    @FocusState private var isRenameFieldFocused: Bool
-    
+    @FocusState private var nameTextFieldFocused: Bool
+    // MARK: body
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                TextField("새 이름을 입력하세요", text: $editingName.currentEditingName)
-                    .textFieldStyle(.roundedBorder)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                    .focused($isRenameFieldFocused)
-                
-                Text("변경된 이름은 다음 대화부터 사용돼요.")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding()
-            .navigationTitle("이름 변경")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("취소") {
-                        Task {
-                            await editingName.cancel()
-                        }
-                        closeEditingNameSheet()
-                    }
+            //이름입력 + 설명
+            content
+                .padding()
+                .navigationTitle("이름 변경")
+                .toolbar {
+                    // 취소저장버튼
+                    cancelToolbarButton
+                    submitToolbarButton
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("저장") {
-                        Task {
-                            await editingName.submit()
-                        }
-                        closeEditingNameSheet()
-                    }
-                    .disabled(isRenameSaveDisabled)
-                }
-            }
         }
         .presentationDetents([.height(200)])
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                isRenameFieldFocused = true
+        .onAppear(perform: focusNameTextField)
+    }
+    
+    @ViewBuilder
+    private var content: some View {
+        VStack(spacing: 16) {
+            nameTextField
+            descriptionText
+        }
+    }
+    
+    @ViewBuilder
+    private var nameTextField: some View {
+        TextField("새 이름을 입력하세요", text: $editingName.currentEditingName)
+            .textFieldStyle(.roundedBorder)
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .focused($nameTextFieldFocused)
+    }
+    
+    @ViewBuilder
+    private var descriptionText: some View {
+        Text("변경된 이름은 다음 대화부터 사용돼요.")
+            .font(.system(size: 14))
+            .foregroundColor(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    @ToolbarContentBuilder
+    private var cancelToolbarButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button("취소") {
+                Task { await editingName.cancel() }
+                closeEditingNameSheet()
             }
         }
     }
+    
+    @ToolbarContentBuilder
+    private var submitToolbarButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("저장") {
+                Task { await editingName.submit() }
+                closeEditingNameSheet()
+            }
+            .disabled(isRenameSaveDisabled)
+        }
+    }
+    
+    private func focusNameTextField() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            nameTextFieldFocused = true
+        }
+    }
+    
+    
+    
+    
+    
     
     //TODO: refactoring 가능한지
     private var isRenameSaveDisabled: Bool {
