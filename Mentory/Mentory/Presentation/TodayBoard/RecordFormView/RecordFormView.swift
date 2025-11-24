@@ -20,10 +20,6 @@ struct RecordFormView: View {
 
 
     // MARK: viewModel
-    @State private var showingImagePicker = false
-    @State private var showingCamera = false
-    
-    // 오디오 관련
     @State private var microphone = Microphone.shared
     @State private var showingAudioRecorder = false
     
@@ -64,7 +60,10 @@ struct RecordFormView: View {
                     text: $recordForm.textInput
                 )
                 
-                self.imagePreviewCard
+                ImagePreviewCard(
+                    model: recordForm
+                )
+                
                 self.voicePreviewCard
             },
             bottomBar: {
@@ -106,40 +105,40 @@ struct RecordFormView: View {
         }
     }
     
-    private var imagePreviewCard: some View {
-        Group {
-            if let imageData = recordForm.imageInput,
-               let uiImage = UIImage(data: imageData) {
-                
-                LiquidGlassCard {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Image(systemName: "photo")
-                                .foregroundColor(.blue)
-                            Text("첨부된 이미지")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Button {
-                                recordForm.imageInput = nil
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        .padding([.horizontal, .top], 16)
-                        
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .cornerRadius(12)
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 16)
-                    }
-                }
-            }
-        }
-    }
+//    private var imagePreviewCard: some View {
+//        Group {
+//            if let imageData = recordForm.imageInput,
+//               let uiImage = UIImage(data: imageData) {
+//                
+//                LiquidGlassCard {
+//                    VStack(alignment: .leading, spacing: 12) {
+//                        HStack {
+//                            Image(systemName: "photo")
+//                                .foregroundColor(.blue)
+//                            Text("첨부된 이미지")
+//                                .font(.subheadline)
+//                                .foregroundColor(.secondary)
+//                            Spacer()
+//                            Button {
+//                                recordForm.imageInput = nil
+//                            } label: {
+//                                Image(systemName: "xmark.circle.fill")
+//                                    .foregroundColor(.gray)
+//                            }
+//                        }
+//                        .padding([.horizontal, .top], 16)
+//                        
+//                        Image(uiImage: uiImage)
+//                            .resizable()
+//                            .scaledToFit()
+//                            .cornerRadius(12)
+//                            .padding(.horizontal, 16)
+//                            .padding(.bottom, 16)
+//                    }
+//                }
+//            }
+//        }
+//    }
     private var voicePreviewCard: some View {
         Group {
             if recordForm.voiceInput != nil {
@@ -390,5 +389,49 @@ fileprivate struct CameraButton: View {
             ImagePicker(imageData: $model.imageInput, sourceType: .camera)
         }
     }
+}
+
+fileprivate struct ImagePreviewCard: View {
+    @ObservedObject var model: RecordForm
     
+    var body: some View {
+        Group {
+            if let imageData = model.imageInput,
+               let uiImage = UIImage(data: imageData) {
+                
+                LiquidGlassCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "photo")
+                                .foregroundColor(.blue)
+                            Text("첨부된 이미지")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                            Button {
+                                model.imageInput = nil
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding([.horizontal, .top], 16)
+                        
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(12)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
+                    }
+                }
+            }
+        }
+    }
+}
+
+fileprivate struct VoicePreviewCard: View {
+    var body: some View {
+        
+    }
 }
