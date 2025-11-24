@@ -85,30 +85,6 @@ struct RecordFormView: View {
     }
     
     @ViewBuilder var bottomToolBar: some View {
-//        Button(action: {
-//            showingImagePicker = true
-//        }) {
-//            Image(systemName: "photo")
-//                .font(.title2)
-//                .fontWeight(.medium)
-//                .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
-//        }
-//        .sheet(isPresented: $showingImagePicker) {
-//            PhotosPicker(imageData: $recordForm.imageInput)
-//        }
-        
-//        Button(action: {
-//            showingCamera = true
-//        }) {
-//            Image(systemName: "camera")
-//                .font(.title2)
-//                .fontWeight(.medium)
-//                .foregroundStyle(recordForm.imageInput != nil ? .blue : .primary)
-//        }
-//        .sheet(isPresented: $showingCamera) {
-//            ImagePicker(imageData: $recordForm.imageInput, sourceType: .camera)
-//        }
-        
         Button(action: {
             showingAudioRecorder = true
         }) {
