@@ -266,7 +266,7 @@ Mentory/                          # 레포지토리 루트
 3. 구현모
    - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyunmo/20251117-app-icon.md)
 4. 김민우
-   - [2024-09-18 음성 전사 중 앱 크래시](docs/troubleshooting/kim-minwoo/20240918-speech-transcript-crash.md)
+   - 작성된 문서 없음
 
 ## 팀원
 
