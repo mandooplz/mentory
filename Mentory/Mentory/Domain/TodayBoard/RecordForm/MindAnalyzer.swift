@@ -125,7 +125,9 @@ final class MindAnalyzer: Sendable, ObservableObject {
         self.secondAnalysisResult = secondResult
         self.mindType = firstResult.mindType
         self.analyzedResult = secondResult.empathyMessage
-//        self.actionKeyWordItems = secondResult.actionKeywords.map{($0, false)}
+
+        // TodayBoard의 actionKeyWordItems 업데이트 (체크되지 않은 상태로 초기화, owner: MindAnalyzer -> RecordForm -> TodayBoard)
+        self.owner!.owner!.actionKeyWordItems = secondResult.actionKeywords.map { ($0, false) }
 
         logger.info("분석 완료")
     }
