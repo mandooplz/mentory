@@ -299,16 +299,25 @@ fileprivate struct SubmitButton<Content: View>: View {
     
     @State var isSubmitEnabled: Bool = false
     @State var showMindAnalyzerView: Bool = false
-    
+    @State var showingSubmitAlert: Bool = false
+
     var body: some View {
         Button {
-            Task {
-                recordForm.validateInput()
-                recordForm.submit()
-            }
+            showingSubmitAlert = true
         } label: {
             ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
         }.disabled(!isSubmitEnabled)
+            .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
+                Button("취소", role: .cancel) { }
+                Button("제출") {
+                    Task {
+                        recordForm.validateInput()
+                        recordForm.submit()
+                    }
+                }
+            } message: {
+                Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
+            }
             .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
                 if let mindAnalyzer = recordForm.mindAnalyzer {
                     destination(mindAnalyzer)
