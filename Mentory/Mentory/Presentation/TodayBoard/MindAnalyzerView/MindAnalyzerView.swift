@@ -46,8 +46,17 @@ struct MindAnalyzerView: View {
                     }
                 })
             
+            AnalyzedResult(
+                readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
+                progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
+                isProgress: mindAnalyzer.isAnalyzing,
+                result: mindAnalyzer.analyzedResult,
+                mindType: mindAnalyzer.mindType
+            )
             
-            analysisStatus
+            
+            
+            
             resultSection
 
             // 분석 완료 후 확인 버튼
@@ -80,30 +89,30 @@ struct MindAnalyzerView: View {
         }
     }
     
-    @ViewBuilder
-    private var analysisStatus: some View {
-        if mindAnalyzer.isAnalyzing {
-            StatusBadge(text: "선택한 멘토가 답변을 준비 중이에요…")
-        } else if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
-            VStack(alignment: .leading, spacing: 12) {
-                if let mindType = mindAnalyzer.mindType {
-                    MindTypeResultView(mindType: mindType)
-                }
-                Text(result)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(18)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color(.secondarySystemBackground))
-            )
-        } else {
-            StatusBadge(text: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.")
-        }
-    }
+//    @ViewBuilder
+//    private var analysisStatus: some View {
+//        if mindAnalyzer.isAnalyzing {
+//            StatusBadge(text: "선택한 멘토가 답변을 준비 중이에요…")
+//        } else if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
+//            VStack(alignment: .leading, spacing: 12) {
+//                if let mindType = mindAnalyzer.mindType {
+//                    MindTypeResultView(mindType: mindType)
+//                }
+//                Text(result)
+//                    .font(.body)
+//                    .foregroundColor(.primary)
+//                    .fixedSize(horizontal: false, vertical: true)
+//            }
+//            .padding(18)
+//            .frame(maxWidth: .infinity, alignment: .leading)
+//            .background(
+//                RoundedRectangle(cornerRadius: 24, style: .continuous)
+//                    .fill(Color(.secondarySystemBackground))
+//            )
+//        } else {
+//            StatusBadge(text: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.")
+//        }
+//    }
     
     @ViewBuilder
     private var resultSection: some View {
@@ -130,32 +139,6 @@ fileprivate struct StatusBadge: View {
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
-        )
-    }
-}
-
-fileprivate struct MindTypeResultView: View {
-    let mindType: Emotion
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(mindType.emoji)
-                .font(.largeTitle)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(mindType.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                Text(mindType.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            Spacer()
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(mindType.tint.opacity(0.18))
         )
     }
 }
@@ -272,6 +255,7 @@ fileprivate struct Header: View {
     }
 }
 
+
 fileprivate struct CharacterPicker: View {
     let characters: [MindAnalyzer.CharacterType]
     @Binding var selection: MindAnalyzer.CharacterType?
@@ -329,6 +313,7 @@ fileprivate struct CharacterPicker: View {
     }
 }
 
+
 fileprivate struct AnalyzeButton: View {
     let iconName: String
     let label: String
@@ -353,7 +338,68 @@ fileprivate struct AnalyzeButton: View {
     }
 }
 
-fileprivate struct AnalyzeResult: View {
+
+fileprivate struct AnalyzedResult: View {
+    let readyPrompt: String
+    let progressPrompt: String
+    let isProgress: Bool
+    let result: String?
+    let mindType: Emotion?
+    
+    var body: some View {
+        if isProgress {
+            StatusBadge(text: progressPrompt)
+        } else if let result, result.isEmpty == false {
+            VStack(alignment: .leading, spacing: 12) {
+                if let mindType {
+                    MindTypeResultView(mindType: mindType)
+                }
+                
+                Text(result)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+            )
+        } else {
+            StatusBadge(text: readyPrompt)
+        }
+    }
+    
+    private struct MindTypeResultView: View {
+        let mindType: Emotion
+        
+        var body: some View {
+            HStack(spacing: 12) {
+                Text(mindType.emoji)
+                    .font(.largeTitle)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(mindType.title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    Text(mindType.description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(mindType.tint.opacity(0.18))
+            )
+        }
+    }
+}
+
+
+fileprivate struct ConfirmButton: View {
     var body: some View {
         
     }
