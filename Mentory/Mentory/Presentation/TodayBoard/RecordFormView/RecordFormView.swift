@@ -32,7 +32,26 @@ struct RecordFormView: View {
     var body: some View {
         RecordFormLayout(
             topBar: {
-                self.recordFormTopBar
+                TopBarLayout(
+                    left: {
+                        CancelButton(
+                            label: "취소",
+                            action: recordForm.removeForm
+                        )
+                    },
+                    center: {
+                        TodayDate()
+                    },
+                    right: {
+                        SubmitButton(
+                            recordForm: recordForm,
+                            label: "완료",
+                            destination: { mindAnalyzer in
+                                MindAnalyzerView(mindAnalyzer)
+                            }
+                        )
+                    }
+                )
             },
             main: {
                 self.titleInputCard
@@ -47,31 +66,6 @@ struct RecordFormView: View {
             // 기록 시작 시간 설정
             recordForm.startTime = Date()
         }
-    }
-    
-    private var recordFormTopBar: some View {
-        HStack {
-            CancelButton(
-                label: "취소",
-                action: {
-                    recordForm.removeForm()
-                })
-            
-            Spacer()
-            
-            TodayDate()
-            
-            Spacer()
-            
-            SubmitButton(
-                recordForm: recordForm,
-                label: "완료",
-                destination: { mindAnalyzer in
-                    MindAnalyzerView(mindAnalyzer)
-                }
-            )
-        }
-        .padding(.horizontal)
     }
     
     private var recordFormBottomBar: some View {
@@ -239,6 +233,38 @@ struct RecordFormView: View {
 }
 
 
+// MARK: Preview
+fileprivate struct RecordFormPreview: View {
+    @StateObject var mentoryiOS = MentoryiOS()
+    
+    var body: some View {
+        if let todayBoard = mentoryiOS.todayBoard,
+           let recordForm = todayBoard.recordForm {
+            RecordFormView(
+                recordForm: recordForm,
+            )
+        } else {
+            ProgressView("프리뷰 로딩 중입니다.")
+                .task {
+                    mentoryiOS.setUp()
+                    
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.next()
+                    
+                    let todayBoard = mentoryiOS.todayBoard!
+                    todayBoard.setUpForm()
+                }
+        }
+    }
+}
+
+
+#Preview {
+    RecordFormPreview()
+}
+
+
 // MARK: Component
 fileprivate struct CancelButton: View {
     let label: String
@@ -322,33 +348,23 @@ fileprivate struct SubmitButton<Content: View>: View {
 }
 
 
-// MARK: Preview
-fileprivate struct RecordFormPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
+fileprivate struct TopBarLayout<L:View, C: View, R: View>: View {
+    @ViewBuilder let left: () -> L
+    @ViewBuilder let center: () -> C
+    @ViewBuilder let right: () -> R
     
     var body: some View {
-        if let todayBoard = mentoryiOS.todayBoard,
-           let recordForm = todayBoard.recordForm {
-            RecordFormView(
-                recordForm: recordForm,
-            )
-        } else {
-            ProgressView("프리뷰 로딩 중입니다.")
-                .task {
-                    mentoryiOS.setUp()
-                    
-                    let onboarding = mentoryiOS.onboarding!
-                    onboarding.nameInput = "김철수"
-                    onboarding.next()
-                    
-                    let todayBoard = mentoryiOS.todayBoard!
-                    todayBoard.setUpForm()
-                }
+        HStack {
+            self.left()
+            
+            Spacer()
+            
+            self.center()
+            
+            Spacer()
+            
+            self.right()
         }
+        .padding(.horizontal)
     }
-}
-
-
-#Preview {
-    RecordFormPreview()
 }
