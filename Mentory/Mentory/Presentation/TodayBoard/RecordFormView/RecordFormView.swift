@@ -18,7 +18,7 @@ struct RecordFormView: View {
     nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
     @ObservedObject var recordForm: RecordForm
     
-    
+
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
@@ -154,7 +154,7 @@ fileprivate struct SubmitButton<Content: View>: View {
     @State var isSubmitEnabled: Bool = false
     @State var showMindAnalyzerView: Bool = false
     @State var showingSubmitAlert: Bool = false
-    
+
     var body: some View {
         Button {
             showingSubmitAlert = true
@@ -244,6 +244,8 @@ fileprivate struct BodyField: View {
     let prompt: String
     @Binding var text: String
     
+    @FocusState private var isFocused: Bool
+    
     var body: some View {
         LiquidGlassCard {
             ZStack(alignment: .topLeading) {
@@ -257,6 +259,7 @@ fileprivate struct BodyField: View {
                 }
                 
                 TextEditor(text: $text)
+                    .focused($isFocused)
                     .scrollContentBackground(.hidden)
                     .frame(minHeight: 300)
                     .padding()
@@ -264,27 +267,14 @@ fileprivate struct BodyField: View {
                         ToolbarItemGroup(placement: .keyboard) {
                             Spacer()
                             Button("완료") {
-                                dismissKeyboard()
+                                isFocused = false   // ← 키보드 내려감 (UIKit NO!)
                             }
                         }
                     }
-                
             }
         }
     }
 }
-
-extension View {
-    func dismissKeyboard() {
-        UIApplication.shared.sendAction(
-            #selector(UIResponder.resignFirstResponder),
-            to: nil,
-            from: nil,
-            for: nil
-        )
-    }
-}
-
 
 fileprivate struct ImageButton: View {
     @ObservedObject var model: RecordForm
