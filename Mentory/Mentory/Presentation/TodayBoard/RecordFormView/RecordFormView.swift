@@ -244,8 +244,6 @@ fileprivate struct BodyField: View {
     let prompt: String
     @Binding var text: String
     
-    @FocusState private var isFocused: Bool
-    
     var body: some View {
         LiquidGlassCard {
             ZStack(alignment: .topLeading) {
@@ -259,24 +257,14 @@ fileprivate struct BodyField: View {
                 }
                 
                 TextEditor(text: $text)
-                    .focused($isFocused)
                     .scrollContentBackground(.hidden)
                     .frame(minHeight: 300)
                     .padding()
-                    .toolbar {
-                        ToolbarItemGroup(placement: .keyboard) {
-                            if isFocused{
-                                Spacer()
-                                Button("완료") {
-                                    isFocused = false
-                                }
-                            }
-                        }
-                    }
             }
         }
     }
 }
+
 
 fileprivate struct ImageButton: View {
     @ObservedObject var model: RecordForm
