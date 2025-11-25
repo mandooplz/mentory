@@ -158,8 +158,10 @@ fileprivate struct SubmitButton<Content: View>: View {
     var body: some View {
         Button {
             showingSubmitAlert = true
+            
         } label: {
             ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
+            
         }.disabled(!isSubmitEnabled)
             .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
                 Button("취소", role: .cancel) { }
@@ -178,13 +180,8 @@ fileprivate struct SubmitButton<Content: View>: View {
                 if let mindAnalyzer = recordForm.mindAnalyzer {
                     destination(mindAnalyzer)
                 }
-            })
-        
-//            .fullScreenCover(isPresented: $showMindAnalyzerView, content: {
-//                if let mindAnalyzer = recordForm.mindAnalyzer {
-//                    destination(mindAnalyzer)
-//                }
-//            })
+            }
+            )
         
             .task {
                 let stream = recordForm.$mindAnalyzer.values
@@ -194,6 +191,7 @@ fileprivate struct SubmitButton<Content: View>: View {
                     self.showMindAnalyzerView = isPresented
                 }
             }
+        
             .task {
                 let titleInputStream = recordForm.$titleInput.values
                 let textInputStream = recordForm.$textInput.values
