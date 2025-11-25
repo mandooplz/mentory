@@ -6,15 +6,18 @@
 //
 import SwiftUI
 import SwiftData
-
+import FirebaseCore
 
 // MARK: App
 @main
 struct MentoryApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
     // MARK: model
     @State var mentoryiOS = MentoryiOS(.real)
-
-
+    
+    
     // MARK: body
     var body: some Scene {
         WindowGroup {
