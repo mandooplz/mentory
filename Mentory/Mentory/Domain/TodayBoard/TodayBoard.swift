@@ -98,21 +98,24 @@ final class TodayBoard: Sendable, ObservableObject {
         let mentoryDB = owner!.mentoryDB
 
         // process
+        let todayRecords: [RecordData]
+        
         do {
-            let todayRecords = try await mentoryDB.fetchToday()
+            todayRecords = try await mentoryDB.fetchToday()
             logger.info("오늘의 레코드 \(todayRecords.count)개 로드 성공")
-
-            // mutate
-            self.records = todayRecords
-
-            // 가장 최근 레코드의 행동 추천을 actionKeyWordItems에 로드
-            if let lastRecord = todayRecords.max(by: { $0.createdAt < $1.createdAt }) {
-                self.actionKeyWordItems = zip(lastRecord.actionTexts, lastRecord.actionCompletionStatus).map { ($0, $1) }
-                self.latestRecordId = lastRecord.id
-                logger.debug("가장 최근 레코드의 행동 추천 \(lastRecord.actionTexts.count)개 로드")
-            }
         } catch {
             logger.error("레코드 로드 실패: \(error)")
+            return
+        }
+        
+        // mutate
+        self.records = todayRecords
+
+        // 가장 최근 레코드의 행동 추천을 actionKeyWordItems에 로드
+        if let lastRecord = todayRecords.max(by: { $0.createdAt < $1.createdAt }) {
+            self.actionKeyWordItems = zip(lastRecord.actionTexts, lastRecord.actionCompletionStatus).map { ($0, $1) }
+            self.latestRecordId = lastRecord.id
+            logger.debug("가장 최근 레코드의 행동 추천 \(lastRecord.actionTexts.count)개 로드")
         }
     }
 
