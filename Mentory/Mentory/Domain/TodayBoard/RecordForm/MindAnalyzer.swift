@@ -195,6 +195,14 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
     }
     
+    func cancel() {
+        // capture
+        let recordForm = self.owner
+        
+        // mutate
+        recordForm?.mindAnalyzer = nil
+    }
+    
     
     // MARK: value
     enum CharacterType: Sendable, CaseIterable {

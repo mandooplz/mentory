@@ -12,12 +12,32 @@ import Testing
 // MARK: Tests
 @Suite("MindAnalyzer")
 struct MindAnalyzerTests {
-    
+    struct Cacnel {
+        let mentoryiOS: MentoryiOS
+        let mindAnalyzer: MindAnalyzer
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
+        }
+        
+        @Test func RecordForm_removeMindAnalyzer() async throws {
+            // given
+            let recordForm = try #require(await mindAnalyzer.owner)
+            
+            try await #require(recordForm.mindAnalyzer?.id == mindAnalyzer.id)
+            
+            // when
+            await mindAnalyzer.cancel()
+            
+            // then
+            await #expect(recordForm.mindAnalyzer == nil)
+        }
+    }
 }
 
 
 // MARK: Helpehr
-private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> MindAnalyzer {
+private func getMindAnalyzerForTest(_ mentoryiOS: MentoryiOS) async throws -> MindAnalyzer {
     // MentoryiOS
     await mentoryiOS.setUp()
     
