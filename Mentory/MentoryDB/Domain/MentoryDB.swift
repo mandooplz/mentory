@@ -18,27 +18,9 @@ actor MentoryDB: Sendable {
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
         do {
-            return try ModelContainer(
-                for: MentoryDB.MentoryDBModel.self,
-                    DailyRecord.DailyRecordModel.self
-            )
+            return try ModelContainer(for: MentoryDB.MentoryDBModel.self, DailyRecord.DailyRecordModel.self)
         } catch {
-            // 디스크 기반 컨테이너 생성 실패 시, 크래시는 막고
-            // 메모리 전용 컨테이너로라도 동작하게 fallback
-            /*
-            #if DEBUG
-            print("❌ MentoryDB ModelContainer 생성 실패: \(error)")
-            #endif
-
-            let schema = Schema([
-                MentoryDB.MentoryDBModel.self,
-                DailyRecord.DailyRecordModel.self
-            ])
-            let config = ModelConfiguration(isStoredInMemoryOnly: true)
-
-            return try! ModelContainer(for: schema, configurations: config)
-             */
-            fatalError()
+            fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
     }()
 

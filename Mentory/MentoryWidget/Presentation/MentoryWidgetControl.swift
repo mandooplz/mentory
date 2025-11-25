@@ -12,6 +12,7 @@ import AppIntents
 // MARK: - 앱과 위젯의 공용 저장소
 
 struct ActionWidgetStorage {
+    // appGroupID에 맞게 수정 필요
     private static let appGroupID = "group.com.sjs.mentory"
     private static var defaults: UserDefaults {
         UserDefaults(suiteName: appGroupID)!
