@@ -9,7 +9,7 @@ import WidgetKit
 import SwiftUI
 import AppIntents
 
-// MARK: - 공용 저장소 헬퍼
+// MARK: - 앱과 위젯의 공용 저장소
 
 struct ActionWidgetStorage {
     private static let appGroupID = "group.com.sjs.mentory"
@@ -30,7 +30,7 @@ struct ActionWidgetStorage {
 
     static func progress() -> Double {
         let value = defaults.double(forKey: progressKey)
-        return value == 0 ? (7.0 / 9.0) : value   // 기본값 7/9
+        return value == 0 ? (7.0 / 9.0) : value
     }
 
     static func setProgress(_ newValue: Double) {
@@ -53,7 +53,7 @@ struct ToggleRecommendedActionIntent: AppIntent {
     }
 }
 
-// MARK: - Timeline Entry
+// MARK: - Timeline Entry (위젯을 그릴 때 필요한 데이터 세트)
 
 struct ActionEntry: TimelineEntry {
     let date: Date
@@ -62,6 +62,7 @@ struct ActionEntry: TimelineEntry {
 }
 
 // MARK: - Provider
+// 시스템 → Provider.timeline 호출 → loadEntry() → ActionEntry → View에게 전달
 
 struct ActionProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> ActionEntry {
@@ -78,7 +79,7 @@ struct ActionProvider: AppIntentTimelineProvider {
     func timeline(for configuration: ConfigurationAppIntent,
                   in context: Context) async -> Timeline<ActionEntry> {
         let entry = loadEntry()
-        // 이 위젯은 내부에서만 상태를 바꾸므로 .never 정책 사용
+        // 이 위젯은 내부에서만 상태를 바꾸므로 .never 사용 (자동 갱신x)
         return Timeline(entries: [entry], policy: .never)
     }
 
@@ -97,28 +98,20 @@ struct MentoryActionWidgetEntryView: View {
     var entry: ActionProvider.Entry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-
-            // MARK: Title line
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("오늘은 이런 행동 어떨까요?")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                 Spacer()
                 Text("7/9")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.gray)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-
-            // MARK: Progress section (앱과 동일한 스타일)
             HStack(spacing: 8) {
-                ZStack {
+                ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(.gray.opacity(0.12))
-                        .frame(height: 10)
-                        .overlay(
-                            Capsule()
-                                .stroke(.white.opacity(0.25), lineWidth: 1)
-                        )
+                        .fill(.secondary.opacity(0.15))
+                        .frame(height: 6)
 
                     GeometryReader { geo in
                         Capsule()
@@ -126,80 +119,63 @@ struct MentoryActionWidgetEntryView: View {
                                 LinearGradient(
                                     colors: [
                                         .purple,
-                                        .purple.opacity(0.55)
+                                        .purple.opacity(0.6)
                                     ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
+                                    startPoint: .leading,
+                                    endPoint: .trailing
                                 )
                             )
-                            .frame(width: geo.size.width * entry.progress)
-                            .shadow(color: .purple.opacity(0.3),
-                                    radius: 3, x: 0, y: 1)
+                            .frame(width: geo.size.width * entry.progress, height: 6)
                     }
                 }
-                .frame(height: 10)
+                .frame(height: 6)
 
                 Button {
-                    // 나중에 추천행동 새로고침 Intent 연결
                 } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.gray)
-                        .padding(6)
-                }
-            }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 6)
-            .background(
-                Color.white.opacity(0.05),
-                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(.white.opacity(0.1), lineWidth: 1)
-            )
+                    ZStack {
+                        Circle()
+                            .fill(.secondary.opacity(0.12))
 
-            // MARK: ActionRow와 동일한 체크 영역(전체가 버튼)
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(width: 24, height: 24)
+            }
+
+            // 체크 영역 전체가 버튼
             Button(intent: ToggleRecommendedActionIntent()) {
                 HStack(spacing: 8) {
                     Image(systemName: entry.isCompleted ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(entry.isCompleted ? Color.accentColor : Color.gray)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(entry.isCompleted ? Color.accentColor : Color.secondary)
 
                     Text(entry.isCompleted
                          ? "오늘의 추천행동을 완료했어요!"
                          : "기록을 남기고 추천행동을 완료해보세요!")
-                    .font(.system(size: 14))
+                    .font(.system(size: 13))
+                    .foregroundStyle(.primary)
+
+                    Spacer(minLength: 0)
                 }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 12)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 10)
                 .background(
-                    Color.white.opacity(0.05),
-                    in: RoundedRectangle(cornerRadius: 18, style: .continuous)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(.white.opacity(0.08), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(Color(.systemBackground).opacity(0.8))
                 )
             }
             .buttonStyle(.plain)
-
         }
-        .padding(.vertical, 22)
-        .padding(.horizontal, 18)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(.systemBackground).opacity(0.9))
-                .shadow(color: Color.black.opacity(0.06),
-                        radius: 10, x: 0, y: 6)
-        )
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .containerBackground(.fill.tertiary, for: .widget)
         .widgetURL(URL(string: "mentory://record"))
     }
 }
 
-// MARK: - Widget 정의
+// MARK: - 위에 있는 View를 진짜 Widget으로 정의
 
 struct MentoryActionWidget: Widget {
     let kind: String = "MentoryActionWidget"
@@ -212,7 +188,7 @@ struct MentoryActionWidget: Widget {
         }
         .configurationDisplayName("오늘의 추천행동")
         .description("추천행동과 진행률을 확인하고 완료 여부를 체크할 수 있어요.")
-        .supportedFamilies([.systemMedium])   // 필요에 따라 small/large 추가 가능
+        .supportedFamilies([.systemMedium])   // 위젯 크기 (스몰, 미디움, 라지)
     }
 }
 
