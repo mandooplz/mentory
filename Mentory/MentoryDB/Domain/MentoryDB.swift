@@ -201,6 +201,15 @@ actor MentoryDB: Sendable {
         }
     }
     
+    func getMentorMessage() {
+        let context = ModelContext(MentoryDB.container)
+        
+    }
+    
+    func setMentorMessage() {
+        let context = ModelContext(MentoryDB.container)
+    }
+    
     
     func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async {
         let context = ModelContext(MentoryDB.container)
@@ -274,6 +283,8 @@ actor MentoryDB: Sendable {
             logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
         }
     }
+    
+    
     
     
     
