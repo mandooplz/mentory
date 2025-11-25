@@ -25,12 +25,15 @@ final class MindAnalyzer: Sendable, ObservableObject {
     weak var owner: RecordForm?
 
     @Published var isAnalyzing: Bool = false
-    @Published var selectedCharacter: CharacterType? = nil
+    @Published var isAnalyzeFinished: Bool = false
+    @Published var selectedCharacter: CharacterType = .A
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
     @Published var firstAnalysisResult: FirstAnalysisResult? = nil
     @Published var secondAnalysisResult: SecondAnalysisResult? = nil
+    
+    
     
     
     // MARK: action
@@ -46,15 +49,15 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
 
-        // selectedCharacter가 없으면 기본값 .A 사용
-        let character = selectedCharacter ?? .A
+        let character = selectedCharacter
 
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         let alanLLM = mentoryiOS.alanLLM
 
-        // MARK: 1차 분석 - 위험도, 주제, mindtype 분류
+        
+        // process
         logger.info("1차 분석 시작")
         let firstResult: FirstAnalysisResult
         do {
@@ -120,11 +123,13 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
 
-        // MARK: 결과 저장
+        
+        // mutate
         self.firstAnalysisResult = firstResult
         self.secondAnalysisResult = secondResult
         self.mindType = firstResult.mindType
         self.analyzedResult = secondResult.empathyMessage
+        self.isAnalyzeFinished = true
 
         // TodayBoard의 actionKeyWordItems 업데이트 (체크되지 않은 상태로 초기화, owner: MindAnalyzer -> RecordForm -> TodayBoard)
         self.owner!.owner!.actionKeyWordItems = secondResult.actionKeywords.map { ($0, false) }
@@ -192,9 +197,30 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     
     // MARK: value
-    enum CharacterType: Sendable {
+    enum CharacterType: Sendable, CaseIterable {
         case A
         case B
+        
+        var displayName: String {
+            switch self {
+            case .A: return "냉스 처리스키"
+            case .B: return "알렉산더 지방스"
+            }
+        }
+        
+        var description: String {
+            switch self {
+            case .A: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
+            case .B: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
+            }
+        }
+        
+        var imageName: String {
+            switch self {
+            case .A: return "bunsuk"
+            case .B: return "gureum"
+            }
+        }
     }
 
     enum RiskLevel: String, Sendable, Codable {
