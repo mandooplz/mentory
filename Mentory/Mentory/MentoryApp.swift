@@ -13,8 +13,8 @@ import SwiftData
 struct MentoryApp: App {
     // MARK: model
     @State var mentoryiOS = MentoryiOS(
-        mentoryDB: MentoryDBMock(),
-        alanLLM: AlanLLMMock()
+        mentoryDB: MentoryDBAdapter(),
+        alanLLM: AlanLLM()
     )
 
 
