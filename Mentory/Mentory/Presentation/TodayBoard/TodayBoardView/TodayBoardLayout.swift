@@ -12,12 +12,10 @@ import WebKit
 // MARK: Layout
 struct TodayBoardLayout<Content:View>: View {
     let content: Content
-    let informationURL: URL
 
     @State private var isShowingInformationView = false
 
-    init(informationURL: URL, @ViewBuilder content: () -> Content) {
-        self.informationURL = informationURL
+    init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
     
@@ -45,7 +43,7 @@ struct TodayBoardLayout<Content:View>: View {
                 }
             }
             .sheet(isPresented: $isShowingInformationView) {
-                WebView(url: informationURL)
+                WebView(url: MentoryiOS().informationURL)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button("닫기") {

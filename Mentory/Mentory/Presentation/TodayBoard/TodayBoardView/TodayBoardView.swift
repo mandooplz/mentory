@@ -23,7 +23,7 @@ struct TodayBoardView: View {
 
     // MARK: body
     var body: some View {
-        TodayBoardLayout(informationURL: todayBoard.owner!.informationURL) {
+        TodayBoardLayout {
             // 상단 타이틀
             Title("기록")
             
