@@ -243,7 +243,9 @@ fileprivate struct BodyField: View {
                 if text.isEmpty {
                     Text("글쓰기 시작…")
                         .foregroundColor(.gray.opacity(0.5))
-                        .padding()
+                        .padding(.leading, 21)
+                        .padding(.top, 24)
+                        .padding(.trailing, 21)
                         .allowsHitTesting(false)
                 }
                 
