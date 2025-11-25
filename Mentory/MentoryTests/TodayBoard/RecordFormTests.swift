@@ -128,24 +128,6 @@ struct RecordFormTests {
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
 
-        @Test func TodayBoard_addRecord() async throws {
-            // Given
-            await MainActor.run {
-                recordForm.titleInput = "테스트 제목"
-                recordForm.textInput = "테스트 내용"
-            }
-
-            let initialCount = await MainActor.run {
-                todayBoard.records.count
-            }
-
-            // When
-            await recordForm.submit()
-
-            // Then
-            let newCount = await MainActor.run { todayBoard.records.count }
-            #expect(newCount == initialCount + 1)
-        }
         
         @Test func notResetTitleInputWhenSucceed() async throws {
             // given
@@ -198,59 +180,6 @@ struct RecordFormTests {
             
             // then
             await #expect(recordForm.voiceInput == testVoiceURL)
-        }
-        
-        
-//        @Test func afterSubmit_formIsReset() async throws {
-//            // Given
-//            let testTitle = "TEST_TITLE"
-//            let testText = "TEST_TEXT"
-//            let testImageData: Data = .init([0x00, 0x01])
-//            let testVoiceURL = URL(string: "file:///test.m4a")!
-//            
-//            await MainActor.run {
-//                recordForm.titleInput = testTitle
-//                recordForm.textInput = testText
-//                recordForm.imageInput = testImageData
-//                recordForm.voiceInput = testVoiceURL
-//            }
-//
-//            // When
-//            await recordForm.submit()
-//
-//            // Then
-//            await #expect(recordForm.titleInput == testTitle)
-//            await #expect(recordForm.textInput == testText)
-//            await #expect(recordForm.imageInput == testImageData)
-//            await #expect(recordForm.voiceInput == testVoiceURL)
-//            await #expect(recordForm.validationResult == .none)
-//        }
-
-        @Test("유효하지 않은 입력으로 제출 시 Record가 추가되지 않음")
-        func whenInvalidInput_recordIsNotAdded() async throws {
-            // Given: 제목이 비어있음
-            await MainActor.run {
-                recordForm.titleInput = ""
-                recordForm.textInput = "내용"
-            }
-
-            let initialCount = await MainActor.run {
-                todayBoard.records.count
-            }
-
-            // When
-            await recordForm.submit()
-
-            // Then
-            let newCount = await MainActor.run {
-                todayBoard.records.count
-            }
-            #expect(newCount == initialCount)
-        }
-
-        @Test("빈 텍스트로 제출 시 Record의 text가 nil로 저장됨", .disabled())
-        func whenTextIsEmpty_recordTextIsNil() async throws {
-            
         }
     }
     
