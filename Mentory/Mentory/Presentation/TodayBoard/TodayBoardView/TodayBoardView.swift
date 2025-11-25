@@ -114,9 +114,9 @@ struct TodayBoardView: View {
                     }
         }
         .task {
-            // 레코드 로드를 먼저 실행 (DB에서 가져오므로 빠름)
             await todayBoard.loadTodayRecords()
-            // 명언은 나중에 로드 (API 호출이므로 시간 걸림)
+        }
+        .task {
             await todayBoard.fetchTodayString()
         }
     }
