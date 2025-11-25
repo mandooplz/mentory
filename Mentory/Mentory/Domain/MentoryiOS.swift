@@ -16,15 +16,18 @@ final class MentoryiOS: Sendable, ObservableObject {
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
     nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
-
-    init(
-        mentoryDB: any MentoryDBInterface = MentoryDBMock(),
-        alanLLM: any AlanLLMInterface = AlanLLMMock()
-    ) {
-        self.mentoryDB = mentoryDB
-        self.alanLLM = alanLLM
+    
+    init(_ mode: SystemMode = .test) {
+        switch mode {
+        case .real:
+            self.mentoryDB = MentoryDBAdapter()
+            self.alanLLM = AlanLLM()
+        case .test:
+            self.mentoryDB = MentoryDBMock()
+            self.alanLLM = AlanLLMMock()
+        }
     }
-
+    
     
     // MARK: state
     nonisolated let id: UUID = UUID()
@@ -106,5 +109,12 @@ final class MentoryiOS: Sendable, ObservableObject {
             logger.error("\(error)")
             return
         }
+    }
+    
+    
+    // MARK: view
+    enum SystemMode: Sendable, Hashable {
+        case test
+        case real
     }
 }

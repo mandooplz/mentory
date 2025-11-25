@@ -5,6 +5,7 @@
 //  Created by 김민우 on 11/24/25.
 //
 import SwiftUI
+import UIKit
 
 
 // MARK: Layout
@@ -30,6 +31,15 @@ struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
                         .padding(.top, 16)
                         .padding(.bottom, 80)
                     }
+                    .scrollDismissesKeyboard(.interactively)
+                    .onTapGesture {
+                        UIApplication.shared.sendAction(
+                            #selector(UIResponder.resignFirstResponder),
+                            to: nil,
+                            from: nil,
+                            for: nil
+                        )
+                    }
                     Spacer()
                 }
             }
@@ -38,7 +48,7 @@ struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
                     self.bottomBar()
                 }
             }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-    }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+        }
     }
 }
