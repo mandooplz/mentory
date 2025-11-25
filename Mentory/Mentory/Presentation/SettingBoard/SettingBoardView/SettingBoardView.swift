@@ -42,11 +42,10 @@ struct SettingBoardView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // 1) 배경
                 Color(.systemGray6)
                     .ignoresSafeArea()
                 
-                // 2) 화면에 보이는 Row들
+                // 화면에 보이는 Row들
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 28) {
                         HeaderRow
@@ -69,13 +68,15 @@ struct SettingBoardView: View {
                     .padding(.vertical, 28)
                 }
             }
+            .task {
+                settingBoard.loadSavedReminderTime()
+            }
         }
-        .modifier(LoadSavedReminderTime(dm: settingBoard))
-        
-        .modifier(HeaderActionModifier(vm: settingBoardViewModel, dm: settingBoard))
-        .modifier(EditingNameActionMofiier(vm: settingBoardViewModel, dm: settingBoard))
     }
-    
+    func openAppSpecificSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
+    }
     
     // MARK: ViewBuilder 모음
     @ViewBuilder
@@ -100,6 +101,9 @@ struct SettingBoardView: View {
                 }
             }
         }
+        .sheet(isPresented: $settingBoardViewModel.isShowingInformationView) {
+            WebView(url: settingBoard.owner!.informationURL)
+        }
     }
     
     @ViewBuilder
@@ -115,6 +119,13 @@ struct SettingBoardView: View {
                 settingBoardViewModel.isShowingEditingNameSheet = true
             }
         }
+        .sheet(isPresented: $settingBoardViewModel.isShowingEditingNameSheet, onDismiss: {
+            Task {
+                await settingBoard.editingName?.cancel()
+            }
+        }) {
+            EditingNameSheet(editingName: settingBoard.editingName!)
+        }
     }
     
     @ViewBuilder
@@ -124,7 +135,9 @@ struct SettingBoardView: View {
             iconBackground: Color.blue,
             title: "앱 설정",
             showDivider: false
-        ) {}
+        ) {
+            openAppSpecificSettings()
+        }
     }
     
     @ViewBuilder
@@ -150,8 +163,10 @@ struct SettingBoardView: View {
         ) {
             settingBoardViewModel.isShowingReminderPickerSheet = true
         }
+        .sheet(isPresented: $settingBoardViewModel.isShowingReminderPickerSheet) {
+            ReminderPickerSheet
+        }
     }
-    
     
     @ViewBuilder
     private var PrivacyPolicyRow: some View {
@@ -162,6 +177,9 @@ struct SettingBoardView: View {
             showDivider: false
         ) {
             settingBoardViewModel.isShowingPrivacyPolicyView = true
+        }
+        .navigationDestination(isPresented: $settingBoardViewModel.isShowingPrivacyPolicyView) {
+            PrivacyPolicyView()
         }
     }
     
@@ -175,6 +193,9 @@ struct SettingBoardView: View {
         ) {
             settingBoardViewModel.isShowingLicenseInfoView = true
         }
+        .navigationDestination(isPresented: $settingBoardViewModel.isShowingLicenseInfoView) {
+            LicenseInfoView()
+        }
     }
     
     @ViewBuilder
@@ -186,6 +207,9 @@ struct SettingBoardView: View {
             showDivider: false
         ) {
             settingBoardViewModel.isShowingTermsOfServiceView = true
+        }
+        .navigationDestination(isPresented: $settingBoardViewModel.isShowingTermsOfServiceView) {
+            TermsOfServiceView()
         }
     }
     
@@ -200,123 +224,23 @@ struct SettingBoardView: View {
         ) {
             settingBoardViewModel.isShowingDataDeletionAlert = true
         }
-    }
-    
-    
-    
-    // MARK: Modifier 모음
-    struct HeaderActionModifier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        let dm: SettingBoard
-        
-        func body(content: Content) -> some View {
-            content
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            vm.isShowingInformationView = true
-                        } label: {
-                            Image(systemName: "info.circle")
-                        }
-                    }
+        .alert(
+            "데이터를 삭제하시겠습니까?",
+            isPresented: $settingBoardViewModel.isShowingDataDeletionAlert,
+            actions: {
+                Button("삭제", role: .destructive) {
+                    settingBoard.confirmDataDeletion()
                 }
-                .sheet(isPresented: $vm.isShowingInformationView) {
-                    WebView(url: dm.owner!.informationURL)
+                Button("취소", role: .cancel) {
                 }
-        }
+            },
+            message: {
+                Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
+            }
+        )
     }
     
-    struct EditingNameActionMofiier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        let dm: SettingBoard
-        
-        func body(content: Content) -> some View {
-            content
-                .sheet(isPresented: $vm.isShowingEditingNameSheet, onDismiss: {
-                    Task {
-                        await dm.editingName?.cancel()
-                    }
-                }) {
-                    EditingNameSheet(editingName: dm.editingName!)
-                }
-        }
-    }
-    
-    struct ReminderTimeActionModifier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        let dm: SettingBoard
-        
-        func body(content: Content) -> some View {
-            content
-                .sheet(isPresented: $vm.isShowingReminderPickerSheet) {
-                    //ReminderPickerSheet
-                }
-        }
-    }
-    
-    struct PrivacyPolicyActionModifier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        func body(content: Content) -> some View {
-            content
-                .navigationDestination(isPresented: $vm.isShowingPrivacyPolicyView) {
-                    PrivacyPolicyView()
-                }
-        }
-    }
-    
-    struct LicenseInfoActionModifier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        func body(content: Content) -> some View {
-            content
-                .navigationDestination(isPresented: $vm.isShowingLicenseInfoView) {
-                    LicenseInfoView()
-                }
-        }
-    }
-    
-    struct TermsOfServiceActionModifier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        func body(content: Content) -> some View {
-            content
-                .navigationDestination(isPresented: $vm.isShowingTermsOfServiceView) {
-                    TermsOfServiceView()
-                }
-        }
-    }
-    
-    struct DataDeletionActionModifier: ViewModifier {
-        @ObservedObject var vm: SettingBoardViewModel
-        let dm: SettingBoard
-        func body(content: Content) -> some View {
-            content
-                .alert(
-                    "데이터를 삭제하시겠습니까?",
-                    isPresented: $vm.isShowingDataDeletionAlert,
-                    actions: {
-                        Button("삭제", role: .destructive) {
-                            dm.confirmDataDeletion()
-                        }
-                        Button("취소", role: .cancel) {
-                        }
-                    },
-                    message: {
-                        Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
-                    }
-                )
-        }
-    }
-    
-    struct LoadSavedReminderTime: ViewModifier {
-        let dm: SettingBoard
-        func body(content: Content) -> some View {
-            content
-                .task {
-                    dm.loadSavedReminderTime()
-                }
-        }
-    }
-    
-    
+    // 알림시간설정시트
     private var ReminderPickerSheet: some View {
         NavigationStack {
             VStack(spacing: 16) {
@@ -481,7 +405,6 @@ struct SettingIcon: View {
         .frame(width: 40)
     }
 }
-
 struct SettingSection<Content: View>: View {
     @ViewBuilder var content: () -> Content
     
