@@ -23,6 +23,7 @@ actor MentoryDB: Sendable {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
     }()
+
     
     
     // MARK: state
