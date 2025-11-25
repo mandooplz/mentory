@@ -15,11 +15,11 @@ struct TodayBoardView: View {
     // MARK: model
     @ObservedObject var todayBoard: TodayBoard
     @ObservedObject var mentoryiOS: MentoryiOS
+
     init(_ todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
         self.mentoryiOS = todayBoard.owner!
     }
-    
 
     // MARK: body
     var body: some View {
@@ -59,7 +59,8 @@ struct TodayBoardView: View {
             // 행동 추천 카드
             SuggestionCard(
                 todayBoard: todayBoard,
-                header: "오늘은 이런 행동 어떨까요?"
+                header: "오늘은 이런 행동 어떨까요?",
+                actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
         // 로드 시 2개의 비동기 작업 실행
@@ -249,17 +250,17 @@ fileprivate struct RecordStatCard<Content: View>: View {
     }
 }
 
-fileprivate struct SuggestionCard: View {
+fileprivate struct SuggestionCard<ActionRows: View>: View {
     @ObservedObject var todayBoard: TodayBoard
-    @State private var actionRowEmpty = false
-
     let header: String
+    let actionRows: ActionRows
 
-    init(todayBoard: TodayBoard, header: String) {
+    init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
         self.todayBoard = todayBoard
         self.header = header
+        self.actionRows = actionRows
     }
-    
+
     var body: some View {
         LiquidGlassCard {
             VStack(alignment: .leading, spacing: 10) {
@@ -321,34 +322,46 @@ fileprivate struct SuggestionCard: View {
                 )
 
                 // MARK: - Action Rows Section
-                if todayBoard.actionKeyWordItems.isEmpty {
-                    ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
-                } else {
-                    VStack(spacing: 12) {
-                        // 동적으로 행동 추천 생성
-                        ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
-                            ActionRow(
-                                checked: Binding(
-                                    get: { todayBoard.actionKeyWordItems[index].1 },
-                                    set: { newValue in
-                                        todayBoard.actionKeyWordItems[index].1 = newValue
-                                        // 체크 상태 변경 시 DB에 실시간 업데이트
-                                        Task {
-                                            await todayBoard.updateActionCompletion()
-                                            await todayBoard.loadTodayRecords()
-                                        }
-                                    }
-                                ),
-                                text: todayBoard.actionKeyWordItems[index].0
-                            )
-                        }
-                    }
+                actionRows
                     .padding(.top, 20)
-                }
             }
             .padding(.vertical, 22)
             .padding(.horizontal, 18)
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+fileprivate struct SuggestionActionRows: View {
+    @ObservedObject var todayBoard: TodayBoard
+    @State private var actionRowEmpty = false
+
+    init(todayBoard: TodayBoard) {
+        self.todayBoard = todayBoard
+    }
+
+    var body: some View {
+        if todayBoard.actionKeyWordItems.isEmpty {
+            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
+        } else {
+            VStack(spacing: 12) {
+                ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
+                    ActionRow(
+                        checked: Binding(
+                            get: { todayBoard.actionKeyWordItems[index].1 },
+                            set: { newValue in
+                                todayBoard.actionKeyWordItems[index].1 = newValue
+                                // 체크 상태 변경 시 DB에 실시간 업데이트
+                                Task {
+                                    await todayBoard.updateActionCompletion()
+                                    await todayBoard.loadTodayRecords()
+                                }
+                            }
+                        ),
+                        text: todayBoard.actionKeyWordItems[index].0
+                    )
+                }
+            }
         }
     }
 }
