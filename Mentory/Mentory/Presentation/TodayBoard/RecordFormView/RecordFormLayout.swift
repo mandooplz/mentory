@@ -30,6 +30,7 @@ struct RecordFormLayout<TopBar: View, Main: View, BottomBar: View>: View {
                         .padding(.top, 16)
                         .padding(.bottom, 80)
                     }
+                    .scrollDismissesKeyboard(.interactively)
                     Spacer()
                 }
             }
