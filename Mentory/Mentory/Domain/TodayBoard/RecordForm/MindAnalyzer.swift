@@ -85,8 +85,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
             let firstQuestion = AlanLLM.Question(firstPrompt)
             let firstAnswer = try await alanLLM.question(firstQuestion)
 
-            // JSON 파싱
-            guard let jsonData = firstAnswer.content.data(using: .utf8) else {
+            // ✅ JSON 파싱 (코드블록 제거 포함)
+            let firstJSONText = Self.stripCodeFence(from: firstAnswer.content)
+
+            guard let jsonData = firstJSONText.data(using: .utf8) else {
                 logger.error("1차 분석 결과를 Data로 변환 실패")
                 return
             }
@@ -100,6 +102,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
 
+
         // MARK: 2차 분석 - 공감 메시지, 행동 추천 키워드
         logger.info("2차 분석 시작")
         let secondResult: SecondAnalysisResult
@@ -108,8 +111,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
             let secondQuestion = AlanLLM.Question(secondPrompt)
             let secondAnswer = try await alanLLM.question(secondQuestion)
 
-            // JSON 파싱
-            guard let jsonData = secondAnswer.content.data(using: .utf8) else {
+            // ✅ JSON 파싱 (코드블록 제거 포함)
+            let secondJSONText = Self.stripCodeFence(from: secondAnswer.content)
+
+            guard let jsonData = secondJSONText.data(using: .utf8) else {
                 logger.error("2차 분석 결과를 Data로 변환 실패")
                 return
             }
@@ -122,6 +127,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             logger.error("2차 분석 실패: \(error)")
             return
         }
+
 
         
         // mutate
@@ -249,7 +255,33 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let empathyMessage: String
         let actionKeywords: [String]
     }
+    
+    // MARK: - Helpers
+
+    /// ```json ... ``` 같이 코드블록으로 감싸진 JSON 문자열에서
+    /// 앞뒤 ``` 라인을 제거해 순수 JSON만 남긴다.
+    private static func stripCodeFence(from text: String) -> String {
+        // 앞뒤 공백/개행 제거 후 줄 단위로 나누기
+        var lines = text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .components(separatedBy: .newlines)
+
+        // 첫 줄이 ``` 또는 ```json 으로 시작하면 제거
+        if let first = lines.first,
+           first.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("```") {
+            lines.removeFirst()
+        }
+
+        // 마지막 줄이 ``` 로 시작하면 제거
+        if let last = lines.last,
+           last.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("```") {
+            lines.removeLast()
+        }
+
+        return lines.joined(separator: "\n")
+    }
 }
+
 
 
 // MARK: CharacterType Prompts
