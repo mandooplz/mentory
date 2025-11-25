@@ -12,10 +12,7 @@ import SwiftData
 @main
 struct MentoryApp: App {
     // MARK: model
-    @State var mentoryiOS = MentoryiOS(
-        mentoryDB: MentoryDBAdapter(),
-        alanLLM: AlanLLM()
-    )
+    @State var mentoryiOS = MentoryiOS(.real)
 
 
     // MARK: body
