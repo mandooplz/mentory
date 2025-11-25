@@ -20,13 +20,10 @@ struct TodayBoardView: View {
         self.mentoryiOS = todayBoard.owner!
     }
     
-    
-    // MARK: viewModel
-    @State private var isShowingInformationView = false
-    
+
     // MARK: body
     var body: some View {
-        TodayBoardLayout {
+        TodayBoardLayout(informationURL: todayBoard.owner!.informationURL) {
             // 상단 타이틀
             Title("기록")
             
@@ -59,26 +56,6 @@ struct TodayBoardView: View {
                 todayBoard: todayBoard,
                 header: "오늘은 이런 행동 어떨까요?"
             )
-            
-        } toolbarContent: {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isShowingInformationView = true
-                } label: {
-                    Image(systemName: "info.circle")
-                        .font(.system(size: 18, weight: .semibold))
-                }
-            }
-        }
-        .sheet(isPresented: $isShowingInformationView) {
-            WebView(url: todayBoard.owner!.informationURL)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button("닫기") {
-                                isShowingInformationView = false
-                            }
-                        }
-                    }
         }
         // 로드 시 2개의 비동기 작업 실행
         .task {

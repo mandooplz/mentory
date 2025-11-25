@@ -6,17 +6,19 @@
 //
 import Foundation
 import SwiftUI
+import WebKit
 
 
 // MARK: Layout
-struct TodayBoardLayout<Content:View, TContent: ToolbarContent>: View {
+struct TodayBoardLayout<Content:View>: View {
     let content: Content
-    let toolbarContent: TContent
-    
-    init(@ViewBuilder content: () -> Content,
-         @ToolbarContentBuilder toolbarContent: () -> TContent) {
+    let informationURL: URL
+
+    @State private var isShowingInformationView = false
+
+    init(informationURL: URL, @ViewBuilder content: () -> Content) {
+        self.informationURL = informationURL
         self.content = content()
-        self.toolbarContent = toolbarContent()
     }
     
     var body: some View {
@@ -33,7 +35,24 @@ struct TodayBoardLayout<Content:View, TContent: ToolbarContent>: View {
                 }
             }
             .toolbar {
-                self.toolbarContent
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isShowingInformationView = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 18, weight: .semibold))
+                    }
+                }
+            }
+            .sheet(isPresented: $isShowingInformationView) {
+                WebView(url: informationURL)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("닫기") {
+                                isShowingInformationView = false
+                            }
+                        }
+                    }
             }
         }
     }
