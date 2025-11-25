@@ -265,6 +265,7 @@ fileprivate struct BodyField: View {
     }
 }
 
+
 fileprivate struct ImageButton: View {
     @ObservedObject var model: RecordForm
     
