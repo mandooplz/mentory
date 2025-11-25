@@ -33,13 +33,14 @@ final class EditingName: Sendable, ObservableObject{
         let newName = currentEditingName.trimmingCharacters(in: .whitespacesAndNewlines)
         let currentName = owner?.owner!.userName ?? ""
         
+        // process
+        let validateResult = newName.isEmpty || newName == currentName
+        
         // mutate
-        if newName.isEmpty || newName == currentName {
-            isSubmitDisabled = true
+        guard validateResult == false else {
+            isSubmitDisabled = false
             return
         }
-        isSubmitDisabled = false
-        
     }
 
     
