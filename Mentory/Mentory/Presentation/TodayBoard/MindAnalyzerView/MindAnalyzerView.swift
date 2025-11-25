@@ -12,7 +12,6 @@ import Values
 struct MindAnalyzerView: View {
     // MARK: model
     @ObservedObject var mindAnalyzer: MindAnalyzer
-
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
     }
@@ -20,229 +19,60 @@ struct MindAnalyzerView: View {
 
     // MARK: body
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                header
-                characterList
-                analyzerButton
-                analysisStatus
-                resultSection
-
-                // 분석 완료 후 확인 버튼
-                if let result = mindAnalyzer.analyzedResult,
-                   result.isEmpty == false,
-                   mindAnalyzer.isAnalyzing == false {
-                    confirmButton
-                }
-            }
-            .padding(24)
-            .background(
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 6)
-            )
-            .padding(.horizontal)
-            .padding(.top, 32)
-            .padding(.bottom, 40)
-        }
-    }
-    
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("누구에게 면담을 요청할까요?")
-                .font(.title3.bold())
-            Text("오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요.")
-                .font(.footnote)
-                .foregroundColor(.secondary)
-        }
-    }
-    
-    private var characterList: some View {
-        VStack(spacing: 16) {
-            ForEach(MindAnalyzer.CharacterType.allCases, id: \.self) { character in
-                CharacterSelectionCard(
-                    character: character,
-                    isSelected: character == (mindAnalyzer.selectedCharacter ?? .A)
-                ) {
-                    mindAnalyzer.selectedCharacter = character
-                }
-            }
-        }
-    }
-    
-    private var analyzerButton: some View {
-        Button {
-            Task {
-                mindAnalyzer.isAnalyzing = true
-                await mindAnalyzer.startAnalyzing()
-                // MentoryRecord 생성 및 저장
-                await mindAnalyzer.saveRecord()
-                mindAnalyzer.isAnalyzing = false
-            }
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane")
-                Text(mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기")
-                    .fontWeight(.semibold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(mindAnalyzer.isAnalyzing == false ? Color.purple : Color.gray.opacity(0.35))
-            )
-            .foregroundColor(.white)
-        }
-    }
-
-    private var confirmButton: some View {
-        Button {
-            let recordForm = mindAnalyzer.owner!
+        MindAnalyzerLayout {
             
-            recordForm.removeForm()
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark.circle.fill")
-                Text("확인")
-                    .fontWeight(.semibold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.blue)
+            Header(
+                title: "누구에게 면담을 요청할까요?",
+                description: "오늘의 감정을 가장 잘 표현해줄 멘토를 선택하면 맞춤 리포트를 보내드릴게요."
             )
-            .foregroundColor(.white)
-        }
-    }
-    
-    @ViewBuilder
-    private var analysisStatus: some View {
-        if mindAnalyzer.isAnalyzing {
-            StatusBadge(text: "선택한 멘토가 답변을 준비 중이에요…")
-        } else if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
-            VStack(alignment: .leading, spacing: 12) {
-                if let mindType = mindAnalyzer.mindType {
-                    MindTypeResultView(mindType: mindType)
+            
+            CharacterPicker(
+                characters: MindAnalyzer.CharacterType.allCases,
+                selection: $mindAnalyzer.selectedCharacter
+            )
+            
+            AnalyzeButton(
+                iconName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane",
+                label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
+                isActive: !mindAnalyzer.isAnalyzing,
+                action: {
+                    Task {
+                        mindAnalyzer.isAnalyzing = true
+                        
+                        await mindAnalyzer.startAnalyzing()
+                        await mindAnalyzer.saveRecord()
+                        
+                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
+                        
+                        mindAnalyzer.isAnalyzing = false
+                    }
+                })
+            
+            AnalyzedResult(
+                readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
+                progressPrompt: "선택한 멘토가 답변을 준비 중이에요...",
+                isProgress: mindAnalyzer.isAnalyzing,
+                result: mindAnalyzer.analyzedResult,
+                mindType: mindAnalyzer.mindType
+            )
+            
+            
+            ConfirmButton(
+                icon: "checkmark.circle.fill",
+                label: "확인",
+                isPresented: mindAnalyzer.isAnalyzeFinished,
+                action: {
+                    let recordForm = mindAnalyzer.owner!
+                    
+                    recordForm.removeForm()
                 }
-                Text(result)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(18)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color(.secondarySystemBackground))
             )
-        } else {
-            StatusBadge(text: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.")
-        }
-    }
-    
-    @ViewBuilder
-    private var resultSection: some View {
-        if let result = mindAnalyzer.analyzedResult, result.isEmpty == false {
-            ResultView(text: result)
         }
     }
 }
 
-fileprivate struct CharacterSelectionCard: View {
-    let character: MindAnalyzer.CharacterType
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                Image(character.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 110)
-                
-                Text(character.displayName)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                Text(character.description)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .padding(.horizontal, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(Color.white)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .stroke(isSelected ? Color.black : Color(.systemGray4), lineWidth: isSelected ? 2 : 1)
-            )
-            .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
-        }
-        .buttonStyle(.plain)
-    }
-}
 
-fileprivate struct StatusBadge: View {
-    let text: String
-    
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "sparkles")
-                .foregroundColor(.purple)
-            Text(text)
-                .font(.subheadline)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
-        )
-    }
-}
 
-fileprivate struct MindTypeResultView: View {
-    let mindType: Emotion
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(mindType.emoji)
-                .font(.largeTitle)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(mindType.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                Text(mindType.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            Spacer()
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(mindType.tint.opacity(0.18))
-        )
-    }
-}
-
-fileprivate struct ResultView: View {
-    let text: String
-    
-    var body: some View {
-        Text(text)
-            .font(.body)
-            .foregroundColor(.primary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
 
 fileprivate extension Emotion {
     var title: String {
@@ -301,29 +131,209 @@ fileprivate extension Emotion {
     }
 }
 
-extension MindAnalyzer.CharacterType: CaseIterable {
-    static var allCases: [MindAnalyzer.CharacterType] { [.A, .B] }
+
+// MARK: Component
+fileprivate struct Header: View {
+    let title: String
+    let description: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.title3.bold())
+            Text(description)
+                .font(.footnote)
+                .foregroundColor(.secondary)
+        }
+    }
 }
 
-fileprivate extension MindAnalyzer.CharacterType {
-    var displayName: String {
-        switch self {
-        case .A: return "냉스 처리스키"
-        case .B: return "알렉산더 지방스"
+
+fileprivate struct CharacterPicker: View {
+    let characters: [MindAnalyzer.CharacterType]
+    @Binding var selection: MindAnalyzer.CharacterType
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            ForEach(characters, id: \.self) { character in
+                SelectableCard(
+                    character: character,
+                    isSelected: character == selection
+                ) {
+                    selection = character
+                }
+            }
         }
     }
     
-    var description: String {
-        switch self {
-        case .A: return "냉철한 분석가 초록이가 감정 분석을 도와드릴게요!"
-        case .B: return "감성적인 조력자 지방이가 따뜻하게 답해드릴게요!"
+    fileprivate struct SelectableCard: View {
+        let character: MindAnalyzer.CharacterType
+        let isSelected: Bool
+        let action: () -> Void
+        
+        var body: some View {
+            Button(action: action) {
+                VStack(spacing: 12) {
+                    Image(character.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 110)
+                    
+                    Text(character.displayName)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text(character.description)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .fill(Color.white)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .stroke(isSelected ? Color.black : Color(.systemGray4), lineWidth: isSelected ? 2 : 1)
+                )
+                .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+}
+
+
+fileprivate struct AnalyzeButton: View {
+    let iconName: String
+    let label: String
+    let isActive: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: iconName)
+                Text(label)
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(self.isActive ? Color.purple : Color.gray.opacity(0.35))
+            )
+            .foregroundColor(.white)
+        }
+    }
+}
+
+
+fileprivate struct AnalyzedResult: View {
+    let readyPrompt: String
+    let progressPrompt: String
+    let isProgress: Bool
+    let result: String?
+    let mindType: Emotion?
+    
+    var body: some View {
+        if isProgress {
+            StatusBadge(text: progressPrompt)
+        } else if let result, result.isEmpty == false {
+            VStack(alignment: .leading, spacing: 12) {
+                if let mindType {
+                    MindTypeResultView(mindType: mindType)
+                }
+                
+                Text(result)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+            )
+        } else {
+            StatusBadge(text: readyPrompt)
         }
     }
     
-    var imageName: String {
-        switch self {
-        case .A: return "bunsuk"
-        case .B: return "gureum"
+    private struct MindTypeResultView: View {
+        let mindType: Emotion
+        
+        var body: some View {
+            HStack(spacing: 12) {
+                Text(mindType.emoji)
+                    .font(.largeTitle)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(mindType.title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                    Text(mindType.description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(mindType.tint.opacity(0.18))
+            )
+        }
+    }
+    private struct StatusBadge: View {
+        let text: String
+
+        var body: some View {
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .foregroundColor(.purple)
+                Text(text)
+                    .font(.subheadline)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+            )
+        }
+    }
+}
+
+
+
+
+fileprivate struct ConfirmButton: View {
+    let icon: String
+    let label: String
+    let isPresented: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        if isPresented {
+            Button(action: self.action){
+                HStack(spacing: 8) {
+                    Image(systemName: self.icon)
+                    Text(self.label)
+                        .fontWeight(.semibold)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.blue)
+                )
+                .foregroundColor(.white)
+            }
         }
     }
 }
@@ -348,6 +358,8 @@ fileprivate struct MindAnalyzerPreview: View {
                     onboarding.next()
                     
                     let todayBoard = mentoryiOS.todayBoard!
+                    
+                    todayBoard.setUpForm()
                     let recordForm = todayBoard.recordForm!
                     
                     recordForm.titleInput = "SAMPLE-TITLE"

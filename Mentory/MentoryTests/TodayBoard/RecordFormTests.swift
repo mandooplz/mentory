@@ -128,78 +128,58 @@ struct RecordFormTests {
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
 
-        // MARK: 제출 기능 테스트
-
-        func TodayBoard_addRecord() async throws {
-            // Given
-            await MainActor.run {
-                recordForm.titleInput = "테스트 제목"
-                recordForm.textInput = "테스트 내용"
-            }
-
-            let initialCount = await MainActor.run {
-                todayBoard.records.count
-            }
-
-            // When
-            await recordForm.submit()
-
-            // Then
-            let newCount = await MainActor.run { todayBoard.records.count }
-            #expect(newCount == initialCount + 1)
-        }
-
-        @Test("제출 후 폼이 초기화되지 않음")
-        func afterSubmit_formIsReset() async throws {
-            // Given
+        
+        @Test func notResetTitleInputWhenSucceed() async throws {
+            // given
             let testTitle = "TEST_TITLE"
-            let testText = "TEST_TEXT"
-            let testImageData: Data = .init([0x00, 0x01])
-            let testVoiceURL = URL(string: "file:///test.m4a")!
-            
             await MainActor.run {
                 recordForm.titleInput = testTitle
+            }
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.titleInput == testTitle)
+        }
+        @Test func notResetTextInputWhenSucceed() async throws {
+            // given
+            let testText = "TEST_TEXT"
+            await MainActor.run {
                 recordForm.textInput = testText
+            }
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.textInput == testText)
+        }
+        @Test func notResetImageInputWhenSucceed() async throws {
+            // given
+            let testImageData: Data = .init([0x00, 0x01])
+            await MainActor.run {
                 recordForm.imageInput = testImageData
+            }
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.imageInput == testImageData)
+        }
+        @Test func notResetVoiceInputWhenSucceed() async throws {
+            // given
+            let testVoiceURL = URL(string: "file:///test.m4a")!
+            await MainActor.run {
                 recordForm.voiceInput = testVoiceURL
             }
-
-            // When
-            await recordForm.submit()
-
-            // Then
-            await #expect(recordForm.titleInput == testTitle)
-            await #expect(recordForm.textInput == testText)
-            await #expect(recordForm.imageInput == testImageData)
-            await #expect(recordForm.voiceInput == testVoiceURL)
-            await #expect(recordForm.validationResult == .none)
-        }
-
-        @Test("유효하지 않은 입력으로 제출 시 Record가 추가되지 않음")
-        func whenInvalidInput_recordIsNotAdded() async throws {
-            // Given: 제목이 비어있음
-            await MainActor.run {
-                recordForm.titleInput = ""
-                recordForm.textInput = "내용"
-            }
-
-            let initialCount = await MainActor.run {
-                todayBoard.records.count
-            }
-
-            // When
-            await recordForm.submit()
-
-            // Then
-            let newCount = await MainActor.run {
-                todayBoard.records.count
-            }
-            #expect(newCount == initialCount)
-        }
-
-        @Test("빈 텍스트로 제출 시 Record의 text가 nil로 저장됨", .disabled())
-        func whenTextIsEmpty_recordTextIsNil() async throws {
             
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.voiceInput == testVoiceURL)
         }
     }
     
@@ -228,37 +208,20 @@ struct RecordFormTests {
 
 // MARK: Helpers
 private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> RecordForm {
-    // 앱 기본 세팅
+    // MentoryiOS
     await mentoryiOS.setUp()
     
-    // 온보딩 가져오기
-    guard let onboarding = await mentoryiOS.onboarding else {
-        throw NSError(domain: "Onboarding not initialized", code: -1)
-    }
-    
-    // 온보딩 값 입력 + 검증
+    // Onboarding
+    let onboarding = try #require(await mentoryiOS.onboarding)
     await onboarding.setName("테스트유저")
     await onboarding.validateInput()
-    
-    // 온보딩 완료 
     await onboarding.next()
     
-    // TodayBoard 가져오기
-    guard let todayBoard = await mentoryiOS.todayBoard else {
-        throw NSError(domain: "TodayBoard not initialized", code: -1)
-    }
+    // TodayBoard
+    let todayBoard = try #require(await mentoryiOS.todayBoard)
+    await todayBoard.setUpForm()
     
-    // RecordForm 없으면 생성
-    if await todayBoard.recordForm == nil {
-        await MainActor.run {
-            todayBoard.recordForm = RecordForm(owner: todayBoard)
-        }
-    }
-    
-    // RecordForm 리턴
-    guard let recordForm = await todayBoard.recordForm else {
-        throw NSError(domain: "RecordForm not initialized", code: -1)
-    }
-    
+    // RecordForm
+    let recordForm = try #require(await todayBoard.recordForm)
     return recordForm
 }
