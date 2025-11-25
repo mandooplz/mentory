@@ -51,15 +51,20 @@ final class EditingName: Sendable, ObservableObject{
             logger.error("입력된 이름이 비어 있어 저장을 건너뜁니다.")
             return
         }
-        guard let owner else {
-            logger.error("owner가 존재하지 않아 이름을 저장할 수 없습니다.")
-            return
+        
+        let settingBoard = owner!
+        let mentoryiOS = settingBoard.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+        
+        //process
+        do {
+            try await mentoryDB.updateName(newName)
+        } catch {
+            logger.error("사용자 이름을 변경하는 데 실패했습니다. \(error)")
         }
         
         // mutate
-        let mentoryiOS = owner.owner
-        mentoryiOS!.userName = newName
-        await mentoryiOS!.saveUserName()
+        mentoryiOS.userName = newName
         logger.info("사용자 이름이 \(newName, privacy: .public)로 변경되었습니다.")
     }
     
