@@ -265,9 +265,11 @@ fileprivate struct BodyField: View {
                     .padding()
                     .toolbar {
                         ToolbarItemGroup(placement: .keyboard) {
-                            Spacer()
-                            Button("완료") {
-                                isFocused = false   // ← 키보드 내려감 (UIKit NO!)
+                            if isFocused{
+                                Spacer()
+                                Button("완료") {
+                                    isFocused = false
+                                }
                             }
                         }
                     }
