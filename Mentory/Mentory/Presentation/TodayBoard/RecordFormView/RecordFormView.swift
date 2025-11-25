@@ -186,6 +186,7 @@ fileprivate struct SubmitButton<Content: View>: View {
             .task {
                 let stream = recordForm.$mindAnalyzer.values
                     .map { $0 != nil }
+                    .dropFirst()
                 
                 for await isPresented in stream {
                     self.showMindAnalyzerView = isPresented
