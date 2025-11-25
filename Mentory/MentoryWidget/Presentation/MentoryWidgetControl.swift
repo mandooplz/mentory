@@ -97,8 +97,9 @@ struct MentoryActionWidgetEntryView: View {
     var entry: ActionProvider.Entry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // 상단 헤더 (오늘은 이런 행동 어떨까요? + 7/9)
+        VStack(alignment: .leading, spacing: 14) {
+
+            // MARK: Title line
             HStack {
                 Text("오늘은 이런 행동 어떨까요?")
                     .font(.system(size: 17, weight: .semibold))
@@ -108,7 +109,7 @@ struct MentoryActionWidgetEntryView: View {
                     .foregroundColor(.gray)
             }
 
-            // Progress Bar
+            // MARK: Progress section (앱과 동일한 스타일)
             HStack(spacing: 8) {
                 ZStack {
                     Capsule()
@@ -139,7 +140,7 @@ struct MentoryActionWidgetEntryView: View {
                 .frame(height: 10)
 
                 Button {
-                    // TODO: 추후 추천 행동 새로고침 AppIntent 연결 가능
+                    // 나중에 추천행동 새로고침 Intent 연결
                 } label: {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 14, weight: .semibold))
@@ -158,29 +159,42 @@ struct MentoryActionWidgetEntryView: View {
                     .stroke(.white.opacity(0.1), lineWidth: 1)
             )
 
-            // 하단 체크 + 텍스트 (오늘의 추천행동 완료 체크)
-            HStack(spacing: 8) {
-                Button(intent: ToggleRecommendedActionIntent()) {
+            // MARK: ActionRow와 동일한 체크 영역(전체가 버튼)
+            Button(intent: ToggleRecommendedActionIntent()) {
+                HStack(spacing: 8) {
                     Image(systemName: entry.isCompleted ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 18, weight: .semibold))
-                }
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(entry.isCompleted ? Color.accentColor : Color.gray)
 
-                Text(entry.isCompleted
-                     ? "오늘의 추천행동을 완료했어요!"
-                     : "기록을 남기고 추천행동을 완료해보세요!")
-                .font(.system(size: 13))
+                    Text(entry.isCompleted
+                         ? "오늘의 추천행동을 완료했어요!"
+                         : "기록을 남기고 추천행동을 완료해보세요!")
+                    .font(.system(size: 14))
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    Color.white.opacity(0.05),
+                    in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(.white.opacity(0.08), lineWidth: 1)
+                )
             }
+            .buttonStyle(.plain)
+
         }
-        .padding(18)
+        .padding(.vertical, 22)
+        .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(
-            // LiquidGlassCard와 비슷한 느낌의 카드 배경 (간단 버전)
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color(.systemBackground).opacity(0.9))
-                .shadow(color: Color.black.opacity(0.08),
+                .shadow(color: Color.black.opacity(0.06),
                         radius: 10, x: 0, y: 6)
         )
-        // 카드 전체를 탭하면 기록 탭으로 이동
         .widgetURL(URL(string: "mentory://record"))
     }
 }
