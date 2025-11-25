@@ -7,6 +7,7 @@
 import SwiftUI
 import WebKit
 import Combine
+import Values
 
 
 // MARK: View
@@ -22,10 +23,6 @@ struct TodayBoardView: View {
     
     // MARK: viewModel
     @State private var isShowingInformationView = false
-    @State private var selections = [false, false, false]
-    var progress: Double {
-        Double(selections.filter { $0 }.count) / 3.0
-    }
     @State private var actionRowEmpty = false
     
     
@@ -60,7 +57,7 @@ struct TodayBoardView: View {
             )
             
             // 행동 추천 카드
-            SuggestionCard {
+            SuggestionCard(todayBoard: todayBoard) {
                 if todayBoard.actionKeyWordItems.isEmpty {
                     ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
                 } else {
@@ -80,6 +77,7 @@ struct TodayBoardView: View {
                                         // 체크 상태 변경 시 DB에 실시간 업데이트
                                         Task {
                                             await todayBoard.updateActionCompletion()
+                                            await todayBoard.loadTodayRecords()
                                         }
                                     }
                                 ),
@@ -112,8 +110,10 @@ struct TodayBoardView: View {
                     }
         }
         .task {
-            await todayBoard.fetchTodayString()
             await todayBoard.loadTodayRecords()
+        }
+        .task {
+            await todayBoard.fetchTodayString()
         }
     }
 }
@@ -294,12 +294,12 @@ fileprivate struct RecordStatCard<Content: View>: View {
 }
 
 fileprivate struct SuggestionCard<Content: View>: View {
+    @ObservedObject var todayBoard: TodayBoard
     let header: String = "오늘은 이런 행동 어떨까요?"
-    let counter: String = "7/9"
-    let progress: Double = 7/9
     let content: Content
-    
-    init(@ViewBuilder content: () -> Content) {
+
+    init(todayBoard: TodayBoard, @ViewBuilder content: () -> Content) {
+        self.todayBoard = todayBoard
         self.content = content()
     }
     
@@ -312,8 +312,8 @@ fileprivate struct SuggestionCard<Content: View>: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.primary)
                     Spacer()
-                    
-                    Text(counter)
+
+                    Text(todayBoard.getIndicator())
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.gray)
                         .frame(alignment: .trailing)
@@ -340,8 +340,9 @@ fileprivate struct SuggestionCard<Content: View>: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
-                                .frame(width: geo.size.width * progress)
+                                .frame(width: geo.size.width * todayBoard.getProgress())
                                 .shadow(color: .purple.opacity(0.3), radius: 3, x: 0, y: 1)
+                                .animation(.spring(response: 0.6, dampingFraction: 0.7), value: todayBoard.getProgress())
                         }
                     }
                     .frame(height: 10)
