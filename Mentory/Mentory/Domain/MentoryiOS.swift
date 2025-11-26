@@ -17,6 +17,8 @@ final class MentoryiOS: Sendable, ObservableObject {
     nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
     
+    let reminderCenter = ReminderNotificationCenter()
+    
     init(_ mode: SystemMode = .test) {
         switch mode {
         case .real:
