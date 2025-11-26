@@ -148,20 +148,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6931D3492ED5F84400E418ED /* Exceptions for "Mentory" folder in "MentoryWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Domain/TodayBoard/MentorMessage.swift,
-			);
-			target = 7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */;
-		};
-		6931D34A2ED5F84400E418ED /* Exceptions for "Mentory" folder in "MentoryWatch Watch App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Domain/TodayBoard/MentorMessage.swift,
-			);
-			target = 5888796B2ECD98EB00083137 /* MentoryWatch Watch App */;
-		};
 		694B337D2ECB0A8D0094E855 /* Exceptions for "Mentory" folder in "Mentory" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -206,8 +192,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				694B337D2ECB0A8D0094E855 /* Exceptions for "Mentory" folder in "Mentory" target */,
-				6931D3492ED5F84400E418ED /* Exceptions for "Mentory" folder in "MentoryWidgetExtension" target */,
-				6931D34A2ED5F84400E418ED /* Exceptions for "Mentory" folder in "MentoryWatch Watch App" target */,
 			);
 			path = Mentory;
 			sourceTree = "<group>";
