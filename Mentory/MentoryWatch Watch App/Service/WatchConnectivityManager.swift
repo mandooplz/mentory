@@ -33,19 +33,21 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
     // iOS 앱에 데이터 요청
     func requestDataFromPhone() {
-        guard session.isReachable else {
-            self.connectionStatus = "iPhone과 연결되지 않음"
-            return
-        }
-
-        let message = ["request": "initialData"]
-        session.sendMessage(message, replyHandler: { [weak self] reply in
-            Task { @MainActor in
-                self?.handleReceivedData(reply)
+        Task {
+            guard session.isReachable else {
+                self.connectionStatus = "iPhone과 연결되지 않음"
+                return
             }
-        }) { [weak self] error in
-            Task { @MainActor in
-                self?.connectionStatus = "데이터 요청 실패: \(error.localizedDescription)"
+
+            let message = ["request": "initialData"]
+            session.sendMessage(message, replyHandler: { [weak self] reply in
+                Task { @MainActor in
+                    self?.handleReceivedData(reply)
+                }
+            }) { [weak self] error in
+                Task { @MainActor in
+                    self?.connectionStatus = "데이터 요청 실패: \(error.localizedDescription)"
+                }
             }
         }
     }
@@ -62,36 +64,42 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
 // MARK: - WCSessionDelegate
 extension WatchConnectivityManager: WCSessionDelegate {
-    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        Task { @MainActor in
-            switch activationState {
-            case .activated:
-                self.connectionStatus = "활성화됨"
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        switch activationState {
+        case .activated:
+            self.connectionStatus = "활성화됨"
+            Task {
                 self.requestDataFromPhone()
-            case .inactive:
-                self.connectionStatus = "비활성화됨"
-            case .notActivated:
-                self.connectionStatus = "활성화 안됨"
-            @unknown default:
-                self.connectionStatus = "알 수 없는 상태"
             }
+        case .inactive:
+            self.connectionStatus = "비활성화됨"
+        case .notActivated:
+            self.connectionStatus = "활성화 안됨"
+        @unknown default:
+            self.connectionStatus = "알 수 없는 상태"
+        }
 
-            if let error = error {
-                self.connectionStatus = "오류: \(error.localizedDescription)"
-            }
+        if let error = error {
+            self.connectionStatus = "오류: \(error.localizedDescription)"
         }
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        self.handleReceivedData(message)
+        Task {
+            self.handleReceivedData(message)
+        }
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        self.handleReceivedData(message)
+        Task {
+            self.handleReceivedData(message)
+        }
         replyHandler(["status": "received"])
     }
 
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
-        self.handleReceivedData(applicationContext)
+        Task {
+            self.handleReceivedData(applicationContext)
+        }
     }
 }
