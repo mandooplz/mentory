@@ -238,28 +238,37 @@ actor MentoryDB: Sendable {
                 return MessageData(
                     id: UUID(),
                     createdAt: .distantPast,
-                    message: "",
+                    message: "앗 오류가 생겼어요 다시 시도해보세요",
                     characterType: .Nangcheol
                 )
             }
             
             //그동안 저장된 명언 전체 로그찍어보기
             logger.debug("all Messages Mapped:\(db.messages.sorted { $0.createdAt>$1.createdAt }.map { $0.toMessageData() })")
-            return db.messages
-                .max { $0.createdAt < $1.createdAt }!
-                .toMessageData()
+            
+            guard let latest = db.messages.max(by: { $0.createdAt < $1.createdAt }) else {
+                        logger.error("messages가 비어 있어 기본값을 반환합니다.")
+                        return MessageData(
+                            id: UUID(),
+                            createdAt: .distantPast,
+                            message: "앗 오류가 생겼어요 다시 시도해보세요",
+                            characterType: .Nangcheol
+                        )
+                    }
+                    
+                    return latest.toMessageData()
             
         } catch {
             logger.error("DB fetch error → 기본값 반환")
             return MessageData(
                 id: UUID(),
                 createdAt: .distantPast,
-                message: "",
+                message: "앗 오류가 생겼어요 다시 시도해보세요",
                 characterType: .Nangcheol
             )
         }
     }
-    func setMentorMessage(message: String, characterType: String) {
+    func setMentorMessage(_ message: String, _ characterType: String) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
