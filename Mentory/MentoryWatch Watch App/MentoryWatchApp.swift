@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct MentoryWatch_Watch_AppApp: App {
+    // MARK: WatchConnectivity
+    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
+
+    init() {
+        // WatchConnectivity 초기화
+        _ = WatchConnectivityManager.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(watchConnectivity)
         }
     }
 }
