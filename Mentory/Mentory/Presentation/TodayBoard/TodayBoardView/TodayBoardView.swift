@@ -113,7 +113,7 @@ struct TodayBoardView: View {
             await todayBoard.loadTodayRecords()
         }
         .task {
-            await todayBoard.fetchTodayString()
+            await todayBoard.loadTodayMentorMessage()
         }
     }
 }
