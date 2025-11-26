@@ -54,6 +54,65 @@ final class SettingBoard: Sendable, ObservableObject {
         
     }
     
+    func turnReminderOn() async {
+        logger.debug("SettingBoard.turnReminderOn 호출")
+        
+        // capture
+        guard isReminderOn == false else {
+            logger.error("알림이 이미 ON 상태입니다.")
+            return
+        }
+        guard let owner else {
+            logger.error("SettingBoard.owner가 nil입니다.")
+            return
+        }
+        let reminderCenter = owner.reminderCenter
+        
+        // mutate
+        self.isReminderOn = true
+        
+        // process
+        await reminderCenter.requestAuthorizationIfNeeded()
+        
+        // 구현필요: 알림 ON일 때 새로 작성하는 일기부터 리마인드 예약. 필요하면 과거 일기들 기준 재등록 로직을 여기에서 구현한다.
+
+    }
+
+    func turnReminderOff() async {
+        logger.debug("SettingBoard.turnReminderOff 호출")
+        
+        // capture
+        guard isReminderOn == true else {
+            logger.error("알림이 이미 OFF 상태입니다.")
+            return
+        }
+        guard let owner else {
+            logger.error("SettingBoard.owner가 nil입니다.")
+            return
+        }
+        let reminderCenter = owner.reminderCenter
+        
+        // mutate
+        self.isReminderOn = false
+        
+        // process
+        await reminderCenter.cancelAllWeeklyReminders()
+    }
+
+    func changeReminderTime(to newDate: Date) {
+        logger.debug("SettingBoard.changeReminderTime 호출")
+        
+        // capture
+        let newDate = newDate
+        
+        // mutate
+        self.reminderTime = newDate
+        applyChangedReminderTime()
+        
+        // 구현필요: 이미 예약된 알림은 그대로 두고, 이후 새로 예약되는 알림부터 변경된 시간을 사용한다.
+
+    }
+    
     func loadSavedReminderTime() {
         guard let savedTime = UserDefaults.standard.object(forKey: Self.reminderTimeKey) as? Date else {
             logger.info("저장된 알림 시간이 없습니다. 기본값: \(String(describing: self.reminderTime))")

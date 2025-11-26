@@ -147,8 +147,17 @@ struct SettingBoardView: View {
             isOn: $settingBoard.isReminderOn,
             showDivider: false
         )
-        
+        .onChange(of: settingBoard.isReminderOn, initial: false) { oldValue, newValue in
+            Task {
+                if newValue {
+                    await settingBoard.turnReminderOn()
+                } else {
+                    await settingBoard.turnReminderOff()
+                }
+            }
+        }
     }
+
     
     @ViewBuilder
     private var ReminderTimeRow: some View {
@@ -253,8 +262,7 @@ struct SettingBoardView: View {
                     settingBoardViewModel.selectedDate = settingBoard.reminderTime
                 }
                 .onChange(of: settingBoardViewModel.selectedDate, initial: false) { oldDate, newDate in
-                    settingBoard.reminderTime = newDate
-                    settingBoard.applyChangedReminderTime()
+                    settingBoard.changeReminderTime(to: newDate)
                 }
                 
                 Button("완료") {
