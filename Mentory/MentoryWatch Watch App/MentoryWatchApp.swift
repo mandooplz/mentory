@@ -13,7 +13,6 @@ struct MentoryWatch_Watch_AppApp: App {
     @StateObject private var watchConnectivity = WatchConnectivityManager.shared
 
     init() {
-        // WatchConnectivity 초기화
         _ = WatchConnectivityManager.shared
     }
 
