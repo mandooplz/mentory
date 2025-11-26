@@ -14,11 +14,19 @@ struct MentoryApp: App {
     // MARK: model
     @State var mentoryiOS = MentoryiOS(.real)
 
+    // MARK: WatchConnectivity
+    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
+
+    init() {
+        // WatchConnectivity 초기화
+        _ = WatchConnectivityManager.shared
+    }
 
     // MARK: body
     var body: some Scene {
         WindowGroup {
             MentoryiOSView(mentoryiOS)
+                .environmentObject(watchConnectivity)
         }
     }
 }
