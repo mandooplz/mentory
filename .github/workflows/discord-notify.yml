@@ -11,16 +11,20 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Discord Notification
-        uses: ilovesoup/discord-webhook-action@master
+      - name: Send Discord Notification
+        uses: tsickert/discord-webhook@v5
         with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          # 메시지 내용 커스터마이징
-          username: "GitHub Merge Bot"
-          avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-          content: "✅ A new PR has been merged into `main`!"
-          # Embed 설정 (선택 사항)
-          embed_title: "${{ github.event.pull_request.title }}"
-          embed_url: "${{ github.event.pull_request.html_url }}"
-          embed_description: "Merged by ${{ github.actor }}"
-          embed_color: 65280 # 초록색 (Decimal color code)
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          username: "깃허브 병합 알림 봇"
+          avatar-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          content: "🎉 Pull Request가 \`main\` 브랜치에 병합되었습니다!"
+
+          embed-title: "${{ github.event.pull_request.title }}"
+          embed-url: "${{ github.event.pull_request.html_url }}"
+
+          embed-description: |
+            병합자: **${{ github.actor }}**
+            🔀 병합된 브랜치: **${{ github.event.pull_request.base.ref }}**
+            🕒 병합 시각: **${{ github.event.pull_request.merged_at }} (UTC)**
+
+          embed-color: 652801~
