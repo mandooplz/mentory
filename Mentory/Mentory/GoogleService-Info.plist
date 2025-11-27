@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.jiseok.mentory</string>
+	<string>cloud.mandooplz.Mentory</string>
 	<key>PROJECT_ID</key>
 	<string>mentory-ios</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:237259087043:ios:0af914ac95d4741cce5676</string>
+	<string>1:237259087043:ios:d2bb0effd5e2c328ce5676</string>
 </dict>
 </plist>
