@@ -1,0 +1,26 @@
+name: Discord Notification on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  discord-notify:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord Notification
+        uses: ilovesoup/discord-webhook-action@master
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          # 메시지 내용 커스터마이징
+          username: "GitHub Merge Bot"
+          avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          content: "✅ A new PR has been merged into `main`!"
+          # Embed 설정 (선택 사항)
+          embed_title: "${{ github.event.pull_request.title }}"
+          embed_url: "${{ github.event.pull_request.html_url }}"
+          embed_description: "Merged by ${{ github.actor }}"
+          embed_color: 65280 # 초록색 (Decimal color code)
