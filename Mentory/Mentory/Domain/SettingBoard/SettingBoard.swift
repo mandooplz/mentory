@@ -25,10 +25,11 @@ final class SettingBoard: Sendable, ObservableObject {
     
     private static let reminderTimeKey = "mentory.settingBoard.reminderTime"
     private var isApplyingSavedReminderTime = false
+    
     @Published var editingName: EditingName? = nil
+    
     @Published var isReminderOn: Bool = true
     @Published var reminderTime: Date = .now
-    
     func formattedReminderTime() -> String {
         self.reminderTime
             .formatted(
@@ -41,17 +42,18 @@ final class SettingBoard: Sendable, ObservableObject {
     
     // MARK: action
     func setUpEditingName() {
-        logger.debug("SettingBoard.setUpEditingName 호출")
-        
         // capture
         guard self.editingName == nil else {
             logger.error("이미 SettingBoard에 EditingName이 존재합니다.")
             return
         }
         
-        // mutate
-        self.editingName = EditingName(owner: self, userName: owner?.userName ?? "")
+        guard let userName = owner!.userName else {
+            fatalError("MentoryiOS의 userName이 nil입니다.")
+        }
         
+        // mutate
+        self.editingName = EditingName(owner: self, userName: userName)
     }
     
     func loadSavedReminderTime() {
