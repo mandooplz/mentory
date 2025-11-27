@@ -67,6 +67,40 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForm = RecordForm(owner: self)
     }
     
+    //    func fetchTodayString() async {
+    //        // capture
+    //        guard isFetchedTodayString == false else {
+    //            logger.error("오늘의 명언이 이미 fetch되었습니다.")
+    //            return
+    //        }
+    //        let alanLLM = owner!.alanLLM
+    //
+    //        // process
+    //        let contentFromAlanLLM: String?
+    //        do {
+    //            // Alan API를 통해 오늘의 명언 또는 속담 요청
+    //            let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
+    //            let response = try await alanLLM.question(question)
+    //            let mentoryDB = owner!.mentoryDB
+    //            contentFromAlanLLM = response.content
+    //            logger.debug("앨런성공: \(response.content)")
+    //
+    //            _ = try await mentoryDB.saveMentorMessage(contentFromAlanLLM!, "Nangcheol")
+    //            logger.debug("TodayBoard에서 saveMentorMessage() 호출완료")
+    //
+    //            let currentMentorMessage = try await mentoryDB.fetchMentorMessage()
+    //            logger.debug("mentoryDB에 저장된 최근 message내용: \(currentMentorMessage.message), 날짜: \(currentMentorMessage.createdAt), 캐릭터: \(currentMentorMessage.characterType.title)")
+    //
+    //        } catch {
+    //            logger.error("오늘의 명언 fetch 실패: \(error.localizedDescription)")
+    //            return
+    //        }
+    //
+    //        // mutate
+    //        self.todayString = contentFromAlanLLM
+    //        self.isFetchedTodayString = true
+    //    }
+    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
@@ -79,18 +113,11 @@ final class TodayBoard: Sendable, ObservableObject {
         let contentFromAlanLLM: String?
         do {
             // Alan API를 통해 오늘의 명언 또는 속담 요청
-            let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
+            let question = AlanLLM.Question("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
             let response = try await alanLLM.question(question)
-            let mentoryDB = owner!.mentoryDB
+            
             contentFromAlanLLM = response.content
-            logger.debug("앨런성공: \(response.content)")
-            
-            _ = try await mentoryDB.saveMentorMessage(contentFromAlanLLM!, "Nangcheol")
-            logger.debug("TodayBoard에서 saveMentorMessage() 호출완료")
-            
-            let currentMentorMessage = try await mentoryDB.fetchMentorMessage()
-            logger.debug("mentoryDB에 저장된 최근 message내용: \(currentMentorMessage.message), 날짜: \(currentMentorMessage.createdAt), 캐릭터: \(currentMentorMessage.characterType.title)")
-            
+            logger.debug("오늘의 명언 fetch 성공: \(response.content)")
         } catch {
             logger.error("오늘의 명언 fetch 실패: \(error.localizedDescription)")
             return
@@ -111,8 +138,9 @@ final class TodayBoard: Sendable, ObservableObject {
             let lastMessage = try await mentoryDB.fetchMentorMessage()
             logger.debug("DB 최근 멘토메세지: \(lastMessage.message) - 날짜: \(lastMessage.createdAt)")
             
+            
             // 1.DB에 저장된 멘토메세지 없는 경우(nil)
-            guard !lastMessage.message.isEmpty else {
+            if lastMessage.message.isEmpty {
                 logger.debug("DB 저장값없음")
                 
                 // 1-1.새 멘토메세지 AlanLLM 호출
@@ -136,13 +164,15 @@ final class TodayBoard: Sendable, ObservableObject {
                 return
             }
             
+            
             // 2.최근 멘토메세지 생성일 == 오늘이라면 저장된 message사용
-            guard !Calendar.current.isDateInToday(lastMessage.createdAt) else {
+            if Calendar.current.isDateInToday(lastMessage.createdAt) {
                 logger.debug("멘토메세지가 최신화되어있음 message내용: \(lastMessage.message)")
                 self.todayString = lastMessage.message
                 self.isFetchedTodayString = true
                 return
             }
+            
             
             // 2-1.최근 멘토메세지 생성일 != 오늘이라면 새로운 명언 생성
             logger.debug("멘토메세지 최신화 아님 AlanLLM 요청 시작")
@@ -173,6 +203,7 @@ final class TodayBoard: Sendable, ObservableObject {
             return
         }
     }
+    
     
     
     
