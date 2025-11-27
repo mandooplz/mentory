@@ -6,7 +6,7 @@
 //
 import Foundation
 import OSLog
-import FirebaseAILogic
+
 
 // MARK: Domain Interface
 protocol AlanLLMInterface: Sendable {
@@ -26,45 +26,99 @@ struct AlanLLM: AlanLLMInterface {
     // MARK: flows
     @concurrent
     func question(_ question: Question) async throws -> Answer {
-        logger.info("Firebase LLM 요청 시작")
-
-        // 1) Firebase LLM 인스턴스 생성
-        let ai = FirebaseAI.firebaseAI(backend: .googleAI())
-        let model = ai.generativeModel(modelName: "gemini-2.5-flash-lite")
-
-        // 2) Firebase Gemini 호출
-        let response: GenerateContentResponse
+        // configure url
+        let token = AuthToken.current
+        
+        guard var urlComponents = URLComponents(string: "\(id.value.absoluteString)/question") else {
+            logger.error("URL 생성 실패")
+            throw AlanLLM.Error.invalidURL
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "content", value: question.content),
+            URLQueryItem(name: "client_id", value: token.value)
+        ]
+        
+        guard let url = urlComponents.url else {
+            logger.error("URL Components로부터 URL 생성 실패")
+            throw AlanLLM.Error.invalidURL
+        }
+        
+        logger.info("API 요청: \(url.absoluteString, privacy: .public)")
+        
         do {
-            response = try await model.generateContent(question.content)
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                logger.error("HTTP 응답 변환 실패")
+                throw AlanLLM.Error.invalidResponse
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode) - \(httpResponse) ")
+                if let bodyString = String(data: data, encoding: .utf8) {
+                    logger.error("HTTP 오류 응답 바디: \(bodyString, privacy: .public)")
+                } else {
+                    logger.error("HTTP 오류 응답 바디 디코딩 실패")
+                }
+                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
+            }
+            
+            let decoder = JSONDecoder()
+            let apiResponse = try decoder.decode(AlanLLM.Answer.self, from: data)
+            
+            logger.info("API 응답 성공: \(apiResponse.content, privacy: .public)")
+            return apiResponse
+            
+        } catch let error as DecodingError {
+            logger.error("디코딩 오류: \(error.localizedDescription, privacy: .public)")
+            throw AlanLLM.Error.decodingError(error)
+        } catch let error as AlanLLM.Error {
+            throw error
         } catch {
-            logger.error("Firebase AI 호출 실패: \(error.localizedDescription)")
+            logger.error("네트워크 오류: \(error.localizedDescription, privacy: .public)")
             throw AlanLLM.Error.networkError(error)
         }
-
-        // 3) 텍스트 추출
-        guard let text = response.text, !text.isEmpty else {
-            logger.error("Firebase AI 응답이 비어 있음")
-            throw AlanLLM.Error.invalidResponse
-        }
-
-        logger.info("Firebase LLM 응답 성공: \(text)")
-
-        // 4) MindAnalyzer가 기대하는 Answer 형태로 wrapping
-        let dummyAction = Answer.Action(
-            name: "firebase",
-            speak: "firebase"
-        )
-
-        return Answer(action: dummyAction, content: text)
     }
-
     
     @concurrent
     func resetState(token: AuthToken = .current) async throws {
-        // Alan 서버 상태 초기화용 → Firebase에서는 필요 없음
-        logger.info("Firebase LLM은 상태 초기화를 필요로 하지 않습니다.")
+        guard let url = URL(string: "\(id.value.absoluteString)/reset-state") else {
+            logger.error("URL 생성 실패")
+            throw AlanLLM.Error.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody = ["client_id": token.value]
+        request.httpBody = try JSONEncoder().encode(requestBody)
+        
+        logger.info("상태 초기화 요청")
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                logger.error("HTTP 응답 변환 실패")
+                throw AlanLLM.Error.invalidResponse
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                logger.error("HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
+                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
+            }
+            
+            logger.info("상태 초기화 성공")
+            
+        } catch let error as AlanLLM.Error {
+            throw error
+        } catch {
+            logger.error("네트워크 오류: \(error.localizedDescription, privacy: .public)")
+            throw AlanLLM.Error.networkError(error)
+        }
     }
-
     
 
     
