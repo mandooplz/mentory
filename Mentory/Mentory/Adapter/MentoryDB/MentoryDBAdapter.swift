@@ -59,7 +59,7 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     }
     
     @concurrent
-    public func saveMentorMessage(_ message: String, _ characterType: String) async throws {
-        try await api.saveMentorMessage(message, characterType)
+    public func saveMentorMessage(_ message: String, _ type: CharacterType) async throws {
+        try await api.saveMentorMessage(message, type)
     }
 }

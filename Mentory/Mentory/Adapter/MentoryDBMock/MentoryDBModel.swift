@@ -113,8 +113,7 @@ final class MentoryDBModel: Sendable {
         return latestData
         
     }
-    func setMentorMessage(_ message: String, _ characterType: String) {
-        let type = CharacterType(rawValue: characterType) ?? .Nangcheol
+    func setMentorMessage(_ message: String, _ type: CharacterType) {
         let newMessage = MentorMessageModel(
             owner: self,
             createdAt: Date(),

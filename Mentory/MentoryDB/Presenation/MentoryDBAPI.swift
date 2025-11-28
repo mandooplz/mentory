@@ -58,7 +58,7 @@ public struct MentoryDBAPI: Sendable {
         return await mentoryDB.getMentorMessage()
     }
     @concurrent
-    public func saveMentorMessage(_ message: String, _ characterType: String) async throws {
-        await mentoryDB.setMentorMessage(message, characterType)
+    public func saveMentorMessage(_ message: String, _ type: CharacterType) async throws {
+        await mentoryDB.setMentorMessage(message, type)
     }
 }

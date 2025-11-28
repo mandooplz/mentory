@@ -242,7 +242,7 @@ actor MentoryDB: Sendable {
                 logger.error("messages가 비어 있습니다.")
                 return nil
             }
-            
+            logger.debug("저장된 전체 메세지:\(db.messages.sorted(by: { $0.createdAt < $1.createdAt }).map { $0.toMessageData() })")
             return latest.toMessageData()
             
         } catch {
@@ -250,7 +250,7 @@ actor MentoryDB: Sendable {
             return nil
         }
     }
-    func setMentorMessage(_ message: String, _ characterType: String) {
+    func setMentorMessage(_ message: String, _ type: CharacterType) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -262,7 +262,7 @@ actor MentoryDB: Sendable {
                 logger.error("DB가 존재하지 않아 메세지를 저장할수 없습니다.")
                 return
             }
-            let type = CharacterType(rawValue: characterType) ?? .Nangcheol
+
             let newMessage = MentorMessage.MentorMessageModel(
                 id: UUID(),
                 createdAt: Date(),
