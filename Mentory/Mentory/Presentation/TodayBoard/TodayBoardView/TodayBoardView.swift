@@ -41,8 +41,8 @@ struct TodayBoardView: View {
             
             // "오늘의 명언" 카드
             PopupCard(
-                title: "오늘의 명언",
-                content: todayBoard.todayString
+                title: todayBoard.mentorMessage?.characterType.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
+                content: todayBoard.mentorMessage?.message ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
             )
             
             // 기분 기록 카드
@@ -113,7 +113,7 @@ struct TodayBoardView: View {
             await todayBoard.loadTodayRecords()
         }
         .task {
-            await todayBoard.loadTodayMentorMessage()
+            await todayBoard.loadTodayMentorMessageTest()
         }
     }
 }
@@ -160,7 +160,7 @@ fileprivate struct Title: View {
             
             Spacer()
         }
-        .padding(.top, 16)
+        .padding(.top, 0)
     }
 }
 
@@ -185,14 +185,14 @@ fileprivate struct GreetingHeader: View {
             }
         }.animation(
             .spring(response: 0.6, dampingFraction: 0.8),
-            value: todayBoard.todayString != nil)
+            value: todayBoard.mentorMessage?.message != nil)
     }
 }
 
 fileprivate struct PopupCard: View {
     let title: String
     let content: String?
-    init(title: String, content: String? = nil) {
+    init(title: String, content: String) {
         self.title = title
         self.content = content
     }
@@ -203,6 +203,7 @@ fileprivate struct PopupCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(title)
                         .font(.system(size: 18, weight: .semibold))
+                    
                     
                     Text(content)
                         .font(.system(size: 16))

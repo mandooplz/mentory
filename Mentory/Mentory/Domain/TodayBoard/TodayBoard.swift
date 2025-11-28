@@ -96,6 +96,45 @@ final class TodayBoard: Sendable, ObservableObject {
         self.isFetchedTodayString = true
     }
     
+    // 데이터 쌓기 위한테스트용함수 추후 loadTodayMentorMessage()로 변경해야함
+    func loadTodayMentorMessageTest() async {
+        let alanLLM = owner!.alanLLM
+        let mentoryDB = owner!.mentoryDB
+        do {
+            let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
+            let question = AlanLLM.Question(character.question)
+            let NewMessageFromAlanLLM: String?
+            do {
+                //AlanLLM 호출
+                logger.debug("AlanLLM: 멘토메세지 요청합니다.")
+                let response = try await alanLLM.question(question)
+                NewMessageFromAlanLLM = response.content
+                logger.debug("AlanLLM: 멘토메세지 요청성공: \(response.content)")
+            } catch {
+                logger.error("AlanLLM: 멘토메세지 요청실패: \(error.localizedDescription)")
+                return
+            }
+            guard let newMessage = NewMessageFromAlanLLM else {
+                logger.error("AlanLLM: nil을 반환")
+                return
+            }
+            // AlanLLM 호출결과값 DB에 저장
+            try await mentoryDB.saveMentorMessage(newMessage, character)
+            
+            //mutate
+            // DB에 저장된 새 멘토메세지 불러오기
+            if let updatedMessage = try await mentoryDB.fetchMentorMessage() {
+                logger.debug("DB: 멘토메세지 업데이트되었습니다. 메세지: \(updatedMessage.message), 캐릭터: \(updatedMessage.characterType.title)")
+                self.mentorMessage = updatedMessage
+                self.mentorMessageDate = updatedMessage.createdAt
+                return
+            }
+        } catch {
+            logger.error("loadTodayMentorMessage()처리 실패: \(error.localizedDescription)")
+        }
+    }
+       
+    
     func loadTodayMentorMessage() async {
         // capture
         let alanLLM = owner!.alanLLM
