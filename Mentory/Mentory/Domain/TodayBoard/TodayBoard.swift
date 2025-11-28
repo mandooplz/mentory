@@ -115,11 +115,15 @@ final class TodayBoard: Sendable, ObservableObject {
             // process
             // DB의 멘토메세지 nil이거나 최신화 되어있지 않은 경우
             logger.debug("DB: 멘토메세지가 nil이거나, 최신화되어있지않습니다.")
+            
+            // 새 멘토메세지 받을 캐릭터 랜덤선정
+            let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
+            let question = AlanLLM.Question(character.question)
+            
             let NewMessageFromAlanLLM: String?
             do {
-                // 새 멘토메세지를 위한 AlanLLM 호출
+                //AlanLLM 호출
                 logger.debug("AlanLLM: 멘토메세지 요청합니다.")
-                let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
                 let response = try await alanLLM.question(question)
                 NewMessageFromAlanLLM = response.content
                 logger.debug("AlanLLM: 멘토메세지 요청성공: \(response.content)")
@@ -132,7 +136,6 @@ final class TodayBoard: Sendable, ObservableObject {
                 return
             }
             // AlanLLM 호출결과값 DB에 저장
-            let character = Bool.random() ? "Nangcheol" : "Gureum"
             try await mentoryDB.saveMentorMessage(newMessage, character)
             
             //mutate
