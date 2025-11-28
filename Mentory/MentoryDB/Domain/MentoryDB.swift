@@ -224,48 +224,30 @@ actor MentoryDB: Sendable {
     }
     
     
-    func getMentorMessage() -> MessageData {
+    func getMentorMessage() -> MessageData? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
         let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
-        
         do {
             guard let db = try context.fetch(descriptor).first else {
-                logger.error("DB가 존재하지 않아 기본값을 반환합니다.")
-                return MessageData(
-                    id: UUID(),
-                    createdAt: .distantPast,
-                    message: "앗 오류가 생겼어요 다시 시도해보세요",
-                    characterType: .Nangcheol
-                )
+                logger.error("DB가 존재하지 않습니다.")
+                return nil
             }
             
-            //그동안 저장된 명언 전체 로그찍어보기
-            logger.debug("all Messages Mapped:\(db.messages.sorted { $0.createdAt>$1.createdAt }.map { $0.toMessageData() })")
-            
+            // messages가 비어있을 때
             guard let latest = db.messages.max(by: { $0.createdAt < $1.createdAt }) else {
-                        logger.error("messages가 비어 있어 기본값을 반환합니다.")
-                        return MessageData(
-                            id: UUID(),
-                            createdAt: .distantPast,
-                            message: "앗 오류가 생겼어요 다시 시도해보세요",
-                            characterType: .Nangcheol
-                        )
-                    }
-                    
-                    return latest.toMessageData()
+                logger.error("messages가 비어 있습니다.")
+                return nil
+            }
+            
+            return latest.toMessageData()
             
         } catch {
-            logger.error("DB fetch error → 기본값 반환")
-            return MessageData(
-                id: UUID(),
-                createdAt: .distantPast,
-                message: "앗 오류가 생겼어요 다시 시도해보세요",
-                characterType: .Nangcheol
-            )
+            logger.error("DB fetch error → nil 반환")
+            return nil
         }
     }
     func setMentorMessage(_ message: String, _ characterType: String) {
@@ -364,7 +346,7 @@ actor MentoryDB: Sendable {
         
         @Relationship var createRecordQueue: [RecordTicket] = []
         @Relationship var records: [DailyRecord.DailyRecordModel] = []
-
+        
         @Relationship var messages: [MentorMessage.MentorMessageModel] = []
         
         init(id: ID, userName: String?) {
@@ -406,7 +388,7 @@ actor MentoryDB: Sendable {
             )
         }
     }
-   
+    
 }
 
 

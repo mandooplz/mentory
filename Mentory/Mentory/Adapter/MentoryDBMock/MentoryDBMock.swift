@@ -69,7 +69,7 @@ struct MentoryDBMock: MentoryDBInterface {
     }
     
     @concurrent
-    func fetchMentorMessage() async throws -> Values.MessageData {
+    func fetchMentorMessage() async throws -> Values.MessageData? {
         return await MainActor.run {
             model.getMentorMessage()
         }

@@ -26,6 +26,8 @@ final class TodayBoard: Sendable, ObservableObject {
     
     @Published var recordForm: RecordForm? = nil
     @Published var records: [RecordData] = []
+    @Published var mentorMessage: MessageData?
+    @Published var mentorMessageDate: Date?
     
     @Published var todayString: String? = nil
     @Published var isFetchedTodayString: Bool = false
@@ -67,40 +69,6 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForm = RecordForm(owner: self)
     }
     
-    //    func fetchTodayString() async {
-    //        // capture
-    //        guard isFetchedTodayString == false else {
-    //            logger.error("오늘의 명언이 이미 fetch되었습니다.")
-    //            return
-    //        }
-    //        let alanLLM = owner!.alanLLM
-    //
-    //        // process
-    //        let contentFromAlanLLM: String?
-    //        do {
-    //            // Alan API를 통해 오늘의 명언 또는 속담 요청
-    //            let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
-    //            let response = try await alanLLM.question(question)
-    //            let mentoryDB = owner!.mentoryDB
-    //            contentFromAlanLLM = response.content
-    //            logger.debug("앨런성공: \(response.content)")
-    //
-    //            _ = try await mentoryDB.saveMentorMessage(contentFromAlanLLM!, "Nangcheol")
-    //            logger.debug("TodayBoard에서 saveMentorMessage() 호출완료")
-    //
-    //            let currentMentorMessage = try await mentoryDB.fetchMentorMessage()
-    //            logger.debug("mentoryDB에 저장된 최근 message내용: \(currentMentorMessage.message), 날짜: \(currentMentorMessage.createdAt), 캐릭터: \(currentMentorMessage.characterType.title)")
-    //
-    //        } catch {
-    //            logger.error("오늘의 명언 fetch 실패: \(error.localizedDescription)")
-    //            return
-    //        }
-    //
-    //        // mutate
-    //        self.todayString = contentFromAlanLLM
-    //        self.isFetchedTodayString = true
-    //    }
-    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
@@ -132,80 +100,53 @@ final class TodayBoard: Sendable, ObservableObject {
         // capture
         let alanLLM = owner!.alanLLM
         let mentoryDB = owner!.mentoryDB
-        
         do {
-            // DB에서 최근 멘토메세지 가져오기
-            let lastMessage = try await mentoryDB.fetchMentorMessage()
-            logger.debug("DB 최근 멘토메세지: \(lastMessage.message) - 날짜: \(lastMessage.createdAt)")
-            
-            
-            // 1.DB에 저장된 멘토메세지 없는 경우(nil)
-            if lastMessage.message.isEmpty {
-                logger.debug("DB 저장값없음")
+            // DB에서 최신 멘토메세지 가져오기
+            if let lastMessage = try await mentoryDB.fetchMentorMessage(),
+               Calendar.current.isDateInToday(lastMessage.createdAt) {
                 
-                // 1-1.새 멘토메세지 AlanLLM 호출
+                // DB의 멘토메세지가 최신화 되어있을경우 return
+                logger.debug("DB: 멘토메세지가 최신입니다. 메세지: \(lastMessage.message), 캐릭터: \(lastMessage.characterType.title)")
+                self.mentorMessage = lastMessage
+                self.mentorMessageDate = lastMessage.createdAt
+                return
+            }
+            
+            // process
+            // DB의 멘토메세지 nil이거나 최신화 되어있지 않은 경우
+            logger.debug("DB: 멘토메세지가 nil이거나, 최신화되어있지않습니다.")
+            let NewMessageFromAlanLLM: String?
+            do {
+                // 새 멘토메세지를 위한 AlanLLM 호출
+                logger.debug("AlanLLM: 멘토메세지 요청합니다.")
                 let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
                 let response = try await alanLLM.question(question)
-                let content = response.content
-                
-                // 1-2.멘토메세지 저장할 랜덤 캐릭터 선택
-                let character = Bool.random() ? "Nangcheol" : "Gureum"
-                
-                // 1-3.DB에 새 멘토메세지 저장
-                try await mentoryDB.saveMentorMessage(content, character)
-                logger.debug("최초 멘토메세지 저장 완료")
-                
-                // 1-4.저장 후 최신 멘토메세지 재조회
-                let updatedMessage = try await mentoryDB.fetchMentorMessage()
-                logger.debug("mentoryDB에 저장된 최근 message내용: \(updatedMessage.message), 날짜: \(updatedMessage.createdAt), 캐릭터: \(updatedMessage.characterType.title)")
-                
-                self.todayString = updatedMessage.message
-                self.isFetchedTodayString = true
+                NewMessageFromAlanLLM = response.content
+                logger.debug("AlanLLM: 멘토메세지 요청성공: \(response.content)")
+            } catch {
+                logger.error("AlanLLM: 멘토메세지 요청실패: \(error.localizedDescription)")
                 return
             }
-            
-            
-            // 2.최근 멘토메세지 생성일 == 오늘이라면 저장된 message사용
-            if Calendar.current.isDateInToday(lastMessage.createdAt) {
-                logger.debug("멘토메세지가 최신화되어있음 message내용: \(lastMessage.message)")
-                self.todayString = lastMessage.message
-                self.isFetchedTodayString = true
+            guard let newMessage = NewMessageFromAlanLLM else {
+                logger.error("AlanLLM: nil을 반환")
                 return
             }
-            
-            
-            // 2-1.최근 멘토메세지 생성일 != 오늘이라면 새로운 명언 생성
-            logger.debug("멘토메세지 최신화 아님 AlanLLM 요청 시작")
-            
-            let question = AlanLLM.Question("동기부여가 될만한 명언을 한가지를 말해줘!")
-            let response = try await alanLLM.question(question)
-            let content = response.content
-            
-            logger.debug("AlanLLM 응답 성공: \(content)")
-            
-            // 2-2.멘토메세지에 저장할 랜덤 캐릭터 선택
+            // AlanLLM 호출결과값 DB에 저장
             let character = Bool.random() ? "Nangcheol" : "Gureum"
+            try await mentoryDB.saveMentorMessage(newMessage, character)
             
-            // 2-3.DB에 새 멘토메세지 저장
-            try await mentoryDB.saveMentorMessage(content, character)
-            logger.debug("TodayBoard에서 saveMentorMessage() 호출완료/ 새로운 멘토메세지 저장")
-            
-            // 2-4. DB에서 최신 멘토메세지 다시 가져오기
-            let updatedMessage = try await mentoryDB.fetchMentorMessage()
-            logger.debug("최신 멘토메세지 업데이트: \(updatedMessage.message), 캐릭터: \(updatedMessage.characterType.title)")
-            
-            // mutate
-            self.todayString = updatedMessage.message
-            self.isFetchedTodayString = true
-            
+            //mutate
+            // DB에 저장된 새 멘토메세지 불러오기
+            if let updatedMessage = try await mentoryDB.fetchMentorMessage() {
+                logger.debug("DB: 멘토메세지 업데이트되었습니다. 메세지: \(updatedMessage.message), 캐릭터: \(updatedMessage.characterType.title)")
+                self.mentorMessage = updatedMessage
+                self.mentorMessageDate = updatedMessage.createdAt
+                return
+            }
         } catch {
-            logger.error("오늘의 명언 처리 실패: \(error.localizedDescription)")
-            return
+            logger.error("loadTodayMentorMessage()처리 실패: \(error.localizedDescription)")
         }
     }
-    
-    
-    
     
     func loadTodayRecords() async {
         // capture

@@ -54,7 +54,7 @@ public struct MentoryDBAPI: Sendable {
     }
     
     @concurrent
-    public func fetchMentorMessage() async throws -> MessageData {
+    public func fetchMentorMessage() async throws -> MessageData? {
         return await mentoryDB.getMentorMessage()
     }
     @concurrent

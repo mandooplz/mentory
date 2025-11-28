@@ -52,7 +52,7 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     }
     
     @concurrent
-    public func fetchMentorMessage() async throws -> MessageData {
+    public func fetchMentorMessage() async throws -> MessageData? {
         let message = try await api.fetchMentorMessage()
         
         return message
