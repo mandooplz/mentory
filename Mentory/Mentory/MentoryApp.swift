@@ -7,10 +7,10 @@
 import SwiftUI
 import SwiftData
 
-
 // MARK: App
 @main
-struct MentoryApp: App {
+struct MentoryApp: App { 
+    
     // MARK: model
     @State var mentoryiOS = MentoryiOS(.real)
 
