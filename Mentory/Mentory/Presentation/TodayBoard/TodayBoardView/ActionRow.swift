@@ -9,7 +9,6 @@ import SwiftUI
 
 // MARK: View
 struct ActionRow: View {
-//    @Binding var isSelected: Bool
     @Binding var checked: Bool
     let text: String
     
