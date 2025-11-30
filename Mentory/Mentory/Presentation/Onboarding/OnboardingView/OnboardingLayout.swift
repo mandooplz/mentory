@@ -8,24 +8,38 @@ import SwiftUI
 
 
 // MARK: Layout
-struct OnboardingLayout<Content: View>: View {
+struct OnboardingLayout<Content: View, BottomContent: View> : View {
     let title: String
-    @ViewBuilder let content: () -> Content
+    @ViewBuilder let main: () -> Content
+    @ViewBuilder let bottom: () -> BottomContent
     
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
-                HStack {
-                    Text(title)
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.black)
-                        .padding(.top, 60)
-                        .padding(.leading, 30)
+                VStack(spacing: 0) {
+                    HStack {
+                        Text(title)
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(.black)
+                            .padding(.top, 60)
+                            .padding(.leading, 30)
+                        
+                        Spacer()
+                    }
+                    
+                    main()
                     
                     Spacer()
                 }
             }
+        }.safeAreaInset(edge: .bottom) {
+            bottom()
+                .padding(.horizontal, 30)
+                .padding(.bottom, 40)
+                
+                .background(Color.white)
         }
+        
     }
 }
 
@@ -34,7 +48,10 @@ struct OnboardingLayout<Content: View>: View {
 #Preview {
     OnboardingLayout(
         title: "레이아웃 제목",
-        content: {
+        main: {
             Text("컨텐츠 영역")
+        },
+        bottom: {
+            Text("하단 영역 컨텐츠")
         })
 }
