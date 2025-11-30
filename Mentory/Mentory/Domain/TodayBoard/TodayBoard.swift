@@ -229,5 +229,7 @@ final class TodayBoard: Sendable, ObservableObject {
         } catch {
             logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
         }
+        
+        // mutate
     }
 }
