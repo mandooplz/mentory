@@ -10,9 +10,13 @@ import Foundation
 // MARK: Value
 nonisolated
 public struct FirebaseAnswer: Sendable, Hashable {
+    // MARK:
     public let content: String
     
     public init(_ content: String) {
         self.content = content
     }
+    
+    
+    // MARK: 
 }

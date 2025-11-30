@@ -72,10 +72,6 @@ struct FirebaseLLM: Sendable {
     
     
     // MARK: value
-//    struct Answer {
-//        let content: String
-//    }
-
     enum Error: Swift.Error {
         case emptyResponse
     }
