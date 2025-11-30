@@ -117,23 +117,6 @@ struct AlanLLM: AlanLLMInterface {
         }
     }
     
-//    nonisolated
-//    struct Question: Sendable, Hashable, Identifiable {
-//        // MARK: codr
-//        let id: ID = ID()
-//        let content: String
-//        
-//        init(_ content: String) {
-//            self.content = content
-//        }
-//        
-//        
-//        // MARK: value
-//        struct ID: Sendable, Hashable {
-//            let rawValue = UUID()
-//        }
-//    }
-    
     nonisolated
     struct Answer: Sendable, Codable {
         // MARK: core
