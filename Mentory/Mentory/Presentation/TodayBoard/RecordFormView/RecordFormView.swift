@@ -204,14 +204,6 @@ fileprivate struct SubmitButton<Content: View>: View {
                 for await canProceed in canProceedStream {
                     self.isSubmitEnabled = canProceed
                 }
-                
-//                let titleInputStream = recordForm.$titleInput.values
-//                let textInputStream = recordForm.$textInput.values
-                
-//                for await (title, text) in zip(titleInputStream, textInputStream) {
-//                    self.isSubmitEnabled = !title.trimmingCharacters(in: .whitespaces).isEmpty &&
-//                    !text.trimmingCharacters(in: .whitespaces).isEmpty
-//                }
             }
     }
 }
