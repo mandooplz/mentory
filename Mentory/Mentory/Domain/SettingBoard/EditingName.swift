@@ -45,7 +45,6 @@ final class EditingName: Sendable, ObservableObject{
         isSubmitDisabled = true
     }
 
-    
     func submit() async {
         // capture
         let newName = nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
