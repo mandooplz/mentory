@@ -107,10 +107,4 @@ final class RecordForm: Sendable, ObservableObject {
             self.voice = voice
         }
     }
-
-    nonisolated enum ValidationResult: String, Sendable, Hashable {
-        case ok
-        case titleInputIsEmpty
-        case contentsInputIsEmpty
-    }
 }
