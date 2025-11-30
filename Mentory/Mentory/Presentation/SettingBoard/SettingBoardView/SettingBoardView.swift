@@ -144,10 +144,11 @@ struct SettingBoardView: View {
     
     @ViewBuilder
     private var ReminderStatusRow: some View {
-        SettingRow(
+        SettingValueRow(
             iconName: "bell.fill",
-            iconBackground: Color.red,
-            title: "알림 상태: \(notificationStatusText)",
+            iconBackground: .red,
+            title: "알림 상태",
+            value: notificationStatusText,   // "ON" / "OFF" / "요청 전"
             showDivider: false
         )
         .onChange(of: settingBoard.isReminderOn, initial: false) { oldValue, newValue in
@@ -269,13 +270,13 @@ struct SettingBoardView: View {
             await MainActor.run {
                 switch settings.authorizationStatus {
                 case .authorized, .provisional, .ephemeral:
-                    notificationStatusText = "알림이 허용된 상태예요"
+                    notificationStatusText = "ON"
                 case .denied:
-                    notificationStatusText = "알림이 꺼져 있어요 (설정 앱에서 변경 가능)"
+                    notificationStatusText = "OFF"
                 case .notDetermined:
-                    notificationStatusText = "아직 알림 권한을 요청하지 않았어요"
+                    notificationStatusText = "요청 전"
                 @unknown default:
-                    notificationStatusText = "알림 상태를 알 수 없어요"
+                    notificationStatusText = "-"
                 }
             }
         }
