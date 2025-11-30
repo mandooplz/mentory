@@ -4,30 +4,19 @@
 //
 //  Created by SJS on 11/27/25.
 //
-
 import Foundation
 import OSLog
 import FirebaseCore
 import FirebaseAI
+import Values
 
+
+
+
+
+// MARK: Domain
 struct FirebaseLLM: Sendable {
-
-    struct Question {
-        let content: String
-
-        init(_ content: String) {
-            self.content = content
-        }
-    }
-
-    struct Answer {
-        let content: String
-    }
-
-    enum Error: Swift.Error {
-        case emptyResponse
-    }
-
+    // MARK: core
     private let logger = Logger(subsystem: "MentoryiOS.FirebaseLLM", category: "Domain")
     private let model: GenerativeModel
 
@@ -40,8 +29,8 @@ struct FirebaseLLM: Sendable {
         self.model = ai.generativeModel(modelName: "gemini-2.5-flash-lite")
     }
 
-
-    func question(_ question: Question) async throws -> Answer {
+    // MARK: flow
+    func question(_ question: FirebaseQuestion) async throws -> Answer {
         logger.info("Firebase LLM 요청 시작")
 
         do {
@@ -79,5 +68,23 @@ struct FirebaseLLM: Sendable {
         }
 
         return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    
+    // MARK: value
+//    struct Question {
+//        let content: String
+//
+//        init(_ content: String) {
+//            self.content = content
+//        }
+//    }
+
+    struct Answer {
+        let content: String
+    }
+
+    enum Error: Swift.Error {
+        case emptyResponse
     }
 }

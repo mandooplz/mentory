@@ -8,7 +8,7 @@ import Foundation
 import OSLog
 
 
-// MARK: Domain Interface
+// MARK: Interface
 protocol AlanLLMInterface: Sendable {
     func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer
 }

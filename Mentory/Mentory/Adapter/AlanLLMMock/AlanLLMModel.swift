@@ -9,7 +9,7 @@ import Collections
 import OSLog
 
 
-// MARK: Model
+// MARK: Object
 @MainActor
 final class AlanLLMModel: Sendable {
     // MARK: core
