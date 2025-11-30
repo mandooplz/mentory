@@ -11,7 +11,6 @@ import OSLog
 // MARK: Domain Interface
 protocol AlanLLMInterface: Sendable {
     func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer
-//    func resetState(token: AlanLLM.AuthToken) async throws
 }
 
 
@@ -86,53 +85,6 @@ struct AlanLLM: AlanLLMInterface {
             throw alanError
         } catch {
             logger.error("question() - 네트워크 오류 발생: \(error.localizedDescription, privacy: .public)")
-            throw AlanLLM.Error.networkError(error)
-        }
-    }
-    
-    @concurrent
-    func resetState(token: AuthToken = .current) async throws {
-        logger.debug("resetState() 시작 - 상태 초기화 준비")
-        
-        guard let url = URL(string: "\(id.value.absoluteString)/reset-state") else {
-            logger.error("resetState() - URL 생성 실패: baseURL=\(id.value.absoluteString, privacy: .public)")
-            throw AlanLLM.Error.invalidURL
-        }
-        
-        logger.debug("resetState() - URL 생성 완료: \(url.absoluteString, privacy: .public)")
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "DELETE"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let requestBody = ["client_id": token.value]
-        request.httpBody = try JSONEncoder().encode(requestBody)
-        
-        logger.debug("resetState() - 요청 바디 인코딩 완료 (client_id 길이: \(token.value.count))")
-        
-        do {
-            logger.debug("resetState() - 네트워크 요청 시작")
-            let (_, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                logger.error("resetState() - HTTPURLResponse 캐스팅 실패")
-                throw AlanLLM.Error.invalidResponse
-            }
-            
-            logger.debug("resetState() - 상태 코드: \(httpResponse.statusCode)")
-            
-            guard httpResponse.statusCode == 200 else {
-                logger.error("resetState() - HTTP 오류: 상태 코드 \(httpResponse.statusCode)")
-                throw AlanLLM.Error.httpError(statusCode: httpResponse.statusCode)
-            }
-            
-            logger.debug("resetState() - 상태 초기화 성공")
-            
-        } catch let alanError as AlanLLM.Error {
-            logger.error("resetState() - AlanLLM.Error 발생: \(String(describing: alanError), privacy: .public)")
-            throw alanError
-        } catch {
-            logger.error("resetState() - 네트워크 오류 발생: \(error.localizedDescription, privacy: .public)")
             throw AlanLLM.Error.networkError(error)
         }
     }

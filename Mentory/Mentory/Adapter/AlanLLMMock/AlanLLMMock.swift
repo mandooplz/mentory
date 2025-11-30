@@ -28,9 +28,4 @@ struct AlanLLMMock: AlanLLMInterface {
             return myAnswer
         }
     }
-    
-    @concurrent
-    func resetState(token: AlanLLM.AuthToken) async {
-        fatalError()
-    }
 }
