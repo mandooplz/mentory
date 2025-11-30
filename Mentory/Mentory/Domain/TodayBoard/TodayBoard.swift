@@ -80,7 +80,7 @@ final class TodayBoard: Sendable, ObservableObject {
         let contentFromAlanLLM: String?
         do {
             // Alan API를 통해 오늘의 명언 또는 속담 요청
-            let question = AlanLLM.Question("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
+            let question = AlanQuestion("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
             let response = try await alanLLM.question(question)
             
             contentFromAlanLLM = response.content
@@ -101,7 +101,7 @@ final class TodayBoard: Sendable, ObservableObject {
         let mentoryDB = owner!.mentoryDB
         do {
             let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
-            let question = AlanLLM.Question(character.question)
+            let question = AlanQuestion(character.question)
             let NewMessageFromAlanLLM: String?
             do {
                 //AlanLLM 호출
@@ -154,7 +154,7 @@ final class TodayBoard: Sendable, ObservableObject {
             
             // 새 멘토메세지 받을 캐릭터 랜덤선정
             let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
-            let question = AlanLLM.Question(character.question)
+            let question = AlanQuestion(character.question)
             
             let NewMessageFromAlanLLM: String?
             do {

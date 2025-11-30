@@ -6,11 +6,12 @@
 //
 import Foundation
 import OSLog
+import Values
 
 
 // MARK: Interface
 protocol AlanLLMInterface: Sendable {
-    func question(_ question: AlanLLM.Question) async throws -> AlanLLM.Answer
+    func question(_ question: AlanQuestion) async throws -> AlanLLM.Answer
 }
 
 
@@ -24,7 +25,7 @@ struct AlanLLM: AlanLLMInterface {
     
     // MARK: flows
     @concurrent
-    func question(_ question: Question) async throws -> Answer {
+    func question(_ question: AlanQuestion) async throws -> Answer {
         logger.debug("question() 시작 - 질문 전송 준비")
         
         let token = AuthToken.current
@@ -116,22 +117,22 @@ struct AlanLLM: AlanLLMInterface {
         }
     }
     
-    nonisolated
-    struct Question: Sendable, Hashable, Identifiable {
-        // MARK: codr
-        let id: ID = ID()
-        let content: String
-        
-        init(_ content: String) {
-            self.content = content
-        }
-        
-        
-        // MARK: value
-        struct ID: Sendable, Hashable {
-            let rawValue = UUID()
-        }
-    }
+//    nonisolated
+//    struct Question: Sendable, Hashable, Identifiable {
+//        // MARK: codr
+//        let id: ID = ID()
+//        let content: String
+//        
+//        init(_ content: String) {
+//            self.content = content
+//        }
+//        
+//        
+//        // MARK: value
+//        struct ID: Sendable, Hashable {
+//            let rawValue = UUID()
+//        }
+//    }
     
     nonisolated
     struct Answer: Sendable, Codable {
