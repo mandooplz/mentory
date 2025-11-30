@@ -42,32 +42,15 @@ struct FirebaseLLM: Sendable {
                 throw Error.emptyResponse
             }
 
-            // ```json 코드블록 감싸져 있으면 제거
-            let cleaned = Self.stripCodeFence(from: rawText)
-
-            logger.info("Firebase LLM 응답 성공: \(cleaned, privacy: .public)")
-            return FirebaseAnswer(cleaned)
+            let answer = FirebaseAnswer(rawText)
+            let cleanedAnswer = answer.removeCodeBlockFence()
+            logger.info("Firebase LLM 응답 성공: \(cleanedAnswer.content, privacy: .public)")
+            
+            return cleanedAnswer
         } catch {
             logger.error("Firebase LLM 오류: \(error.localizedDescription, privacy: .public)")
             throw error
         }
-    }
-
-
-    // ```json ... ``` 같이 코드블록으로 감싸진 응답에서 앞뒤 ``` 제거
-    private static func stripCodeFence(from text: String) -> String {
-        var result = text.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if result.hasPrefix("```") {
-            if let firstNewline = result.range(of: "\n") {
-                result = String(result[firstNewline.upperBound...])
-            }
-            if let closingRange = result.range(of: "```", options: .backwards) {
-                result = String(result[..<closingRange.lowerBound])
-            }
-        }
-
-        return result.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     
