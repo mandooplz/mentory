@@ -178,8 +178,7 @@ fileprivate struct SubmitButton<Content: View>: View {
                         
                         if let todayBoard = recordForm.owner,
                            let mentory = todayBoard.owner,
-                           let settingBoard = mentory.settingBoard,
-                           settingBoard.isReminderOn {
+                           let settingBoard = mentory.settingBoard {
                             
                             let reminderTime = settingBoard.reminderTime
                             
