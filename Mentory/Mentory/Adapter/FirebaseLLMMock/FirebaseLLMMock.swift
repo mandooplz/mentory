@@ -14,4 +14,8 @@ struct FirebaseLLMMock: FirebaseLLMInterface {
     func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
         fatalError()
     }
+    
+    func getEmotionAnalysis(_: FirebaseQuestion) async throws -> FirebaseAnalysis {
+        fatalError()
+    }
 }
