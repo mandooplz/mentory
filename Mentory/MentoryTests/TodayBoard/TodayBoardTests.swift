@@ -104,6 +104,7 @@ struct TodayBoardTests {
         @Test func updateRecords() async throws {
             // given
             let recordData = RecordData(id: .init(),
+                                        recordDate: .now,
                                         createdAt: .now,
                                         content: "SAMPLE_CONTENT",
                                         analyzedResult: "SAMPLE_RESULT",
