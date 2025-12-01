@@ -32,7 +32,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
-    @Published fileprivate var firstAnalysisResult: FirstAnalysisResult? = nil
+    @Published private var firstAnalysisResult: FirstAnalysisResult? = nil
     @Published var secondAnalysisResult: SecondAnalysisResult? = nil
     
     
@@ -343,7 +343,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
     }
 
-    enum RiskLevel: String, Sendable, Codable {
+    fileprivate enum RiskLevel: String, Sendable, Codable {
         case low
         case medium
         case high

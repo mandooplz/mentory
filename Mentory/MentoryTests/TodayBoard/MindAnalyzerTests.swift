@@ -84,6 +84,10 @@ private func getMindAnalyzerForTest(_ mentoryiOS: MentoryiOS) async throws -> Mi
         recordForm.textInput = "SAMPLE_TEXT"
     }
     
+    await recordForm.validateInput()
+    
+    try await #require(recordForm.canProceed == true)
+    
     await recordForm.submit()
     
     // MindAnalyzer
