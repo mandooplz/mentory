@@ -131,6 +131,10 @@ final class TodayBoard: Sendable, ObservableObject {
                 logger.debug("DB: 멘토메세지 업데이트되었습니다. 메세지: \(updatedMessage.message), 캐릭터: \(updatedMessage.characterType.title)")
                 self.mentorMessage = updatedMessage
                 self.mentorMessageDate = updatedMessage.createdAt
+
+                // Watch로 멘토 메시지 전송
+                WatchConnectivityManager.shared.updateMentorMessage(updatedMessage.message, character: updatedMessage.characterType.rawValue)
+
                 return
             }
         } catch {
