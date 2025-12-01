@@ -37,7 +37,7 @@ struct MindAnalyzerView: View {
                 isActive: !mindAnalyzer.isAnalyzing,
                 action: {
                     Task {
-                        mindAnalyzer.isAnalyzing = true
+                        mindAnalyzer.startAnalyze()
                         
 //                        await mindAnalyzer.startAnalyzing()
                         await mindAnalyzer.newAnalyzingExteneded()
@@ -46,7 +46,7 @@ struct MindAnalyzerView: View {
 //                        
 //                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
                         
-                        mindAnalyzer.isAnalyzing = false
+                        mindAnalyzer.stopAnalyze()
                     }
                 })
             
