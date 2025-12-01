@@ -282,13 +282,8 @@ final class TodayBoard: Sendable, ObservableObject {
         logger.debug("RecordForm \(availableDates.count)개 생성 완료")
     }
 
-    /// 선택된 날짜의 RecordForm을 반환합니다
-    func getSelectedRecordForm() -> RecordForm? {
-        guard let selectedDate = selectedDate else {
-            logger.error("선택된 날짜가 없습니다.")
-            return nil
-        }
-
-        return recordForms.first { $0.targetDate == selectedDate }
+    /// 지정된 날짜의 RecordForm을 반환합니다
+    func getRecordForm(for date: RecordDate) -> RecordForm? {
+        return recordForms.first { $0.targetDate == date }
     }
 }
