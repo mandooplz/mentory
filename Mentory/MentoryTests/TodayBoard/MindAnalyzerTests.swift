@@ -97,7 +97,7 @@ struct MindAnalyzerTests {
         }
     }
     
-    struct Cacnel {
+    struct Cancel {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer
         init() async throws {

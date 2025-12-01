@@ -23,7 +23,14 @@ public struct RecordData: Sendable, Hashable, Codable {
     public let actionTexts: [String] // 행동 추천이 왜 필요한가>
     public let actionCompletionStatus: [Bool]
 
-    public init(id: UUID, recordDate: Date, createdAt: Date, content: String, analyzedResult: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
+    public init(id: UUID,
+                recordDate: Date,
+                createdAt: Date,
+                content: String,
+                analyzedResult: String,
+                emotion: Emotion,
+                actionTexts: [String] = [],
+                actionCompletionStatus: [Bool] = [] ) {
         self.id = id
         self.recordDate = recordDate
         self.createdAt = createdAt
