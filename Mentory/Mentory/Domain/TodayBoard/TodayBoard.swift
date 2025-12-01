@@ -92,6 +92,11 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate
         self.todayString = contentFromAlanLLM
         self.isFetchedTodayString = true
+
+        // Watch로 명언 전송
+        if let quote = contentFromAlanLLM {
+            WatchConnectivityManager.shared.updateTodayString(quote)
+        }
     }
     func loadTodayRecords() async {
         // capture
