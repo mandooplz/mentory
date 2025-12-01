@@ -27,11 +27,25 @@ class SettingBoardViewModel: ObservableObject {
     @Published var isShowingTermsOfServiceView = false
     
     @Published var isShowingDataDeletionAlert = false
+    @Published var notificationStatusText: String = "요청 전"
     // MARK: action
-    
-    
-    // MARK: value
-    
+    func onAppear(settingBoard: SettingBoard) async {
+        settingBoard.loadSavedReminderTime()
+        
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        switch settings.authorizationStatus {
+        case .authorized, .provisional, .ephemeral:
+            notificationStatusText = "ON"
+        case .denied:
+            notificationStatusText = "OFF"
+        case .notDetermined:
+            notificationStatusText = "요청 전"
+        @unknown default:
+            notificationStatusText = "-"
+        }
+    }
 }
 
 
@@ -40,8 +54,6 @@ struct SettingBoardView: View {
     // MARK: core
     @ObservedObject var settingBoard: SettingBoard
     @ObservedObject var settingBoardViewModel: SettingBoardViewModel
-    
-    @State private var notificationStatusText: String = "알림 상태를 확인 중이에요"
     
     nonisolated let logger = Logger(subsystem: "MentoryiOS.SettingBoardView", category: "Presentation")
     
@@ -77,8 +89,7 @@ struct SettingBoardView: View {
                 }
             }
             .task {
-                settingBoard.loadSavedReminderTime()
-                refreshNotificationStatus()
+                await settingBoardViewModel.onAppear(settingBoard: settingBoard)
             }
         }
     }
@@ -153,31 +164,12 @@ struct SettingBoardView: View {
             iconName: "bell.fill",
             iconBackground: .red,
             title: "알림 상태",
-            value: notificationStatusText,   // "ON" / "OFF" / "요청 전"
+            value: settingBoardViewModel.notificationStatusText,   // "ON" / "OFF" / "요청 전"
             showDivider: false
         )
-        .onChange(of: settingBoard.isReminderOn, initial: false) { oldValue, newValue in
-            if newValue {
-                settingBoard.turnReminderOn()
-                
-                Task {
-                    guard let owner = settingBoard.owner else {
-                        return
-                    }
-                    await owner.reminderCenter.requestAuthorizationIfNeeded()
-                }
-            } else {
-                settingBoard.turnReminderOff()
-                
-                Task {
-                    guard let owner = settingBoard.owner else { return }
-                    await owner.reminderCenter.cancelAllWeeklyReminders()
-                }
-            }
-        }
     }
-
-
+    
+    
     
     @ViewBuilder
     private var ReminderTimeRow: some View {
@@ -266,26 +258,6 @@ struct SettingBoardView: View {
                 Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
             }
         )
-    }
-    
-    private func refreshNotificationStatus() {
-        Task {
-            let center = UNUserNotificationCenter.current()
-            let settings = await center.notificationSettings()
-            
-            await MainActor.run {
-                switch settings.authorizationStatus {
-                case .authorized, .provisional, .ephemeral:
-                    notificationStatusText = "ON"
-                case .denied:
-                    notificationStatusText = "OFF"
-                case .notDetermined:
-                    notificationStatusText = "요청 전"
-                @unknown default:
-                    notificationStatusText = "-"
-                }
-            }
-        }
     }
     
     // 알림시간설정시트
