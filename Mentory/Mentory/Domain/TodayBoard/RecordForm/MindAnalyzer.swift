@@ -195,7 +195,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
     }
     
-    func newAnalyzingExteneded() async {
+    func analyze() async {
         // capture
         guard let textInput = owner?.textInput else {
             logger.error("TextInput이 비어있습니다.")

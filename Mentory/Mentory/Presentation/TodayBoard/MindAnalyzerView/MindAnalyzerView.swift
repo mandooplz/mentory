@@ -40,7 +40,7 @@ struct MindAnalyzerView: View {
                         mindAnalyzer.startAnalyze()
                         
 //                        await mindAnalyzer.startAnalyzing()
-                        await mindAnalyzer.newAnalyzingExteneded()
+                        await mindAnalyzer.analyze()
                         
 //                        await mindAnalyzer.saveRecord()
 //                        
