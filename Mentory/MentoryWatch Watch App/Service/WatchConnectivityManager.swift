@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import WatchConnectivity
+@preconcurrency import WatchConnectivity
 import Combine
 
 // WatchOS에서 iOS 앱과 통신하기 위한 매니저
@@ -15,9 +15,14 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     static let shared = WatchConnectivityManager()
 
     @Published var todayString: String = "명언을 불러오는 중..."
+    @Published var mentorMessage: String = "멘토 메시지를 불러오는 중..."
+    @Published var mentorCharacter: String = ""
     @Published var connectionStatus: String = "연결 대기 중"
 
-    private let session: WCSession
+    nonisolated private let session: WCSession
+    nonisolated(unsafe) private var cachedTodayString: String = ""
+    nonisolated(unsafe) private var cachedMentorMessage: String = ""
+    nonisolated(unsafe) private var cachedMentorCharacter: String = ""
 
     private override init() {
         self.session = WCSession.default
@@ -32,31 +37,60 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
     // MARK: - Public Methods
 
     // iOS 앱에 데이터 요청
-    func requestDataFromPhone() {
+    nonisolated func requestDataFromPhone() {
         guard session.isReachable else {
-            self.connectionStatus = "iPhone과 연결되지 않음"
+            Task { @MainActor in
+                self.connectionStatus = "iPhone과 연결되지 않음"
+            }
             return
         }
 
         let message = ["request": "initialData"]
         session.sendMessage(message, replyHandler: { [weak self] reply in
+            guard let self = self else { return }
+
+            let quote = reply["todayString"] as? String ?? ""
+            let mentorMsg = reply["mentorMessage"] as? String ?? ""
+            let character = reply["mentorCharacter"] as? String ?? ""
+
+            self.cachedTodayString = quote
+            self.cachedMentorMessage = mentorMsg
+            self.cachedMentorCharacter = character
+
             Task { @MainActor in
-                self?.handleReceivedData(reply)
+                self.todayString = quote
+                self.mentorMessage = mentorMsg
+                self.mentorCharacter = character
+                self.connectionStatus = "연결됨"
             }
-        }) { [weak self] error in
-            Task { @MainActor in
-                self?.connectionStatus = "데이터 요청 실패: \(error.localizedDescription)"
-            }
-        }
+        })
     }
 
     // MARK: - Private Methods
 
-    private func handleReceivedData(_ data: [String: Any]) {
-        if let quote = data["todayString"] as? String {
-            self.todayString = quote
+    nonisolated private func updateData(quote: String?, mentorMsg: String?, character: String?) {
+        if let quote = quote {
+            self.cachedTodayString = quote
         }
-        self.connectionStatus = "연결됨"
+        if let mentorMsg = mentorMsg {
+            self.cachedMentorMessage = mentorMsg
+        }
+        if let character = character {
+            self.cachedMentorCharacter = character
+        }
+
+        Task { @MainActor in
+            if let quote = quote {
+                self.todayString = quote
+            }
+            if let mentorMsg = mentorMsg {
+                self.mentorMessage = mentorMsg
+            }
+            if let character = character {
+                self.mentorCharacter = character
+            }
+            self.connectionStatus = "연결됨"
+        }
     }
 }
 
@@ -82,16 +116,28 @@ extension WatchConnectivityManager: WCSessionDelegate {
         }
     }
 
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        self.handleReceivedData(message)
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+        let quote = message["todayString"] as? String
+        let mentorMsg = message["mentorMessage"] as? String
+        let character = message["mentorCharacter"] as? String
+
+        updateData(quote: quote, mentorMsg: mentorMsg, character: character)
     }
 
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        self.handleReceivedData(message)
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+        let quote = message["todayString"] as? String
+        let mentorMsg = message["mentorMessage"] as? String
+        let character = message["mentorCharacter"] as? String
+
+        updateData(quote: quote, mentorMsg: mentorMsg, character: character)
         replyHandler(["status": "received"])
     }
 
-    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
-        self.handleReceivedData(applicationContext)
+    nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        let quote = applicationContext["todayString"] as? String
+        let mentorMsg = applicationContext["mentorMessage"] as? String
+        let character = applicationContext["mentorCharacter"] as? String
+
+        updateData(quote: quote, mentorMsg: mentorMsg, character: character)
     }
 }

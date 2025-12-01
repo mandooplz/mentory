@@ -21,7 +21,9 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
     // MARK: - Private Properties
     private let session: WCSession
-    private var todayString: String = ""
+    nonisolated(unsafe) private var todayString: String = ""
+    nonisolated(unsafe) private var mentorMessage: String = ""
+    nonisolated(unsafe) private var mentorCharacter: String = ""
 
     // MARK: - Initialization
     private override init() {
@@ -42,6 +44,13 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
         self.sendDataToWatch()
     }
 
+    /// 멘토 메시지를 설정하고 Watch로 전송
+    func updateMentorMessage(_ message: String, character: String) {
+        self.mentorMessage = message
+        self.mentorCharacter = character
+        self.sendDataToWatch()
+    }
+
     // MARK: - Private Methods
 
     /// Watch로 데이터 전송 (Application Context 사용 - 백그라운드에서도 동작)
@@ -53,6 +62,8 @@ final class WatchConnectivityManager: NSObject, ObservableObject {
 
         let context: [String: Any] = [
             "todayString": todayString,
+            "mentorMessage": mentorMessage,
+            "mentorCharacter": mentorCharacter,
             "timestamp": Date().timeIntervalSince1970
         ]
 
@@ -102,14 +113,19 @@ extension WatchConnectivityManager: WCSessionDelegate {
     }
 
     /// Watch로부터 메시지를 받고 응답해야 할 때
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        if message["request"] as? String == "initialData" {
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+        let request = message["request"] as? String
+
+        if request == "initialData" {
             let reply: [String: Any] = [
-                "todayString": self.todayString
+                "todayString": self.todayString,
+                "mentorMessage": self.mentorMessage,
+                "mentorCharacter": self.mentorCharacter
             ]
             replyHandler(reply)
         } else {
-            replyHandler(["status": "received"])
+            let reply: [String: Any] = ["status": "received"]
+            replyHandler(reply)
         }
     }
 }
