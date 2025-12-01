@@ -340,21 +340,4 @@ final class MindAnalyzer: Sendable, ObservableObject {
 //            }
 //        }
     }
-
-//    fileprivate enum RiskLevel: String, Sendable, Codable {
-//        case low
-//        case medium
-//        case high
-//    }
-
-//    fileprivate struct FirstAnalysisResult: Sendable, Codable {
-//        let riskLevel: RiskLevel
-//        let topic: String
-//        let mindType: Emotion
-//    }
-//
-//    fileprivate struct SecondAnalysisResult: Sendable, Codable {
-//        let empathyMessage: String
-//        let actionKeywords: [String]
-//    }
 }
