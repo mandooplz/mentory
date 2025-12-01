@@ -10,6 +10,14 @@ import Values
 import OSLog
 
 
+// MARK: Value
+struct RecordFormItem: Identifiable {
+    let id = UUID()
+    let targetDate: RecordDate
+    var form: RecordForm
+}
+
+
 // MARK: Object
 @MainActor
 final class TodayBoard: Sendable, ObservableObject {
