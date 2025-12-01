@@ -36,9 +36,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
     
-//    @Published private var firstAnalysisResult: FirstAnalysisResult? = nil
-//    @Published private var secondAnalysisResult: SecondAnalysisResult? = nil
-    
     
     // MARK: action
 //    func startAnalyzing() async {
@@ -344,11 +341,11 @@ final class MindAnalyzer: Sendable, ObservableObject {
 //        }
     }
 
-    fileprivate enum RiskLevel: String, Sendable, Codable {
-        case low
-        case medium
-        case high
-    }
+//    fileprivate enum RiskLevel: String, Sendable, Codable {
+//        case low
+//        case medium
+//        case high
+//    }
 
 //    fileprivate struct FirstAnalysisResult: Sendable, Codable {
 //        let riskLevel: RiskLevel
