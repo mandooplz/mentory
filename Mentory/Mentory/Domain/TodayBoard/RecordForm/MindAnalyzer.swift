@@ -25,7 +25,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: RecordForm?
 
-    @Published var isAnalyzing: Bool = false
+    @Published private(set) var isAnalyzing: Bool = false
+    func startAnalyze() { isAnalyzing = true }
+    func stopAnalyze() { isAnalyzing = false }
+    
     @Published var isAnalyzeFinished: Bool = false
     
     @Published var selectedCharacter: CharacterType = .A
