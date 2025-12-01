@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Value
 @frozen
-nonisolated public enum Emotion: String, Codable, Sendable {
+nonisolated public enum Emotion: String, Codable, Sendable, CaseIterable {
     case veryUnpleasant
     case unPleasant
     case slightlyUnpleasant

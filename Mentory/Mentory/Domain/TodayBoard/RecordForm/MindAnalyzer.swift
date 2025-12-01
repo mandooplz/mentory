@@ -8,6 +8,7 @@ import Foundation
 import Values
 import Combine
 import OSLog
+import FirebaseAILogic
 
 
 // MARK: Object
@@ -31,7 +32,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
-    @Published var firstAnalysisResult: FirstAnalysisResult? = nil
+    @Published fileprivate var firstAnalysisResult: FirstAnalysisResult? = nil
     @Published var secondAnalysisResult: SecondAnalysisResult? = nil
     
     
@@ -130,6 +131,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // mutate
         self.firstAnalysisResult = firstResult
         self.secondAnalysisResult = secondResult
+        
         self.mindType = firstResult.mindType
         self.analyzedResult = secondResult.empathyMessage
         self.isAnalyzeFinished = true
@@ -139,33 +141,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
         logger.info("분석 완료")
     }
-    func startAnalyzingExteneded() async {
-        // capture
-        guard let textInput = owner?.textInput else {
-            logger.error("TextInput이 비어있습니다.")
-            return
-        }
-
-        guard textInput.isEmpty == false else {
-            logger.error("textInput이 비어있습니다.")
-            return
-        }
-
-        let character = selectedCharacter
-        let recordForm = self.owner!
-        let todayBoard = recordForm.owner!
-        let mentoryiOS = todayBoard.owner!
-        
-        let firebaseLLM = mentoryiOS.firebaseLLM
-        
-        // process
-        // firebaseLLM을 사용해 구조화된 출력을 얻는다.
-        
-        
-        // mutate
-        
-    }
-
     func saveRecord() async {
         // 분석 결과 검증
         guard let _ = firstAnalysisResult else {
@@ -221,6 +196,44 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
     }
     
+    func newAnalyzingExteneded() async {
+        // capture
+        guard let textInput = owner?.textInput else {
+            logger.error("TextInput이 비어있습니다.")
+            return
+        }
+
+        guard textInput.isEmpty == false else {
+            logger.error("textInput이 비어있습니다.")
+            return
+        }
+
+        let character = selectedCharacter
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
+        
+        let firebaseLLM = mentoryiOS.firebaseLLM
+        
+        // process
+        // firebaseLLM을 사용해 구조화된 출력을 얻는다.
+        let mindTypes = Emotion.allCases.map { $0.rawValue }
+        
+        let jsonSchema = Schema.object(
+            properties: [
+                "mindType": .enumeration(values: mindTypes ),
+                "empathyMessage": .string(description: "감정 상태 메시지"),
+                "actionKeywords": Schema.array(
+                    items: .string(description: "사용자의 감정 상태에 따른 행동 추천"),
+                    minItems: 3,
+                    maxItems: 3),
+            ])
+        
+        
+        // mutate
+        
+    }
+    
     func cancel() {
         // capture
         let recordForm = self.owner
@@ -256,7 +269,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             }
         }
         
-        func makeSecondAnalysisPrompt(firstResult: MindAnalyzer.FirstAnalysisResult, diaryText: String) -> String {
+        fileprivate func makeSecondAnalysisPrompt(firstResult: MindAnalyzer.FirstAnalysisResult, diaryText: String) -> String {
             switch self {
             case .A:
                 // T 스타일
@@ -336,7 +349,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         case high
     }
 
-    struct FirstAnalysisResult: Sendable, Codable {
+    fileprivate struct FirstAnalysisResult: Sendable, Codable {
         let riskLevel: RiskLevel
         let topic: String
         let mindType: Emotion
@@ -345,9 +358,5 @@ final class MindAnalyzer: Sendable, ObservableObject {
     struct SecondAnalysisResult: Sendable, Codable {
         let empathyMessage: String
         let actionKeywords: [String]
-    }
-    
-    struct FirebaseAnalysisResult: Sendable, Codable {
-        
     }
 }
