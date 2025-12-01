@@ -98,7 +98,7 @@ struct MentoryDBMock: MentoryDBInterface {
     }
     
     @concurrent
-    func saveMentorMessage(_ message: String, _ type: CharacterType) async throws {
+    func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws {
         await MainActor.run {
             model.setMentorMessage(message, type)
         }

@@ -112,7 +112,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
             id: UUID(),
             recordDate: recordForm.targetDate.toDate(),  // 일기가 속한 날짜
             createdAt: Date(),  // 실제 작성 시간
-            content: "",
+            
+            content: "", //  
             analyzedResult: analyzedContent,
             emotion: self.mindType!,
             actionTexts: actionTexts,

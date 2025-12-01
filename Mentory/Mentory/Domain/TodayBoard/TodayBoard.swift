@@ -114,8 +114,8 @@ final class TodayBoard: Sendable, ObservableObject {
         let alanLLM = owner!.alanLLM
         let mentoryDB = owner!.mentoryDB
         do {
-            let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
-            let question = AlanQuestion(character.question)
+            let randomCharacter = MentoryCharacter.random
+            let question = AlanQuestion(randomCharacter.question)
             let NewMessageFromAlanLLM: String?
             do {
                 //AlanLLM 호출
@@ -132,7 +132,7 @@ final class TodayBoard: Sendable, ObservableObject {
                 return
             }
             // AlanLLM 호출결과값 DB에 저장
-            try await mentoryDB.saveMentorMessage(newMessage, character)
+            try await mentoryDB.saveMentorMessage(newMessage, randomCharacter)
             
             //
             
@@ -173,8 +173,8 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.debug("DB: 멘토메세지가 nil이거나, 최신화되어있지않습니다.")
             
             // 새 멘토메세지 받을 캐릭터 랜덤선정
-            let character: CharacterType = Bool.random() ? .Nangcheol : .Gureum
-            let question = AlanQuestion(character.question)
+            let randomCharacter = MentoryCharacter.random
+            let question = AlanQuestion(randomCharacter.question)
             
             let NewMessageFromAlanLLM: String?
             do {
@@ -192,7 +192,7 @@ final class TodayBoard: Sendable, ObservableObject {
                 return
             }
             // AlanLLM 호출결과값 DB에 저장
-            try await mentoryDB.saveMentorMessage(newMessage, character)
+            try await mentoryDB.saveMentorMessage(newMessage, randomCharacter)
             
             //mutate
             // DB에 저장된 새 멘토메세지 불러오기
