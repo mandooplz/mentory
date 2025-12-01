@@ -139,6 +139,9 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
         logger.info("분석 완료")
     }
+    func startAnalyzingExteneded() async {
+        
+    }
 
     func saveRecord() async {
         // 분석 결과 검증
