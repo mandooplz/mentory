@@ -164,9 +164,12 @@ struct SettingBoardView: View {
             iconName: "bell.fill",
             iconBackground: .red,
             title: "알림 상태",
-            value: settingBoardViewModel.notificationStatusText,   // "ON" / "OFF" / "요청 전"
+            value: settingBoardViewModel.notificationStatusText,
             showDivider: false
-        )
+        ) {
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            UIApplication.shared.open(url)
+        }
     }
     
     
