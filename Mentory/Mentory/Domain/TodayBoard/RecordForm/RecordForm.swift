@@ -72,32 +72,23 @@ final class RecordForm: Sendable, ObservableObject {
             logger.error("RecordForm의 내용 입력이 비어있습니다. 텍스트, 이미지, 음성 중 하나 이상의 값이 필요합니다.")
             return
         }
+        
+        guard let todayBoard = owner,
+              let mentory = todayBoard.owner,
+              let settingBoard = mentory.settingBoard else {
+            logger.warning("리마인더 예약에 필요한 owner 체인이 없습니다.")
+            return
+        }
 
-        // 기록 완성까지 걸린 시간 계산 및 저장
-        let now = Date()
+        
+        // process
+
         
         if let startTime = startTime {
             self.completionTime = Date().timeIntervalSince(startTime)
             logger.info("기록 완성 시간: \(self.completionTime!)초")
         } else {
             logger.warning("startTime이 설정되지 않았습니다.")
-        }
-        
-        
-        
-
-        // mutate
-        self.mindAnalyzer = MindAnalyzer(owner: self)
-        
-        await scheduleWeeklyReminder(baseDate: now)
-    }
-    
-    private func scheduleWeeklyReminder(baseDate: Date) async {
-        guard let todayBoard = owner,
-              let mentory = todayBoard.owner,
-              let settingBoard = mentory.settingBoard else {
-            logger.warning("리마인더 예약에 필요한 owner 체인이 없습니다.")
-            return
         }
         
         let reminderTime = settingBoard.reminderTime
@@ -107,10 +98,38 @@ final class RecordForm: Sendable, ObservableObject {
         
         // 마지막 기록(baseDate) 기준으로 알림 1개만 다시 예약
         await mentory.reminderCenter.scheduleWeeklyReminder(
-            baseDate: baseDate,
+            baseDate: .now,
             reminderTime: reminderTime
         )
+        
+//        await scheduleWeeklyReminder(baseDate: now)
+        
+        
+        
+
+        // mutate
+        self.mindAnalyzer = MindAnalyzer(owner: self)
     }
+    
+//    private func scheduleWeeklyReminder(baseDate: Date) async {
+//        guard let todayBoard = owner,
+//              let mentory = todayBoard.owner,
+//              let settingBoard = mentory.settingBoard else {
+//            logger.warning("리마인더 예약에 필요한 owner 체인이 없습니다.")
+//            return
+//        }
+//        
+//        let reminderTime = settingBoard.reminderTime
+//        
+//        // 기존 알림 전부 삭제
+//        await mentory.reminderCenter.cancelAllWeeklyReminders()
+//        
+//        // 마지막 기록(baseDate) 기준으로 알림 1개만 다시 예약
+//        await mentory.reminderCenter.scheduleWeeklyReminder(
+//            baseDate: baseDate,
+//            reminderTime: reminderTime
+//        )
+//    }
 
     
     func removeForm() {

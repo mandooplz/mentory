@@ -32,8 +32,9 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
+    
     @Published private var firstAnalysisResult: FirstAnalysisResult? = nil
-    @Published var secondAnalysisResult: SecondAnalysisResult? = nil
+    @Published private var secondAnalysisResult: SecondAnalysisResult? = nil
     
     
     
@@ -355,7 +356,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let mindType: Emotion
     }
 
-    struct SecondAnalysisResult: Sendable, Codable {
+    fileprivate struct SecondAnalysisResult: Sendable, Codable {
         let empathyMessage: String
         let actionKeywords: [String]
     }
