@@ -35,6 +35,7 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var recordForm: RecordForm? = nil  // deprecated: 기존 단일 폼 (호환성 유지)
     @Published var recordForms: [RecordFormItem] = []  // 새로운 다중 폼 시스템
     @Published var selectedDate: RecordDate? = nil  // 현재 선택된 날짜
+    @Published var showDateSelectionSheet: Bool = false  // 날짜 선택 Sheet 표시 여부
 
     @Published var records: [RecordData] = []
     func getIndicator() -> String {
