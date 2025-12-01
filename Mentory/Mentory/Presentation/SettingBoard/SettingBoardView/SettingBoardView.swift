@@ -30,13 +30,11 @@ class SettingBoardViewModel: ObservableObject {
     @Published var notificationStatusText: String = "요청 전"
     
     // MARK: action
-    @MainActor
     func onAppear(settingBoard: SettingBoard) async {
         settingBoard.loadSavedReminderTime()
         await refreshNotificationStatus()
     }
     
-    @MainActor
     func refreshNotificationStatus() async {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
@@ -53,7 +51,6 @@ class SettingBoardViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func didTapReminderStatus(settingBoard: SettingBoard) async {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
