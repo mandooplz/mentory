@@ -26,7 +26,6 @@ final class TodayBoard: Sendable, ObservableObject {
 
     @Published var recordForm: RecordForm? = nil  // deprecated: 기존 단일 폼 (호환성 유지)
     @Published var recordForms: [RecordForm] = []  // RecordForm 배열 (각 RecordForm이 targetDate 정보를 포함)
-    @Published var selectedDate: RecordDate? = nil  // 현재 선택된 날짜
     @Published var showDateSelectionSheet: Bool = false  // 날짜 선택 Sheet 표시 여부
 
     @Published var records: [RecordData] = []
@@ -75,6 +74,7 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate - 기본값으로 오늘 날짜 사용
         self.recordForm = RecordForm(owner: self, targetDate: .today)
     }
+    
     func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
@@ -268,16 +268,12 @@ final class TodayBoard: Sendable, ObservableObject {
         guard !availableDates.isEmpty else {
             logger.warning("작성 가능한 날짜가 없습니다. 모든 날짜에 이미 일기가 작성되었습니다.")
             self.recordForms = []
-            self.selectedDate = nil
             return
         }
 
         self.recordForms = availableDates.map { date in
             RecordForm(owner: self, targetDate: date)
         }
-
-        // 첫 번째 작성 가능한 날짜를 기본 선택
-        self.selectedDate = availableDates.first
 
         logger.debug("RecordForm \(availableDates.count)개 생성 완료")
     }

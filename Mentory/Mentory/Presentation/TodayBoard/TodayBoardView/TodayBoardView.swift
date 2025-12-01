@@ -446,8 +446,6 @@ fileprivate struct DateSelectionSheet: View {
                         DateButton(
                             date: recordForm.targetDate,
                             action: {
-                                // 날짜 선택
-                                todayBoard.selectedDate = recordForm.targetDate
                                 // recordForm 설정
                                 todayBoard.recordForm = recordForm
                                 // Sheet 닫기
