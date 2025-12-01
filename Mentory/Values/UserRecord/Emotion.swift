@@ -17,4 +17,10 @@ nonisolated public enum Emotion: String, Codable, Sendable, CaseIterable {
     case slightlyPleasant
     case pleasant
     case veryPleasant
+    
+    
+    // MARK: operator
+    public static func getAllEmotions() -> [String] {
+        return Self.allCases.map { $0.rawValue }
+    }
 }

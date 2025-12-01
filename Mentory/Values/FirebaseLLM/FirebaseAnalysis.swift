@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Value
 nonisolated
-public struct FirebaseAnalysis: Sendable, Hashable {
+public struct FirebaseAnalysis: Sendable, Hashable, Codable {
     // MARK: core
     public let mindType: Emotion
     public let empathyMessage: String

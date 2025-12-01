@@ -212,39 +212,24 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         
-        let ai = FirebaseAI.firebaseAI(backend: .googleAI())
+        let firebaseLLM = mentoryiOS.firebaseLLM
         
         // process
-        // firebaseLLM을 사용해 구조화된 출력을 얻는다.
-        let mindTypes = Emotion.allCases.map { $0.rawValue }
+        let question = FirebaseQuestion(textInput)
         
-        let jsonSchema = Schema.object(
-            properties: [
-                "mindType": .enumeration(values: mindTypes ),
-                "empathyMessage": .string(description: "감정 상태 메시지"),
-                "actionKeywords": Schema.array(
-                    items: .string(description: "사용자의 감정 상Fou태에 따른 행동 추천"),
-                    minItems: 3,
-                    maxItems: 3),
-            ])
-        
-        let model = ai.generativeModel(
-          modelName: "gemini-2.5-flash-lite",
-          // In the generation config, set the `responseMimeType` to `application/json`
-          // and pass the JSON schema object into `responseSchema`.
-          generationConfig: GenerationConfig(
-            responseMIMEType: "application/json",
-            responseSchema: jsonSchema
-          )
-        )
-        
-        // mutate
+        let analysis: FirebaseAnalysis
         do {
-            let response = try await model.generateContent(textInput)
-            print(response.text ?? "No text in response.")
+            analysis = try await firebaseLLM.getEmotionAnalysis(question)
+            
         } catch {
             logger.error("\(error)")
+            return
         }
+        
+        
+        // mutate
+        self.mindType = analysis.mindType
+        self.analyzedResult = analysis.empathyMessage
     }
     
     func cancel() {
