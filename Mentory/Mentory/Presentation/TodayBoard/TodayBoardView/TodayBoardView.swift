@@ -442,14 +442,14 @@ fileprivate struct DateSelectionSheet: View {
                 Spacer()
             } else {
                 VStack(spacing: 12) {
-                    ForEach(todayBoard.recordForms) { item in
+                    ForEach(todayBoard.recordForms) { recordForm in
                         DateButton(
-                            date: item.targetDate,
+                            date: recordForm.targetDate,
                             action: {
                                 // 날짜 선택
-                                todayBoard.selectedDate = item.targetDate
+                                todayBoard.selectedDate = recordForm.targetDate
                                 // recordForm 설정
-                                todayBoard.recordForm = item.form
+                                todayBoard.recordForm = recordForm
                                 // Sheet 닫기
                                 dismiss()
                             }

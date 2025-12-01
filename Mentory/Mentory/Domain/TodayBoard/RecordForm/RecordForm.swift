@@ -12,7 +12,7 @@ import Values
 
 // MARK: Object
 @MainActor
-final class RecordForm: Sendable, ObservableObject {
+final class RecordForm: Sendable, ObservableObject, Identifiable {
     // MARK: core
     init(owner: TodayBoard, targetDate: RecordDate) {
         self.owner = owner

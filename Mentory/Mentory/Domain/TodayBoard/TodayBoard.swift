@@ -10,14 +10,6 @@ import Values
 import OSLog
 
 
-// MARK: Value
-struct RecordFormItem: Identifiable {
-    let id = UUID()
-    let targetDate: RecordDate
-    var form: RecordForm
-}
-
-
 // MARK: Object
 @MainActor
 final class TodayBoard: Sendable, ObservableObject {
@@ -33,7 +25,7 @@ final class TodayBoard: Sendable, ObservableObject {
     weak var owner: MentoryiOS?
 
     @Published var recordForm: RecordForm? = nil  // deprecated: 기존 단일 폼 (호환성 유지)
-    @Published var recordForms: [RecordFormItem] = []  // 새로운 다중 폼 시스템
+    @Published var recordForms: [RecordForm] = []  // RecordForm 배열 (각 RecordForm이 targetDate 정보를 포함)
     @Published var selectedDate: RecordDate? = nil  // 현재 선택된 날짜
     @Published var showDateSelectionSheet: Bool = false  // 날짜 선택 Sheet 표시 여부
 
@@ -281,10 +273,7 @@ final class TodayBoard: Sendable, ObservableObject {
         }
 
         self.recordForms = availableDates.map { date in
-            RecordFormItem(
-                targetDate: date,
-                form: RecordForm(owner: self, targetDate: date)
-            )
+            RecordForm(owner: self, targetDate: date)
         }
 
         // 첫 번째 작성 가능한 날짜를 기본 선택
@@ -300,6 +289,6 @@ final class TodayBoard: Sendable, ObservableObject {
             return nil
         }
 
-        return recordForms.first { $0.targetDate == selectedDate }?.form
+        return recordForms.first { $0.targetDate == selectedDate }
     }
 }
