@@ -90,21 +90,21 @@ final class RecordForm: Sendable, ObservableObject {
     
 
     // MARK: value
-    nonisolated struct Record: Identifiable, Sendable, Hashable {
-        let id: UUID
-        let title: String
-        let date: Date
-        let text: String?
-        let image: Data?
-        let voice: URL?
-
-        init(id: UUID = UUID(), title: String, date: Date, text: String? = nil, image: Data? = nil, voice: URL? = nil) {
-            self.id = id
-            self.title = title
-            self.date = date
-            self.text = text
-            self.image = image
-            self.voice = voice
-        }
-    }
+//    nonisolated struct Record: Identifiable, Sendable, Hashable {
+//        let id: UUID
+//        let title: String
+//        let date: Date
+//        let text: String?
+//        let image: Data?
+//        let voice: URL?
+//
+//        init(id: UUID = UUID(), title: String, date: Date, text: String? = nil, image: Data? = nil, voice: URL? = nil) {
+//            self.id = id
+//            self.title = title
+//            self.date = date
+//            self.text = text
+//            self.image = image
+//            self.voice = voice
+//        }
+//    }
 }
