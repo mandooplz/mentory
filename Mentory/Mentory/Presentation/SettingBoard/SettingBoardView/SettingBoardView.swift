@@ -37,11 +37,16 @@ class SettingBoardViewModel: ObservableObject {
 
 // MARK: View
 struct SettingBoardView: View {
+    // MARK: core
     @ObservedObject var settingBoard: SettingBoard
     @ObservedObject var settingBoardViewModel: SettingBoardViewModel
     
     @State private var notificationStatusText: String = "알림 상태를 확인 중이에요"
     
+    nonisolated let logger = Logger(subsystem: "MentoryiOS.SettingBoardView", category: "Presentation")
+    
+    
+    // MARK: body
     var body: some View {
         NavigationStack {
             ZStack {
@@ -251,9 +256,10 @@ struct SettingBoardView: View {
             isPresented: $settingBoardViewModel.isShowingDataDeletionAlert,
             actions: {
                 Button("삭제", role: .destructive) {
-                    settingBoard.confirmDataDeletion()
+                    logger.debug("데이터 삭제 기능 구현 예정")
                 }
                 Button("취소", role: .cancel) {
+                    logger.debug("데이터 삭제 취소 구현 예정")
                 }
             },
             message: {
