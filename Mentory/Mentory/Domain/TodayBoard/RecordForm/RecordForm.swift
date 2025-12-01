@@ -68,13 +68,16 @@ final class RecordForm: Sendable, ObservableObject {
             return
         }
 
-        // 기록 완성까지 걸린 시간 계산 및 저장
+        // process
         if let startTime = startTime {
             self.completionTime = Date().timeIntervalSince(startTime)
             logger.info("기록 완성 시간: \(self.completionTime!)초")
         } else {
             logger.warning("startTime이 설정되지 않았습니다.")
         }
+        
+        
+        
 
         // mutate
         self.mindAnalyzer = MindAnalyzer(owner: self)
