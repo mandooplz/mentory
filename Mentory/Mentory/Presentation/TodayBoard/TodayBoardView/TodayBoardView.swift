@@ -392,25 +392,70 @@ fileprivate struct DateSelectionSheet: View {
             }
             .padding(.top, 32)
 
-            // 날짜 선택 버튼들
-            VStack(spacing: 12) {
-                ForEach(todayBoard.recordForms) { item in
-                    DateButton(
-                        date: item.targetDate,
-                        action: {
-                            // 날짜 선택
-                            todayBoard.selectedDate = item.targetDate
-                            // recordForm 설정
-                            todayBoard.recordForm = item.form
-                            // Sheet 닫기
-                            dismiss()
-                        }
-                    )
-                }
-            }
-            .padding(.horizontal, 24)
+            // 날짜 선택 버튼들 또는 완료 메시지
+            if todayBoard.recordForms.isEmpty {
+                VStack(spacing: 16) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.green)
+                        .padding(.top, 32)
 
-            Spacer()
+                    Text("모든 일기를 작성했어요!")
+                        .font(.system(size: 20, weight: .bold))
+
+                    Text("오늘, 어제, 그제의 일기를\n모두 작성하셨습니다.")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("확인")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.blue]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(12)
+                            .shadow(
+                                color: Color.blue.opacity(0.3),
+                                radius: 8,
+                                x: 0,
+                                y: 4
+                            )
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                }
+
+                Spacer()
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(todayBoard.recordForms) { item in
+                        DateButton(
+                            date: item.targetDate,
+                            action: {
+                                // 날짜 선택
+                                todayBoard.selectedDate = item.targetDate
+                                // recordForm 설정
+                                todayBoard.recordForm = item.form
+                                // Sheet 닫기
+                                dismiss()
+                            }
+                        )
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                Spacer()
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemBackground))
