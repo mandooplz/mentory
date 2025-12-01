@@ -37,8 +37,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
     @Published private var secondAnalysisResult: SecondAnalysisResult? = nil
     
     
-    
-    
     // MARK: action
     func startAnalyzing() async {
         // capture
@@ -214,7 +212,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         
-        let firebaseLLM = mentoryiOS.firebaseLLM
+        let ai = FirebaseAI.firebaseAI(backend: .googleAI())
         
         // process
         // firebaseLLM을 사용해 구조화된 출력을 얻는다.
@@ -225,14 +223,28 @@ final class MindAnalyzer: Sendable, ObservableObject {
                 "mindType": .enumeration(values: mindTypes ),
                 "empathyMessage": .string(description: "감정 상태 메시지"),
                 "actionKeywords": Schema.array(
-                    items: .string(description: "사용자의 감정 상태에 따른 행동 추천"),
+                    items: .string(description: "사용자의 감정 상Fou태에 따른 행동 추천"),
                     minItems: 3,
                     maxItems: 3),
             ])
         
+        let model = ai.generativeModel(
+          modelName: "gemini-2.5-flash-lite",
+          // In the generation config, set the `responseMimeType` to `application/json`
+          // and pass the JSON schema object into `responseSchema`.
+          generationConfig: GenerationConfig(
+            responseMIMEType: "application/json",
+            responseSchema: jsonSchema
+          )
+        )
         
         // mutate
-        
+        do {
+            let response = try await model.generateContent(textInput)
+            print(response.text ?? "No text in response.")
+        } catch {
+            logger.error("\(error)")
+        }
     }
     
     func cancel() {

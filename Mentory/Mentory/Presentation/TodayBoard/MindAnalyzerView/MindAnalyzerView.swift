@@ -39,10 +39,12 @@ struct MindAnalyzerView: View {
                     Task {
                         mindAnalyzer.isAnalyzing = true
                         
-                        await mindAnalyzer.startAnalyzing()
-                        await mindAnalyzer.saveRecord()
+//                        await mindAnalyzer.startAnalyzing()
+                        await mindAnalyzer.newAnalyzingExteneded()
                         
-                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
+//                        await mindAnalyzer.saveRecord()
+//                        
+//                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
                         
                         mindAnalyzer.isAnalyzing = false
                     }
