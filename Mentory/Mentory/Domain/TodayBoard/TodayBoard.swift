@@ -68,17 +68,20 @@ final class TodayBoard: Sendable, ObservableObject {
     
     
     // MARK: action
+    /// @deprecated 이 메서드는 더 이상 사용되지 않습니다.
+    /// 대신 setupRecordForms()와 날짜 선택 UI를 사용하세요.
+    /// 기존 호환성 유지를 위해 남겨둔 메서드입니다.
     func setUpForm() {
-        logger.debug("TodayBoard.setUp 호출")
-        
+        logger.warning("setUpForm() 호출됨 - deprecated: setupRecordForms() 사용을 권장합니다")
+
         // capture
         guard self.recordForm == nil else {
             logger.error("이미 TodayBoard에 RecordForm이 존재합니다.")
             return
         }
-        
-        // mutate
-        self.recordForm = RecordForm(owner: self)
+
+        // mutate - 기본값으로 오늘 날짜 사용
+        self.recordForm = RecordForm(owner: self, targetDate: .today)
     }
     func fetchTodayString() async {
         // capture
@@ -270,6 +273,13 @@ final class TodayBoard: Sendable, ObservableObject {
         }
 
         // mutate
+        guard !availableDates.isEmpty else {
+            logger.warning("작성 가능한 날짜가 없습니다. 모든 날짜에 이미 일기가 작성되었습니다.")
+            self.recordForms = []
+            self.selectedDate = nil
+            return
+        }
+
         self.recordForms = availableDates.map { date in
             RecordFormItem(
                 targetDate: date,
@@ -280,7 +290,7 @@ final class TodayBoard: Sendable, ObservableObject {
         // 첫 번째 작성 가능한 날짜를 기본 선택
         self.selectedDate = availableDates.first
 
-        logger.debug("RecordForm \(recordForms.count)개 생성 완료")
+        logger.debug("RecordForm \(availableDates.count)개 생성 완료")
     }
 
     /// 선택된 날짜의 RecordForm을 반환합니다
