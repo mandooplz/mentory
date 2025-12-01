@@ -82,7 +82,10 @@ final class RecordForm: Sendable, ObservableObject {
     
     func removeForm() {
         // capture
-        let todayBoard = self.owner!
+        guard let todayBoard = self.owner else {
+            logger.error("RecordForm의 부모인 TodayBoard가 존재하지 않습니다.")
+            return
+        }
         
         // mutate
         todayBoard.recordForm = nil
@@ -90,21 +93,4 @@ final class RecordForm: Sendable, ObservableObject {
     
 
     // MARK: value
-//    nonisolated struct Record: Identifiable, Sendable, Hashable {
-//        let id: UUID
-//        let title: String
-//        let date: Date
-//        let text: String?
-//        let image: Data?
-//        let voice: URL?
-//
-//        init(id: UUID = UUID(), title: String, date: Date, text: String? = nil, image: Data? = nil, voice: URL? = nil) {
-//            self.id = id
-//            self.title = title
-//            self.date = date
-//            self.text = text
-//            self.image = image
-//            self.voice = voice
-//        }
-//    }
 }
