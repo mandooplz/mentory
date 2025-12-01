@@ -28,10 +28,16 @@ class SettingBoardViewModel: ObservableObject {
     
     @Published var isShowingDataDeletionAlert = false
     @Published var notificationStatusText: String = "요청 전"
+    
     // MARK: action
+    @MainActor
     func onAppear(settingBoard: SettingBoard) async {
         settingBoard.loadSavedReminderTime()
-        
+        await refreshNotificationStatus()
+    }
+    
+    @MainActor
+    func refreshNotificationStatus() async {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
         
@@ -45,6 +51,33 @@ class SettingBoardViewModel: ObservableObject {
         @unknown default:
             notificationStatusText = "-"
         }
+    }
+    
+    @MainActor
+    func didTapReminderStatus(settingBoard: SettingBoard) async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            // 아직 권한 요청 안했으면 팝업을 띄움
+            if let reminderCenter = settingBoard.owner?.reminderCenter {
+                await reminderCenter.requestAuthorizationIfNeeded()
+            }
+            await refreshNotificationStatus()
+            
+        case .denied, .authorized, .provisional, .ephemeral:
+            openAppSettings()
+            
+        @unknown default:
+            break
+        }
+    }
+    
+    // MARK: 설정 앱 이동
+    private func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
 
@@ -167,8 +200,9 @@ struct SettingBoardView: View {
             value: settingBoardViewModel.notificationStatusText,
             showDivider: false
         ) {
-            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-            UIApplication.shared.open(url)
+            Task {
+                await settingBoardViewModel.didTapReminderStatus(settingBoard: settingBoard)
+            }
         }
     }
     
