@@ -12,6 +12,31 @@ import Testing
 // MARK: Tests
 @Suite("MindAnalyzer")
 struct MindAnalyzerTests {
+    struct StartAnalyzing {
+        let mentoryiOS: MentoryiOS
+        let mindAnalyzer: MindAnalyzer
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
+        }
+        
+        @Test func whenTextInputIsEmpty() async throws {
+            // given
+            let recordForm = await mindAnalyzer.owner!
+            
+            await MainActor.run {
+                recordForm.textInput = ""
+            }
+            
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            // when
+            await mindAnalyzer.startAnalyzing()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == false)
+        }
+    }
     struct Cacnel {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer

@@ -11,11 +11,16 @@ import FirebaseAI
 import Values
 
 
+// MARK: Interface
+protocol FirebaseLLMInterface: Sendable {
+    func question(_ : FirebaseQuestion) async throws -> FirebaseAnswer
+}
 
 
 
 // MARK: Domain
-struct FirebaseLLM: Sendable {
+nonisolated
+struct FirebaseLLM: FirebaseLLMInterface {
     // MARK: core
     private let logger = Logger(subsystem: "MentoryiOS.FirebaseLLM", category: "Domain")
     private let model: GenerativeModel
@@ -30,6 +35,7 @@ struct FirebaseLLM: Sendable {
     }
 
     // MARK: flow
+    @concurrent
     func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
         logger.info("Firebase LLM 요청 시작")
 

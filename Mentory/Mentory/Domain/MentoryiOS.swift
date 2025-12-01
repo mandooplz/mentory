@@ -16,15 +16,18 @@ final class MentoryiOS: Sendable, ObservableObject {
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
     nonisolated let mentoryDB: any MentoryDBInterface
     nonisolated let alanLLM: any AlanLLMInterface
+    nonisolated let firebaseLLM: any FirebaseLLMInterface
     
     init(_ mode: SystemMode = .test) {
         switch mode {
         case .real:
             self.mentoryDB = MentoryDBAdapter()
             self.alanLLM = AlanLLM()
+            self.firebaseLLM = FirebaseLLM()
         case .test:
             self.mentoryDB = MentoryDBMock()
             self.alanLLM = AlanLLMMock()
+            self.firebaseLLM = FirebaseLLMMock()
         }
     }
     

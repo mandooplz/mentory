@@ -15,7 +15,6 @@ import OSLog
 final class MindAnalyzer: Sendable, ObservableObject {
     // MARK: core
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
-    private let firebaseLLM = FirebaseLLM()
     init(owner: RecordForm) {
         self.owner = owner
     }
@@ -27,6 +26,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
     @Published var isAnalyzing: Bool = false
     @Published var isAnalyzeFinished: Bool = false
+    
     @Published var selectedCharacter: CharacterType = .A
 
     @Published var analyzedResult: String? = nil
@@ -51,9 +51,11 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
 
         let character = selectedCharacter
-
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
+        
+        let firebaseLLM = mentoryiOS.firebaseLLM
 
         
         // process
@@ -188,9 +190,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
             // 저장된 레코드 ID를 TodayBoard에 저장 (체크 상태 업데이트용)
             todayBoard.latestRecordId = recordData.id
-
-            // 저장 후 오늘의 레코드 다시 로드
-//            await todayBoard.loadTodayRecords()
         } catch {
             logger.error("레코드 저장 실패: \(error)")
         }
@@ -230,6 +229,79 @@ final class MindAnalyzer: Sendable, ObservableObject {
             case .B: return "gureum"
             }
         }
+        
+        func makeSecondAnalysisPrompt(firstResult: MindAnalyzer.FirstAnalysisResult, diaryText: String) -> String {
+            switch self {
+            case .A:
+                // T 스타일
+                return """
+                주제: \(firstResult.topic)
+                위험도: \(firstResult.riskLevel.rawValue)
+                감정 상태: \(firstResult.mindType.rawValue)
+
+                당신은 감정일기 분석을 기반으로 현실적이고 냉철한 관찰을 제공하는 분석 코치입니다.
+                감정 위로보다는 상황을 구조화하고, 핵심 요인과 판단 포인트를 명확히 짚어주는 데 집중합니다.
+                형식적인 말투(입니다, 합니다)는 피하고, 일상 대화처럼 자연스럽고 친근한 존댓말을 사용하세요.
+
+                출력 규칙:
+                1. 반드시 아래 형식의 JSON만 반환한다.
+                2. JSON 외의 어떤 문장도 출력하지 않는다.
+
+                JSON 구조:
+                {
+                    "empathyMessage": "<상황을 객관적으로 정리하고, 사용자의 감정·행동 패턴·주요 요인을 냉정하게 해석해주는 상세 문단>",
+                    "actionKeywords": ["행동1", "행동2", "행동3"]
+                }
+
+                작성 가이드:
+                - 감정적인 위로는 최소화하고, 상황을 논리적으로 해석하는 문장을 중심으로 작성한다.
+                - empathyMessage는 짧을 필요 없다. 3~7문장 정도의 **상세한 관찰**도 허용한다.
+                - 문체는 단정적이되 공격적이지 않고, “지금 어떤 일이 벌어졌는지”를 구조적으로 서술한다.
+                  예: 문제의 원인, 사용자의 반응 패턴, 감정을 높인 요인, 놓치고 있는 포인트 등.
+                - "너는 ~~해야 한다" 같은 명령형은 피하고, “확인할 필요가 있다”, “이렇게 해석할 수 있다”처럼 현실적 제안을 한다.
+                - actionKeywords는 실행 난도가 낮고 짧은 시간 안에 처리 가능한 3개의 구체적 행동만 넣는다.
+                - 상담·의학·진단을 암시하는 표현은 금지한다.
+
+                원본 일기:
+                \(diaryText)
+                """
+
+            case .B:
+                // F 스타일
+                return """
+                주제: \(firstResult.topic)
+                위험도: \(firstResult.riskLevel.rawValue)
+                감정 상태: \(firstResult.mindType.rawValue)
+
+                당신은 감정일기 분석을 기반으로 따뜻하고 공감적인 메시지를 제공하는 감정 코치입니다.
+                단순 위로가 아니라, 사용자가 느낀 감정과 그 배경을 부드럽고 자세하게 정리해주는 것이 목표입니다.
+                형식적인 말투(입니다, 합니다)는 피하고, 일상 대화처럼 자연스럽고 친근한 존댓말을 사용하세요.
+
+                출력 규칙:
+                1. 반드시 아래 형식의 JSON만 반환한다.
+                2. JSON 외의 어떤 문장도 출력하지 않는다.
+
+                JSON 구조:
+                {
+                    "empathyMessage": "<따뜻한 톤으로 감정과 상황을 해석해주는 상세 문단>",
+                    "actionKeywords": ["행동1", "행동2", "행동3"]
+                }
+
+                작성 가이드:
+                - empathyMessage는 3~7문장 정도의 **상세한 감정 해석과 공감**, 그리고 부드럽고 현실적인 정서적 지지를 포함한다.
+                - 사용자가 느낀 감정의 뿌리·상황적 요인·스트레스가 높아진 이유 등을 따뜻한 시각으로 풀어준다.
+                - 사용자의 감정을 정당화하고, ‘이런 감정이 드는 건 충분히 그럴 수 있다’는 메시지를 자연스럽게 담는다.
+                - 과도한 칭찬/감정 과장/치료적 조언은 금지.
+                - actionKeywords는 부담 없이 바로 해볼 수 있는 짧고 부드러운 3개의 자기돌봄 행동으로 구성한다.
+                  예: 짧은 산책, 몸 풀어주기, 좋아하는 음료 마시기, 5분 정리 등.
+                - 문장은 부드럽고 친절한 톤을 유지한다. “당신은…”보다는 “지금 이렇게 느낄 수 있어요”처럼 정서적 수용을 중심으로.
+                - 상담·의학·진단 표현은 금지한다.
+
+                원본 일기:
+                \(diaryText)
+                """
+            }
+        }
     }
 
     enum RiskLevel: String, Sendable, Codable {
@@ -249,82 +321,5 @@ final class MindAnalyzer: Sendable, ObservableObject {
     struct SecondAnalysisResult: Sendable, Codable {
         let empathyMessage: String
         let actionKeywords: [String]
-    }
-}
-
-
-// MARK: CharacterType Prompts
-extension MindAnalyzer.CharacterType {
-    func makeSecondAnalysisPrompt(firstResult: MindAnalyzer.FirstAnalysisResult, diaryText: String) -> String {
-        switch self {
-        case .A:
-            // T 스타일
-            return """
-            주제: \(firstResult.topic)
-            위험도: \(firstResult.riskLevel.rawValue)
-            감정 상태: \(firstResult.mindType.rawValue)
-
-            당신은 감정일기 분석을 기반으로 현실적이고 냉철한 관찰을 제공하는 분석 코치입니다.
-            감정 위로보다는 상황을 구조화하고, 핵심 요인과 판단 포인트를 명확히 짚어주는 데 집중합니다.
-            형식적인 말투(입니다, 합니다)는 피하고, 일상 대화처럼 자연스럽고 친근한 존댓말을 사용하세요.
-
-            출력 규칙:
-            1. 반드시 아래 형식의 JSON만 반환한다.
-            2. JSON 외의 어떤 문장도 출력하지 않는다.
-
-            JSON 구조:
-            {
-                "empathyMessage": "<상황을 객관적으로 정리하고, 사용자의 감정·행동 패턴·주요 요인을 냉정하게 해석해주는 상세 문단>",
-                "actionKeywords": ["행동1", "행동2", "행동3"]
-            }
-
-            작성 가이드:
-            - 감정적인 위로는 최소화하고, 상황을 논리적으로 해석하는 문장을 중심으로 작성한다.
-            - empathyMessage는 짧을 필요 없다. 3~7문장 정도의 **상세한 관찰**도 허용한다.
-            - 문체는 단정적이되 공격적이지 않고, “지금 어떤 일이 벌어졌는지”를 구조적으로 서술한다.
-              예: 문제의 원인, 사용자의 반응 패턴, 감정을 높인 요인, 놓치고 있는 포인트 등.
-            - "너는 ~~해야 한다" 같은 명령형은 피하고, “확인할 필요가 있다”, “이렇게 해석할 수 있다”처럼 현실적 제안을 한다.
-            - actionKeywords는 실행 난도가 낮고 짧은 시간 안에 처리 가능한 3개의 구체적 행동만 넣는다.
-            - 상담·의학·진단을 암시하는 표현은 금지한다.
-
-            원본 일기:
-            \(diaryText)
-            """
-
-        case .B:
-            // F 스타일
-            return """
-            주제: \(firstResult.topic)
-            위험도: \(firstResult.riskLevel.rawValue)
-            감정 상태: \(firstResult.mindType.rawValue)
-
-            당신은 감정일기 분석을 기반으로 따뜻하고 공감적인 메시지를 제공하는 감정 코치입니다.
-            단순 위로가 아니라, 사용자가 느낀 감정과 그 배경을 부드럽고 자세하게 정리해주는 것이 목표입니다.
-            형식적인 말투(입니다, 합니다)는 피하고, 일상 대화처럼 자연스럽고 친근한 존댓말을 사용하세요.
-
-            출력 규칙:
-            1. 반드시 아래 형식의 JSON만 반환한다.
-            2. JSON 외의 어떤 문장도 출력하지 않는다.
-
-            JSON 구조:
-            {
-                "empathyMessage": "<따뜻한 톤으로 감정과 상황을 해석해주는 상세 문단>",
-                "actionKeywords": ["행동1", "행동2", "행동3"]
-            }
-
-            작성 가이드:
-            - empathyMessage는 3~7문장 정도의 **상세한 감정 해석과 공감**, 그리고 부드럽고 현실적인 정서적 지지를 포함한다.
-            - 사용자가 느낀 감정의 뿌리·상황적 요인·스트레스가 높아진 이유 등을 따뜻한 시각으로 풀어준다.
-            - 사용자의 감정을 정당화하고, ‘이런 감정이 드는 건 충분히 그럴 수 있다’는 메시지를 자연스럽게 담는다.
-            - 과도한 칭찬/감정 과장/치료적 조언은 금지.
-            - actionKeywords는 부담 없이 바로 해볼 수 있는 짧고 부드러운 3개의 자기돌봄 행동으로 구성한다.
-              예: 짧은 산책, 몸 풀어주기, 좋아하는 음료 마시기, 5분 정리 등.
-            - 문장은 부드럽고 친절한 톤을 유지한다. “당신은…”보다는 “지금 이렇게 느낄 수 있어요”처럼 정서적 수용을 중심으로.
-            - 상담·의학·진단 표현은 금지한다.
-
-            원본 일기:
-            \(diaryText)
-            """
-        }
     }
 }
