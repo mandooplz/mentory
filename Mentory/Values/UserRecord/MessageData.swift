@@ -14,9 +14,9 @@ public struct MessageData: Sendable, Hashable, Codable {
     public let id: UUID
     public let createdAt: Date
     public let message: String
-    public let characterType: CharacterType
+    public let characterType: MentoryCharacter
 
-    public init(id: UUID, createdAt: Date, message: String, characterType: CharacterType) {
+    public init(id: UUID, createdAt: Date, message: String, characterType: MentoryCharacter) {
         self.id = id
         self.createdAt = createdAt
         self.message = message

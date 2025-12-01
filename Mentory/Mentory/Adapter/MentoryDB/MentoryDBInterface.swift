@@ -26,5 +26,5 @@ protocol MentoryDBInterface: Sendable {
     func fetchAvailableDatesForWriting() async throws -> [RecordDate]
 
     func fetchMentorMessage() async throws -> MessageData?
-    func saveMentorMessage(_ message: String, _ type: CharacterType) async throws -> Void
+    func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws -> Void
 }

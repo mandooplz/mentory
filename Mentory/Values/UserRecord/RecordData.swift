@@ -15,12 +15,12 @@ public struct RecordData: Sendable, Hashable, Codable {
     public let recordDate: Date  // 일기가 속한 날짜 (오늘/어제/그제)
     public let createdAt: Date   // 실제 작성 시간
 
-    public let content: String
+    public let content: String // content가 왜 필요한가?
     public let analyzedResult: String
     public let emotion: Emotion
 
     // 행동 추천 (무조건 3개)
-    public let actionTexts: [String]
+    public let actionTexts: [String] // 행동 추천이 왜 필요한가>
     public let actionCompletionStatus: [Bool]
 
     public init(id: UUID, recordDate: Date, createdAt: Date, content: String, analyzedResult: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
