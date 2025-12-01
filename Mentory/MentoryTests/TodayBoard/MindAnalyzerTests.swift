@@ -6,20 +6,66 @@
 //
 import Foundation
 import Testing
+import Values
 @testable import Mentory
 
 
 // MARK: Tests
 @Suite("MindAnalyzer")
 struct MindAnalyzerTests {
-    struct StartAnalyzing {
+    struct Analyze {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
         }
+        
+        @Test func setIsAnalyzeFinishedTrue() async throws {
+            // given
+            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            
+            await MainActor.run {
+                mindAnalyzer.selectedCharacter = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.isAnalyzeFinished == true)
+        }
+        @Test func setAnalyzedResult() async throws {
+            // given
+            try await #require(mindAnalyzer.analyzedResult == nil)
+            
+            await MainActor.run {
+                mindAnalyzer.selectedCharacter = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.analyzedResult != nil)
+        }
+        @Test func setMindType() async throws {
+            // given
+            try await #require(mindAnalyzer.mindType == nil)
+            
+            await MainActor.run {
+                mindAnalyzer.selectedCharacter = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.mindType != nil)
+            
+        }
     }
+    
     struct Cacnel {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer

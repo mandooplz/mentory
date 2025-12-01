@@ -26,8 +26,12 @@ final class MindAnalyzer: Sendable, ObservableObject {
     weak var owner: RecordForm?
     
     @Published private(set) var isAnalyzing: Bool = false
-    func startAnalyze() { isAnalyzing = true }
-    func stopAnalyze() { isAnalyzing = false }
+    func startAnalyze() {
+        isAnalyzing = true
+    }
+    func stopAnalyze() {
+        isAnalyzing = false
+    }
     
     @Published var isAnalyzeFinished: Bool = false
     
@@ -80,6 +84,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         self.isAnalyzeFinished = true
     }
     func saveRecord() async {
+        // capture
         guard let analyzedContent = self.analyzedResult,
               !analyzedContent.isEmpty else {
             logger.error("분석된 내용이 비어있습니다. 저장을 중단합니다.")
