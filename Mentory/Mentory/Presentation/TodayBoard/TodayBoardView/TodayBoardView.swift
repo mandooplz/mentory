@@ -386,7 +386,11 @@ fileprivate struct DateSelectionSheet: View {
                 Text("어느 날의 일기를 쓸까요?")
                     .font(.system(size: 24, weight: .bold))
 
-                Text("작성 가능한 날짜를 선택해주세요")
+                Text("작성 가능한 날짜를 선택해주세요.")
+                    .font(.system(size: 14))
+                    .foregroundColor(.gray)
+                
+                Text("일기는 최대 이틀 전까지의 날짜만 작성할 수 있어요.")
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
             }
