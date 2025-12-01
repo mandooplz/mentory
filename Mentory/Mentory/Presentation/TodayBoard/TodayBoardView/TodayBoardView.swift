@@ -174,6 +174,7 @@ fileprivate struct PopupCard: View {
 fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     @State var showFullScreenCover: Bool = false
+    @State var showDateSelectionSheet: Bool = false
     
     let imageName: String
     let content: String
@@ -197,7 +198,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
 //                    todayBoard.setUpForm()
                     Task {
                         await todayBoard.setupRecordForms()
-                        todayBoard.showDateSelectionSheet = true
+                        showDateSelectionSheet = true
                     }
                 } label: {
                     Text(navLabel)
@@ -226,7 +227,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
         }
         
         // 날짜 선택 Sheet (반쯤 올라옴)
-        .sheet(isPresented: $todayBoard.showDateSelectionSheet) {
+        .sheet(isPresented: $showDateSelectionSheet) {
             DateSelectionSheet(todayBoard: todayBoard)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
