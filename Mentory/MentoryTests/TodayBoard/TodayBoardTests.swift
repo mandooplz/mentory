@@ -17,19 +17,32 @@ struct TodayBoardTests {
     struct SetUpMentorMessage {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
-        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentory = await MentoryiOS()
             self.todayBoard = try await getTodayBoardForTest(mentory)
-            self.mentoryDB = mentory.mentoryDB
         }
         
         @Test func createMentorMessage() async throws {
             // given
+            try await #require(todayBoard.mentorMessage == nil)
             
             // when
+            await todayBoard.setUpMentorMessage()
             
             // then
+            await #expect(todayBoard.mentorMessage != nil)
+        }
+        @Test func whenAlreadySetUp() async throws {
+            // given
+            await todayBoard.setUpMentorMessage()
+            
+            let mentorMessage = try #require(await todayBoard.mentorMessage)
+            
+            // when
+            await todayBoard.setUpMentorMessage()
+            
+            // then
+            await #expect(todayBoard.mentorMessage?.id == mentorMessage.id)
         }
     }
 }

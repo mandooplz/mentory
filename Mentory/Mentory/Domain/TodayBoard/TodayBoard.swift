@@ -40,33 +40,13 @@ final class TodayBoard: Sendable, ObservableObject {
     // MARK: action
     func setUpMentorMessage() async {
         // capture
-        let mentoryiOS = self.owner!
-        
-        let mentoryDB = mentoryiOS.mentoryDB // SwiftData에서 저장된 MentorMessage를 조회하기 위해 필요
-        let alanLLM = mentoryiOS.alanLLM
-        
-        // process
-        let messageContent: String
-        do {
-            // SwiftData에 저장된 MentorMessage를 불러온다.
-            // 만약 없다면 -> 새로 갱신
-            // 있는데, 유효하다면 -> 기존 거 재사용
-            // 있는데, 지났다면 -> 새로 갱신
-            let randomCharacter = MentoryCharacter.random
-            let question = AlanQuestion(randomCharacter.question)
-            
-            let answer = try await alanLLM.question(question)
-            messageContent = answer.content
-        } catch {
-            logger.error("setUpMentorMessage 에러 발생 : \(error)")
+        guard self.mentorMessage == nil else {
+            logger.error("이미 MentorMessage 객체가 존재합니다.")
             return
         }
         
         // mutate
-        self.mentorMessage = MentorMessage(
-            owner: self,
-            content: messageContent)
-        // 여기서 character는 어떤 역할을 하는가.
+        self.mentorMessage = MentorMessage(owner: self)
     }
     func setupRecordForms() async {
         // capture
