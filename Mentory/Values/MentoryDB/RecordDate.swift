@@ -8,6 +8,7 @@ import Foundation
 
 
 // MARK: Value
+@available(*, deprecated, message: "이 함수는 더 이상 사용되지 않을 예정입니다.")
 @frozen
 nonisolated public enum RecordDate: String, CaseIterable, Identifiable, Sendable {
     case today = "오늘"
