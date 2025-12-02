@@ -57,7 +57,7 @@ struct TodayBoardView: View {
             // 행동 추천 카드
             SuggestionCard(
                 todayBoard: todayBoard,
-                header: "오늘은 이런 행동 어떨까요?",
+                header: todayBoard.actionKeyWordItems.isEmpty ? "기록을 남기고 추천 행동을 완료해보세요! " :"오늘은 이런 행동 어떨까요?",
                 actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
@@ -195,7 +195,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                     .font(.system(size: 16, weight: .medium))
                 
                 Button {
-//                    todayBoard.setUpForm()
+                    //                    todayBoard.setUpForm()
                     Task {
                         await todayBoard.setupRecordForms()
                         showDateSelectionSheet = true
@@ -256,27 +256,19 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     var body: some View {
         LiquidGlassCard {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Text(header)
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Text(todayBoard.getIndicator())
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
-                
-                ProgressSection
-                
+                Text(header)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.primary)
+                ProgressBar
                 actionRows
-                    .padding(.top, 20)
+                    .padding(.top, 0)
             }
             .padding(.vertical, 22)
             .padding(.horizontal, 18)
         }
     }
     
-    private var ProgressSection: some View {
+    private var ProgressBar: some View {
         HStack {
             ZStack {
                 Capsule()
@@ -302,58 +294,40 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
             }
             .frame(height: 10)
             
-            Button {
-                // TODO: 새로고침
-            } label: {
-                Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .padding(6)
-            }
+            Text(todayBoard.getIndicator())
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 6)
-        .background(Color.mentorySubCard.opacity(0.5),
-                    in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.mentoryBorder.opacity(0.4), lineWidth: 1)
-        )
     }
 }
 
 fileprivate struct SuggestionActionRows: View {
     @ObservedObject var todayBoard: TodayBoard
-//    @State private var actionRowEmpty = false
     
     init(todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
     }
     
     var body: some View {
-        if todayBoard.actionKeyWordItems.isEmpty {
-            Text("기록을 남기고 추천 행동을 완료해보세.")
-//            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
-        } else {
-            VStack(spacing: 12) {
-                ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
-                    ActionRow(
-                        checked: Binding(
-                            get: { todayBoard.actionKeyWordItems[index].1 },
-                            set: { newValue in
-                                todayBoard.actionKeyWordItems[index].1 = newValue
-                                // 체크 상태 변경 시 DB에 실시간 업데이트
-                                Task {
-                                    await todayBoard.updateActionCompletion()
-                                    await todayBoard.loadTodayRecords()
-                                }
-                            }
-                        ),
-                        text: todayBoard.actionKeyWordItems[index].0
-                    )
-                }
-            }
+        ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
+            ActionRow(
+                checked: Binding(
+                    get: { todayBoard.actionKeyWordItems[index].1 },
+                    set: { newValue in
+                        todayBoard.actionKeyWordItems[index].1 = newValue
+                        // 체크 상태 변경 시 DB에 실시간 업데이트
+                        Task {
+                            await todayBoard.updateActionCompletion()
+                            await todayBoard.loadTodayRecords()
+                        }
+                    }
+                ),
+                text: todayBoard.actionKeyWordItems[index].0
+            )
         }
+        
     }
 }
 
