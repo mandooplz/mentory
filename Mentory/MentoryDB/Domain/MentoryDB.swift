@@ -18,7 +18,9 @@ actor MentoryDB: Sendable {
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
         do {
-            return try ModelContainer(for: MentoryDB.MentoryDBModel.self, DailyRecord.DailyRecordModel.self)
+            return try ModelContainer(
+                for: MentoryDB.MentoryDBModel.self, DailyRecord.DailyRecordModel.self,
+                DailySuggestion.DailySuggestionModel.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
@@ -400,7 +402,6 @@ actor MentoryDB: Sendable {
         // MARK: core
         @Attribute(.unique) var id: UUID
         var userName: String?
-        
         
         @Relationship var createRecordQueue: [RecordTicket] = []
         @Relationship var records: [DailyRecord.DailyRecordModel] = []

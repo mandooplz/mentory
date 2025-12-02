@@ -9,7 +9,7 @@ import Values
 import Collections
 
 
-// MARK: Object
+// MARK: Mock Model
 @MainActor
 final class DailyRecordModel: Sendable {
     // MARK: core
