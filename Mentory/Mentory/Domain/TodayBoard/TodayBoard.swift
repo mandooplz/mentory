@@ -50,30 +50,24 @@ final class TodayBoard: Sendable, ObservableObject {
     }
     func setUpRecordForms() async {
         // capture
-        let mentoryDB = owner!.mentoryDB
+        guard self.recordForms.isEmpty == true else {
+            logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.")
+            return
+        }
 
         // process
-        let availableDates: [MentoryDate]
-        do {
-            availableDates = try await mentoryDB.fetchAvailableDatesForWriting()
-            logger.debug("작성 가능한 날짜 \(availableDates.count)개 발견")
-        } catch {
-            logger.error("작성 가능한 날짜 조회 실패: \(error)")
-            return
-        }
+        let today = MentoryDate.now
+        let yesterday = today.dayBefore()
+        let twoDaysAgo = today.twoDaysBefore()
+        
+        let dates = [today, yesterday, twoDaysAgo]
 
+        
         // mutate
-        guard !availableDates.isEmpty else {
-            logger.warning("작성 가능한 날짜가 없습니다. 모든 날짜에 이미 일기가 작성되었습니다.")
-            self.recordForms = []
-            return
-        }
-
-        self.recordForms = availableDates.map { date in
+        let recordForms = dates.map { date in
             RecordForm(owner: self, targetDate: date)
         }
-
-        logger.debug("RecordForm \(availableDates.count)개 생성 완료")
+        self.recordForms = recordForms
     }
     func setUpSuggestions() async {
         // capture

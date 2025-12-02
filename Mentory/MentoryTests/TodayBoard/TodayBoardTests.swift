@@ -45,6 +45,26 @@ struct TodayBoardTests {
             await #expect(todayBoard.mentorMessage?.id == mentorMessage.id)
         }
     }
+    
+    struct SetUpRecordForms {
+        let mentory: MentoryiOS
+        let todayBoard: TodayBoard
+        init() async throws {
+            self.mentory = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentory)
+        }
+        
+        @Test func createRecordForms() async throws {
+            // given
+            try await #require(todayBoard.recordForms.isEmpty == true)
+            
+            // when
+            await todayBoard.setUpRecordForms()
+            
+            // then
+            await #expect(todayBoard.recordForms.isEmpty == false)
+        }
+    }
 }
 
 
