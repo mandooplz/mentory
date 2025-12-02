@@ -44,17 +44,17 @@ final class MindAnalyzer: Sendable, ObservableObject {
     func analyze() async {
         // capture
         guard let textInput = owner?.textInput else {
-            logger.error("TextInput이 비어있습니다.")
+            logger.error("Owner?.textInput이 nil입니다.")
             return
         }
         
         guard textInput.isEmpty == false else {
-            logger.error("textInput이 비어있습니다.")
+            logger.error("textInput이 비어 있습니다.")
             return
         }
         
         guard let character else {
-            logger.error("캐릭터를 먼저 선택해야 합니다.")
+            logger.error("MindAnalyzer.character를 먼저 선택해야 합니다.")
             return
         }
         
@@ -63,6 +63,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let mentoryiOS = todayBoard.owner!
         
         let firebaseLLM = mentoryiOS.firebaseLLM
+        
         
         // process
         let question = FirebaseQuestion(textInput)
@@ -83,6 +84,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     }
     
     // TODO: saveRecord를 analyze 액션으로 통합,
+    // saveRecord() ->
     func saveRecord() async {
         // capture
         guard let analyzedContent = self.analyzedResult,
@@ -93,30 +95,30 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         
         // capture
-        guard let recordForm = owner else {
-            logger.error("RecordForm owner가 없습니다.")
-            return
-        }
-        guard let todayBoard = recordForm.owner else {
-            logger.error("TodayBoard owner가 없습니다.")
-            return
-        }
-        let mentoryDB = todayBoard.owner!.mentoryDB
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        let mentoryiOS = todayBoard.owner!
         
-        // 행동 추천 데이터 가져오기
+        let mentoryDB = mentoryiOS.mentoryDB
+        
         let actionTexts = todayBoard.actionKeyWordItems.map { $0.0 }
         let actionCompletionStatus = todayBoard.actionKeyWordItems.map { $0.1 }
+        
         
         // MentoryRecord 생성
         let recordData = RecordData(
             id: UUID(),
             recordDate: recordForm.targetDate.toDate(),  // 일기가 속한 날짜
             createdAt: Date(),  // 실제 작성 시간
-            content: "",
+            
+            content: "", // content가 무엇인가.
             analyzedResult: analyzedContent,
             emotion: self.mindType!,
+            
             actionTexts: actionTexts,
-            actionCompletionStatus: actionCompletionStatus)
+            actionCompletionStatus: actionCompletionStatus
+        )
+        
         
         // process
         do {

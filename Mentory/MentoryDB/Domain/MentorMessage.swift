@@ -31,9 +31,9 @@ actor MentorMessage: Sendable {
         @Attribute(.unique) var id: UUID
         var createdAt: Date
         var message: String
-        var characterType: CharacterType
+        var characterType: MentoryCharacter
 
-        init(id: UUID = UUID(), createdAt: Date, message: String, characterType: CharacterType) {
+        init(id: UUID = UUID(), createdAt: Date, message: String, characterType: MentoryCharacter) {
             self.id = id
             self.createdAt = createdAt
             self.message = message

@@ -158,7 +158,7 @@ final class MentoryDBModel: Sendable {
         return latestData
         
     }
-    func setMentorMessage(_ message: String, _ type: CharacterType) {
+    func setMentorMessage(_ message: String, _ type: MentoryCharacter) {
         let newMessage = MentorMessageModel(
             owner: self,
             createdAt: Date(),

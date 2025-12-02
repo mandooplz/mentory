@@ -174,6 +174,7 @@ fileprivate struct PopupCard: View {
 fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     @State var showFullScreenCover: Bool = false
+    @State var showDateSelectionSheet: Bool = false
     
     let imageName: String
     let content: String
@@ -194,7 +195,11 @@ fileprivate struct RecordStatCard<Content: View>: View {
                     .font(.system(size: 16, weight: .medium))
                 
                 Button {
-                    todayBoard.setUpForm()
+//                    todayBoard.setUpForm()
+                    Task {
+                        await todayBoard.setupRecordForms()
+                        showDateSelectionSheet = true
+                    }
                 } label: {
                     Text(navLabel)
                         .font(.system(size: 16, weight: .semibold))
@@ -220,6 +225,15 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 self.showFullScreenCover = isPresent
             }
         }
+        
+        // 날짜 선택 Sheet (반쯤 올라옴)
+        .sheet(isPresented: $showDateSelectionSheet) {
+            DateSelectionSheet(todayBoard: todayBoard)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        
+        // 일기 작성 FullScreenCover
         .fullScreenCover(isPresented: $showFullScreenCover) {
             if let form = todayBoard.recordForm {
                 navDestination(form)
@@ -310,7 +324,7 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
 
 fileprivate struct SuggestionActionRows: View {
     @ObservedObject var todayBoard: TodayBoard
-    @State private var actionRowEmpty = false
+//    @State private var actionRowEmpty = false
     
     init(todayBoard: TodayBoard) {
         self.todayBoard = todayBoard
@@ -318,7 +332,8 @@ fileprivate struct SuggestionActionRows: View {
     
     var body: some View {
         if todayBoard.actionKeyWordItems.isEmpty {
-            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
+            Text("기록을 남기고 추천 행동을 완료해보세.")
+//            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
         } else {
             VStack(spacing: 12) {
                 ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in

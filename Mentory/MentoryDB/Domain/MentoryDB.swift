@@ -308,7 +308,7 @@ actor MentoryDB: Sendable {
             return nil
         }
     }
-    func setMentorMessage(_ message: String, _ type: CharacterType) {
+    func setMentorMessage(_ message: String, _ type: MentoryCharacter) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         

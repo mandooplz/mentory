@@ -15,7 +15,7 @@ import Values
 final class MentorMessageModel: Sendable {
     
     // MARK: core
-    init(owner: MentoryDBModel? = nil, createdAt: Date, message: String, characterType: CharacterType) {
+    init(owner: MentoryDBModel? = nil, createdAt: Date, message: String, characterType: MentoryCharacter) {
         self.owner = owner
         self.createdAt = createdAt
         self.message = message
@@ -29,7 +29,7 @@ final class MentorMessageModel: Sendable {
     nonisolated let createdAt: Date
     
     nonisolated let message: String
-    nonisolated let characterType: CharacterType
+    nonisolated let characterType: MentoryCharacter
     
     
 
