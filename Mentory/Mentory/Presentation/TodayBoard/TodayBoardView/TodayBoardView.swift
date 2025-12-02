@@ -34,7 +34,7 @@ struct TodayBoardView: View {
             GreetingHeader(
                 todayBoard: todayBoard,
                 userName: mentoryiOS.userName ?? "익명",
-                recordCount: todayBoard.records.count
+                recordCount: todayBoard.userRecordCount
             )
             
             // "오늘의 명언" 카드
@@ -121,15 +121,19 @@ fileprivate struct Title: View {
 fileprivate struct GreetingHeader: View {
     @ObservedObject var todayBoard: TodayBoard
     let userName: String
-    let recordCount: Int
+    let recordCount: Int?
     
     var body: some View {
         // 작은 설명 텍스트
         Group{
-            if recordCount == 0 {
-                Text("\(userName)님, 일기를 작성해보세요!")
+            if let recordCount {
+                if recordCount == 0 {
+                    Text("\(userName)님, 일기를 작성해보세요!")
+                } else {
+                    Text("\(userName)님 \(recordCount)번째 기록하셨네요!")
+                }
             } else {
-                Text("\(userName)님 \(recordCount)번째 기록하셨네요!")
+                EmptyView()
             }
         }
         .font(.system(size: 12))
@@ -138,6 +142,9 @@ fileprivate struct GreetingHeader: View {
         .animation(
             .spring(response: 0.6, dampingFraction: 0.8),
             value: todayBoard.mentorMessage?.message != nil)
+        .task {
+            await todayBoard.fetchUserRecordCoount()
+        }
     }
 }
 
