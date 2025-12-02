@@ -24,6 +24,7 @@ final class TodayBoard: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
 
+    // record
     @Published private var recordForm: RecordForm? = nil
     @Published var selectedRecordForm: RecordForm? = nil
     @Published var recordForms: [RecordForm] = []
@@ -56,11 +57,9 @@ final class TodayBoard: Sendable, ObservableObject {
         return Double(completedActions) / Double(totalActions)
     }
     
+    // mentorMessage
     @Published var mentorMessage: MessageData?
     @Published var mentorMessageDate: Date?
-    
-    @Published private var todayString: String? = nil
-    @Published private var isFetchedTodayString: Bool = false
     
     @Published var actionKeyWordItems: [(String, Bool)] = []
     @Published var latestRecordId: UUID? = nil
@@ -78,39 +77,6 @@ final class TodayBoard: Sendable, ObservableObject {
 
         // mutate - 기본값으로 오늘 날짜 사용
         self.recordForm = RecordForm(owner: self, targetDate: .today)
-    }
-    private func fetchTodayString() async {
-        // capture
-        guard isFetchedTodayString == false else {
-            logger.error("오늘의 명언이 이미 fetch되었습니다.")
-            return
-        }
-        let alanLLM = owner!.alanLLM
-        
-        // process
-        let contentFromAlanLLM: String?
-        do {
-            // Alan API를 통해 오늘의 명언 또는 속담 요청
-            let question = AlanQuestion("오늘의 명언이나 속담을 하나만 짧게 알려줘. 명언이나 속담만 답변해줘.")
-            let response = try await alanLLM.question(question)
-            
-            // watch 앱으로 데이터 전송
-            
-            contentFromAlanLLM = response.content
-            logger.debug("오늘의 명언 fetch 성공: \(response.content)")
-        } catch {
-            logger.error("오늘의 명언 fetch 실패: \(error.localizedDescription)")
-            return
-        }
-        
-        // mutate
-        self.todayString = contentFromAlanLLM
-        self.isFetchedTodayString = true
-
-        // Watch로 명언 전송
-        if let quote = contentFromAlanLLM {
-            WatchConnectivityManager.shared.updateTodayString(quote)
-        }
     }
     
     func fetchUserRecordCoount() async {
