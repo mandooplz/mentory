@@ -114,6 +114,9 @@ final class TodayBoard: Sendable, ObservableObject {
             WatchConnectivityManager.shared.updateTodayString(quote)
         }
     }
+    func fetchUserRecordCoount() async {
+        fatalError()
+    }
     
     // 데이터 쌓기 위한테스트용 함수, 추후 loadTodayMentorMessage()로 변경해야함
     func loadTodayMentorMessageTest() async {
