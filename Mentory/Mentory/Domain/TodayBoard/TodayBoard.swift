@@ -112,6 +112,8 @@ final class TodayBoard: Sendable, ObservableObject {
         self.userRecordCount = recordCount
     }
     
+    
+    // MARK: DELETE
     func loadTodayMentorMessageTest() async {
         let alanLLM = owner!.alanLLM
         let mentoryDB = owner!.mentoryDB
@@ -209,7 +211,6 @@ final class TodayBoard: Sendable, ObservableObject {
         }
     }
     
-    
     func loadTodayRecords() async {
         // capture
         let mentoryDB = owner!.mentoryDB
@@ -247,7 +248,8 @@ final class TodayBoard: Sendable, ObservableObject {
         
         // process
         do {
-            try await mentoryDB.updateActionCompletion(recordId: recordId, completionStatus: completionStatus)
+            try await mentoryDB.updateActionCompletion(recordId: recordId,
+                                                       completionStatus: completionStatus)
             logger.debug("행동 추천 완료 상태가 업데이트되었습니다.")
         } catch {
             logger.error("행동 추천 완료 상태 업데이트 실패: \(error)")
