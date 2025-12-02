@@ -81,7 +81,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForm = RecordForm(owner: self, targetDate: .today)
     }
     
-    func fetchTodayString() async {
+    private func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
             logger.error("오늘의 명언이 이미 fetch되었습니다.")

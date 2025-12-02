@@ -47,50 +47,6 @@ struct TodayBoardTests {
         }
     }
     
-    struct FetchTodayString {
-        let mentory: MentoryiOS
-        let todayBoard: TodayBoard
-        init() async throws {
-            self.mentory = await MentoryiOS()
-            self.todayBoard = try await getTodayBoardForTest(mentory)
-        }
-        
-        @Test func setTodayString() async throws {
-            // given
-            try await #require(todayBoard.todayString == nil)
-            
-            // when
-            await todayBoard.fetchTodayString()
-            
-            // then
-            await #expect(todayBoard.todayString != nil)
-        }
-        
-        @Test func setIsFetchedTodayStringTrue() async throws {
-            // given
-            try await #require(todayBoard.isFetchedTodayString == false)
-            
-            // when
-            await todayBoard.fetchTodayString()
-            
-            // then
-            await #expect(todayBoard.isFetchedTodayString == true)
-        }
-        
-        @Test func whenIsFetchedTodayStringIsTrue() async throws {
-            // given
-            await todayBoard.fetchTodayString()
-            let oldString = try #require(await todayBoard.todayString)
-            try await #require(todayBoard.isFetchedTodayString == true)
-            
-            // when
-            await todayBoard.fetchTodayString()
-            
-            // then
-            await #expect(todayBoard.todayString == oldString)
-        }
-    }
-    
     struct LoadTodayRecords {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard

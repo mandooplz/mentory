@@ -108,7 +108,6 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
 
-    
     func removeForm() {
         // capture
         guard let todayBoard = self.owner else {
