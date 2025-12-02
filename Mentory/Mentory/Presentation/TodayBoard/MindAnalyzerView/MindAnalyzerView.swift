@@ -58,7 +58,7 @@ struct MindAnalyzerView: View {
             } message: {
                 Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
             }
-            .tint(.blue)
+            .keyboardShortcut(.defaultAction)
             
             AnalyzedResult(
                 readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",
