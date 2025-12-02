@@ -66,9 +66,11 @@ struct RecordContainerView: View {
                 }
             // MARK: 입력 변경 감지 → validateInput() 호출
                 .onReceive(recordForm.$titleInput) { _ in
+                    print("title changed → validateInput")
                     recordForm.validateInput()
                 }
                 .onReceive(recordForm.$textInput) { _ in
+                    print("text changed → validateInput")
                     recordForm.validateInput()
                 }
             
