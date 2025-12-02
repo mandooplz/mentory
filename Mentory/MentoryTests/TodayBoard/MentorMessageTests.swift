@@ -13,7 +13,12 @@ import Testing
 @Suite
 struct MentorMessageTests {
     struct SetRandomCharacter {
-        
+        let mentoryiOS: MentoryiOS
+        let mentorMessage: MentorMessage
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.mentorMessage = try await getMentorMessage(mentoryiOS)
+        }
     }
 }
 
