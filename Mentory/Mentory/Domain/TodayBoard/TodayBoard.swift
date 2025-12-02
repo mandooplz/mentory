@@ -28,7 +28,10 @@ final class TodayBoard: Sendable, ObservableObject {
 
     @Published var recordForms: [RecordForm] = []
     @Published var recordFormSelection: RecordForm? = nil
-    private var lastRecordFormUpdate: MentoryDate? = nil
+    private var stdDate: MentoryDate = .now
+    internal func updateStdDate() {
+        self.stdDate = .now
+    }
     
     @Published var recordCount: Int? = nil
     
@@ -54,9 +57,10 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.")
             return
         }
+        let now = self.stdDate
 
         // process
-        let today = MentoryDate.now
+        let today = now
         let yesterday = today.dayBefore()
         let twoDaysAgo = today.twoDaysBefore()
         
@@ -75,6 +79,7 @@ final class TodayBoard: Sendable, ObservableObject {
         // process
         
         // mutate
+        fatalError("updateStdDate로 바뀐 기준값이 하루를 넘겼을 때 RecordForm 객체를 업데이트하는 코드가 필요합니다.")
     }
     
     func setUpSuggestions() async {
