@@ -126,9 +126,13 @@ fileprivate struct CancelButton: View {
         Button {
             action()
         } label: {
-            ActionButtonLabel(text: self.label,
-                              usage: .cancel)
+            LiquidGlassIconButtonLabel(
+                systemName: "xmark",
+                isEnabled: true,
+                accessibilityLabel: label
+            )
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -149,6 +153,25 @@ fileprivate struct TodayDate: View {
     }
 }
 
+fileprivate struct LiquidGlassIconButtonLabel: View {
+    let systemName: String
+    var isEnabled: Bool = true
+    var accessibilityLabel: String?
+
+    var body: some View {
+        LiquidGlassCard {
+            Image(systemName: systemName)
+                .font(.system(size: 14, weight: .semibold))
+                .frame(width: 28, height: 28)
+                .padding(6)
+                .foregroundStyle(isEnabled ? .primary : .secondary)
+                .accessibilityLabel(accessibilityLabel ?? "")
+        }
+        .opacity(isEnabled ? 1.0 : 0.5)
+    }
+}
+
+
 fileprivate struct SubmitButton<Content: View>: View {
     @ObservedObject var recordForm: RecordForm
     let label: String
@@ -163,9 +186,15 @@ fileprivate struct SubmitButton<Content: View>: View {
             showingSubmitAlert = true
             
         } label: {
-            ActionButtonLabel(text: "완료", usage: isSubmitEnabled ? .submitEnabled : .submitDisabled)
+            LiquidGlassIconButtonLabel(
+                    systemName: "checkmark",
+                    isEnabled: isSubmitEnabled,
+                    accessibilityLabel: label
+                )
             
-        }.disabled(!isSubmitEnabled)
+        }
+        .buttonStyle(.plain)
+        .disabled(!isSubmitEnabled)
             .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
                 Button("취소", role: .cancel) { }
                 Button("제출") {
