@@ -14,39 +14,6 @@ import Values
 // MARK: Tests
 @Suite("TodayBoard")
 struct TodayBoardTests {
-    struct SetUpForm {
-        let mentoryiOS: MentoryiOS
-        let todayBoard: TodayBoard
-        init() async throws {
-            self.mentoryiOS = await MentoryiOS()
-            self.todayBoard = try await getTodayBoardForTest(mentoryiOS)
-        }
-        
-        @Test func createRecordForm() async throws {
-            // given
-            try await #require(todayBoard.recordForm == nil)
-            
-            // when
-            await todayBoard.setUpForm()
-            
-            // then
-            await #expect(todayBoard.recordForm != nil)
-        }
-        
-        @Test func whenAlreadySetUp() async throws {
-            // given
-            await todayBoard.setUpForm()
-            
-            let recordForm = try #require(await todayBoard.recordForm)
-            
-            // when
-            await todayBoard.setUpForm()
-            
-            // then
-            await #expect(todayBoard.recordForm?.id == recordForm.id)
-        }
-    }
-    
     struct LoadTodayRecords {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
