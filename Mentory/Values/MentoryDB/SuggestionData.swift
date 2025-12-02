@@ -16,6 +16,15 @@ public struct SuggestionData: Sendable, Hashable, Codable {
     public let content: String
     public let status: Status
     
+    public init(
+        id: UUID,
+        content: String,
+        status: Status) {
+        self.id = id
+        self.content = content
+        self.status = status
+    }
+    
     
     // MARK: Value
     public enum Status: Sendable, Hashable, Codable {

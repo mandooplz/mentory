@@ -60,9 +60,6 @@ actor DailyRecord: Sendable {
 
         var analyzedResult: String
         var emotion: Emotion
-
-        var actionTexts: [String] = []
-        var actionCompletionStatus: [Bool] = []
         
         @Relationship var suggestions: [DailySuggestion.DailySuggestionModel] = []
 
@@ -71,16 +68,12 @@ actor DailyRecord: Sendable {
              createdAt: Date,
              analyzedResult: String,
              emotion: Emotion,
-             actionTexts: [String],
-             actionCompletionStatus: [Bool],
              suggestions: [DailySuggestion.DailySuggestionModel]) {
             self.id = id
             self.recordDate = recordDate
             self.createdAt = createdAt
             self.analyzedResult = analyzedResult
             self.emotion = emotion
-            self.actionTexts = actionTexts
-            self.actionCompletionStatus = actionCompletionStatus
             self.suggestions = suggestions
         }
         
@@ -91,9 +84,7 @@ actor DailyRecord: Sendable {
                          recordDate: self.recordDate,
                          createdAt: self.createdAt,
                          analyzedResult: self.analyzedResult,
-                         emotion: self.emotion,
-                         actionTexts: self.actionTexts,
-                         actionCompletionStatus: self.actionCompletionStatus)
+                         emotion: self.emotion)
         }
     }
 }

@@ -76,63 +76,22 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
         
+        // saveRecord를 구현해야 함.
         
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
-        todayBoard.actionKeyWordItems = analysis.actionKeywords.map {($0,false)}
-        logger.debug("추천행동: \(todayBoard.actionKeyWordItems)")
+        
+        let suggestions = analysis.actionKeywords
+            .map { keyword in
+                Suggestion(
+                    owner: todayBoard,
+                    source: .random,
+                    isDone: false)
+            }
+        todayBoard.suggestions = suggestions
+        
         self.isAnalyzeFinished = true
-    }
-    
-    // TODO: saveRecord를 analyze 액션으로 통합,
-    // saveRecord() ->
-    func saveRecord() async {
-        // capture
-        guard let analyzedContent = self.analyzedResult,
-              !analyzedContent.isEmpty else {
-            logger.error("분석된 내용이 비어있습니다. 저장을 중단합니다.")
-            return
-        }
-        
-        
-        // capture
-        let recordForm = self.owner!
-        let todayBoard = recordForm.owner!
-        let mentoryiOS = todayBoard.owner!
-        
-        let mentoryDB = mentoryiOS.mentoryDB
-        
-        let actionTexts = todayBoard.actionKeyWordItems.map { $0.0 }
-        let actionCompletionStatus = todayBoard.actionKeyWordItems.map { $0.1 }
-        
-        
-        // MentoryRecord 생성
-        let recordData = RecordData(
-            id: UUID(),
-            recordDate: recordForm.targetDate.toDate(),  // 일기가 속한 날짜
-            createdAt: Date(),  // 실제 작성 시간
-            
-            analyzedResult: analyzedContent,
-            emotion: self.mindType!,
-            
-            actionTexts: actionTexts,
-            actionCompletionStatus: actionCompletionStatus
-        )
-        
-        
-        // process
-        do {
-            try await mentoryDB.saveRecord(recordData)
-            
-            logger.info("레코드 저장 성공: \(recordData.id)")
-            logger.debug("레코드 저장추천행동\(recordData.actionTexts))")
-            
-            // 저장된 레코드 ID를 TodayBoard에 저장 (체크 상태 업데이트용)
-            todayBoard.latestRecordId = recordData.id
-        } catch {
-            logger.error("레코드 저장 실패: \(error)")
-        }
     }
     
     func cancel() {

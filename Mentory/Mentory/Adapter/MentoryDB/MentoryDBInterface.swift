@@ -12,21 +12,20 @@ import Values
 
 // MARK: Interface
 protocol MentoryDBInterface: Sendable {
+    // name
     func updateName(_ newName: String) async throws -> Void
     func getName() async throws -> String?
     
     func saveRecord(_ data: RecordData) async throws -> Void
-    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws -> Void
 
     func fetchAll() async throws -> [RecordData]
     func fetchToday() async throws -> [RecordData]
     func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData]
-    func fetchRecordForDate(_ targetDate: Date) async throws -> RecordData?
-    func hasRecordForDate(_ recordDate: RecordDate) async throws -> Bool
-    func fetchAvailableDatesForWriting() async throws -> [RecordDate]
+    
+    func fetchAvailableDatesForWriting() async throws -> [MentoryDate]
 
     func fetchMentorMessage() async throws -> MessageData?
-    func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws -> Void
+    func updateMentorMessage(_ data: MessageData) async throws -> Void
     
     func getRecordCount() async throws -> Int
 }

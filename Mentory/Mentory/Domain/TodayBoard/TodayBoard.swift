@@ -40,25 +40,37 @@ final class TodayBoard: Sendable, ObservableObject {
     // MARK: action
     func setUpMentorMessage() async {
         // capture
-        let mentoryDB = owner!.mentoryDB
+        let mentoryiOS = self.owner!
+        
+        let mentoryDB = mentoryiOS.mentoryDB
+        let alanLLM = mentoryiOS.alanLLM
         
         // process
+        let messageContent: String
         do {
-            // SwiftData에 저장된 데이터를 불러온다.
-            // 데이터의 createdAt이 
+            // SwiftData에 저장된 MentorMessage를 불러온다.
+            // 만약 없다면 -> 새로 갱신
+            // 있는데, 유효하다면 -> 기존 거 재사용
+            // 있는데, 지났다면 -> 새로 갱신
+            let randomCharacter = MentoryCharacter.random
+            let question = AlanQuestion(randomCharacter.question)
+            
+            let answer = try await alanLLM.question(question)
+            messageContent = answer.content
         } catch {
             logger.error("setUpMentorMessage 에러 발생 : \(error)")
             return
         }
         
         // mutate
+        self.mentorMessage = MentorMessage(owner: self, content: messageContent)
     }
     func setupRecordForms() async {
         // capture
         let mentoryDB = owner!.mentoryDB
 
         // process
-        let availableDates: [RecordDate]
+        let availableDates: [MentoryDate]
         do {
             availableDates = try await mentoryDB.fetchAvailableDatesForWriting()
             logger.debug("작성 가능한 날짜 \(availableDates.count)개 발견")

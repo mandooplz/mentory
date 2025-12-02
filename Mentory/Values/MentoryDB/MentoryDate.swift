@@ -20,6 +20,7 @@ public struct MentoryDate: Sendable, Codable, Hashable {
         return MentoryDate(.now)
     }
     
+    
     // MARK: operator
     public func relativeDay(from other: MentoryDate) -> RelativeDay {
         let calendar = Calendar.current
@@ -41,6 +42,7 @@ public struct MentoryDate: Sendable, Codable, Hashable {
         default: return .unknown
         }
     }
+    
     
     // MARK: value
     public enum RelativeDay: String, Sendable, Hashable, Codable {

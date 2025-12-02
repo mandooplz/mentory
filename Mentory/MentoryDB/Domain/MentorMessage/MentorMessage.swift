@@ -24,29 +24,38 @@ actor MentorMessage: Sendable {
     //MARK: action
     
     //MARK: value
-    //>>여기에 모델.. 어떤 규격?으로 저장될지 정하기 (UUID, 캐릭터타입, 메세지..?)
+
     @Model
     final class MentorMessageModel {
         // MARK: core
         @Attribute(.unique) var id: UUID
+        
         var createdAt: Date
-        var message: String
+        
+        var content: String
         var characterType: MentoryCharacter
 
-        init(id: UUID = UUID(), createdAt: Date, message: String, characterType: MentoryCharacter) {
+        init(id: UUID = UUID(), createdAt: Date, content: String, characterType: MentoryCharacter) {
             self.id = id
             self.createdAt = createdAt
-            self.message = message
+            self.content = content
             self.characterType = characterType
+        }
+        
+        init(data: MessageData) {
+            self.id = UUID()
+            self.createdAt = data.createdAt
+            self.content = data.content
+            self.characterType = data.characterType
         }
         
         
         // MARK: operator
         func toMessageData() -> MessageData {
-            return .init(id: self.id,
-                         createdAt: self.createdAt,
-                         message: self.message,
-                         characterType: self.characterType)
+            return .init(
+                createdAt: self.createdAt,
+                content: self.content,
+                characterType: self.characterType)
         }
 
     }

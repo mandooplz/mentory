@@ -16,9 +16,9 @@ public struct MessageData: Sendable, Hashable, Codable {
     
     public let characterType: MentoryCharacter
     
-    init(createdAt: Date = .now,
-         content: String,
-         characterType: MentoryCharacter) {
+    public init(createdAt: Date = .now,
+                content: String,
+                characterType: MentoryCharacter) {
         self.createdAt = createdAt
         self.content = content
         self.characterType = characterType

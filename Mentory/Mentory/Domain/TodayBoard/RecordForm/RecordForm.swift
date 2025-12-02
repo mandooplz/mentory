@@ -14,7 +14,7 @@ import Values
 @MainActor
 final class RecordForm: Sendable, ObservableObject, Identifiable {
     // MARK: core
-    init(owner: TodayBoard, targetDate: RecordDate) {
+    init(owner: TodayBoard, targetDate: MentoryDate) {
         self.owner = owner
         self.targetDate = targetDate
     }
@@ -23,7 +23,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
 
     // MARK: state
     nonisolated let id = UUID()
-    let targetDate: RecordDate  // 이 폼이 어느 날짜의 일기인지
+    let targetDate: MentoryDate
     weak var owner: TodayBoard?
     
     @Published var mindAnalyzer: MindAnalyzer? = nil
