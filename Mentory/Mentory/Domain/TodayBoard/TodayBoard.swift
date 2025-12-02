@@ -40,9 +40,16 @@ final class TodayBoard: Sendable, ObservableObject {
     // MARK: action
     func setUpMentorMessage() async {
         // capture
+        let mentoryDB = owner!.mentoryDB
         
         // process
-        // SwiftData에 저장된 데이터를 불러옴.
+        do {
+            // SwiftData에 저장된 데이터를 불러온다.
+            // 데이터의 createdAt이 
+        } catch {
+            logger.error("setUpMentorMessage 에러 발생 : \(error)")
+            return
+        }
         
         // mutate
     }

@@ -14,6 +14,24 @@ import Values
 // MARK: Tests
 @Suite("TodayBoard")
 struct TodayBoardTests {
+    struct SetUpMentorMessage {
+        let mentory: MentoryiOS
+        let todayBoard: TodayBoard
+        let mentoryDB: any MentoryDBInterface
+        init() async throws {
+            self.mentory = await MentoryiOS()
+            self.todayBoard = try await getTodayBoardForTest(mentory)
+            self.mentoryDB = mentory.mentoryDB
+        }
+        
+        @Test func createMentorMessage() async throws {
+            // given
+            
+            // when
+            
+            // then
+        }
+    }
     struct LoadTodayRecords {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
