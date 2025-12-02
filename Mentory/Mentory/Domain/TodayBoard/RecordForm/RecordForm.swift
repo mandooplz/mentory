@@ -14,7 +14,8 @@ import Values
 @MainActor
 final class RecordForm: Sendable, ObservableObject, Identifiable {
     // MARK: core
-    init(owner: TodayBoard, targetDate: MentoryDate) {
+    init(owner: TodayBoard,
+         targetDate: MentoryDate) {
         self.owner = owner
         self.targetDate = targetDate
     }
@@ -25,6 +26,8 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     nonisolated let id = UUID()
     let targetDate: MentoryDate
     weak var owner: TodayBoard?
+    
+    @Published var isDisabled: Bool = true
     
     @Published var mindAnalyzer: MindAnalyzer? = nil
 
@@ -40,6 +43,14 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     
     
     // MARK: action
+    func checkDisability() async {
+        // capture
+        
+        // process
+        
+        // mutate
+    }
+    
     func validateInput() {
         // capture
         let title = self.titleInput

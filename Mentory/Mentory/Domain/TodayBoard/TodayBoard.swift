@@ -48,7 +48,7 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate
         self.mentorMessage = MentorMessage(owner: self)
     }
-    func setupRecordForms() async {
+    func setUpRecordForms() async {
         // capture
         let mentoryDB = owner!.mentoryDB
 
@@ -76,6 +76,11 @@ final class TodayBoard: Sendable, ObservableObject {
         logger.debug("RecordForm \(availableDates.count)개 생성 완료")
     }
     func setUpSuggestions() async {
+        // capture
+        
+        // process
+        
+        // mutate
         fatalError()
     }
     

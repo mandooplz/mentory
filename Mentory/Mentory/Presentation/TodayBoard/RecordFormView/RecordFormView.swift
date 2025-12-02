@@ -105,7 +105,7 @@ fileprivate struct RecordFormPreview: View {
                     onboarding.next()
                     
                     let todayBoard = mentoryiOS.todayBoard!
-                    await todayBoard.setupRecordForms()
+                    await todayBoard.setUpRecordForms()
                 }
         }
     }

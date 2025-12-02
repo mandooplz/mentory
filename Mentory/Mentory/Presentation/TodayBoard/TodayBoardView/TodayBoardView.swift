@@ -205,7 +205,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 
                 Button {
                     Task {
-                        await todayBoard.setupRecordForms()
+                        await todayBoard.setUpRecordForms()
                         showDateSelectionSheet = true
                     }
                 } label: {
@@ -229,7 +229,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
             .frame(maxWidth: .infinity)
         }
         .task {
-            await todayBoard.setupRecordForms()
+            await todayBoard.setUpRecordForms()
         }
         .task {
             let stream = todayBoard.$recordFormSelection.values

@@ -197,7 +197,7 @@ private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> Reco
     
     // TodayBoard
     let todayBoard = try #require(await mentoryiOS.todayBoard)
-    await todayBoard.setupRecordForms()
+    await todayBoard.setUpRecordForms()
     
     // RecordForm
     let recordForm = try #require(await todayBoard.recordForms.first)
