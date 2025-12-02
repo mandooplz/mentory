@@ -13,11 +13,16 @@ import Collections
 @MainActor
 final class DailyRecordModel: Sendable {
     // MARK: core
-    init(owner: MentoryDBModel? = nil,recordDate: Date, createAt: Date, content: String, analyzedContent: String, emotion: Emotion, actionTexts: [String] = [], actionCompletionStatus: [Bool] = []) {
+    init(owner: MentoryDBModel? = nil,
+         recordDate: Date,
+         createAt: Date,
+         analyzedContent: String,
+         emotion: Emotion,
+         actionTexts: [String] = [],
+         actionCompletionStatus: [Bool] = []) {
         self.owner = owner
         self.recordDate = recordDate
         self.createAt = createAt
-        self.content = content
         self.analyzedContent = analyzedContent
         self.emotion = emotion
         self.actionTexts = actionTexts
@@ -32,9 +37,7 @@ final class DailyRecordModel: Sendable {
     nonisolated let recordDate: Date
     nonisolated let createAt: Date
     
-    var content: String
     var analyzedContent: String
-    
     var emotion: Emotion
 
     // 행동 추천 (무조건 3개)

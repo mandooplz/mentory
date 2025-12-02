@@ -365,7 +365,6 @@ actor MentoryDB: Sendable {
                     id: data.id,
                     recordDate: data.recordDate,
                     createdAt: data.createdAt,
-                    content: data.content,
                     analyzedResult: data.analyzedResult,
                     emotion: data.emotion,
                     actionTexts: data.actionTexts,
@@ -420,7 +419,6 @@ actor MentoryDB: Sendable {
         @Attribute(.unique) var id: UUID
         var recordDate: Date  // 일기가 속한 날짜
         var createdAt: Date   // 실제 작성 시간
-        var content: String
         var analyzedResult: String
         var emotion: Emotion
         var actionTexts: [String]
@@ -430,7 +428,6 @@ actor MentoryDB: Sendable {
             self.id = data.id
             self.recordDate = data.recordDate
             self.createdAt = data.createdAt
-            self.content = data.content
             self.analyzedResult = data.analyzedResult
             self.emotion = data.emotion
             self.actionTexts = data.actionTexts
@@ -442,7 +439,6 @@ actor MentoryDB: Sendable {
                 id: id,
                 recordDate: recordDate,
                 createdAt: createdAt,
-                content: content,
                 analyzedResult: analyzedResult,
                 emotion: emotion,
                 actionTexts: actionTexts,
