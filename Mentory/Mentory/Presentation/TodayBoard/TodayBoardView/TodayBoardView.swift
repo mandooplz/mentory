@@ -234,11 +234,18 @@ fileprivate struct RecordStatCard<Content: View>: View {
         }
         
         // 일기 작성 FullScreenCover
+//        .fullScreenCover(isPresented: $showFullScreenCover) {
+//            if let form = todayBoard.recordForm {
+//                navDestination(form)
+//            }
+//        }
         .fullScreenCover(isPresented: $showFullScreenCover) {
             if let form = todayBoard.recordForm {
-                navDestination(form)
+                RecordContainerView(recordForm: form)
             }
         }
+
+        
     }
 }
 
