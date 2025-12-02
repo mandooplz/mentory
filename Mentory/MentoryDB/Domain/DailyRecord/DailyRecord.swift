@@ -56,22 +56,17 @@ actor DailyRecord: Sendable {
         // MARK: core
         @Attribute(.unique) var id: UUID
         var recordDate: Date  // 일기가 속한 날짜 (오늘/어제/그제)
-        var createdAt: Date   // 실제 작성 시간
+        var createdAt: Date
 
         var analyzedResult: String
         var emotion: Emotion
 
-        // 행동 추천 (무조건 3개)
-        var actionTexts: [String]
-        var actionCompletionStatus: [Bool]
+        var actionTexts: [String] = []
+        var actionCompletionStatus: [Bool] = []
+        
+        @Relationship var suggestions: [DailySuggestion.DailySuggestionModel] = []
 
-        init(id: UUID = UUID(),
-             recordDate: Date,
-             createdAt: Date,
-             analyzedResult: String,
-             emotion: Emotion,
-             actionTexts: [String] = [],
-             actionCompletionStatus: [Bool] = []) {
+        init(id: UUID, recordDate: Date, createdAt: Date, analyzedResult: String, emotion: Emotion, actionTexts: [String], actionCompletionStatus: [Bool], suggestions: [DailySuggestion.DailySuggestionModel]) {
             self.id = id
             self.recordDate = recordDate
             self.createdAt = createdAt
@@ -79,6 +74,7 @@ actor DailyRecord: Sendable {
             self.emotion = emotion
             self.actionTexts = actionTexts
             self.actionCompletionStatus = actionCompletionStatus
+            self.suggestions = suggestions
         }
         
         
