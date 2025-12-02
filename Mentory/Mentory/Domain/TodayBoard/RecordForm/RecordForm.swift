@@ -116,7 +116,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         }
         
         // mutate
-        todayBoard.recordForm = nil
+        todayBoard.recordForms = []
     }
     
 

@@ -24,7 +24,8 @@ final class TodayBoard: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
 
-    @Published var recordForm: RecordForm? = nil
+    @Published private var recordForm: RecordForm? = nil
+    @Published var selectedRecordForm: RecordForm? = nil
     @Published var recordForms: [RecordForm] = []
     func getRecordForm(for date: RecordDate) -> RecordForm? {
         return recordForms.first { $0.targetDate == date }
@@ -33,8 +34,9 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var userRecordCount: Int? = nil
     
     @Published var records: [RecordData] = []
-    // getIndicator: 오늘 생성된 모든 행동 추천의 개수 합 (3/6)
     func getIndicator() -> String {
+        // 오늘 생성된 모든 행동 추천의 개수 합 (3/6) 을 반환
+        
         let records = self.records
         
         let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
@@ -43,9 +45,9 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         return "\(completedActions)/\(totalActions)"
     }
-    // getProgress: 0.0 ~ 1.0 사이의 진행률을 계산
     func getProgress() -> Double {
         // 모든 레코드에서 행동 완료율 계산
+        // 0.0 ~ 1.0 사이의 진행률을 계산
         let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
         guard totalActions > 0 else { return 0 }
         let completedActions = records.reduce(0) { sum, record in
@@ -129,7 +131,6 @@ final class TodayBoard: Sendable, ObservableObject {
         self.userRecordCount = recordCount
     }
     
-    // 데이터 쌓기 위한테스트용 함수, 추후 loadTodayMentorMessage()로 변경해야함
     func loadTodayMentorMessageTest() async {
         let alanLLM = owner!.alanLLM
         let mentoryDB = owner!.mentoryDB
@@ -226,6 +227,7 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("loadTodayMentorMessage()처리 실패: \(error.localizedDescription)")
         }
     }
+    
     
     func loadTodayRecords() async {
         // capture
