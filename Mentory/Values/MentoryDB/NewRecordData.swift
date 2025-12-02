@@ -15,7 +15,6 @@ public struct NewRecordData: Sendable, Hashable, Codable, Equatable {
     public let recordDate: Date
     public let createdAt: Date
     
-    public let content: String
-    public let analyzedContent: String
+    public let analyzedResult: String
     public let emotion: Emotion
 }
