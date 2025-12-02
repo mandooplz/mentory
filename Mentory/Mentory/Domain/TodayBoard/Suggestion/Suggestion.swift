@@ -15,9 +15,11 @@ final class Suggestion: Sendable, ObservableObject {
     // MARK: core
     init(owner: TodayBoard,
          source: SuggestionID,
+         content: String,
          isDone: Bool) {
         self.owner = owner
         self.source = source
+        self.content = content
         self.isDone = isDone
     }
     
@@ -27,12 +29,14 @@ final class Suggestion: Sendable, ObservableObject {
     weak var owner: TodayBoard?
     
     nonisolated let source: SuggestionID
+    nonisolated let content: String
     
     @Published var isDone: Bool
     
     
     // MARK: action
     func markDone() async {
+        // SwiftData의 UserSuggestion에 isDone 업데이트
         fatalError()
     }
     
