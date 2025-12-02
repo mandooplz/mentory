@@ -24,12 +24,11 @@ final class TodayBoard: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
     
-    // mentorMessage
     @Published var mentorMessage: MentorMessage? = nil
 
-    // recordForm
     @Published var recordForms: [RecordForm] = []
     @Published var recordFormSelection: RecordForm? = nil
+    private var lastRecordFormUpdate: MentoryDate? = nil
     
     @Published var recordCount: Int? = nil
     
@@ -48,6 +47,7 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate
         self.mentorMessage = MentorMessage(owner: self)
     }
+    
     func setUpRecordForms() async {
         // capture
         guard self.recordForms.isEmpty == true else {
@@ -69,6 +69,14 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         self.recordForms = recordForms
     }
+    func updateRecordForms() async {
+        // capture
+        
+        // process
+        
+        // mutate
+    }
+    
     func setUpSuggestions() async {
         // capture
         

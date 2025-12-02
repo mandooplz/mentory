@@ -24,7 +24,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
 
     // MARK: state
     nonisolated let id = UUID()
-    let targetDate: MentoryDate
+    nonisolated let targetDate: MentoryDate
     weak var owner: TodayBoard?
     
     @Published var isDisabled: Bool = true

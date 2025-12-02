@@ -64,6 +64,83 @@ struct TodayBoardTests {
             // then
             await #expect(todayBoard.recordForms.isEmpty == false)
         }
+        @Test func createThreeRecordForms() async throws {
+            // given
+            try await #require(todayBoard.recordForms.count == 0)
+            
+            // when
+            await todayBoard.setUpRecordForms()
+            
+            // then
+            await #expect(todayBoard.recordForms.count == 3)
+        }
+        
+        @Test func createTodayRecordForm() async throws {
+            // given
+            let today = MentoryDate.now
+            
+            try await #require(todayBoard.recordForms.isEmpty)
+            
+            // when
+            await todayBoard.setUpRecordForms()
+            
+            // then
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let firstIndex = await todayBoard.recordForms
+                .startIndex
+            
+            let recordForm = await todayBoard.recordForms[firstIndex]
+            
+            let date = recordForm.targetDate
+            
+            #expect(date.isSameDate(as: today))
+        }
+        @Test func createYesterDayRecordForm() async throws {
+            // given
+            let yesterday = MentoryDate.now.dayBefore()
+            
+            try await #require(todayBoard.recordForms.isEmpty)
+            
+            // when
+            await todayBoard.setUpRecordForms()
+            
+            // then
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let secondIndex = await todayBoard.recordForms
+                .startIndex
+                .advanced(by: 1)
+            
+            let recordForm = await todayBoard.recordForms[secondIndex]
+            
+            let date = recordForm.targetDate
+            
+            #expect(date.isSameDate(as: yesterday))
+        }
+        @Test func createTwoDaysAgoRecordForm() async throws {
+            // given
+            let twoDaysAgo = MentoryDate.now
+                .twoDaysBefore()
+            
+            try await #require(todayBoard.recordForms.isEmpty)
+            
+            // when
+            await todayBoard.setUpRecordForms()
+            
+            // then
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let thirdIndex = await todayBoard.recordForms
+                .startIndex
+                .advanced(by: 2)
+            
+            let recordForm = await todayBoard.recordForms[thirdIndex]
+            
+            let date = recordForm.targetDate
+            
+            #expect(date.isSameDate(as: twoDaysAgo))
+        }
     }
 }
 
