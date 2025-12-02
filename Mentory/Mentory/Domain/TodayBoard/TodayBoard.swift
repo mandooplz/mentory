@@ -66,17 +66,32 @@ final class TodayBoard: Sendable, ObservableObject {
     
     
     // MARK: action
-    func setUpForm() {
-        logger.warning("setUpForm() 호출됨 - deprecated: setupRecordForms() 사용을 권장합니다")
-
+    func setupRecordForms() async {
         // capture
-        guard self.recordForm == nil else {
-            logger.error("이미 TodayBoard에 RecordForm이 존재합니다.")
+        let mentoryDB = owner!.mentoryDB
+
+        // process
+        let availableDates: [RecordDate]
+        do {
+            availableDates = try await mentoryDB.fetchAvailableDatesForWriting()
+            logger.debug("작성 가능한 날짜 \(availableDates.count)개 발견")
+        } catch {
+            logger.error("작성 가능한 날짜 조회 실패: \(error)")
             return
         }
 
-        // mutate - 기본값으로 오늘 날짜 사용
-        self.recordForm = RecordForm(owner: self, targetDate: .today)
+        // mutate
+        guard !availableDates.isEmpty else {
+            logger.warning("작성 가능한 날짜가 없습니다. 모든 날짜에 이미 일기가 작성되었습니다.")
+            self.recordForms = []
+            return
+        }
+
+        self.recordForms = availableDates.map { date in
+            RecordForm(owner: self, targetDate: date)
+        }
+
+        logger.debug("RecordForm \(availableDates.count)개 생성 완료")
     }
     
     func fetchUserRecordCoount() async {
@@ -239,34 +254,5 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         
         // mutate
-    }
-
-    /// 작성 가능한 날짜의 RecordForm들을 생성합니다
-    func setupRecordForms() async {
-        // capture
-        let mentoryDB = owner!.mentoryDB
-
-        // process
-        let availableDates: [RecordDate]
-        do {
-            availableDates = try await mentoryDB.fetchAvailableDatesForWriting()
-            logger.debug("작성 가능한 날짜 \(availableDates.count)개 발견")
-        } catch {
-            logger.error("작성 가능한 날짜 조회 실패: \(error)")
-            return
-        }
-
-        // mutate
-        guard !availableDates.isEmpty else {
-            logger.warning("작성 가능한 날짜가 없습니다. 모든 날짜에 이미 일기가 작성되었습니다.")
-            self.recordForms = []
-            return
-        }
-
-        self.recordForms = availableDates.map { date in
-            RecordForm(owner: self, targetDate: date)
-        }
-
-        logger.debug("RecordForm \(availableDates.count)개 생성 완료")
     }
 }

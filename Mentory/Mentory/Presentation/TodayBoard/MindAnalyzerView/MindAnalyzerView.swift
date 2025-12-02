@@ -362,7 +362,7 @@ fileprivate struct MindAnalyzerPreview: View {
                     
                     let todayBoard = mentoryiOS.todayBoard!
                     
-                    todayBoard.setUpForm()
+                    await todayBoard.setupRecordForms()
                     let recordForm = todayBoard.recordForms.first!
                     
                     recordForm.titleInput = "SAMPLE-TITLE"
