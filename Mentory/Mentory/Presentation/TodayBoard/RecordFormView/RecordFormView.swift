@@ -91,7 +91,7 @@ fileprivate struct RecordFormPreview: View {
     
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
-           let recordForm = todayBoard.recordForm {
+           let recordForm = todayBoard.recordForms.first {
             RecordFormView(
                 recordForm: recordForm,
             )
@@ -105,7 +105,7 @@ fileprivate struct RecordFormPreview: View {
                     onboarding.next()
                     
                     let todayBoard = mentoryiOS.todayBoard!
-                    todayBoard.setUpForm()
+                    await todayBoard.setupRecordForms()
                 }
         }
     }
