@@ -182,28 +182,6 @@ struct RecordFormTests {
             await #expect(recordForm.voiceInput == testVoiceURL)
         }
     }
-    
-    struct RemoveForm {
-        let mentoryiOS: MentoryiOS
-        let recordForm: RecordForm
-        init() async throws {
-            self.mentoryiOS = await MentoryiOS()
-            self.recordForm = try await getRecordFormForTest(mentoryiOS)
-        }
-        
-        @Test func deleteRecordForm() async throws {
-            // given
-            let todayBoard = try #require(await recordForm.owner)
-            
-            try await #require(todayBoard.recordForm != nil)
-            
-            // when
-            await recordForm.removeForm()
-            
-            // then
-            await #expect(todayBoard.recordForm == nil)
-        }
-    }
 }
 
 // MARK: Helpers
@@ -219,9 +197,9 @@ private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> Reco
     
     // TodayBoard
     let todayBoard = try #require(await mentoryiOS.todayBoard)
-    await todayBoard.setUpForm()
+    await todayBoard.setupRecordForms()
     
     // RecordForm
-    let recordForm = try #require(await todayBoard.recordForm)
+    let recordForm = try #require(await todayBoard.recordForms.first)
     return recordForm
 }

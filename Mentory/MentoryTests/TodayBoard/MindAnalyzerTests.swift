@@ -134,10 +134,10 @@ private func getMindAnalyzerForTest(_ mentoryiOS: MentoryiOS) async throws -> Mi
     
     // TodayBoard
     let todayBoard = try #require(await mentoryiOS.todayBoard)
-    await todayBoard.setUpForm()
+    await todayBoard.setupRecordForms()
     
     // RecordForm
-    let recordForm = try #require(await todayBoard.recordForm)
+    let recordForm = try #require(await todayBoard.recordForms.first)
     
     await MainActor.run {
         recordForm.titleInput = "SAMPLE_TITLE"
