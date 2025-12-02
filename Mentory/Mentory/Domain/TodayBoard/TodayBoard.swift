@@ -25,18 +25,26 @@ final class TodayBoard: Sendable, ObservableObject {
     weak var owner: MentoryiOS?
     
     // mentorMessage
-    @Published var mentorMessage: MessageData?
+    @Published var mentorMessage: MentorMessage? = nil
 
     // recordForm
     @Published var recordForms: [RecordForm] = []
-    @Published var selectedRecordForm: RecordForm? = nil
+    @Published var recordFormSelection: RecordForm? = nil
     
-    @Published var userRecordCount: Int? = nil
+    @Published var recordCount: Int? = nil
+    
+    // suggestion
+    @Published var suggestions: [Suggestion] = []
     
     
     // MARK: action
     func setUpMentorMessage() async {
-        fatalError()
+        // capture
+        
+        // process
+        // SwiftData에 저장된 데이터를 불러옴.
+        
+        // mutate
     }
     func setupRecordForms() async {
         // capture
@@ -84,7 +92,7 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         
         // mutate
-        self.userRecordCount = recordCount
+        self.recordCount = recordCount
     }
     
     

@@ -22,7 +22,7 @@ final class MentorMessage: Sendable, ObservableObject {
     // MARK: state
     weak var owner: TodayBoard?
     
-    @Published var content: String = "값을 불러오는 중입니다."
+    @Published private(set) var content: String
     
     
     // MARK: action

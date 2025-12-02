@@ -230,13 +230,13 @@ fileprivate struct RecordStatCard<Content: View>: View {
             await todayBoard.setupRecordForms()
         }
         .task {
-            let strea = todayBoard.$selectedRecordForm.values
+            let strea = todayBoard.$recordFormSelection.values
                 .map { recordForm in
                     recordForm != nil
                 }
             
             
-            for await isPresent in todayBoard.$selectedRecordForm.values.map({ $0 != nil }) {
+            for await isPresent in todayBoard.$recordFormSelection.values.map({ $0 != nil }) {
                 self.showFullScreenCover = isPresent
             }
         }
@@ -250,7 +250,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
         
         // 일기 작성 FullScreenCover
         .fullScreenCover(isPresented: $showFullScreenCover) {
-            if let form = todayBoard.selectedRecordForm {
+            if let form = todayBoard.recordFormSelection {
                 navDestination(form)
             }
         }
@@ -445,7 +445,7 @@ fileprivate struct DateSelectionSheet: View {
                             date: recordForm.targetDate,
                             action: {
                                 // recordForm 설정
-                                todayBoard.selectedRecordForm = recordForm
+                                todayBoard.recordFormSelection = recordForm
                                 // Sheet 닫기
                                 dismiss()
                             }
