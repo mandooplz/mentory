@@ -13,13 +13,17 @@ import Values
 @MainActor
 final class Suggestion: Sendable, ObservableObject {
     // MARK: core
-    init(source: NewSuggestionData,
+    init(owner: TodayBoard,
+         source: NewSuggestionData,
          isDone: Bool) {
+        self.owner = owner
         self.source = source
         self.isDone = isDone
     }
     
     // MARK: state
+    weak var owner: TodayBoard?
+    
     nonisolated let source: NewSuggestionData
     
     @Published var isDone: Bool
