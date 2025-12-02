@@ -24,10 +24,14 @@ final class TodayBoard: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
 
-    @Published var recordForm: RecordForm? = nil  // deprecated: 기존 단일 폼 (호환성 유지)
-    @Published var recordForms: [RecordForm] = []  // RecordForm 배열 (각 RecordForm이 targetDate 정보를 포함)
+    @Published var recordForm: RecordForm? = nil
+    @Published var recordForms: [RecordForm] = []
+    func getRecordForm(for date: RecordDate) -> RecordForm? {
+        return recordForms.first { $0.targetDate == date }
+    }
 
     @Published var records: [RecordData] = []
+    // getIndicator: 오늘 생성된 모든 행동 추천의 개수 합 (3/6)
     func getIndicator() -> String {
         let records = self.records
         
@@ -37,6 +41,7 @@ final class TodayBoard: Sendable, ObservableObject {
         }
         return "\(completedActions)/\(totalActions)"
     }
+    // getProgress: 0.0 ~ 1.0 사이의 진행률을 계산
     func getProgress() -> Double {
         // 모든 레코드에서 행동 완료율 계산
         let totalActions = records.reduce(0) { $0 + $1.actionTexts.count }
@@ -54,7 +59,7 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var isFetchedTodayString: Bool = false
     
     @Published var actionKeyWordItems: [(String, Bool)] = []
-    @Published var latestRecordId: UUID? = nil // 가장 최근 저장된 레코드 ID (행동 추천 업데이트용)
+    @Published var latestRecordId: UUID? = nil
     
     
     // MARK: action
@@ -279,10 +284,5 @@ final class TodayBoard: Sendable, ObservableObject {
         }
 
         logger.debug("RecordForm \(availableDates.count)개 생성 완료")
-    }
-
-    /// 지정된 날짜의 RecordForm을 반환합니다
-    func getRecordForm(for date: RecordDate) -> RecordForm? {
-        return recordForms.first { $0.targetDate == date }
     }
 }
