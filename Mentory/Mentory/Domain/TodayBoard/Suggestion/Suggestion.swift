@@ -14,7 +14,7 @@ import Values
 final class Suggestion: Sendable, ObservableObject {
     // MARK: core
     init(owner: TodayBoard,
-         source: NewSuggestionData,
+         source: SuggestionData,
          isDone: Bool) {
         self.owner = owner
         self.source = source
@@ -24,7 +24,7 @@ final class Suggestion: Sendable, ObservableObject {
     // MARK: state
     weak var owner: TodayBoard?
     
-    nonisolated let source: NewSuggestionData
+    nonisolated let source: SuggestionData
     
     @Published var isDone: Bool
     

@@ -32,11 +32,11 @@ actor DailySuggestion {
         @Attribute(.unique) var id: UUID
         
         var content: String
-        var status: NewSuggestionData.Status
+        var status: SuggestionData.Status
         
         init(id: UUID,
              content: String,
-             status: NewSuggestionData.Status) {
+             status: SuggestionData.Status) {
             self.id = id
             self.content = content
             self.status = status

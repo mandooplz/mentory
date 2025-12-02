@@ -1,5 +1,5 @@
 //
-//  NewRecordData.swift
+//  RecordData.swift
 //  Mentory
 //
 //  Created by 김민우 on 12/2/25.
@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: Value
 nonisolated
-public struct NewRecordData: Sendable, Hashable, Codable, Equatable {
+public struct RecordData: Sendable, Hashable, Codable, Equatable {
     // MARK: core
     public let id: UUID
     
@@ -18,6 +18,7 @@ public struct NewRecordData: Sendable, Hashable, Codable, Equatable {
     
     public let analyzedResult: String
     public let emotion: Emotion
+    
     
     public init(id: UUID, recordDate: Date, createdAt: Date, analyzedResult: String, emotion: Emotion) {
         self.id = id
