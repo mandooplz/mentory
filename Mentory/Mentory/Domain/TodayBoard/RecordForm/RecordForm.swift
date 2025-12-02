@@ -46,6 +46,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         // process
         
         // mutate
+        fatalError("targetDate를 통해 MentoryDB에서 현재 날짜에 해당하는 Record를 가져와서 그 값들을 바탕으로 isDisabled를 결정하는 로직이 필요합니다.")
     }
     
     func validateInput() {

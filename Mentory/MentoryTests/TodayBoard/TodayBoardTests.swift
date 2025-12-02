@@ -142,6 +142,11 @@ struct TodayBoardTests {
             #expect(date.isSameDate(as: twoDaysAgo))
         }
     }
+    
+    
+    struct SetUpSuggestion {
+        
+    }
 }
 
 
