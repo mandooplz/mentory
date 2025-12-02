@@ -57,17 +57,14 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var mentorMessage: MessageData?
     @Published var mentorMessageDate: Date?
     
-    @Published var todayString: String? = nil
-    @Published var isFetchedTodayString: Bool = false
+    @Published private var todayString: String? = nil
+    @Published private var isFetchedTodayString: Bool = false
     
     @Published var actionKeyWordItems: [(String, Bool)] = []
     @Published var latestRecordId: UUID? = nil
     
     
     // MARK: action
-    /// @deprecated 이 메서드는 더 이상 사용되지 않습니다.
-    /// 대신 setupRecordForms()와 날짜 선택 UI를 사용하세요.
-    /// 기존 호환성 유지를 위해 남겨둔 메서드입니다.
     func setUpForm() {
         logger.warning("setUpForm() 호출됨 - deprecated: setupRecordForms() 사용을 권장합니다")
 
@@ -80,7 +77,6 @@ final class TodayBoard: Sendable, ObservableObject {
         // mutate - 기본값으로 오늘 날짜 사용
         self.recordForm = RecordForm(owner: self, targetDate: .today)
     }
-    
     private func fetchTodayString() async {
         // capture
         guard isFetchedTodayString == false else {
@@ -114,6 +110,7 @@ final class TodayBoard: Sendable, ObservableObject {
             WatchConnectivityManager.shared.updateTodayString(quote)
         }
     }
+    
     func fetchUserRecordCoount() async {
         // capture
         let mentoryiOS = self.owner!
