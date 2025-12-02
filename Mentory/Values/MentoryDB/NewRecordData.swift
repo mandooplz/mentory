@@ -10,6 +10,7 @@ import Foundation
 // MARK: Value
 nonisolated
 public struct NewRecordData: Sendable, Hashable, Codable, Equatable {
+    // MARK: core
     public let id: UUID
     
     public let recordDate: Date
@@ -17,4 +18,12 @@ public struct NewRecordData: Sendable, Hashable, Codable, Equatable {
     
     public let analyzedResult: String
     public let emotion: Emotion
+    
+    public init(id: UUID, recordDate: Date, createdAt: Date, analyzedResult: String, emotion: Emotion) {
+        self.id = id
+        self.recordDate = recordDate
+        self.createdAt = createdAt
+        self.analyzedResult = analyzedResult
+        self.emotion = emotion
+    }
 }
