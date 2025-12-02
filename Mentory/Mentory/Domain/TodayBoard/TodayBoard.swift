@@ -30,6 +30,8 @@ final class TodayBoard: Sendable, ObservableObject {
         return recordForms.first { $0.targetDate == date }
     }
 
+    @Published var userRecordCount: Int? = nil
+    
     @Published var records: [RecordData] = []
     // getIndicator: 오늘 생성된 모든 행동 추천의 개수 합 (3/6)
     func getIndicator() -> String {

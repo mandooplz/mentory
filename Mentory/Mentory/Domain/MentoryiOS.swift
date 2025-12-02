@@ -47,8 +47,8 @@ final class MentoryiOS: Sendable, ObservableObject {
     }
     
     @Published var onboardingFinished: Bool = false
-    @Published var onboarding: Onboarding? = nil
     
+    @Published var onboarding: Onboarding? = nil
     @Published var todayBoard: TodayBoard? = nil
     @Published var settingBoard: SettingBoard? = nil
     
@@ -72,6 +72,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         // mutate
         self.onboarding = Onboarding(owner: self)
     }
+    
     func loadUserName() async {
         // capture
         let mentoryDB = self.mentoryDB
@@ -98,7 +99,6 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
     }
-    
     func saveUserName() async {
         // capture
         guard let userName else {
