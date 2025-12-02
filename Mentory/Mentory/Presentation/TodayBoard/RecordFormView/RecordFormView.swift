@@ -77,10 +77,6 @@ struct RecordFormView: View {
                     model: recordForm
                 )
             })
-        .task {
-            // 기록 시작 시간 설정
-            recordForm.startTime = Date()
-        }
     }
 }
 

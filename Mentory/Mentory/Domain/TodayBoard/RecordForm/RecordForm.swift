@@ -38,9 +38,6 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     
     @Published var canProceed: Bool = false
     
-    var startTime: Date? = nil // 기록 시작 시간 (RecordFormView가 열릴 때 설정됨)
-    var completionTime: TimeInterval? = nil // 기록 완성까지 걸린 시간
-    
     
     // MARK: action
     func checkDisability() async {
@@ -96,13 +93,6 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
 
         
         // process
-        if let startTime {
-            self.completionTime = Date().timeIntervalSince(startTime)
-            logger.info("기록 완성 시간: \(self.completionTime!)초")
-        } else {
-            logger.warning("startTime이 설정되지 않았습니다.")
-        }
-        
         let reminderTime = settingBoard.reminderTime
         
         // 기존 알림 전부 삭제
