@@ -11,6 +11,7 @@ import Values
 // MARK: View
 struct MindAnalyzerView: View {
     // MARK: model
+    @State private var showingSubmitAlert = false
     @ObservedObject var mindAnalyzer: MindAnalyzer
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
@@ -36,6 +37,12 @@ struct MindAnalyzerView: View {
                 label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
                 isActive: !mindAnalyzer.isAnalyzing,
                 action: {
+                    showingSubmitAlert = true
+                }
+            )
+            .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
+                Button("취소", role: .cancel) { }
+                Button("제출") {
                     Task {
                         mindAnalyzer.startAnalyze()
                         
@@ -47,7 +54,11 @@ struct MindAnalyzerView: View {
                         
                         mindAnalyzer.stopAnalyze()
                     }
-                })
+                }
+            } message: {
+                Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
+            }
+            .tint(.blue)
             
             AnalyzedResult(
                 readyPrompt: "면담 요청을 보내면 멘토가 감정 리포트를 작성해드려요.",

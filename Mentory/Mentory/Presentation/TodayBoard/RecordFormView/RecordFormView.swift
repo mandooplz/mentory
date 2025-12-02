@@ -138,14 +138,14 @@ fileprivate struct CancelButton: View {
 
 fileprivate struct TodayDate: View {
     let targetDate: RecordDate
-
+    
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "M월 d일 EEEE"
         return formatter.string(from: targetDate.toDate())
     }
-
+    
     var body: some View {
         Text(formattedDate)
             .font(.headline)
@@ -157,7 +157,7 @@ fileprivate struct LiquidGlassIconButtonLabel: View {
     let systemName: String
     var isEnabled: Bool = true
     var accessibilityLabel: String?
-
+    
     var body: some View {
         LiquidGlassCard {
             Image(systemName: systemName)
@@ -179,66 +179,56 @@ fileprivate struct SubmitButton<Content: View>: View {
     
     @State var isSubmitEnabled: Bool = false
     @State var showMindAnalyzerView: Bool = false
-    @State var showingSubmitAlert: Bool = false
     
     var body: some View {
         Button {
-            showingSubmitAlert = true
-            
+            Task {
+                recordForm.validateInput()
+                guard recordForm.canProceed else { return }
+                await recordForm.submit()
+                // submit() 안에서 recordForm.mindAnalyzer가 설정됨
+            }
         } label: {
             LiquidGlassIconButtonLabel(
-                    systemName: "checkmark",
-                    isEnabled: isSubmitEnabled,
-                    accessibilityLabel: label
-                )
-            
+                systemName: "checkmark",
+                isEnabled: isSubmitEnabled,
+                accessibilityLabel: label
+            )
         }
         .buttonStyle(.plain)
         .disabled(!isSubmitEnabled)
-            .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
-                Button("취소", role: .cancel) { }
-                Button("제출") {
-                    Task {
-                        recordForm.validateInput()
-                        await recordForm.submit()
-                    }
-                }
-            } message: {
-                Text("일기를 제출하면 수정할 수 없습니다.\n제출하시겠습니까?")
-            }
-            .keyboardShortcut(.defaultAction)
         
-            .navigationDestination(isPresented: $showMindAnalyzerView, destination: {
-                if let mindAnalyzer = recordForm.mindAnalyzer {
-                    destination(mindAnalyzer)
-                }
+        .navigationDestination(isPresented: $showMindAnalyzerView, destination: {
+            if let mindAnalyzer = recordForm.mindAnalyzer {
+                destination(mindAnalyzer)
             }
-            )
+        }
+        )
         
-            .task {
-                let stream = recordForm.$mindAnalyzer.values
-                    .map { $0 != nil }
-                    .dropFirst()
-                
-                for await isPresented in stream {
-                    self.showMindAnalyzerView = isPresented
-                }
+        .task {
+            let stream = recordForm.$mindAnalyzer.values
+                .map { $0 != nil }
+                .dropFirst()
+            
+            for await isPresented in stream {
+                self.showMindAnalyzerView = isPresented
             }
+        }
         
         
-            .onReceive(recordForm.$textInput, perform: { _ in
-                recordForm.validateInput()
-            })
-            .onReceive(recordForm.$titleInput, perform: { _ in
-                recordForm.validateInput()
-            })
-            .task {
-                let canProceedStream = recordForm.$canProceed.values
-                
-                for await canProceed in canProceedStream {
-                    self.isSubmitEnabled = canProceed
-                }
+        .onReceive(recordForm.$textInput, perform: { _ in
+            recordForm.validateInput()
+        })
+        .onReceive(recordForm.$titleInput, perform: { _ in
+            recordForm.validateInput()
+        })
+        .task {
+            let canProceedStream = recordForm.$canProceed.values
+            
+            for await canProceed in canProceedStream {
+                self.isSubmitEnabled = canProceed
             }
+        }
     }
 }
 
