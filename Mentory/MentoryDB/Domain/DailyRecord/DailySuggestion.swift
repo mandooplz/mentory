@@ -6,11 +6,18 @@
 //
 import Foundation
 import SwiftData
+import Values
+import OSLog
 
 
 // MARK: Object
 actor DailySuggestion {
     // MARK: core
+    init(id: UUID) {
+        self.id = id
+    }
+    nonisolated let id: UUID
+    nonisolated let logger = Logger(subsystem: "MentoryDB.DailySuggestion", category: "Domain")
     
     
     // MARK: state
@@ -24,8 +31,15 @@ actor DailySuggestion {
     final class DailySuggestionModel {
         @Attribute(.unique) var id: UUID
         
-        init(id: UUID) {
+        var content: String
+        var status: NewSuggestionData.Status
+        
+        init(id: UUID,
+             content: String,
+             status: NewSuggestionData.Status) {
             self.id = id
+            self.content = content
+            self.status = status
         }
     }
 }
