@@ -55,14 +55,6 @@ final class SettingBoard: Sendable, ObservableObject {
         // mutate
         self.editingName = EditingName(owner: self, userName: userName)
     }
-    
-//    func turnReminderOn() {
-//        logger.debug("SettingBoard.turnReminderOn 호출")
-//    }
-//
-//    func turnReminderOff() {
-//        logger.debug("SettingBoard.turnReminderOff 호출")
-//    }
 
 
     func changeReminderTime(to newDate: Date) {
