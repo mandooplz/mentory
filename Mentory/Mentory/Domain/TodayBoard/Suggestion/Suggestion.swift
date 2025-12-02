@@ -22,6 +22,8 @@ final class Suggestion: Sendable, ObservableObject {
     }
     
     // MARK: state
+    nonisolated let id = UUID()
+    
     weak var owner: TodayBoard?
     
     nonisolated let source: SuggestionID

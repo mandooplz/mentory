@@ -39,8 +39,8 @@ struct TodayBoardView: View {
             
             // "오늘의 명언" 카드
             PopupCard(
-                title: todayBoard.mentorMessage?.characterType.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
-                content: todayBoard.mentorMessage?.message ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+                title: todayBoard.mentorMessage?.character?.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
+                content: todayBoard.mentorMessage?.content ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
             )
             
             // 기분 기록 카드
@@ -58,17 +58,19 @@ struct TodayBoardView: View {
             SuggestionCard(
                 todayBoard: todayBoard,
                 header: "오늘은 이런 행동 어떨까요?",
-                actionRows: SuggestionActionRows(todayBoard: todayBoard)
+                actionRows:
+                    Text("구현 예정")
+//                    SuggestionActionRows(todayBoard: todayBoard)
             )
         }
-        // 로드 시 2개의 비동기 작업 실행
-        .task {
-            // 오늘의 기록 불러오기
-            await todayBoard.loadTodayRecords()
-        }
-        .task {
-            await todayBoard.loadTodayMentorMessageTest()
-        }
+//        // 로드 시 2개의 비동기 작업 실행
+//        .task {
+//            // 오늘의 기록 불러오기
+//            await todayBoard.loadTodayRecords()
+//        }
+//        .task {
+//            await todayBoard.loadTodayMentorMessageTest()
+//        }
     }
 }
 
@@ -141,7 +143,7 @@ fileprivate struct GreetingHeader: View {
         .frame(maxWidth: .infinity, alignment: .center)
         .animation(
             .spring(response: 0.6, dampingFraction: 0.8),
-            value: todayBoard.mentorMessage?.message != nil)
+            value: todayBoard.mentorMessage?.content != nil)
         .task {
             await todayBoard.fetchUserRecordCoount()
         }
@@ -230,12 +232,9 @@ fileprivate struct RecordStatCard<Content: View>: View {
             await todayBoard.setupRecordForms()
         }
         .task {
-            let strea = todayBoard.$recordFormSelection.values
-                .map { recordForm in
-                    recordForm != nil
-                }
-            
-            
+            let stream = todayBoard.$recordFormSelection.values
+                .map { recordFormState in recordFormState != nil }
+
             for await isPresent in todayBoard.$recordFormSelection.values.map({ $0 != nil }) {
                 self.showFullScreenCover = isPresent
             }
@@ -276,9 +275,9 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.primary)
                     Spacer()
-                    Text(todayBoard.getIndicator())
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.secondary)
+//                    Text(todayBoard.getIndicator())
+//                        .font(.system(size: 12, weight: .semibold))
+//                        .foregroundStyle(.secondary)
                 }
                 
                 ProgressSection
@@ -310,9 +309,9 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: geo.size.width * todayBoard.getProgress())
-                        .animation(.spring(response: 0.6,
-                                           dampingFraction: 0.7), value: todayBoard.getProgress())
+//                        .frame(width: geo.size.width * todayBoard.getProgress())
+//                        .animation(.spring(response: 0.6,
+//                                           dampingFraction: 0.7), value: todayBoard.getProgress())
                 }
             }
             .frame(height: 10)
@@ -337,40 +336,40 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     }
 }
 
-fileprivate struct SuggestionActionRows: View {
-    @ObservedObject var todayBoard: TodayBoard
-//    @State private var actionRowEmpty = false
-    
-    init(todayBoard: TodayBoard) {
-        self.todayBoard = todayBoard
-    }
-    
-    var body: some View {
-        if todayBoard.actionKeyWordItems.isEmpty {
-            Text("기록을 남기고 추천 행동을 완료해보세.")
-//            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
-        } else {
-            VStack(spacing: 12) {
-                ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
-                    ActionRow(
-                        checked: Binding(
-                            get: { todayBoard.actionKeyWordItems[index].1 },
-                            set: { newValue in
-                                todayBoard.actionKeyWordItems[index].1 = newValue
-                                // 체크 상태 변경 시 DB에 실시간 업데이트
-                                Task {
-                                    await todayBoard.updateActionCompletion()
-                                    await todayBoard.loadTodayRecords()
-                                }
-                            }
-                        ),
-                        text: todayBoard.actionKeyWordItems[index].0
-                    )
-                }
-            }
-        }
-    }
-}
+//fileprivate struct SuggestionActionRows: View {
+//    @ObservedObject var todayBoard: TodayBoard
+////    @State private var actionRowEmpty = false
+//    
+//    init(todayBoard: TodayBoard) {
+//        self.todayBoard = todayBoard
+//    }
+//    
+//    var body: some View {
+//        if todayBoard.suggestions.isEmpty {
+//            Text("기록을 남기고 추천 행동을 완료해보세요.")
+////            ActionRow(checked: $actionRowEmpty, text: "기록을 남기고 추천행동을 완료해보세요!")
+//        } else {
+//            VStack(spacing: 12) {
+//                ForEach(todayBoard.suggestions, id: \.id) { index in
+//                    ActionRow(
+//                        checked: Binding(
+//                            get: { todayBoard.actionKeyWordItems[index].1 },
+//                            set: { newValue in
+//                                todayBoard.actionKeyWordItems[index].1 = newValue
+//                                // 체크 상태 변경 시 DB에 실시간 업데이트
+//                                Task {
+//                                    await todayBoard.updateActionCompletion()
+//                                    await todayBoard.loadTodayRecords()
+//                                }
+//                            }
+//                        ),
+//                        text: todayBoard.actionKeyWordItems[index].0
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
 
 // MARK: - DateSelectionSheet
 fileprivate struct DateSelectionSheet: View {
@@ -463,18 +462,18 @@ fileprivate struct DateSelectionSheet: View {
 }
 
 fileprivate struct DateButton: View {
-    let date: RecordDate
+    let date: MentoryDate
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(date.rawValue)
+                    Text(date.formatted())
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
                     
-                    Text(dateDescription(for: date))
+                    Text(date.formatted())
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                 }

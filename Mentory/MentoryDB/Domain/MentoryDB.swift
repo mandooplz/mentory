@@ -199,6 +199,48 @@ actor MentoryDB: Sendable {
             return 0
         }
     }
+    // 현재, 어제, 그제 Record가 있는지 확인하고 Record가 없는 날짜를 [MentoryDate] 배열로 반환
+    func getAvailableDatesForWriting() async -> [MentoryDate] {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 빈 배열을 반환합니다.")
+                return []
+            }
+            
+            // 기준 날짜: 오늘 / 어제 / 그제
+            let now = MentoryDate.now
+            let yesterday = MentoryDate(Calendar.current.date(byAdding: .day, value: -1, to: now.rawValue)!)
+            let dayBeforeYesterday = MentoryDate(Calendar.current.date(byAdding: .day, value: -2, to: now.rawValue)!)
+            let candidates = [now, yesterday, dayBeforeYesterday]
+            
+            let calendar = Calendar.current
+            
+            // DB의 기록된 날짜 집합 (startOfDay 기반 비교)
+            let recordedDates: Set<Date> = Set(
+                db.records.map { calendar.startOfDay(for: $0.recordDate) }
+            )
+            
+            // candidates 중 아직 기록이 없는 날짜만 남기기
+            let available = candidates.filter { candidate in
+                let day = calendar.startOfDay(for: candidate.rawValue)
+                return recordedDates.contains(day) == false
+            }
+            
+            logger.debug("기록 가능한 날짜 조회 결과 \(available)")
+            return available
+            
+        } catch {
+            logger.error("getAvailableDatesForWriting 에러 발생: \(error)")
+            return []
+        }
+    }
     
     // + createRecordQueue: [RecordTicket]
     func insertDataInQueue(_ recordData: RecordData) {
@@ -282,54 +324,6 @@ actor MentoryDB: Sendable {
             return
         }
     }
-    
-    
-    
-    // MARK: other
-    // 현재, 어제, 그제 Record가 있는지 확인하고 Record가 없는 날짜를 [MentoryDate] 배열로 반환
-    func getAvailableDatesForWriting() async -> [MentoryDate] {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("MentoryDB가 존재하지 않아 빈 배열을 반환합니다.")
-                return []
-            }
-            
-            // 기준 날짜: 오늘 / 어제 / 그제
-            let now = MentoryDate.now
-            let yesterday = MentoryDate(Calendar.current.date(byAdding: .day, value: -1, to: now.rawValue)!)
-            let dayBeforeYesterday = MentoryDate(Calendar.current.date(byAdding: .day, value: -2, to: now.rawValue)!)
-            let candidates = [now, yesterday, dayBeforeYesterday]
-            
-            let calendar = Calendar.current
-            
-            // DB의 기록된 날짜 집합 (startOfDay 기반 비교)
-            let recordedDates: Set<Date> = Set(
-                db.records.map { calendar.startOfDay(for: $0.recordDate) }
-            )
-            
-            // candidates 중 아직 기록이 없는 날짜만 남기기
-            let available = candidates.filter { candidate in
-                let day = calendar.startOfDay(for: candidate.rawValue)
-                return recordedDates.contains(day) == false
-            }
-            
-            logger.debug("기록 가능한 날짜 조회 결과 \(available)")
-            return available
-            
-        } catch {
-            logger.error("getAvailableDatesForWriting 에러 발생: \(error)")
-            return []
-        }
-    }
-
-
     
     
     

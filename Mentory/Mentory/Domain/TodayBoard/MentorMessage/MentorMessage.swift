@@ -14,18 +14,16 @@ import Values
 final class MentorMessage: Sendable, ObservableObject {
     // MARK: core
     init(owner: TodayBoard,
-         content: String,
-         character: MentoryCharacter) {
+         content: String) {
         self.owner = owner
         self.content = content
-        self.character = character
     }
     
     
     // MARK: state
     weak var owner: TodayBoard?
     
-    nonisolated let character: MentoryCharacter
+    nonisolated let character: MentoryCharacter? = nil
     
     @Published private(set) var content: String
     

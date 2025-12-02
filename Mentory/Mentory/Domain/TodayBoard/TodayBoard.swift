@@ -66,6 +66,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.mentorMessage = MentorMessage(
             owner: self,
             content: messageContent)
+        // 여기서 character는 어떤 역할을 하는가.
     }
     func setupRecordForms() async {
         // capture

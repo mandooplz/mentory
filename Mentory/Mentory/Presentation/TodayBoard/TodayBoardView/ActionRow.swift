@@ -24,11 +24,11 @@ struct ActionRow: View {
                     Circle()
                         .fill(Color.mentoryAccentPrimary)
                         .frame(width: 20, height: 20)
-                                                .overlay(
-                                                    Image(systemName: "checkmark")
-                                                        .font(.system(size: 11, weight: .bold))
-                                                        .foregroundColor(.white)
-                                                )
+                        .overlay(
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(.white)
+                        )
                         .transition(.scale.combined(with: .opacity))
                         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: checked)
                 }
