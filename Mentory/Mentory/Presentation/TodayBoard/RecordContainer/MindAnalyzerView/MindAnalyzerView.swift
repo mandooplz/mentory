@@ -13,6 +13,8 @@ struct MindAnalyzerView: View {
     // MARK: model
     @State private var showingSubmitAlert = false
     @ObservedObject var mindAnalyzer: MindAnalyzer
+    @Namespace private var mentorNamespace
+    
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
     }
@@ -42,29 +44,51 @@ struct MindAnalyzerView: View {
                 
                 CharacterPicker(
                     characters: MentoryCharacter.allCases,
-                    selection: $mindAnalyzer.character
+                    selection: $mindAnalyzer.character,
+                    namespace: mentorNamespace
                 )
                 
                 AnalyzeButton(
                     iconName: mindAnalyzer.isAnalyzing ? "hourglass" : "paperplane",
                     label: mindAnalyzer.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
-                    isActive: !mindAnalyzer.isAnalyzing,
-                    action: {
-                        showingSubmitAlert = true
-                    }
-                )
+                    isActive: !mindAnalyzer.isAnalyzing && mindAnalyzer.character != nil
+                ) {
+                    showingSubmitAlert = true
+                }
+                .disabled(mindAnalyzer.character == nil || mindAnalyzer.isAnalyzing)
                 .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
                     Button("취소", role: .cancel) { }
                     Button("제출") {
                         Task {
-                            mindAnalyzer.startAnalyze()
+                            await MainActor.run {
+                                withAnimation(.spring(response: 0.7,
+                                                      dampingFraction: 0.85)) {
+                                    mindAnalyzer.startAnalyze()
+                                }
+                            }
                             
+                            let startTime = Date()
                             await mindAnalyzer.analyze()
+                            
+                            // 로딩화면 최소 1초로 설정
+                            let elapsed = Date().timeIntervalSince(startTime)
+                            let minimum: TimeInterval = 1.0
+                            if elapsed < minimum {
+                                let remain = minimum - elapsed
+                                try? await Task.sleep(
+                                    nanoseconds: UInt64(remain * 1_000_000_000)
+                                )
+                            }
                             
                             //                        await mindAnalyzer.saveRecord()
                             //                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
                             
-                            mindAnalyzer.stopAnalyze()
+                            await MainActor.run {
+                                withAnimation(.spring(response: 0.7,
+                                                      dampingFraction: 0.85)) {
+                                    mindAnalyzer.stopAnalyze()
+                                }
+                            }
                         }
                     }
                 } message: {
@@ -80,11 +104,14 @@ struct MindAnalyzerView: View {
                     mindType: mindAnalyzer.mindType
                 )
             }
+
             else if isGeneratingStage {
                 if let character = mindAnalyzer.character {
                     CharacterPicker.SelectableCard(
                         character: character,
                         isSelected: true,
+                        namespace: mentorNamespace,
+                        useMatchedGeometry: true,
                         action: { }
                     )
                     .disabled(true)
@@ -98,12 +125,15 @@ struct MindAnalyzerView: View {
                     mindType: mindAnalyzer.mindType
                 )
             }
+            
             else if isResultStage {
                 
                 if let character = mindAnalyzer.character {
                     CharacterPicker.SelectableCard(
                         character: character,
                         isSelected: true,
+                        namespace: mentorNamespace,
+                        useMatchedGeometry: true,
                         action: { }
                     )
                     .disabled(true)
@@ -126,7 +156,7 @@ struct MindAnalyzerView: View {
                 }
             }
         }
-//        .navigationBarBackButtonHidden(!isSelectingStage)
+        //        .navigationBarBackButtonHidden(!isSelectingStage)
     }
 }
 
@@ -212,12 +242,26 @@ fileprivate struct CharacterPicker: View {
     let characters: [MentoryCharacter]
     @Binding var selection: MentoryCharacter?
     
+    let namespace: Namespace.ID?
+    
+    init(
+        characters: [MentoryCharacter],
+        selection: Binding<MentoryCharacter?>,
+        namespace: Namespace.ID? = nil
+    ) {
+        self.characters = characters
+        self._selection = selection
+        self.namespace = namespace
+    }
+    
     var body: some View {
         VStack(spacing: 16) {
             ForEach(characters, id: \.self) { character in
                 SelectableCard(
                     character: character,
-                    isSelected: character == selection
+                    isSelected: character == selection,
+                    namespace: namespace,
+                    useMatchedGeometry: character == selection
                 ) {
                     selection = character
                 }
@@ -228,25 +272,34 @@ fileprivate struct CharacterPicker: View {
     fileprivate struct SelectableCard: View {
         let character: MentoryCharacter
         let isSelected: Bool
+        let namespace: Namespace.ID?
+        let useMatchedGeometry: Bool
         let action: () -> Void
         
         var body: some View {
             Button(action: action) {
-                VStack(spacing: 12) {
-                    Image(character.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 110)
-                    
-                    Text(character.displayName)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Text(character.description)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                cardContent
+            }
+            .buttonStyle(.plain)
+        }
+        
+        @ViewBuilder
+        private var cardContent: some View {
+            let base = VStack(spacing: 12) {
+                Image(character.imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 110)
+                
+                Text(character.displayName)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Text(character.description)
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
                 .padding(.horizontal, 12)
@@ -256,15 +309,26 @@ fileprivate struct CharacterPicker: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .stroke(isSelected ? Color.mentoryAccentPrimary : Color(.mentoryBorder), lineWidth: isSelected ? 2 : 1)
+                        .stroke(
+                            isSelected ? Color.mentoryAccentPrimary : Color(.mentoryBorder),
+                            lineWidth: isSelected ? 2 : 1
+                        )
                 )
-                .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 10, y: 8)
+                .shadow(
+                    color: isSelected ? Color.black.opacity(0.08) : Color.clear,
+                    radius: 10,
+                    y: 8
+                )
+            
+            // namespace 와 useMatchedGeometry 둘 다 있으면 애니메이션 연결
+            if let namespace, useMatchedGeometry {
+                base.matchedGeometryEffect(id: character, in: namespace)
+            } else {
+                base
             }
-            .buttonStyle(.plain)
         }
     }
 }
-
 
 fileprivate struct AnalyzeButton: View {
     let iconName: String
@@ -285,7 +349,7 @@ fileprivate struct AnalyzeButton: View {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(isActive ?
                           Color.mentoryAccentPrimary :
-                          Color.mentoryAccentPrimary.opacity(0.35))
+                            Color.mentoryAccentPrimary.opacity(0.35))
             )
             .foregroundColor(.white)
         }
