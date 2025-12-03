@@ -158,6 +158,29 @@ public struct MentoryDate: Sendable, Codable, Hashable {
         return MentoryDate(newDate)
     }
     
+    /// 현재 MentoryDate와 같은 날짜지만 시/분/초가 랜덤한 Date를 반환합니다.
+    ///
+    /// 같은 날짜이지만, 하루(0시~23:59:59) 내의 무작위 시각이 필요할 때 사용됩니다.
+    /// 예: 기록 데이터 생성 테스트 / 더미 데이터 생성 / 무작위 타임스탬프 연출.
+    ///
+    /// ```swift
+    /// let today = MentoryDate.now
+    /// let random = today.randomTimeInSameDay()
+    /// print(random)   // 예: 2025-12-03 14:27:51
+    /// ```
+    public func randomTimeInSameDay() -> MentoryDate {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: rawValue)
+        
+        // 하루의 총 초: 24 * 60 * 60 = 86400
+        let secondsInDay = 24 * 60 * 60
+        let randomOffset = Int.random(in: 0 ..< secondsInDay)
+        
+        let newDate = calendar.date(byAdding: .second, value: randomOffset, to: start) ?? rawValue
+        return MentoryDate(newDate)
+    }
+    
+    
     // MARK: value
     /// 두 날짜 간의 상대적인 관계를 간단한 한국어 표현으로 나타내는 열거형입니다.
     ///

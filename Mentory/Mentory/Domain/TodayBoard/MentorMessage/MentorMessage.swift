@@ -33,8 +33,6 @@ final class MentorMessage: Sendable, ObservableObject {
     }
     
     
-    
-    
     // MARK: action
     func fetchCharacter() async {
         // capture

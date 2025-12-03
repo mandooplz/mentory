@@ -28,10 +28,7 @@ final class TodayBoard: Sendable, ObservableObject {
 
     @Published var recordForms: [RecordForm] = []
     @Published var recordFormSelection: RecordForm? = nil
-    private var stdDate: MentoryDate = .now
-    internal func updateStdDate() {
-        self.stdDate = .now
-    }
+    var recentSetUpDate: MentoryDate? = nil
     
     @Published var recordCount: Int? = nil
     
@@ -56,7 +53,7 @@ final class TodayBoard: Sendable, ObservableObject {
             logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.")
             return
         }
-        let now = self.stdDate
+        let now = MentoryDate.now
 
         // process
         let today = now
@@ -71,9 +68,16 @@ final class TodayBoard: Sendable, ObservableObject {
             RecordForm(owner: self, targetDate: date)
         }
         self.recordForms = recordForms
+        self.recentSetUpDate = now
     }
     func updateRecordForms() async {
         // capture
+        if let recentSetUpDate,
+           recentSetUpDate.isSameDate(as: .now) {
+            logger.error("현재 recentSetUpDate와 동일한 날짜라 updateRecordForms을 취소합니다.")
+            return
+        }
+        
         
         // process
         

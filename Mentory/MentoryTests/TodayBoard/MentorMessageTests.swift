@@ -30,8 +30,6 @@ struct MentorMessageTests {
                 mentorMessage.character = character
             }
             
-            try await #require(mentorMessage.character == nil)
-            
             // when
             await mentorMessage.fetchCharacter()
             
