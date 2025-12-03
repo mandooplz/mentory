@@ -78,18 +78,15 @@ struct MindAnalyzerView: View {
                             let startTime = Date()
                             await mindAnalyzer.analyze()
                             
-                            // 로딩화면 최소 1초로 설정
+                            // 로딩화면 최소 2초로 설정
                             let elapsed = Date().timeIntervalSince(startTime)
-                            let minimum: TimeInterval = 1.0
+                            let minimum: TimeInterval = 2.0
                             if elapsed < minimum {
                                 let remain = minimum - elapsed
                                 try? await Task.sleep(
                                     nanoseconds: UInt64(remain * 1_000_000_000)
                                 )
                             }
-                            
-                            //                        await mindAnalyzer.saveRecord()
-                            //                        await mindAnalyzer.owner?.owner?.loadTodayRecords()
                             
                             await MainActor.run {
                                 withAnimation(
