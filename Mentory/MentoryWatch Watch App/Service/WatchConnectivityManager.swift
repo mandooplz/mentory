@@ -42,14 +42,14 @@ final class WatchConnectivityManager: ObservableObject {
                 self?.connectionStatus = data.connectionStatus
             }
         }
-        engine.activate()
+        await engine.activate()
 
         // mutate
         self.engine = engine
     }
 
-    /// iOS 앱에 데이터 요청
-    func requestDataFromPhone() async {
-        await engine?.requestDataFromPhone()
+    /// iOS 앱에서 보낸 데이터 로드
+    func loadInitialData() {
+        engine?.loadInitialDataFromContext()
     }
 }

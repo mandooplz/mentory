@@ -10,13 +10,12 @@ import Foundation
 import OSLog
 
 /// WCSessionDelegate를 구현하는 백그라운드 처리 전용 액터
-actor WatchConnectivityEngine {
+actor WatchConnectivityEngine: NSObject {
     // MARK: - Core
     static let shared = WatchConnectivityEngine()
 
     private nonisolated let logger = Logger(subsystem: "MentoryWatch.WatchConnectivityEngine", category: "Service")
-    private nonisolated(unsafe) let session: WCSession
-    private var sessionDelegate: SessionDelegate?
+    private nonisolated let session: WCSession
 
     // MARK: - State
     private var cachedMentorMessage: String = ""
@@ -29,7 +28,7 @@ actor WatchConnectivityEngine {
     typealias DataUpdateHandler = @Sendable (WatchData) -> Void
 
     // MARK: - Initialization
-    private init() {
+    private override init() {
         self.session = WCSession.default
     }
 
@@ -42,16 +41,8 @@ actor WatchConnectivityEngine {
             return
         }
 
-        let delegate = SessionDelegate(engine: self)
-        Task {
-            await self.setSessionDelegate(delegate)
-        }
-        session.delegate = delegate
+        session.delegate = self
         session.activate()
-    }
-
-    private func setSessionDelegate(_ delegate: SessionDelegate) {
-        self.sessionDelegate = delegate
     }
 
     /// 데이터 업데이트 핸들러 설정
@@ -59,28 +50,18 @@ actor WatchConnectivityEngine {
         self.dataUpdateHandler = handler
     }
 
-    /// iOS 앱에 데이터 요청
-    func requestDataFromPhone() {
-        guard session.isReachable else {
-            logger.warning("iPhone과 연결되지 않음")
-            updateConnectionStatus("iPhone과 연결되지 않음")
-            return
+    /// iOS 앱에서 보낸 applicationContext 데이터 로드
+    nonisolated func loadInitialDataFromContext() {
+        // iOS에서 updateApplicationContext로 보낸 최신 데이터 읽기
+        let context = session.receivedApplicationContext
+        let mentorMsg = context["mentorMessage"] as? String ?? ""
+        let character = context["mentorCharacter"] as? String ?? ""
+
+        logger.debug("ApplicationContext에서 데이터 로드 완료")
+
+        Task {
+            await handleReceivedData(mentorMsg: mentorMsg, character: character)
         }
-
-        let message = ["request": "initialData"]
-        session.sendMessage(message, replyHandler: { [weak self] reply in
-            guard let self = self else { return }
-
-            // Task 외부에서 데이터 추출 (Sendable하지 않은 Dictionary를 직접 전달하지 않음)
-            let mentorMsg = reply["mentorMessage"] as? String ?? ""
-            let character = reply["mentorCharacter"] as? String ?? ""
-
-            Task {
-                await self.handleReceivedData(mentorMsg: mentorMsg, character: character)
-            }
-        }, errorHandler: { [weak self] error in
-            self?.logger.error("데이터 요청 실패: \(error.localizedDescription)")
-        })
     }
 
     // MARK: - Internal Methods
@@ -105,10 +86,8 @@ actor WatchConnectivityEngine {
         switch state {
         case .activated:
             statusMessage = "활성화됨"
-            // 활성화 완료되면 데이터 요청
-            Task {
-                await self.requestDataFromPhone()
-            }
+            // 활성화 완료되면 applicationContext에서 데이터 로드
+            loadInitialDataFromContext()
         case .inactive:
             statusMessage = "비활성화됨"
         case .notActivated:
@@ -145,47 +124,29 @@ actor WatchConnectivityEngine {
     }
 }
 
-// MARK: - SessionDelegate
-private final class SessionDelegate: NSObject, @preconcurrency WCSessionDelegate {
-    private weak var engine: WatchConnectivityEngine?
-
-    nonisolated init(engine: WatchConnectivityEngine) {
-        self.engine = engine
-        super.init()
-    }
-
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+// MARK: - WCSessionDelegate
+extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
+    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         Task {
-            await engine?.handleActivation(state: activationState, error: error)
+            await handleActivation(state: activationState, error: error)
         }
     }
 
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         let mentorMsg = message["mentorMessage"] as? String
         let character = message["mentorCharacter"] as? String
 
         Task {
-            await engine?.handleReceivedData(mentorMsg: mentorMsg, character: character)
+            await handleReceivedData(mentorMsg: mentorMsg, character: character)
         }
     }
 
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        let mentorMsg = message["mentorMessage"] as? String
-        let character = message["mentorCharacter"] as? String
-
-        Task {
-            await engine?.handleReceivedData(mentorMsg: mentorMsg, character: character)
-        }
-
-        replyHandler(["status": "received"])
-    }
-
-    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+    nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         let mentorMsg = applicationContext["mentorMessage"] as? String
         let character = applicationContext["mentorCharacter"] as? String
 
         Task {
-            await engine?.handleReceivedData(mentorMsg: mentorMsg, character: character)
+            await handleReceivedData(mentorMsg: mentorMsg, character: character)
         }
     }
 }
