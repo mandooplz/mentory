@@ -32,7 +32,8 @@ struct MentorMessageTests {
             await #expect(mentorMessage.character != nil)
         }
         
-        @Test(arguments: MentoryCharacter.allCases) func setCharacterRandomlyOnce(_ character: MentoryCharacter) async throws {
+        @Test(arguments: MentoryCharacter.allCases)
+        func setCharacterRandomlyOnce(_ character: MentoryCharacter) async throws {
             // given
             await MainActor.run {
                 mentorMessage.character = character

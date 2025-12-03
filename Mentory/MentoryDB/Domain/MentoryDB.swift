@@ -21,12 +21,31 @@ actor MentoryDB: Sendable {
     static let container: ModelContainer = {
         do {
             return try ModelContainer(
-                for: MentoryDB.MentoryDBModel.self, DailyRecord.DailyRecordModel.self,
+                for: MentoryDBModel.self, DailyRecord.DailyRecordModel.self,
                 DailySuggestion.DailySuggestionModel.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
     }()
+    private func getRef() throws -> MentoryDBModel {
+        
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        let model = try context.fetch(descriptor).first
+        
+        if let model {
+            return model
+        } else {
+            let newModel = MentoryDBModel(id: self.id)
+            context.insert(newModel)
+            return newModel
+        }
+    }
     
     
     
@@ -91,6 +110,11 @@ actor MentoryDB: Sendable {
             logger.error("MentoryDB 조회 오류: \(error)")
             return nil
         }
+    }
+    
+    // + character: MentoryCharacter? = nil
+    func setCharacter(_ character: MentoryCharacter) {
+        
     }
     
     // + records: [DailyRecord]
@@ -379,58 +403,57 @@ actor MentoryDB: Sendable {
             logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
         }
     }
+}
+
+
+
+// MARK: model
+@Model
+final class MentoryDBModel {
+    // MARK: core
+    @Attribute(.unique) var id: UUID
+    var userName: String? = nil
+    var character: MentoryCharacter? = nil
     
+    @Relationship var createRecordQueue: [RecordTicket] = []
+    @Relationship var records: [DailyRecord.DailyRecordModel] = []
     
+    @Relationship var messages: MentorMessage.MentorMessageModel? = nil
     
+    init(id: UUID,
+         userName: String? = nil) {
+        self.id = id
+        self.userName = userName
+    }
+}
+
+@Model
+final class RecordTicket {
+    // MARK: core
+    @Attribute(.unique) var id: UUID
+    var recordDate: Date  // 일기가 속한 날짜
+    var createdAt: Date   // 실제 작성 시간
     
+    var analyzedResult: String
+    var emotion: Emotion
     
-    // MARK: value
-    @Model
-    final class MentoryDBModel {
-        // MARK: core
-        @Attribute(.unique) var id: UUID
-        var userName: String?
-        
-        @Relationship var createRecordQueue: [RecordTicket] = []
-        @Relationship var records: [DailyRecord.DailyRecordModel] = []
-        
-        @Relationship var messages: MentorMessage.MentorMessageModel? = nil
-        
-        init(id: ID, userName: String?) {
-            self.id = id
-            self.userName = userName
-        }
+    init(data: RecordData) {
+        self.id = data.id
+        self.recordDate = data.recordDate
+        self.createdAt = data.createdAt
+        self.analyzedResult = data.analyzedResult
+        self.emotion = data.emotion
     }
     
-    @Model
-    final class RecordTicket {
-        // MARK: core
-        @Attribute(.unique) var id: UUID
-        var recordDate: Date  // 일기가 속한 날짜
-        var createdAt: Date   // 실제 작성 시간
-        
-        var analyzedResult: String
-        var emotion: Emotion
-        
-        init(data: RecordData) {
-            self.id = data.id
-            self.recordDate = data.recordDate
-            self.createdAt = data.createdAt
-            self.analyzedResult = data.analyzedResult
-            self.emotion = data.emotion
-        }
-        
-        func toRecordData() -> RecordData {
-            .init(
-                id: id,
-                recordDate: recordDate,
-                createdAt: createdAt,
-                analyzedResult: analyzedResult,
-                emotion: emotion,
-            )
-        }
+    func toRecordData() -> RecordData {
+        .init(
+            id: id,
+            recordDate: recordDate,
+            createdAt: createdAt,
+            analyzedResult: analyzedResult,
+            emotion: emotion,
+        )
     }
-    
 }
 
 
