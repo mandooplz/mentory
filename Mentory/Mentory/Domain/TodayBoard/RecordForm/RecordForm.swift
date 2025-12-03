@@ -47,7 +47,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     
         //process
         let canProceedResult: Bool = !title.isEmpty && !text.isEmpty
-        logger.debug("submit 가능\(canProceedResult)")
+        
         // mutate
         self.canProceed = canProceedResult
     }
