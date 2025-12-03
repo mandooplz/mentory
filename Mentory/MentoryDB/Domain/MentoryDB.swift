@@ -15,6 +15,11 @@ actor MentoryDB: Sendable {
     // MARK: core
     init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
         self.id = id
+        
+        let context = ModelContext(Self.container)
+        let newModel = MentoryDBModel(id: id)
+        context.insert(newModel)
+        try! context.save()
     }
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
@@ -27,25 +32,6 @@ actor MentoryDB: Sendable {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
         }
     }()
-    private func getRef() throws -> MentoryDBModel {
-        
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        let model = try context.fetch(descriptor).first
-        
-        if let model {
-            return model
-        } else {
-            let newModel = MentoryDBModel(id: self.id)
-            context.insert(newModel)
-            return newModel
-        }
-    }
     
     
     
@@ -56,33 +42,17 @@ actor MentoryDB: Sendable {
     // + userName: String? = nil
     func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
-        let id = self.id
         
-        // sharedUUID 에 해당하는 Model을 찾거나, 없으면 새로 생성
+        let id = self.id
         let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
         
-        let model: MentoryDBModel
-        
         do {
-            if let existing = try context.fetch(descriptor).first {
-                logger.debug("MentoryDB를 찾았습니다.")
-                model = existing
-            } else {
-                logger.debug("MentoryDB가 존재하지 않습니다. 새로운 MentoryDB를 생성합니다.")
-                model = MentoryDBModel(id: self.id, userName: newName)
-            }
-        } catch {
-            logger.error("MentoryDB 조회 오류: \(error)")
-            return
-        }
-        
-        
-        do {
+            let model = try context.fetch(descriptor).first!
             context.insert(model)
-            
             model.userName = newName
+            
             try context.save()
             logger.debug("MentoryDB에 새로운 이름 \(newName)을 저장했습니다.")
         } catch {
@@ -113,8 +83,36 @@ actor MentoryDB: Sendable {
     }
     
     // + character: MentoryCharacter? = nil
-    func setCharacter(_ character: MentoryCharacter) {
+    func getCharacter() -> MentoryCharacter? {
+        let context = ModelContext(MentoryDB.container)
         
+        let id = self.id
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        let model = try! context.fetch(descriptor).first!
+        return model.character
+    }
+    func setCharacter(_ character: MentoryCharacter) {
+        let context = ModelContext(MentoryDB.container)
+        
+        let id = self.id
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            let model = try context.fetch(descriptor).first!
+            context.insert(model)
+            model.character = character
+            
+            try context.save()
+            logger.debug("MentoryDB에 새로운 캐릭터 \(character.rawValue) 저장했습니다.")
+        } catch {
+            logger.error("MentoryDB 저장 오류: \(error)")
+            return
+        }
     }
     
     // + records: [DailyRecord]
