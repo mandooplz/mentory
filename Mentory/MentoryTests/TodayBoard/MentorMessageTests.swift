@@ -24,11 +24,13 @@ struct MentorMessageTests {
         }
         
         @Test(arguments: MentoryCharacter.allCases)
-        func setCharacterFromDB(_ character: MentoryCharacter) async throws {
+        func updateCharacterFromDB(_ character: MentoryCharacter) async throws {
             // given
             await MainActor.run {
                 mentorMessage.character = character
             }
+            
+            try await #require(mentorMessage.character == nil)
             
             // when
             await mentorMessage.fetchCharacter()
@@ -54,9 +56,11 @@ struct MentorMessageTests {
     struct UpdateContent {
         let mentoryiOS: MentoryiOS
         let mentorMessage: MentorMessage
+        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mentorMessage = try await getMentorMessage(mentoryiOS)
+            self.mentoryDB = mentoryiOS.mentoryDB
         }
         
         @Test func whenCharacterIsNil() async throws {
@@ -70,6 +74,72 @@ struct MentorMessageTests {
             
             // then
             await #expect(mentorMessage.content == nil)
+        }
+        
+        @Test func setContent() async throws {
+            // given
+            await mentorMessage.fetchCharacter()
+            try await #require(mentorMessage.character != nil)
+            
+            try await #require(mentorMessage.content == nil)
+            
+            // when
+            await mentorMessage.updateContent()
+            
+            // then
+            await #expect(mentorMessage.content != nil)
+        }
+        @Test func setRecentUpdate() async throws {
+            // given
+            await mentorMessage.fetchCharacter()
+            try await #require(mentorMessage.character != nil)
+            
+            try await #require(mentorMessage.recentUpdate == nil)
+            
+            // when
+            await mentorMessage.updateContent()
+            
+            // then
+            await #expect(mentorMessage.recentUpdate != nil)
+        }
+        
+        @Test func doNotUpdateContentIsSameDay() async throws {
+            // given
+            await mentorMessage.fetchCharacter()
+            await mentorMessage.updateContent()
+            
+            await mentorMessage.resetContent()
+            
+            try await #require(mentorMessage.content == nil)
+            try await #require(mentorMessage.recentUpdate != nil)
+            
+            // when
+            await mentorMessage.updateContent()
+            
+            // then
+            await #expect(mentorMessage.content == nil)
+        }
+        
+        @Test func loadContentFromMentoryDB() async throws {
+            // given
+            await mentorMessage.fetchCharacter()
+            await mentorMessage.updateContent()
+            
+            let recentUpdate = try #require(await mentorMessage.recentUpdate)
+            let content = try #require(await mentorMessage.content)
+            
+            await MainActor.run {
+                mentorMessage.recentUpdate = nil
+                mentorMessage.content = nil
+            }
+            
+            // when
+            await mentorMessage.updateContent()
+            
+            // then
+            await #expect(mentorMessage.content == content)
+            await #expect(mentorMessage.recentUpdate != recentUpdate)
+            
         }
     }
 }

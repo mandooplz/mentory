@@ -26,7 +26,12 @@ final class MentorMessage: Sendable, ObservableObject {
     
     var character: MentoryCharacter? = nil
     
-    @Published private(set) var content: String? = nil
+    var recentUpdate: MentoryDate? = nil
+    @Published var content: String? = nil
+    func resetContent() {
+        self.content = nil
+    }
+    
     
     
     
@@ -62,6 +67,11 @@ final class MentorMessage: Sendable, ObservableObject {
         // capture
         guard let character else {
             logger.error("MentorMessage의 Character가 nil입니다. 먼저 Character를 설정하세요.")
+            return
+        }
+        if let recentUpdate,
+           recentUpdate.isSameDate(as: .now) == true {
+            logger.error("\(Date.now) 날짜의 MentorMessage가 이미 존재합니다.")
             return
         }
         
@@ -109,6 +119,7 @@ final class MentorMessage: Sendable, ObservableObject {
         
         // mutate
         self.content = messageContent
+        self.recentUpdate = .now
     }
     
     
