@@ -72,7 +72,7 @@ struct MindAnalyzerView: View {
                             
                             // 로딩화면 최소 1초로 설정
                             let elapsed = Date().timeIntervalSince(startTime)
-                            let minimum: TimeInterval = 1.0
+                            let minimum: TimeInterval = 2.0
                             if elapsed < minimum {
                                 let remain = minimum - elapsed
                                 try? await Task.sleep(
@@ -114,7 +114,7 @@ struct MindAnalyzerView: View {
                         useMatchedGeometry: true,
                         action: { }
                     )
-                    .disabled(true)
+                    .allowsHitTesting(false)
                 }
                 
                 AnalyzedResult(
@@ -136,7 +136,7 @@ struct MindAnalyzerView: View {
                         useMatchedGeometry: true,
                         action: { }
                     )
-                    .disabled(true)
+                    .allowsHitTesting(false)
                 }
                 
                 AnalyzedResult(
