@@ -13,6 +13,7 @@ struct MindAnalyzerView: View {
     @State private var showingSubmitAlert = false
     @ObservedObject var mindAnalyzer: MindAnalyzer
     @Namespace private var mentorNamespace
+    @Environment(\.dismiss) private var dismiss
 
     init(_ mindAnalyzer: MindAnalyzer) {
         self.mindAnalyzer = mindAnalyzer
@@ -166,7 +167,18 @@ struct MindAnalyzerView: View {
 //        .preference(key: CancelToolbarHidden.self, value: mindAnalyzer.isAnalyzing || mindAnalyzer.isAnalyzeFinished)
         
 
-        .navigationBarBackButtonHidden(!isSelectingStage)
+        .toolbar {
+            if isSelectingStage {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                    }
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
