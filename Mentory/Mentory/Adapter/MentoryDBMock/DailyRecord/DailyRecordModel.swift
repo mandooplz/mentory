@@ -14,8 +14,8 @@ import Collections
 final class DailyRecordModel: Sendable {
     // MARK: core
     init(owner: MentoryDBModel? = nil,
-         recordDate: Date,
-         createAt: Date,
+         recordDate: MentoryDate,
+         createAt: MentoryDate,
          analyzedContent: String,
          emotion: Emotion,
          actionTexts: [String] = [],
@@ -34,8 +34,8 @@ final class DailyRecordModel: Sendable {
     nonisolated let id = UUID()
     weak var owner: MentoryDBModel?
     
-    nonisolated let recordDate: Date
-    nonisolated let createAt: Date
+    nonisolated let recordDate: MentoryDate
+    nonisolated let createAt: MentoryDate
     
     var analyzedContent: String
     var emotion: Emotion

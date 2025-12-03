@@ -83,7 +83,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         do {
             let recordData = RecordData(
                 id: .init(),
-                recordDate: targetDate.rawValue,
+                recordDate: targetDate,
                 createdAt: .now,
                 analyzedResult: analysis.empathyMessage,
                 emotion: analysis.mindType

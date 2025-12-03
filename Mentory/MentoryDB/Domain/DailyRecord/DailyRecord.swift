@@ -81,8 +81,8 @@ actor DailyRecord: Sendable {
         // MARK: operator
         func toData() -> RecordData {
             return .init(id: self.id,
-                         recordDate: self.recordDate,
-                         createdAt: self.createdAt,
+                         recordDate: .init(recordDate),
+                         createdAt: .init(createdAt),
                          analyzedResult: self.analyzedResult,
                          emotion: self.emotion)
         }

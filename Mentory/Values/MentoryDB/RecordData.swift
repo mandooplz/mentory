@@ -13,14 +13,14 @@ public struct RecordData: Sendable, Hashable, Codable, Equatable {
     // MARK: core
     public let id: UUID
     
-    public let recordDate: Date
-    public let createdAt: Date
+    public let recordDate: MentoryDate
+    public let createdAt: MentoryDate
     
     public let analyzedResult: String
     public let emotion: Emotion
     
     
-    public init(id: UUID, recordDate: Date, createdAt: Date, analyzedResult: String, emotion: Emotion) {
+    public init(id: UUID, recordDate: MentoryDate, createdAt: MentoryDate, analyzedResult: String, emotion: Emotion) {
         self.id = id
         self.recordDate = recordDate
         self.createdAt = createdAt

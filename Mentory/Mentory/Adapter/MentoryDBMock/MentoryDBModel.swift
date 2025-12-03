@@ -26,6 +26,15 @@ final class MentoryDBModel: Sendable {
     }
     
     var records: [DailyRecordModel] = []
+    func isSameDayRecordExist(_ date: MentoryDate) -> Bool {
+        let result = self.records
+            .contains { record in
+                record.recordDate.isSameDate(as: date) == true
+            }
+        
+        return result
+    }
+    
 
     
     // MARK: action

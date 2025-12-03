@@ -42,11 +42,34 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     // MARK: action
     func checkDisability() async {
         // capture
+        let recordDate = self.targetDate
+        
+        let todayBoard = self.owner!
+        let mentoryiOS = todayBoard.owner!
+        
+        let mentoryDB = mentoryiOS.mentoryDB
         
         // process
+        let isRecordAlreadyExist: RecordCheckResult
+        do {
+            switch try await mentoryDB.isSameDayRecordExist(for: recordDate) {
+            case true:
+                isRecordAlreadyExist = .recordAlreadyExist
+            case false:
+                isRecordAlreadyExist = .recordNotExist
+            }
+        } catch {
+            logger.error("\(#function) 실패: \(error)")
+            return
+        }
         
         // mutate
-        fatalError("targetDate를 통해 MentoryDB에서 현재 날짜에 해당하는 Record를 가져와서 그 값들을 바탕으로 isDisabled를 결정하는 로직이 필요합니다.")
+        switch isRecordAlreadyExist {
+        case .recordAlreadyExist:
+            self.isDisabled = true
+        case .recordNotExist:
+            self.isDisabled = false
+        }
     }
     
     func validateInput() {
@@ -117,4 +140,8 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     
 
     // MARK: value
+    enum RecordCheckResult: Sendable, Hashable {
+        case recordAlreadyExist
+        case recordNotExist
+    }
 }

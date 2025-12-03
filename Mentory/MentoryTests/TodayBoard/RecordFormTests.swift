@@ -4,10 +4,11 @@
 //
 //  Created by 구현모 on 11/15/25.
 //
-
 import Testing
 @testable import Mentory
 import Foundation
+import Values
+
 
 // MARK: Tests
 @Suite("RecordForm", .timeLimit(.minutes(1)))
@@ -15,9 +16,50 @@ struct RecordFormTests {
     struct CheckDisability {
         let mentoryiOS: MentoryiOS
         let recordForm: RecordForm
+        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
+            self.mentoryDB = mentoryiOS.mentoryDB
+        }
+        
+        @Test func setIsDiabledToFalse() async throws {
+            // given
+            try await #require(recordForm.isDisabled == true)
+            
+            // when
+            await recordForm.checkDisability()
+            
+            // then
+            await #expect(recordForm.isDisabled == false)
+        }
+        @Test func notSetFalseWhenRecordAlreadExistAtTargetDate() async throws {
+            // given
+            try await #require(mentoryDB.getRecordCount() == 0)
+            
+            let targetDate = recordForm.targetDate
+            
+            let randomDateAtSameDay = targetDate.randomTimeInSameDay()
+            let recordData = RecordData(
+                id: .init(),
+                recordDate: randomDateAtSameDay,
+                createdAt: .now,
+                analyzedResult: "SAMPLE_RESULT",
+                emotion: .neutral
+            )
+            
+            try await mentoryDB.saveRecord(recordData)
+            
+            try await #require(mentoryDB.getRecordCount() == 1)
+            
+            // given
+            try await #require(recordForm.isDisabled == true)
+            
+            // when
+            await recordForm.checkDisability()
+            
+            // then
+            await #expect(recordForm.isDisabled == true)
         }
     }
     
@@ -136,6 +178,14 @@ struct RecordFormTests {
             
             // then
             await #expect(recordForm.mindAnalyzer == nil)
+        }
+        @Test func whenIsDiabledIsTrue() async throws {
+            // given
+            try await #require(recordForm.isDisabled == true)
+            
+            // when
+            
+            // then
         }
 
         @Test func notResetTitleInputWhenSucceed() async throws {

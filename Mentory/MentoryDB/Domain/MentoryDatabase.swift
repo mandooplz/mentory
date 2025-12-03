@@ -315,8 +315,8 @@ final class RecordTicket {
     
     init(data: RecordData) {
         self.id = data.id
-        self.recordDate = data.recordDate
-        self.createdAt = data.createdAt
+        self.recordDate = data.recordDate.rawValue
+        self.createdAt = data.createdAt.rawValue
         self.analyzedResult = data.analyzedResult
         self.emotion = data.emotion
     }
@@ -324,8 +324,8 @@ final class RecordTicket {
     func toRecordData() -> RecordData {
         .init(
             id: id,
-            recordDate: recordDate,
-            createdAt: createdAt,
+            recordDate: .init(recordDate),
+            createdAt: .init(createdAt),
             analyzedResult: analyzedResult,
             emotion: emotion,
         )

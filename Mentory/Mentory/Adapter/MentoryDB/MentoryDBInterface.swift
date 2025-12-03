@@ -23,6 +23,6 @@ protocol MentoryDBInterface: Sendable {
     func setCharacter(_: MentoryCharacter) async throws
     
     func getRecordCount() async throws -> Int
-    
+    func isSameDayRecordExist(for: MentoryDate) async throws -> Bool
     func saveRecord(_: RecordData) async throws
 }

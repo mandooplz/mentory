@@ -39,6 +39,10 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         await object.getRecordCount()
     }
     
+    @concurrent func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
+        fatalError()
+    }
+    
     @concurrent func saveRecord(_ data: RecordData) async throws {
         await object.insertTicket(data)
         

@@ -50,7 +50,11 @@ struct MentoryDBMock: MentoryDBInterface {
     }
     
     @concurrent func getRecordCount() async throws -> Int {
-        fatalError()
+        return await object.records.count
+    }
+    
+    @concurrent func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
+        return await object.isSameDayRecordExist(date)
     }
     
     
