@@ -48,13 +48,14 @@ final class TodayBoard: Sendable, ObservableObject {
         
         self.currentDate = newDate
     }
-    func resetCurrentDate() {
+    func refreshCurrentDate() {
         self.currentDate = .now
     }
     
     @Published var recordCount: Int? = nil
     
     @Published var suggestions: [Suggestion] = []
+    var recentSuggestionUpdate: MentoryDate? = nil
     func getSuggestionIndicator() -> String {
         "2/3"
     }
@@ -135,13 +136,45 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForms = newRecordForms
     }
     
-    func setUpSuggestions() async {
+    func loadSuggestions() async {
         // capture
+        let currentDate = self.currentDate
         
-        // process
+        let mentoryiOS = self.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+        
+        // process - MentoryDB
+        let recentRecord: (any DailyRecordInterface)?
+        do {
+            recentRecord = try await mentoryDB.getRecentRecord()
+        } catch {
+            logger.error("\(#function) 실패: \(error)")
+            return
+        }
+        
+        guard let recentRecord else {
+            logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
+            return
+        }
+        
+        // process - MentoryDB
+        let suggestionDatas: [SuggestionData]
+        do {
+            suggestionDatas = try await recentRecord.getSuggestions()
+        } catch {
+            logger.error("\(#function) 실패 : \(error)")
+            return
+        }
         
         // mutate
-        fatalError("구현 예정")
+        self.suggestions = suggestionDatas
+            .map { Suggestion(
+                owner: self,
+                target: $0.target,
+                content: $0.content,
+                isDone: $0.isDone)
+            }
+        self.recentSuggestionUpdate = currentDate
     }
     
     func fetchUserRecordCoount() async {

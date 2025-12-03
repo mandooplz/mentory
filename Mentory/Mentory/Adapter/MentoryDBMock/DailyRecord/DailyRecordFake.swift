@@ -45,6 +45,16 @@ final class DailyRecordFake: Sendable {
         self.createSuggestionQueue.append(contentsOf: suggestionDatas)
     }
     var suggestions: [DailySuggestionFake] = []
+    func getSuggestions() -> [SuggestionData] {
+        return self.suggestions
+            .map { dailySuggestion in
+                SuggestionData(
+                        target: dailySuggestion.target,
+                        content: dailySuggestion.content,
+                        isDone: dailySuggestion.isDone
+                    )
+            }
+    }
 
 
     // MARK: action

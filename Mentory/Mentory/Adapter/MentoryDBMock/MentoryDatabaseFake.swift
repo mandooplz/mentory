@@ -39,6 +39,10 @@ final class MentoryDatabaseFake: Sendable {
         
         return result
     }
+    func getRecentRecord() -> DailyRecordFake? {
+        return self.records
+            .max(by: { $0.recordDate < $1.recordDate })
+    }
     
     // MARK: action
     func createDailyRecords() {
