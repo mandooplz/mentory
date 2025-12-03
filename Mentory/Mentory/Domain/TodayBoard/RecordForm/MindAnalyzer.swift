@@ -38,6 +38,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     @Published var isAnalyzeFinished: Bool = false
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
+    @Published var suggestions: [SuggestionData] = []
     
     
     // MARK: action
@@ -82,6 +83,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         // process - MentoryDB
         // DailyRecord & DailySuggestion 생성
+        let suggestionDatas = analysis.actionKeywords
+            .map { actionText in
+                SuggestionData(content: actionText)
+            }
         do {
             let recordData = RecordData(
                 id: .init(),
@@ -90,11 +95,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
                 analyzedResult: analysis.empathyMessage,
                 emotion: analysis.mindType
             )
-            
-            let suggestionDatas = analysis.actionKeywords
-                .map { actionText in
-                    SuggestionData(content: actionText)
-                }
             
             try await mentoryDB.submitAnalysis(
                 recordData: recordData,
@@ -110,6 +110,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
+        self.suggestions = suggestionDatas
         
         let suggestions = analysis.actionKeywords
             .map { keyword in
