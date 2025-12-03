@@ -12,6 +12,15 @@ import Foundation
 // MARK: Tests
 @Suite("RecordForm", .timeLimit(.minutes(1)))
 struct RecordFormTests {
+    struct CheckDisability {
+        let mentoryiOS: MentoryiOS
+        let recordForm: RecordForm
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.recordForm = try await getRecordFormForTest(mentoryiOS)
+        }
+    }
+    
     struct ValidateInput {
         let mentoryiOS: MentoryiOS
         let recordForm: RecordForm

@@ -164,7 +164,7 @@ final class TodayBoard: Sendable, ObservableObject {
     }
 
     
-    // TODO: ETC
+    // TODO: etc
     func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
         // capture
 //        guard let recordId = latestRecordId else {

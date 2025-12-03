@@ -63,6 +63,9 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let mentoryiOS = todayBoard.owner!
         
         let firebaseLLM = mentoryiOS.firebaseLLM
+        let mentoryDB = mentoryiOS.mentoryDB
+        
+        let targetDate = recordForm.targetDate
         
         
         // process
@@ -76,7 +79,23 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
         
-        // saveRecord를 구현해야 함.
+        // process
+        do {
+            let recordData = RecordData(
+                id: .init(),
+                recordDate: targetDate.rawValue,
+                createdAt: .now,
+                analyzedResult: analysis.empathyMessage,
+                emotion: analysis.mindType
+            )
+            
+            try await mentoryDB.saveRecord(recordData)
+            
+            logger.debug("MentoryDB에 RecordData를 저장했습니다.")
+        } catch {
+            logger.error("\(error)")
+            return
+        }
         
         // mutate
         self.mindType = analysis.mindType

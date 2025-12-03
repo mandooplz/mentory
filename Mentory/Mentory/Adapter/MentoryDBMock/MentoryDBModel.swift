@@ -17,16 +17,16 @@ final class MentoryDBModel: Sendable {
     
     // MARK: state
     var userName: String? = nil
+    var userCharacter: MentoryCharacter? = nil
+    var message: MessageData? = nil
+    
+    private var createRecordQueue: Deque<RecordData> = []
+    func insertTicket(_ recordData: RecordData) {
+        self.createRecordQueue.append(recordData)
+    }
     
     var records: [DailyRecordModel] = []
-    
-    var createRecordQueue: Deque<RecordData> = []
-    
-    var userCharacter: MentoryCharacter? = nil
-    
-    var message: MessageData? = nil
 
-    
     
     // MARK: action
     func createDailyRecords() {

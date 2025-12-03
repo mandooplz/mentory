@@ -52,4 +52,11 @@ struct MentoryDBMock: MentoryDBInterface {
     @concurrent func getRecordCount() async throws -> Int {
         fatalError()
     }
+    
+    
+    @concurrent func saveRecord(_ recordData: RecordData) async throws {
+        await object.insertTicket(recordData)
+        
+        await object.createDailyRecords()
+    }
 }
