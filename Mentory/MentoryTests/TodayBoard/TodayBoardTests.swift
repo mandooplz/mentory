@@ -74,18 +74,6 @@ struct TodayBoardTests {
             // then
             await #expect(todayBoard.recordForms.count == 3)
         }
-        @Test func setRecentSetUpDate() async throws {
-            // given
-            try await #require(todayBoard.recentSetUpDate == nil)
-            
-            try await #require(todayBoard.recordForms.isEmpty == true)
-            
-            // when
-            await todayBoard.setUpRecordForms()
-            
-            // then
-            await #expect(todayBoard.recentSetUpDate != nil)
-        }
         
         @Test func createTodayRecordForm() async throws {
             // given
@@ -174,19 +162,6 @@ struct TodayBoardTests {
             
             #expect(newRecordFormIdSet == recordFormIdSet)
         }
-        @Test func whenAlreadySetUpNotSetRecentSetUpDateAgain() async throws {
-            // given
-            await todayBoard.setUpRecordForms()
-            
-            try await #require(todayBoard.recordForms.isEmpty == false)
-            let recentSetUpDate = try #require(await todayBoard.recentSetUpDate)
-            
-            // when
-            await todayBoard.setUpRecordForms()
-            
-            // then
-            await #expect(todayBoard.recentSetUpDate == recentSetUpDate)
-        }
     }
     
     struct UpdateRecordForms {
@@ -197,6 +172,16 @@ struct TodayBoardTests {
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
+        @Test func whenNotSetUpRecordForms() async throws {
+            // given
+            try await #require(todayBoard.recordForms.isEmpty == true)
+            
+            // when
+            await todayBoard.updateRecordForms()
+            
+            // then
+            await #expect(todayBoard.recordForms.isEmpty == true)
+        }
         @Test func NotUpdateWhenIsSameDay() async throws {
             // given
             await todayBoard.setUpRecordForms()
@@ -207,12 +192,10 @@ struct TodayBoardTests {
             let recordFormIds = recordForms.map { $0.id }
             let recordFormIdSet = Set(recordFormIds)
             
-            let date = try #require(await todayBoard.recentSetUpDate)
+            let date = await todayBoard.currentDate
             let randomSameDate = date.randomTimeInSameDay()
             
-            await MainActor.run {
-                todayBoard.recentSetUpDate = randomSameDate
-            }
+            await todayBoard.setCurrentDate(randomSameDate)
             
             // when
             await todayBoard.updateRecordForms()
@@ -224,6 +207,76 @@ struct TodayBoardTests {
             
             #expect(newRecordFormIdSet == recordFormIdSet)
         }
+        
+        @Test func removeStaleRecordFormWhenDayChanged() async throws {
+            // given
+            await todayBoard.setUpRecordForms()
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let optionalRecordForm = await todayBoard.recordForms
+                .first { recordForm in
+                    recordForm.targetDate.relativeDay(from: .now) == .dayBefoeYesterday
+                }
+            let twoDaysAgoRecordForm = try #require(await optionalRecordForm)
+            
+            // given
+            let baseDate = try #require(await todayBoard.recentUpdatedate())
+            let nextDate = baseDate.dayAfter()
+            await todayBoard.setCurrentDate(nextDate)
+
+            
+            // when
+            await todayBoard.updateRecordForms()
+            
+            
+            // then
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let isExist = await todayBoard.recordForms
+                .contains { $0.id == twoDaysAgoRecordForm.id }
+            
+            #expect(isExist == false)
+        }
+        @Test func createRecordFormWhenDayChanged() async throws {
+            // given
+            await todayBoard.setUpRecordForms()
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let beforeRecordForms = await todayBoard.recordForms
+            let beforeIdSet = Set(beforeRecordForms.map(\.id))
+            
+            let baseDate = try #require(await todayBoard.recentUpdatedate())
+            let nextDate = baseDate.dayAfter()
+            await todayBoard.setCurrentDate(nextDate)
+            
+            
+            // when
+            await todayBoard.updateRecordForms()
+            
+            
+            // then
+            try await #require(todayBoard.recordForms.count == 3)
+            
+            let afterRecordForms = await todayBoard.recordForms
+            let afterIdSet = Set(afterRecordForms.map(\.id))
+            
+            // 새로 생긴 id 1개
+            let diff = afterIdSet.subtracting(beforeIdSet)
+            let newId = try #require(diff.first)
+            #expect(diff.count == 1)
+            
+            let newRecordForm = try #require(await todayBoard.recordForms
+                .first { $0.id == newId }
+            )
+            let newRecordFormDate = newRecordForm.targetDate
+            
+            // 새 폼의 날짜는 nextDate(= 새로운 오늘)이 되어야 한다
+            #expect(newRecordFormDate.isSameDate(as: nextDate))
+            
+            // recentSetUpDate도 nextDate로 갱신되었는지 확인
+            let recent = try #require(await todayBoard.recentUpdatedate())
+            #expect(recent.isSameDate(as: nextDate))
+        }
     }
     
     struct SetUpSuggestion {
@@ -234,7 +287,18 @@ struct TodayBoardTests {
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
-        
+        @Test(.disabled()) func whenAlreadySetUp() async throws {
+            // given
+            await todayBoard.setUpSuggestions()
+            
+            try await #require(todayBoard.suggestions.count == 3)
+            
+            // when
+            await todayBoard.setUpSuggestions()
+            
+            // then
+            Issue.record("테스트 작성 예정")
+        }
     }
 }
 

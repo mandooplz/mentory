@@ -20,7 +20,7 @@ import Foundation
 /// let description = today.formatted()   // 예: "12월 3일 수요일"
 /// ```
 nonisolated
-public struct MentoryDate: Sendable, Codable, Hashable {
+public struct MentoryDate: Sendable, Codable, Hashable, Comparable {
     // MARK: core
     public let rawValue: Date
     public init(_ rawValue: Date) {
@@ -158,6 +158,22 @@ public struct MentoryDate: Sendable, Codable, Hashable {
         return MentoryDate(newDate)
     }
     
+    /// 현재 날짜에서 정확히 하루 뒤(1일 후)의 `MentoryDate`를 반환합니다.
+    ///
+    /// - Returns: self보다 1일 이후 날짜를 나타내는 `MentoryDate`.
+    ///
+    /// ```swift
+    /// let today = MentoryDate.now
+    /// let tomorrow = today.dayAfter()
+    ///
+    /// print(tomorrow.formatted()) // 예: "12월 4일 목요일"
+    /// ```
+    public func dayAfter() -> MentoryDate {
+        let calendar = Calendar.current
+        let newDate = calendar.date(byAdding: .day, value: 1, to: self.rawValue) ?? self.rawValue
+        return MentoryDate(newDate)
+    }
+    
     /// 현재 MentoryDate와 같은 날짜지만 시/분/초가 랜덤한 Date를 반환합니다.
     ///
     /// 같은 날짜이지만, 하루(0시~23:59:59) 내의 무작위 시각이 필요할 때 사용됩니다.
@@ -178,6 +194,14 @@ public struct MentoryDate: Sendable, Codable, Hashable {
         
         let newDate = calendar.date(byAdding: .second, value: randomOffset, to: start) ?? rawValue
         return MentoryDate(newDate)
+    }
+    
+    /// 두 `MentoryDate` 값을 비교할 수 있도록 하는 연산자입니다.
+    ///
+    /// 내부적으로 보관 중인 `rawValue`(`Date`)를 기준으로 오름차순 정렬이 가능해집니다.
+    /// 예를 들어, `sorted()` 호출 시 가장 과거의 날짜부터 정렬됩니다.
+    public static func < (lhs: MentoryDate, rhs: MentoryDate) -> Bool {
+        lhs.rawValue < rhs.rawValue
     }
     
     

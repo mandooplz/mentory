@@ -28,7 +28,29 @@ final class TodayBoard: Sendable, ObservableObject {
 
     @Published var recordForms: [RecordForm] = []
     @Published var recordFormSelection: RecordForm? = nil
-    var recentSetUpDate: MentoryDate? = nil
+    func recentUpdatedate() -> MentoryDate? {
+        guard self.recordForms.isEmpty == false else {
+            return nil
+        }
+        
+        return self.recordForms
+            .map { $0.targetDate }
+            .max()!
+    }
+    
+    
+    private(set) var currentDate: MentoryDate = .now
+    func setCurrentDate(_ newDate: MentoryDate) {
+        guard newDate > currentDate else {
+            logger.error("이전 날짜로 설정하려고 했습니다.")
+            return
+        }
+        
+        self.currentDate = newDate
+    }
+    func resetCurrentDate() {
+        self.currentDate = .now
+    }
     
     @Published var recordCount: Int? = nil
     
@@ -68,21 +90,46 @@ final class TodayBoard: Sendable, ObservableObject {
             RecordForm(owner: self, targetDate: date)
         }
         self.recordForms = recordForms
-        self.recentSetUpDate = now
     }
     func updateRecordForms() async {
         // capture
-        if let recentSetUpDate,
-           recentSetUpDate.isSameDate(as: .now) {
-            logger.error("현재 recentSetUpDate와 동일한 날짜라 updateRecordForms을 취소합니다.")
+        let currentDate = self.currentDate
+        let recordForms = self.recordForms
+        guard recordForms.isEmpty == false else {
+            logger.error("recordForms가 비어 있어 updateRecordForms을 취소합니다.")
+            return
+        }
+        guard let recentUpdatedate = self.recentUpdatedate() else {
+            logger.error("recentUpdateDate가 nil이어서 updateRecordForms을 취소합니다.")
             return
         }
         
-        
         // process
+        let isSameDay = recentUpdatedate.isSameDate(as: currentDate)
+        guard isSameDay == false else {
+            logger.error("현재 날짜와 가장 최근 업데이트된 날짜가 같습니다. 아무것도 하지 않습니다.")
+            return
+        }
         
+        let targetDates: [MentoryDate] = [
+            currentDate,
+            currentDate.dayBefore(),
+            currentDate.twoDaysBefore()
+        ]
+        
+        var newRecordForms: [RecordForm] = []
+        for targetDate in targetDates {
+            if let existing = recordForms.first(where: { $0.targetDate.isSameDate(as: targetDate) }) {
+                    newRecordForms.append(existing)
+            } else {
+                let newForm = RecordForm(owner: self, targetDate: targetDate)
+                newRecordForms.append(newForm)
+            }
+        }
+        newRecordForms.sort { $0.targetDate < $1.targetDate }
+            
         // mutate
-        fatalError("updateStdDate로 바뀐 기준값이 하루를 넘겼을 때 RecordForm 객체를 업데이트하는 코드가 필요합니다.")
+        self.recordForms = newRecordForms
     }
     
     func setUpSuggestions() async {
@@ -91,7 +138,7 @@ final class TodayBoard: Sendable, ObservableObject {
         // process
         
         // mutate
-        fatalError()
+        fatalError("구현 예정")
     }
     
     func fetchUserRecordCoount() async {
@@ -102,7 +149,8 @@ final class TodayBoard: Sendable, ObservableObject {
         // process
         let recordCount: Int
         do {
-            recordCount = try await mentoryDB.getRecordCount()
+            async let count = try await mentoryDB.getRecordCount()
+            recordCount = try await count
         } catch {
             logger.error("\(error)")
             return
