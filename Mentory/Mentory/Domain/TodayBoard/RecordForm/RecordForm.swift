@@ -92,38 +92,23 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
             logger.error("canProceed가 false입니다. 먼저 validateInput을 실행해주세요.")
             return
         }
-
-        guard titleInput.isEmpty == false else {
-            logger.error("RecordForm의 titleInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
-            return
-        }
-        if titleInput.isEmpty {
-            
-            return
-        } else if textInput.isEmpty && voiceInput == nil && imageInput == nil {
-            logger.error("RecordForm의 내용 입력이 비어있습니다. 텍스트, 이미지, 음성 중 하나 이상의 값이 필요합니다.")
-            return
-        }
         
-        guard let todayBoard = owner,
-              let mentory = todayBoard.owner,
-              let settingBoard = mentory.settingBoard else {
-            logger.warning("리마인더 예약에 필요한 owner 체인이 없습니다.")
-            return
-        }
+        let todayBoard = self.owner!
+        let mentoryiOS = todayBoard.owner!
+        let settingBoard = mentoryiOS.settingBoard!
 
         
-        // process
-        let reminderTime = settingBoard.reminderTime
-        
-        // 기존 알림 전부 삭제
-        await mentory.reminderCenter.cancelAllWeeklyReminders()
-        
-        // 마지막 기록(baseDate) 기준으로 알림 1개만 다시 예약
-        await mentory.reminderCenter.scheduleWeeklyReminder(
-            baseDate: .now,
-            reminderTime: reminderTime
-        )
+//        // process
+//        let reminderTime = settingBoard.reminderTime
+//        
+//        // 기존 알림 전부 삭제
+//        await mentory.reminderCenter.cancelAllWeeklyReminders()
+//        
+//        // 마지막 기록(baseDate) 기준으로 알림 1개만 다시 예약
+//        await mentory.reminderCenter.scheduleWeeklyReminder(
+//            baseDate: .now,
+//            reminderTime: reminderTime
+//        )
         
 
         // mutate
