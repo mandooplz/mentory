@@ -287,12 +287,12 @@ actor MentoryDB: Sendable {
             }
             
             // messages가 비어있을 때
-            guard let latest = db.messages.max(by: { $0.createdAt < $1.createdAt }) else {
-                logger.error("messages가 비어 있습니다.")
+            guard let mentorMessage = db.messages else {
+                logger.error("MentorMessage가 MentoryDB 안에 존재하지 않습니다.")
                 return nil
             }
-            logger.debug("저장된 전체 메세지:\(db.messages.sorted(by: { $0.createdAt < $1.createdAt }).map { $0.toMessageData() })")
-            return latest.toMessageData()
+            
+            return mentorMessage.toMessageData()
             
         } catch {
             logger.error("DB fetch error → nil 반환")
@@ -315,7 +315,7 @@ actor MentoryDB: Sendable {
 
             let newMessage = MentorMessage.MentorMessageModel(data: data)
             
-            db.messages.append(newMessage)
+            db.messages = newMessage
             try context.save()
             logger.debug("MentoryDB에 새로운 멘토 메시지를 저장했습니다.")
             
@@ -394,7 +394,7 @@ actor MentoryDB: Sendable {
         @Relationship var createRecordQueue: [RecordTicket] = []
         @Relationship var records: [DailyRecord.DailyRecordModel] = []
         
-        @Relationship var messages: [MentorMessage.MentorMessageModel] = []
+        @Relationship var messages: MentorMessage.MentorMessageModel? = nil
         
         init(id: ID, userName: String?) {
             self.id = id

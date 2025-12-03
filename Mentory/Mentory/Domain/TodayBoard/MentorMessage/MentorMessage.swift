@@ -24,7 +24,7 @@ final class MentorMessage: Sendable, ObservableObject {
     nonisolated let id = UUID()
     weak var owner: TodayBoard?
     
-    nonisolated let character: MentoryCharacter? = nil
+    var character: MentoryCharacter? = nil
     
     @Published private(set) var content: String? = nil
     
@@ -32,6 +32,14 @@ final class MentorMessage: Sendable, ObservableObject {
     
     // MARK: action
     func setRandomCharacter() {
+        // capture
+        guard self.character == nil else {
+            logger.error("이미 Character가 설정되어 있습니다.")
+            return
+        }
+        
+        // mutate
+        self.character = .random
         
     }
     func fetchUserCharacter() async {
@@ -45,6 +53,8 @@ final class MentorMessage: Sendable, ObservableObject {
         let alanLLM = mentoryiOS.alanLLM
         
         // process
+        
+        
         let messageContent: String
         do {
             // SwiftData에 저장된 MentorMessage를 불러온다.

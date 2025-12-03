@@ -6,6 +6,7 @@
 //
 import Foundation
 import Testing
+import Values
 @testable import Mentory
 
 
@@ -18,6 +19,28 @@ struct MentorMessageTests {
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mentorMessage = try await getMentorMessage(mentoryiOS)
+        }
+        
+        @Test func setCharacter() async throws {
+            // given
+            try await #require(mentorMessage.character == nil)
+            
+            // when
+            await mentorMessage.setRandomCharacter()
+            
+            // then
+            await #expect(mentorMessage.character != nil)
+        }
+        
+        @Test(arguments: MentoryCharacter.allCases) func setCharacterRandomlyOnce(_ character: MentoryCharacter) async throws {
+            // given
+            await MainActor.run {
+                mentorMessage.character = character
+            }
+            
+            // when
+            
+            // then
         }
     }
 }
