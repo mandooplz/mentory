@@ -39,9 +39,9 @@ struct TodayBoardView: View {
             
             // 멘토리메세지 카드
             PopupCard(
-                imageName: todayBoard.mentorMessage?.characterType.imageName ?? "greeting",
-                title: todayBoard.mentorMessage?.characterType.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
-                content: todayBoard.mentorMessage?.message ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+                imageName: todayBoard.mentorMessage?.character?.imageName ?? "greeting",
+                title: todayBoard.mentorMessage?.character?.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
+                content: todayBoard.mentorMessage?.content ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
             )
             
             // 기분 기록 카드
@@ -58,17 +58,14 @@ struct TodayBoardView: View {
             // 행동 추천 카드
             SuggestionCard(
                 todayBoard: todayBoard,
-                header: todayBoard.actionKeyWordItems.isEmpty ? "기록을 남기고 추천 행동을 완료해보세요! " :"오늘은 이런 행동 어떨까요?",
+                header: todayBoard.suggestions.isEmpty ? "기록을 남기고 추천 행동을 완료해보세요! " :"오늘은 이런 행동 어떨까요?",
                 actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
         // 로드 시 2개의 비동기 작업 실행
         .task {
-            // 오늘의 기록 불러오기
-            await todayBoard.loadTodayRecords()
-        }
-        .task {
-            await todayBoard.loadTodayMentorMessageTest()
+//            await todayBoard.loadTodayRecords()
+//            await todayBoard.loadTodayMentorMessageTest()
         }
         .task {
             // WatchConnectivity 설정
@@ -275,7 +272,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showFullScreenCover) {
-            if let form = todayBoard.recordForm {
+            if let form = todayBoard.recordFormSelection {
                 RecordContainerView(recordForm: form)
             }
         }
@@ -336,7 +333,7 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
             }
             .frame(height: 10)
             
-            Text(todayBoard.getIndicator())
+            Text(todayBoard.getSuggestionIndicator())
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.secondary)
         }
@@ -353,22 +350,23 @@ fileprivate struct SuggestionActionRows: View {
     }
     
     var body: some View {
-        ForEach(todayBoard.actionKeyWordItems.indices, id: \.self) { index in
-            ActionRow(
-                checked: Binding(
-                    get: { todayBoard.actionKeyWordItems[index].1 },
-                    set: { newValue in
-                        todayBoard.actionKeyWordItems[index].1 = newValue
-                        // 체크 상태 변경 시 DB에 실시간 업데이트
-                        Task {
-                            await todayBoard.updateActionCompletion()
-                            await todayBoard.loadTodayRecords()
-                        }
-                    }
-                ),
-                text: todayBoard.actionKeyWordItems[index].0
-            )
-        }
+//        ForEach(todayBoard.suggestions, id: \.self.id) { index in
+//            // 각 아이템마다 ActionRow를 하나씩 만들어준다.
+//            ActionRow(
+//                checked: Binding(
+//                    get: { todayBoard.actionKeyWordItems[index].1 },
+//                    set: { newValue in
+//                        todayBoard.actionKeyWordItems[index].1 = newValue
+//                        // 체크 상태 변경 시 DB에 실시간 업데이트
+//                        Task {
+//                            await todayBoard.updateActionCompletion()
+//                            await todayBoard.loadTodayRecords()
+//                        }
+//                    }
+//                ),
+//                text: todayBoard.actionKeyWordItems[index].0
+//            )
+//        }
         
     }
 }
