@@ -10,12 +10,16 @@ import Values
 
 // MARK: Mock
 nonisolated
-struct DailyRecordMock: DailyRecordInterface {
+public struct DailyRecordMock: DailyRecordInterface {
     // MARK: core
+    nonisolated let object: DailyRecordFake
+    init(_ object: DailyRecordFake) {
+        self.object = object
+    }
     
     
     // MARK: flow
-    func delete() async throws {
-        fatalError()
+    @concurrent func getSuggestions() async throws -> [SuggestionData] {
+        return await object.getSuggestions()
     }
 }

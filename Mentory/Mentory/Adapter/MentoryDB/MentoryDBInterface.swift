@@ -13,6 +13,8 @@ import Values
 
 // MARK: Interface
 protocol MentoryDBInterface: Sendable {
+    associatedtype DailyRecord: DailyRecordInterface
+    
     func setName(_ newName: String) async throws
     func getName() async throws -> String?
 
@@ -24,6 +26,7 @@ protocol MentoryDBInterface: Sendable {
     
     func getRecordCount() async throws -> Int
     func isSameDayRecordExist(for: MentoryDate) async throws -> Bool
+    func getRecentRecord() async throws -> DailyRecord?
     
     func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws
 }

@@ -279,7 +279,7 @@ struct TodayBoardTests {
         }
     }
     
-    struct SetUpSuggestion {
+    struct LoadSuggestions {
         let mentory: MentoryiOS
         let todayBoard: TodayBoard
         init() async throws {
@@ -289,12 +289,12 @@ struct TodayBoardTests {
         
         @Test(.disabled()) func whenAlreadySetUp() async throws {
             // given
-            await todayBoard.setUpSuggestions()
+            await todayBoard.loadSuggestions()
             
             try await #require(todayBoard.suggestions.count == 3)
             
             // when
-            await todayBoard.setUpSuggestions()
+            await todayBoard.loadSuggestions()
             
             // then
             Issue.record("테스트 작성 예정")

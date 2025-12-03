@@ -54,9 +54,16 @@ struct MentoryDatabaseMock: MentoryDBInterface {
     @concurrent func getRecordCount() async throws -> Int {
         return await object.records.count
     }
-    
     @concurrent func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
         return await object.isSameDayRecordExist(date)
+    }
+    @concurrent func getRecentRecord() async throws -> DailyRecordMock? {
+        guard let dailyRecord = await object.getRecentRecord() else {
+            logger.error("최근 DailyRecord가 존재하지 않습니다.")
+            return nil
+        }
+        
+        return .init(dailyRecord)
     }
     
     

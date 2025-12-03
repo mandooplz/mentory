@@ -99,7 +99,8 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
-        
+
+        // 이를 어디에서 설명해야 하는가.
 //        let settingBoard = mentoryiOS.settingBoard!
 
         

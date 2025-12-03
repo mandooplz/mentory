@@ -10,61 +10,6 @@ import Values
 import OSLog
 
 
-// MARK: model
-@Model
-final class MentoryDBModel {
-    // MARK: core
-    @Attribute(.unique) var id: UUID
-    var userName: String? = nil
-    
-    var userCharacter: MentoryCharacter? = nil
-    
-    var messageCreatedAt: Date? = nil
-    var messageContent: String? = nil
-    var messageCharacter: MentoryCharacter? = nil
-    
-    @Relationship var createRecordQueue: [RecordTicket] = []
-    @Relationship var records: [DailyRecordModel] = []
-    
-    
-    init(id: UUID,
-         userName: String? = nil) {
-        self.id = id
-        self.userName = userName
-    }
-}
-
-@Model
-final class RecordTicket {
-    @Attribute(.unique) var id: UUID
-    
-    var recordDate: Date  // 일기가 속한 날짜
-    var createdAt: Date   // 실제 작성 시간
-    
-    var analyzedResult: String
-    var emotion: Emotion
-    
-    init(data: RecordData) {
-        self.id = data.id
-        self.recordDate = data.recordDate.rawValue
-        self.createdAt = data.createdAt.rawValue
-        self.analyzedResult = data.analyzedResult
-        self.emotion = data.emotion
-    }
-    
-    func toRecordData() -> RecordData {
-        .init(
-            id: id,
-            recordDate: .init(recordDate),
-            createdAt: .init(createdAt),
-            analyzedResult: analyzedResult,
-            emotion: emotion,
-        )
-    }
-}
-
-
-
 
 // MARK: Object
 public actor MentoryDatabase: Sendable {
@@ -248,7 +193,7 @@ public actor MentoryDatabase: Sendable {
         }
     }
     public func getRecord(ticketId: UUID) -> DailyRecord? {
-        fatalError()
+        fatalError("구현 예정입니다.")
     }
     public func insertTicket(_ recordData: RecordData) {
         let context = ModelContext(Self.container)
@@ -331,6 +276,60 @@ public actor MentoryDatabase: Sendable {
         } catch {
             logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
         }
+    }
+}
+
+
+// MARK: model
+@Model
+final class MentoryDBModel {
+    // MARK: core
+    @Attribute(.unique) var id: UUID
+    var userName: String? = nil
+    
+    var userCharacter: MentoryCharacter? = nil
+    
+    var messageCreatedAt: Date? = nil
+    var messageContent: String? = nil
+    var messageCharacter: MentoryCharacter? = nil
+    
+    @Relationship var createRecordQueue: [RecordTicket] = []
+    @Relationship var records: [DailyRecordModel] = []
+    
+    
+    init(id: UUID,
+         userName: String? = nil) {
+        self.id = id
+        self.userName = userName
+    }
+}
+
+@Model
+final class RecordTicket {
+    @Attribute(.unique) var id: UUID
+    
+    var recordDate: Date  // 일기가 속한 날짜
+    var createdAt: Date   // 실제 작성 시간
+    
+    var analyzedResult: String
+    var emotion: Emotion
+    
+    init(data: RecordData) {
+        self.id = data.id
+        self.recordDate = data.recordDate.rawValue
+        self.createdAt = data.createdAt.rawValue
+        self.analyzedResult = data.analyzedResult
+        self.emotion = data.emotion
+    }
+    
+    func toRecordData() -> RecordData {
+        .init(
+            id: id,
+            recordDate: .init(recordDate),
+            createdAt: .init(createdAt),
+            analyzedResult: analyzedResult,
+            emotion: emotion,
+        )
     }
 }
 
