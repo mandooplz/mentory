@@ -293,17 +293,8 @@ final class TodayBoard: Sendable, ObservableObject {
         return recordForms.first { $0.targetDate == date }
     }
 
-    /// WatchConnectivity 설정 - Watch로부터 투두 완료 처리 받기
-    func setupWatchConnectivity() async {
-        await WatchConnectivityManager.shared.setTodoCompletionHandler { [weak self] todoText, isCompleted in
-            Task { @MainActor in
-                await self?.handleWatchTodoCompletion(todoText: todoText, isCompleted: isCompleted)
-            }
-        }
-    }
-
     /// Watch로부터 투두 완료 처리를 받아서 DB 업데이트
-    private func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
+    func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
         // capture
         guard let recordId = latestRecordId else {
             logger.error("업데이트할 레코드 ID가 없습니다.")
