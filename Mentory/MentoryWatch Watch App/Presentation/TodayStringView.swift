@@ -29,8 +29,8 @@ struct TodayStringView: View {
                     .padding()
             }
         }
-        .onAppear {
-            connectivityManager.requestDataFromPhone()
+        .task {
+            connectivityManager.loadInitialData()
         }
     }
 
