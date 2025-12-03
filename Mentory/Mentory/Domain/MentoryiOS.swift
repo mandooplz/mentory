@@ -97,6 +97,9 @@ final class MentoryiOS: Sendable, ObservableObject {
 
         self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
+
+        // WatchConnectivity 설정
+        await self.todayBoard?.setupWatchConnectivity()
     }
     
     func saveUserName() async {
