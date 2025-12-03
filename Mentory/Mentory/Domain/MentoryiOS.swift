@@ -99,7 +99,12 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.settingBoard = SettingBoard(owner: self)
 
         // WatchConnectivity 설정
-        await self.todayBoard?.setupWatchConnectivity()
+        await WatchConnectivityManager.shared.setUp()
+        await WatchConnectivityManager.shared.setTodoCompletionHandler { [weak self] todoText, isCompleted in
+            Task { @MainActor in
+                await self?.todayBoard?.handleWatchTodoCompletion(todoText: todoText, isCompleted: isCompleted)
+            }
+        }
     }
     
     func saveUserName() async {
