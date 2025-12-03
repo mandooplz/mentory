@@ -28,6 +28,13 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         await object.setMentorMessage(data)
     }
     
+    @concurrent func getCharacter() async throws -> MentoryCharacter? {
+        fatalError()
+    }
+    @concurrent func setCharacter(_ character: MentoryCharacter) async throws {
+        fatalError()
+    }
+    
     @concurrent func getRecordCount() async throws -> Int {
         await object.getRecordCount()
     }

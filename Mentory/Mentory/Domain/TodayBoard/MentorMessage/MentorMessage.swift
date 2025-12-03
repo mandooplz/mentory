@@ -42,19 +42,24 @@ final class MentorMessage: Sendable, ObservableObject {
         self.character = .random
         
     }
+    
     func fetchUserCharacter() async {
         // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
         
         // process
+        let character: MentoryCharacter?
         do {
+            character = try await mentoryDB.getCharacter()
         } catch {
             logger.error("fetchUserCharacter 실패 : \(error)")
             return
         }
         
         // mutate
+        self.character = character
     }
     
     func updateContent() async {

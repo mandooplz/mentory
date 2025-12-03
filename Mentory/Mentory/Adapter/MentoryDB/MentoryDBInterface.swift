@@ -13,11 +13,14 @@ import Values
 
 // MARK: Interface
 protocol MentoryDBInterface: Sendable {
-    func setName(_ newName: String) async throws -> Void
+    func setName(_ newName: String) async throws
     func getName() async throws -> String?
 
     func getMentorMessage() async throws -> MessageData?
-    func setMentorMessage(_ data: MessageData) async throws -> Void
+    func setMentorMessage(_ data: MessageData) async throws
+    
+    func getCharacter() async throws -> MentoryCharacter?
+    func setCharacter(_: MentoryCharacter) async throws
     
     func getRecordCount() async throws -> Int
 }

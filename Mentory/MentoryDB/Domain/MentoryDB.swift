@@ -40,7 +40,6 @@ public actor MentoryDB: Sendable {
     // + id: UUID
     nonisolated public let id: UUID
     
-    // + userName: String? = nil
     public func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
         
@@ -83,219 +82,6 @@ public actor MentoryDB: Sendable {
         }
     }
     
-    // + character: MentoryCharacter? = nil
-    public func getCharacter() -> MentoryCharacter? {
-        let context = ModelContext(MentoryDB.container)
-        
-        let id = self.id
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        let model = try! context.fetch(descriptor).first!
-        return model.character
-    }
-    public func setCharacter(_ character: MentoryCharacter) {
-        let context = ModelContext(MentoryDB.container)
-        
-        let id = self.id
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        do {
-            let model = try context.fetch(descriptor).first!
-            context.insert(model)
-            model.character = character
-            
-            try context.save()
-            logger.debug("MentoryDB에 새로운 캐릭터 \(character.rawValue) 저장했습니다.")
-        } catch {
-            logger.error("MentoryDB 저장 오류: \(error)")
-            return
-        }
-    }
-    
-    // + records: [DailyRecord]
-    public func getAllRecords() async -> [RecordData] {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate {
-                $0.id == id
-            }
-        )
-        
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("MentoryDB가 존재하지 않아 빈배열을 반환합니다.")
-                return []
-            }
-            
-            let recordModels = db.records.sorted { $0.createdAt > $1.createdAt }
-            let recordDatas = recordModels
-                .map { model in
-                    return model.toData()
-                }
-            
-            logger.debug("모든 레코드 조회 성공 \(recordDatas.count)")
-            return recordDatas
-        } catch {
-            logger.error("레코드 조회 오류: \(error)")
-            return []
-        }
-    }
-    public func getTodayRecordDatas() async -> [RecordData] {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("DB가 존재하지 않아 빈 배열을 반환합니다.")
-                return []
-            }
-            
-            let calendar = Calendar.current
-            let today = calendar.startOfDay(for: Date())
-            let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
-            
-            let recordDatas = db.records
-                .filter { $0.createdAt >= today && $0.createdAt < tomorrow }
-                .sorted { $0.createdAt > $1.createdAt }
-                .map { $0.toData() }
-            
-            logger.debug("오늘 레코드 조회 성공 \(recordDatas.count)")
-            return recordDatas
-        } catch {
-            logger.error("TodayRecord 조회 오류: \(error)")
-            return []
-        }
-    }
-    public func getRecords(from: Date, to: Date) -> [RecordData] {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("DB가 존재하지 않아 빈 배열을 반환합니다.")
-                return []
-            }
-            
-            return db.records.filter {
-                $0.createdAt >= from && $0.createdAt <= to
-            }
-            .sorted { $0.createdAt > $1.createdAt }
-            .map { $0.toData() }
-            
-        } catch {
-            logger.error("날짜 범위 조회 오류: \(error)")
-            return []
-        }
-    }
-    public func getRecordCount() -> Int {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("MentoryDB가 존재하지 않아 0을 반환합니다.")
-                return 0
-            }
-            
-            return db.records.count
-            
-        } catch {
-            logger.error("에러 발생으로 0 반환. \(error)")
-            return 0
-        }
-    }
-    // 현재, 어제, 그제 Record가 있는지 확인하고 Record가 없는 날짜를 [MentoryDate] 배열로 반환
-    public func getAvailableDatesForWriting() async -> [MentoryDate] {
-        let context = ModelContext(MentoryDB.container)
-        let id = self.id
-
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-        
-        do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("MentoryDB가 존재하지 않아 빈 배열을 반환합니다.")
-                return []
-            }
-            
-            // 기준 날짜: 오늘 / 어제 / 그제
-            let now = MentoryDate.now
-            let yesterday = MentoryDate(Calendar.current.date(byAdding: .day, value: -1, to: now.rawValue)!)
-            let dayBeforeYesterday = MentoryDate(Calendar.current.date(byAdding: .day, value: -2, to: now.rawValue)!)
-            let candidates = [now, yesterday, dayBeforeYesterday]
-            
-            let calendar = Calendar.current
-            
-            // DB의 기록된 날짜 집합 (startOfDay 기반 비교)
-            let recordedDates: Set<Date> = Set(
-                db.records.map { calendar.startOfDay(for: $0.recordDate) }
-            )
-            
-            // candidates 중 아직 기록이 없는 날짜만 남기기
-            let available = candidates.filter { candidate in
-                let day = calendar.startOfDay(for: candidate.rawValue)
-                return recordedDates.contains(day) == false
-            }
-            
-            logger.debug("기록 가능한 날짜 조회 결과 \(available)")
-            return available
-            
-        } catch {
-            logger.error("getAvailableDatesForWriting 에러 발생: \(error)")
-            return []
-        }
-    }
-    
-    // + createRecordQueue: [RecordTicket]
-    public func insertDataInQueue(_ recordData: RecordData) {
-        let context = ModelContext(Self.container)
-        let id = self.id
-        
-        let descriptor = FetchDescriptor<MentoryDBModel>(
-            predicate: #Predicate {
-                $0.id == id
-            }
-        )
-        
-        do {
-            if let db = try context.fetch(descriptor).first {
-                let ticket = RecordTicket(data: recordData)
-                
-                db.createRecordQueue.append(ticket)
-                logger.debug("RecordData를 큐에 추가했습니다. 현재 큐 크기: \(db.createRecordQueue.count)")
-            } else {
-                logger.debug("MentoryDB가 존재하지 않습니다. 새로운 MentoryDB를 생성한 뒤 큐에 추가합니다.")
-                let newDb = MentoryDBModel(id: id, userName: nil)
-                context.insert(newDb)
-            }
-            
-            try context.save()
-        } catch {
-            logger.error("RecordData 큐 추가 오류: \(error.localizedDescription)")
-            return
-        }
-    }
-    
-    // + mentorMessages: MentorMessage? = nil
     public func getMentorMessage() -> MessageData? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
@@ -348,6 +134,89 @@ public actor MentoryDB: Sendable {
         }
     }
     
+    public func getCharacter() -> MentoryCharacter? {
+        let context = ModelContext(MentoryDB.container)
+        
+        let id = self.id
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        let model = try! context.fetch(descriptor).first!
+        return model.character
+    }
+    public func setCharacter(_ character: MentoryCharacter) {
+        let context = ModelContext(MentoryDB.container)
+        
+        let id = self.id
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            let model = try context.fetch(descriptor).first!
+            context.insert(model)
+            model.character = character
+            
+            try context.save()
+            logger.debug("MentoryDB에 새로운 캐릭터 \(character.rawValue) 저장했습니다.")
+        } catch {
+            logger.error("MentoryDB 저장 오류: \(error)")
+            return
+        }
+    }
+    
+    public func getRecordCount() -> Int {
+        let context = ModelContext(MentoryDB.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+        
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 0을 반환합니다.")
+                return 0
+            }
+            
+            return db.records.count
+            
+        } catch {
+            logger.error("에러 발생으로 0 반환. \(error)")
+            return 0
+        }
+    }
+    
+    // + createRecordQueue: [RecordTicket]
+    public func insertDataInQueue(_ recordData: RecordData) {
+        let context = ModelContext(Self.container)
+        let id = self.id
+        
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate {
+                $0.id == id
+            }
+        )
+        
+        do {
+            if let db = try context.fetch(descriptor).first {
+                let ticket = RecordTicket(data: recordData)
+                
+                db.createRecordQueue.append(ticket)
+                logger.debug("RecordData를 큐에 추가했습니다. 현재 큐 크기: \(db.createRecordQueue.count)")
+            } else {
+                logger.debug("MentoryDB가 존재하지 않습니다. 새로운 MentoryDB를 생성한 뒤 큐에 추가합니다.")
+                let newDb = MentoryDBModel(id: id, userName: nil)
+                context.insert(newDb)
+            }
+            
+            try context.save()
+        } catch {
+            logger.error("RecordData 큐 추가 오류: \(error.localizedDescription)")
+            return
+        }
+    }
     
     
     // MARK: action
