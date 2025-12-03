@@ -123,7 +123,7 @@ struct MindAnalyzerView: View {
                         useMatchedGeometry: true,
                         action: {}
                     )
-                    .disabled(true)
+                    .allowsHitTesting(false)
                 }
                 
                 AnalyzedResult(
