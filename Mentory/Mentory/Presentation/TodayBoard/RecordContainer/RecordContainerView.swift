@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-struct cancelToolbarHidden: PreferenceKey {
+struct CancelToolbarHidden: PreferenceKey {
     nonisolated
     static let defaultValue: Bool = false
     
@@ -26,7 +26,7 @@ struct RecordContainerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navigationPath = NavigationPath()
     @State private var isSubmitEnabled = false
-    @State private var isCancelHidden = false
+//    @State private var isCancelHidden = false
     @ObservedObject var recordForm: RecordForm
     
     
@@ -34,9 +34,6 @@ struct RecordContainerView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             RecordFormView(recordForm: recordForm)
-                .onPreferenceChange(cancelToolbarHidden.self) { value in
-                    isCancelHidden = value
-                }
                 .navigationDestination(for: String.self) { value in
                     if value == "MindAnalyzerView" {
                         MindAnalyzerView(recordForm.mindAnalyzer!)
@@ -46,7 +43,7 @@ struct RecordContainerView: View {
                 .toolbar {
                     // MARK: 취소 버튼
                     ToolbarItem(placement: .navigationBarLeading) {
-                        if !isCancelHidden {
+//                        if !isCancelHidden {
                             Button {
                                 if navigationPath.isEmpty {
                                     // 현재 화면 = RecordFormView
@@ -58,7 +55,7 @@ struct RecordContainerView: View {
                             } label: {
                                 Image(systemName: "xmark")
                             }
-                        }
+                        //}
                     }
                     
                     // MARK: 완료 버튼 (RecordFormView에서만 보임)
@@ -99,5 +96,8 @@ struct RecordContainerView: View {
                     }
                 }
         }
+//        .onPreferenceChange(CancelToolbarHidden.self) { value in
+//            isCancelHidden = value
+//        }
     }
 }
