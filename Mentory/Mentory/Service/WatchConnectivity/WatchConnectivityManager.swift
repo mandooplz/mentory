@@ -42,7 +42,7 @@ final class WatchConnectivityManager: ObservableObject {
                 self?.isReachable = state.isReachable
             }
         }
-        engine.activate()
+        await engine.activate()
 
         // mutate
         self.engine = engine

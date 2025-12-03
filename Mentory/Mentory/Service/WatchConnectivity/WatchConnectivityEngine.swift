@@ -10,13 +10,12 @@ import Foundation
 import OSLog
 
 /// WCSessionDelegate를 구현하는 백그라운드 처리 전용 액터
-actor WatchConnectivityEngine {
+actor WatchConnectivityEngine: NSObject {
     // MARK: - Core
     static let shared = WatchConnectivityEngine()
 
     private nonisolated let logger = Logger(subsystem: "Mentory.WatchConnectivityEngine", category: "Service")
-    private nonisolated(unsafe) let session: WCSession
-    private var sessionDelegate: SessionDelegate?
+    private nonisolated let session: WCSession
 
     // MARK: - State
     private var cachedMentorMessage: String = ""
@@ -31,7 +30,7 @@ actor WatchConnectivityEngine {
     typealias StateUpdateHandler = @Sendable (ConnectionState) -> Void
 
     // MARK: - Initialization
-    private init() {
+    private override init() {
         self.session = WCSession.default
     }
 
@@ -44,16 +43,8 @@ actor WatchConnectivityEngine {
             return
         }
 
-        let delegate = SessionDelegate(engine: self)
-        Task {
-            await self.setSessionDelegate(delegate)
-        }
-        session.delegate = delegate
+        session.delegate = self
         session.activate()
-    }
-
-    private func setSessionDelegate(_ delegate: SessionDelegate) {
-        self.sessionDelegate = delegate
     }
 
     /// 상태 업데이트 핸들러 설정
@@ -134,52 +125,29 @@ actor WatchConnectivityEngine {
     }
 }
 
-// MARK: - SessionDelegate
-private final class SessionDelegate: NSObject, @preconcurrency WCSessionDelegate {
-    private weak var engine: WatchConnectivityEngine?
-
-    nonisolated init(engine: WatchConnectivityEngine) {
-        self.engine = engine
-        super.init()
-    }
-
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+// MARK: - WCSessionDelegate
+extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
+    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         Task {
-            await engine?.handleActivation(state: activationState, session: session, error: error)
+            await handleActivation(state: activationState, session: session, error: error)
         }
     }
 
-    func sessionDidBecomeInactive(_ session: WCSession) {
+    nonisolated func sessionDidBecomeInactive(_ session: WCSession) {
         // iOS 전용: Watch가 새로운 기기로 전환 중
     }
 
-    func sessionDidDeactivate(_ session: WCSession) {
+    nonisolated func sessionDidDeactivate(_ session: WCSession) {
         // iOS 전용: Watch 전환 완료, 재활성화 필요
         session.activate()
     }
 
-    func sessionReachabilityDidChange(_ session: WCSession) {
+    nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task {
-            await engine?.handleReachabilityChange(isReachable: session.isReachable)
+            await handleReachabilityChange(isReachable: session.isReachable)
         }
     }
 
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        let request = message["request"] as? String
-
-        Task {
-            if request == "initialData" {
-                let data = await engine?.getCachedData()
-                let reply: [String: Any] = [
-                    "mentorMessage": data?.mentorMessage ?? "",
-                    "mentorCharacter": data?.mentorCharacter ?? ""
-                ]
-                replyHandler(reply)
-            } else {
-                replyHandler(["status": "received"])
-            }
-        }
-    }
 }
 
 // MARK: - Data Model
