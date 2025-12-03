@@ -321,7 +321,7 @@ final class TodayBoard: Sendable, ObservableObject {
         actionKeyWordItems[index].1 = isCompleted
         logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
 
-        // records 배열에서도 업데이트 (인디케이터 반영용)
+        // records 배열에서도 업데이트 (인디케이터 반영용, 로직 개선 필요)
         if let recordIndex = records.firstIndex(where: { $0.id == recordId }) {
             let oldRecord = records[recordIndex]
             var newCompletionStatus = oldRecord.actionCompletionStatus
