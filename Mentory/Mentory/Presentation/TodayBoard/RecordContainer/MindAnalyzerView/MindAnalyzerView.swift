@@ -474,7 +474,7 @@ private struct MindAnalyzerPreview: View {
 
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
-            let recordForm = todayBoard.recordForm,
+           let recordForm = todayBoard.recordForms.first,
             let mindAnalyzer = recordForm.mindAnalyzer
         {
             MindAnalyzerView(mindAnalyzer)
@@ -489,8 +489,8 @@ private struct MindAnalyzerPreview: View {
 
                     let todayBoard = mentoryiOS.todayBoard!
 
-                    todayBoard.setUpForm()
-                    let recordForm = todayBoard.recordForm!
+                    await todayBoard.setUpRecordForms()
+                    let recordForm = todayBoard.recordForms.first!
 
                     recordForm.titleInput = "SAMPLE-TITLE"
                     recordForm.textInput = "SAMPLE-TEXT"

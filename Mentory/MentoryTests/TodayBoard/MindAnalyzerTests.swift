@@ -16,9 +16,11 @@ struct MindAnalyzerTests {
     struct Analyze {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer
+        let todayBoard: TodayBoard
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
+            self.todayBoard = await mindAnalyzer.owner!.owner!
         }
         
         @Test func setIsAnalyzeFinishedTrue() async throws {
@@ -63,6 +65,50 @@ struct MindAnalyzerTests {
             // then
             await #expect(mindAnalyzer.mindType != nil)
             
+        }
+        
+        @Test func setSuggestions() async throws {
+            // given
+            try await #require(mindAnalyzer.suggestions.isEmpty == true)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.suggestions.isEmpty == false)
+        }
+        @Test func appendThreeSuggestions() async throws {
+            // given
+            try await #require(mindAnalyzer.suggestions.count == 0)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(mindAnalyzer.suggestions.count == 3)
+        }
+        
+        @Test func TodayBoard_createSuggestions() async throws {
+            // given
+            try await #require(todayBoard.suggestions.isEmpty == true)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(todayBoard.suggestions.isEmpty == false)
         }
         
         @Test func whenTextInputFromRecordFormIsEmpty() async throws {
@@ -134,10 +180,10 @@ private func getMindAnalyzerForTest(_ mentoryiOS: MentoryiOS) async throws -> Mi
     
     // TodayBoard
     let todayBoard = try #require(await mentoryiOS.todayBoard)
-    await todayBoard.setUpForm()
+    await todayBoard.setUpRecordForms()
     
     // RecordForm
-    let recordForm = try #require(await todayBoard.recordForm)
+    let recordForm = try #require(await todayBoard.recordForms.first)
     
     await MainActor.run {
         recordForm.titleInput = "SAMPLE_TITLE"

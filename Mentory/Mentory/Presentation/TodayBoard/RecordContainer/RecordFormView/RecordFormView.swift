@@ -56,10 +56,6 @@ struct RecordFormView: View {
                     model: recordForm
                 )
             })
-        .task {
-            // 기록 시작 시간 설정
-            recordForm.startTime = Date()
-        }
     }
 }
 
@@ -70,7 +66,7 @@ fileprivate struct RecordFormPreview: View {
     
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,
-           let recordForm = todayBoard.recordForm {
+           let recordForm = todayBoard.recordForms.first {
             RecordFormView(
                 recordForm: recordForm,
             )
@@ -84,7 +80,7 @@ fileprivate struct RecordFormPreview: View {
                     onboarding.next()
                     
                     let todayBoard = mentoryiOS.todayBoard!
-                    todayBoard.setUpForm()
+                    await todayBoard.setUpRecordForms()
                 }
         }
     }
@@ -99,13 +95,13 @@ fileprivate struct RecordFormPreview: View {
 // MARK: Component
 
 fileprivate struct TodayDate: View {
-    let targetDate: RecordDate
-    
+    let targetDate: MentoryDate
+
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "M월 d일 EEEE"
-        return formatter.string(from: targetDate.toDate())
+        return formatter.string(from: targetDate.rawValue)
     }
     
     var body: some View {

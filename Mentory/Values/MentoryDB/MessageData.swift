@@ -4,22 +4,23 @@
 //
 //  Created by JAY on 11/26/25.
 //
-
 import Foundation
+
 
 // MARK: value
 nonisolated
 public struct MessageData: Sendable, Hashable, Codable {
     // MARK: core
-    public let id: UUID
-    public let createdAt: Date
-    public let message: String
+    public let createdAt: MentoryDate
+    public let content: String
+    
     public let characterType: MentoryCharacter
-
-    public init(id: UUID, createdAt: Date, message: String, characterType: MentoryCharacter) {
-        self.id = id
+    
+    public init(createdAt: MentoryDate = .now,
+                content: String,
+                characterType: MentoryCharacter) {
         self.createdAt = createdAt
-        self.message = message
+        self.content = content
         self.characterType = characterType
     }
 }

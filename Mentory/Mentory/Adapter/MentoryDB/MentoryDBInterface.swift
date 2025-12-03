@@ -10,21 +10,23 @@ import OSLog
 import Values
 
 
+
 // MARK: Interface
 protocol MentoryDBInterface: Sendable {
-    func updateName(_ newName: String) async throws -> Void
-    func getName() async throws -> String?
+    associatedtype DailyRecord: DailyRecordInterface
     
-    func saveRecord(_ data: RecordData) async throws -> Void
-    func updateActionCompletion(recordId: UUID, completionStatus: [Bool]) async throws -> Void
+    func setName(_ newName: String) async throws
+    func getName() async throws -> String?
 
-    func fetchAll() async throws -> [RecordData]
-    func fetchToday() async throws -> [RecordData]
-    func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData]
-    func fetchRecordForDate(_ targetDate: Date) async throws -> RecordData?
-    func hasRecordForDate(_ recordDate: RecordDate) async throws -> Bool
-    func fetchAvailableDatesForWriting() async throws -> [RecordDate]
-
-    func fetchMentorMessage() async throws -> MessageData?
-    func saveMentorMessage(_ message: String, _ type: MentoryCharacter) async throws -> Void
+    func getMentorMessage() async throws -> MessageData?
+    func setMentorMessage(_ data: MessageData) async throws
+    
+    func getCharacter() async throws -> MentoryCharacter?
+    func setCharacter(_: MentoryCharacter) async throws
+    
+    func getRecordCount() async throws -> Int
+    func isSameDayRecordExist(for: MentoryDate) async throws -> Bool
+    func getRecentRecord() async throws -> DailyRecord?
+    
+    func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws
 }

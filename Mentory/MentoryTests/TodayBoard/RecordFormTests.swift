@@ -4,14 +4,65 @@
 //
 //  Created by 구현모 on 11/15/25.
 //
-
 import Testing
 @testable import Mentory
 import Foundation
+import Values
+
 
 // MARK: Tests
 @Suite("RecordForm", .timeLimit(.minutes(1)))
 struct RecordFormTests {
+    struct CheckDisability {
+        let mentoryiOS: MentoryiOS
+        let recordForm: RecordForm
+        let mentoryDB: any MentoryDBInterface
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.recordForm = try await getRecordFormForTest(mentoryiOS)
+            self.mentoryDB = mentoryiOS.mentoryDB
+        }
+        
+        @Test func setIsDiabledToFalse() async throws {
+            // given
+            try await #require(recordForm.isDisabled == true)
+            
+            // when
+            await recordForm.checkDisability()
+            
+            // then
+            await #expect(recordForm.isDisabled == false)
+        }
+        @Test func notSetFalseWhenRecordAlreadExistAtTargetDate() async throws {
+            // given
+            try await #require(mentoryDB.getRecordCount() == 0)
+            
+            let targetDate = recordForm.targetDate
+            
+            let randomDateAtSameDay = targetDate.randomTimeInSameDay()
+            let recordData = RecordData(
+                id: .init(),
+                recordDate: randomDateAtSameDay,
+                createdAt: .now,
+                analyzedResult: "SAMPLE_RESULT",
+                emotion: .neutral
+            )
+            
+            try await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
+            
+            try await #require(mentoryDB.getRecordCount() == 1)
+            
+            // given
+            try await #require(recordForm.isDisabled == true)
+            
+            // when
+            await recordForm.checkDisability()
+            
+            // then
+            await #expect(recordForm.isDisabled == true)
+        }
+    }
+    
     struct ValidateInput {
         let mentoryiOS: MentoryiOS
         let recordForm: RecordForm
@@ -20,7 +71,6 @@ struct RecordFormTests {
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
         }
 
-        // 실패 케이스
         @Test func whenTitleIsEmpty() async throws {
             // Given: 제목이 비어있고 텍스트만 있음
             await MainActor.run {
@@ -54,7 +104,6 @@ struct RecordFormTests {
             await #expect(recordForm.canProceed == false)
         }
 
-        // 성공 케이스
         @Test func whenTitleAndTextExist() async throws {
             // Given
             await MainActor.run {
@@ -116,6 +165,45 @@ struct RecordFormTests {
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
         
+        @Test func createMindAnalyzer() async throws {
+            // given
+            await MainActor.run {
+                recordForm.titleInput = "TEST_TITLE"
+                recordForm.textInput = "TEST_TEXT"
+            }
+            
+            await recordForm.validateInput()
+            
+            try await #require(recordForm.canProceed == true)
+            
+            // given
+            try await #require(recordForm.mindAnalyzer == nil)
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.mindAnalyzer != nil)
+        }
+        @Test func doNotCreateMindAnalyzerAgainWhenSubmitTwice() async throws {
+            // given
+            await MainActor.run {
+                recordForm.titleInput = "TEST_TITLE"
+                recordForm.textInput = "TEST_TEXT"
+            }
+            
+            await recordForm.validateInput()
+            await recordForm.submit()
+            
+            let mindAnalyzer = try #require(await recordForm.mindAnalyzer)
+            
+            // when
+            await recordForm.submit()
+            
+            // then
+            await #expect(recordForm.mindAnalyzer?.id == mindAnalyzer.id)
+        }
+        
         @Test func whenCanProceeedIsFalse() async throws {
             // given
             try await #require(recordForm.canProceed == false)
@@ -128,12 +216,21 @@ struct RecordFormTests {
             // then
             await #expect(recordForm.mindAnalyzer == nil)
         }
+        @Test func whenIsDiabledIsTrue() async throws {
+            // given
+            try await #require(recordForm.isDisabled == true)
+            
+            // when
+            
+            // then
+        }
 
         @Test func notResetTitleInputWhenSucceed() async throws {
             // given
             let testTitle = "TEST_TITLE"
             await MainActor.run {
                 recordForm.titleInput = testTitle
+                recordForm.textInput = "TEST_TEXT"
             }
             
             // when
@@ -182,28 +279,6 @@ struct RecordFormTests {
             await #expect(recordForm.voiceInput == testVoiceURL)
         }
     }
-    
-    struct RemoveForm {
-        let mentoryiOS: MentoryiOS
-        let recordForm: RecordForm
-        init() async throws {
-            self.mentoryiOS = await MentoryiOS()
-            self.recordForm = try await getRecordFormForTest(mentoryiOS)
-        }
-        
-        @Test func deleteRecordForm() async throws {
-            // given
-            let todayBoard = try #require(await recordForm.owner)
-            
-            try await #require(todayBoard.recordForm != nil)
-            
-            // when
-            await recordForm.removeForm()
-            
-            // then
-            await #expect(todayBoard.recordForm == nil)
-        }
-    }
 }
 
 // MARK: Helpers
@@ -219,9 +294,9 @@ private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> Reco
     
     // TodayBoard
     let todayBoard = try #require(await mentoryiOS.todayBoard)
-    await todayBoard.setUpForm()
+    await todayBoard.setUpRecordForms()
     
     // RecordForm
-    let recordForm = try #require(await todayBoard.recordForm)
+    let recordForm = try #require(await todayBoard.recordForms.first)
     return recordForm
 }
