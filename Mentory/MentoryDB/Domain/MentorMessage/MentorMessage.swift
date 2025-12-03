@@ -43,7 +43,7 @@ actor MentorMessage: Sendable {
         
         init(data: MessageData) {
             self.id = UUID()
-            self.createdAt = data.createdAt
+            self.createdAt = data.createdAt.rawValue
             self.content = data.content
             self.characterType = data.characterType
         }
@@ -52,7 +52,7 @@ actor MentorMessage: Sendable {
         // MARK: operator
         func toMessageData() -> MessageData {
             return .init(
-                createdAt: self.createdAt,
+                createdAt: .init(self.createdAt),
                 content: self.content,
                 characterType: self.characterType)
         }

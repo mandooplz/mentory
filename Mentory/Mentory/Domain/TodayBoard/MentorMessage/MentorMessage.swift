@@ -64,21 +64,39 @@ final class MentorMessage: Sendable, ObservableObject {
     
     func updateContent() async {
         // capture
+        guard let character else {
+            logger.error("MentorMessage의 Character가 nil입니다. 먼저 Character를 설정하세요.")
+            return
+        }
+        
         let mentoryiOS = self.owner!.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
         let alanLLM = mentoryiOS.alanLLM
         
         // process
+        let messageFromDB: MessageData?
+        do {
+            messageFromDB = try await mentoryDB.getMentorMessage()
+        } catch {
+            logger.error("MentoryDB에서 MentorMessage 가져오기 실패: \(error)")
+            return
+        }
+        
         let messageContent: String
         do {
-            // SwiftData에 저장된 MentorMessage를 불러온다.
-            // 만약 없다면 -> 새로 갱신
-            // 있는데, 유효하다면 -> 기존 거 재사용
-            // 있는데, 지났다면 -> 새로 갱신
-            let randomCharacter = MentoryCharacter.random
-            let question = AlanQuestion(randomCharacter.question)
-            
-            let answer = try await alanLLM.question(question)
-            messageContent = answer.content
+            let isMessageValid = messageFromDB?.createdAt
+                .isSameDate(as: .now)
+                
+            if isMessageValid == true {
+                // Message가 유효한 경우
+                messageContent = messageFromDB!.content
+            } else {
+                // Message가 존재하지 않거나, 유효하지 않을 때
+                let question = AlanQuestion(character.question)
+                
+                async let answer = try await alanLLM.question(question)
+                messageContent = try await answer.content
+            }
         } catch {
             logger.error("setUpMentorMessage 에러 발생 : \(error)")
             return

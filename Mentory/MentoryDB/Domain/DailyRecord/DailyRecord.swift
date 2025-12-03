@@ -25,7 +25,7 @@ actor DailyRecord: Sendable {
     
     // MARK: action
     func delete() async {
-        let contanier = MentoryDB.container
+        let contanier = MentoryDatabase.container
         let context = ModelContext(contanier)
         let id = self.id
         

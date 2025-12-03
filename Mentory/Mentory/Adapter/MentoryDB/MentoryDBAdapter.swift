@@ -12,7 +12,7 @@ import Values
 
 // MARK: Domain
 nonisolated struct MentoryDBAdapter: MentoryDBInterface {
-    private let object = MentoryDB.shared
+    private let object = MentoryDatabase.shared
     
     @concurrent func getName() async throws -> String? {
         return await object.getName()

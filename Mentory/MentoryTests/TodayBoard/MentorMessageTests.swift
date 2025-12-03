@@ -46,6 +46,28 @@ struct MentorMessageTests {
             await #expect(mentorMessage.character == character)
         }
     }
+    
+    struct UpdateContent {
+        let mentoryiOS: MentoryiOS
+        let mentorMessage: MentorMessage
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+            self.mentorMessage = try await getMentorMessage(mentoryiOS)
+        }
+        
+        @Test func whenCharacterIsNil() async throws {
+            // given
+            try await #require(mentorMessage.character == nil)
+            
+            try await #require(mentorMessage.content == nil)
+            
+            // when
+            await mentorMessage.updateContent()
+            
+            // then
+            await #expect(mentorMessage.content == nil)
+        }
+    }
 }
 
 

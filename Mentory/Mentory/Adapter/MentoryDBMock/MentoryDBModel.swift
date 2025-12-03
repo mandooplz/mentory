@@ -89,7 +89,7 @@ final class MentoryDBModel: Sendable {
         let latest = messages.max { $0.createdAt < $1.createdAt }!
 
         let latestData = MessageData(
-            createdAt: latest.createdAt,
+            createdAt: .init(latest.createdAt),
             content: latest.message,
             characterType: latest.characterType
         )

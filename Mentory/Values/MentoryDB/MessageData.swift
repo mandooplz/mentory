@@ -11,12 +11,12 @@ import Foundation
 nonisolated
 public struct MessageData: Sendable, Hashable, Codable {
     // MARK: core
-    public let createdAt: Date
+    public let createdAt: MentoryDate
     public let content: String
     
     public let characterType: MentoryCharacter
     
-    public init(createdAt: Date = .now,
+    public init(createdAt: MentoryDate = .now,
                 content: String,
                 characterType: MentoryCharacter) {
         self.createdAt = createdAt

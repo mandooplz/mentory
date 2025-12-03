@@ -11,7 +11,7 @@ import OSLog
 
 
 // MARK: Object
-public actor MentoryDB: Sendable {
+public actor MentoryDatabase: Sendable {
     // MARK: core
     private init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
         self.id = id
@@ -21,7 +21,7 @@ public actor MentoryDB: Sendable {
         context.insert(newModel)
         try! context.save()
     }
-    public static let shared = MentoryDB()
+    public static let shared = MentoryDatabase()
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
@@ -41,7 +41,7 @@ public actor MentoryDB: Sendable {
     nonisolated public let id: UUID
     
     public func setName(_ newName: String) {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         
         let id = self.id
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -61,7 +61,7 @@ public actor MentoryDB: Sendable {
         }
     }
     public func getName() -> String? {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         let id = self.id
         
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -83,7 +83,7 @@ public actor MentoryDB: Sendable {
     }
     
     public func getMentorMessage() -> MessageData? {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         let id = self.id
         
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -109,7 +109,7 @@ public actor MentoryDB: Sendable {
         }
     }
     public func setMentorMessage(_ data: MessageData) {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         let id = self.id
         
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -135,7 +135,7 @@ public actor MentoryDB: Sendable {
     }
     
     public func getCharacter() -> MentoryCharacter? {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         
         let id = self.id
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -146,7 +146,7 @@ public actor MentoryDB: Sendable {
         return model.character
     }
     public func setCharacter(_ character: MentoryCharacter) {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         
         let id = self.id
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -167,7 +167,7 @@ public actor MentoryDB: Sendable {
     }
     
     public func getRecordCount() -> Int {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         let id = self.id
         
         let descriptor = FetchDescriptor<MentoryDBModel>(
@@ -221,7 +221,7 @@ public actor MentoryDB: Sendable {
     
     // MARK: action
     public func createDailyRecords() async {
-        let context = ModelContext(MentoryDB.container)
+        let context = ModelContext(MentoryDatabase.container)
         let id = self.id
         
         let descriptor = FetchDescriptor<MentoryDBModel>(
