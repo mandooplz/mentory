@@ -48,7 +48,7 @@ struct RecordFormTests {
                 emotion: .neutral
             )
             
-            try await mentoryDB.saveRecord(recordData)
+            try await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
             
             try await #require(mentoryDB.getRecordCount() == 1)
             

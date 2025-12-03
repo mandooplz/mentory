@@ -6,13 +6,15 @@
 //
 import Foundation
 import Values
+import OSLog
 
 
 // MARK: Mock
 nonisolated
-struct MentoryDBMock: MentoryDBInterface {
+struct MentoryDatabaseMock: MentoryDBInterface {
     // MARK: core
-    nonisolated let object = MentoryDBModel()
+    nonisolated let object = MentoryDatabaseFake()
+    nonisolated let logger = Logger(subsystem: "MentoryDatabaseMock", category: "Adapter")
     
     
     // MARK: flow
@@ -58,9 +60,20 @@ struct MentoryDBMock: MentoryDBInterface {
     }
     
     
-    @concurrent func saveRecord(_ recordData: RecordData) async throws {
-        await object.insertTicket(recordData)
+    @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         
+        // create DailyRecord
+        await object.insertTicket(recordData)
         await object.createDailyRecords()
+        
+        guard let dailyRecord = await object.getDailyRecord(ticketId: recordData.id) else {
+            logger.error("\(recordData.id.uuidString.prefix(6))에 해당하는 DailyRecord가 없습니다.")
+            return
+        }
+        
+        // create DailySuggestion
+        await dailyRecord.insertTicket(suggestionData)
+        await dailyRecord.createDailySuggestions()
+        
     }
 }

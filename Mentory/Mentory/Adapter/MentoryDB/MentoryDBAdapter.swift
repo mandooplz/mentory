@@ -43,9 +43,10 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         fatalError()
     }
     
-    @concurrent func saveRecord(_ data: RecordData) async throws {
-        await object.insertTicket(data)
-        
+    @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
+        await object.insertTicket(recordData)
         await object.createDailyRecords()
+        
+        fatalError("Suggestion 저장 추가 구현 필요합니다.")
     }
 }

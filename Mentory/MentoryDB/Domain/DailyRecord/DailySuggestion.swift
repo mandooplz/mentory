@@ -18,12 +18,12 @@ final class DailySuggestionModel {
     var target: UUID // SuggestionID의 원시값
     
     var content: String
-    var status: SuggestionData.Status
+    var status: Bool
     
     init(id: UUID = UUID(),
          target: UUID,
          content: String,
-         status: SuggestionData.Status) {
+         status: Bool) {
         self.id = id
         self.target = target
         self.content = content
@@ -33,7 +33,7 @@ final class DailySuggestionModel {
 
 
 // MARK: Object
-actor DailySuggestion {
+public actor DailySuggestion {
     // MARK: core
     init(id: UUID) {
         self.id = id

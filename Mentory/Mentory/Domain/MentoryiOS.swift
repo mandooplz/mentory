@@ -27,7 +27,7 @@ final class MentoryiOS: Sendable, ObservableObject {
             self.alanLLM = AlanLLM()
             self.firebaseLLM = FirebaseLLM()
         case .test:
-            self.mentoryDB = MentoryDBMock()
+            self.mentoryDB = MentoryDatabaseMock()
             self.alanLLM = AlanLLMMock()
             self.firebaseLLM = FirebaseLLMMock()
         }

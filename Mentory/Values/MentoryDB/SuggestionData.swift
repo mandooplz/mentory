@@ -13,22 +13,18 @@ public struct SuggestionData: Sendable, Hashable, Codable {
     // MARK: core
     public let id: UUID
     
+    public let target: SuggestionID
+    
     public let content: String
-    public let status: Status
+    public let isDone: Bool
     
-    public init(
-        id: UUID,
-        content: String,
-        status: Status) {
+    public init(id: UUID = .init(),
+                target: SuggestionID = .random,
+                content: String,
+                isDone: Bool = false) {
         self.id = id
+        self.target = target
         self.content = content
-        self.status = status
-    }
-    
-    
-    // MARK: Value
-    public enum Status: Sendable, Hashable, Codable {
-        case ready
-        case done
+        self.isDone = isDone
     }
 }

@@ -68,7 +68,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let targetDate = recordForm.targetDate
         
         
-        // process
+        // process - FirebaseLLM
+        // 감저 분석
         let question = FirebaseQuestion(textInput)
         
         let analysis: FirebaseAnalysis
@@ -79,7 +80,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
             return
         }
         
-        // process
+        // process - MentoryDB
+        // DailyRecord & DailySuggestion 생성
         do {
             let recordData = RecordData(
                 id: .init(),
@@ -89,9 +91,17 @@ final class MindAnalyzer: Sendable, ObservableObject {
                 emotion: analysis.mindType
             )
             
-            try await mentoryDB.saveRecord(recordData)
+            let suggestionDatas = analysis.actionKeywords
+                .map { actionText in
+                    SuggestionData(content: actionText)
+                }
             
-            logger.debug("MentoryDB에 RecordData를 저장했습니다.")
+            try await mentoryDB.submitAnalysis(
+                recordData: recordData,
+                suggestionData: suggestionDatas
+            )
+            
+            logger.debug("MentoryDB에 RecordData와 SuggestionData를 저장했습니다.")
         } catch {
             logger.error("\(error)")
             return

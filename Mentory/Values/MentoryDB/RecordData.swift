@@ -20,7 +20,11 @@ public struct RecordData: Sendable, Hashable, Codable, Equatable {
     public let emotion: Emotion
     
     
-    public init(id: UUID, recordDate: MentoryDate, createdAt: MentoryDate, analyzedResult: String, emotion: Emotion) {
+    public init(id: UUID = .init(),
+                recordDate: MentoryDate,
+                createdAt: MentoryDate = .now,
+                analyzedResult: String,
+                emotion: Emotion) {
         self.id = id
         self.recordDate = recordDate
         self.createdAt = createdAt

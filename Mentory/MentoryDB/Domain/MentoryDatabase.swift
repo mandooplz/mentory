@@ -10,6 +10,62 @@ import Values
 import OSLog
 
 
+// MARK: model
+@Model
+final class MentoryDBModel {
+    // MARK: core
+    @Attribute(.unique) var id: UUID
+    var userName: String? = nil
+    
+    var userCharacter: MentoryCharacter? = nil
+    
+    var messageCreatedAt: Date? = nil
+    var messageContent: String? = nil
+    var messageCharacter: MentoryCharacter? = nil
+    
+    @Relationship var createRecordQueue: [RecordTicket] = []
+    @Relationship var records: [DailyRecordModel] = []
+    
+    
+    init(id: UUID,
+         userName: String? = nil) {
+        self.id = id
+        self.userName = userName
+    }
+}
+
+@Model
+final class RecordTicket {
+    @Attribute(.unique) var id: UUID
+    
+    var recordDate: Date  // 일기가 속한 날짜
+    var createdAt: Date   // 실제 작성 시간
+    
+    var analyzedResult: String
+    var emotion: Emotion
+    
+    init(data: RecordData) {
+        self.id = data.id
+        self.recordDate = data.recordDate.rawValue
+        self.createdAt = data.createdAt.rawValue
+        self.analyzedResult = data.analyzedResult
+        self.emotion = data.emotion
+    }
+    
+    func toRecordData() -> RecordData {
+        .init(
+            id: id,
+            recordDate: .init(recordDate),
+            createdAt: .init(createdAt),
+            analyzedResult: analyzedResult,
+            emotion: emotion,
+        )
+    }
+}
+
+
+
+
 // MARK: Object
 public actor MentoryDatabase: Sendable {
     // MARK: core
@@ -29,7 +85,7 @@ public actor MentoryDatabase: Sendable {
             return try ModelContainer(
                 for: MentoryDBModel.self,
                 RecordTicket.self,
-                DailyRecord.DailyRecordModel.self,
+                DailyRecordModel.self,
                 DailySuggestionModel.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
@@ -39,7 +95,6 @@ public actor MentoryDatabase: Sendable {
     
     
     // MARK: state
-    // + id: UUID
     nonisolated public let id: UUID
     
     public func setName(_ newName: String) {
@@ -192,7 +247,9 @@ public actor MentoryDatabase: Sendable {
             return 0
         }
     }
-    
+    public func getRecord(ticketId: UUID) -> DailyRecord? {
+        fatalError()
+    }
     public func insertTicket(_ recordData: RecordData) {
         let context = ModelContext(Self.container)
         let id = self.id
@@ -245,8 +302,8 @@ public actor MentoryDatabase: Sendable {
             
             // 1) 새 레코드 생성
             let newModels = db.createRecordQueue.map { data in
-                DailyRecord.DailyRecordModel(
-                    id: data.id,
+                DailyRecordModel(
+                    ticketId: data.id,
                     
                     recordDate: data.recordDate,
                     createdAt: data.createdAt,
@@ -279,57 +336,5 @@ public actor MentoryDatabase: Sendable {
 
 
 
-// MARK: model
-@Model
-final class MentoryDBModel {
-    // MARK: core
-    @Attribute(.unique) var id: UUID
-    var userName: String? = nil
-    
-    var userCharacter: MentoryCharacter? = nil
-    
-    var messageCreatedAt: Date? = nil
-    var messageContent: String? = nil
-    var messageCharacter: MentoryCharacter? = nil
-    
-    @Relationship var createRecordQueue: [RecordTicket] = []
-    @Relationship var records: [DailyRecord.DailyRecordModel] = []
-    
-    
-    init(id: UUID,
-         userName: String? = nil) {
-        self.id = id
-        self.userName = userName
-    }
-}
-
-@Model
-final class RecordTicket {
-    // MARK: core
-    @Attribute(.unique) var id: UUID
-    var recordDate: Date  // 일기가 속한 날짜
-    var createdAt: Date   // 실제 작성 시간
-    
-    var analyzedResult: String
-    var emotion: Emotion
-    
-    init(data: RecordData) {
-        self.id = data.id
-        self.recordDate = data.recordDate.rawValue
-        self.createdAt = data.createdAt.rawValue
-        self.analyzedResult = data.analyzedResult
-        self.emotion = data.emotion
-    }
-    
-    func toRecordData() -> RecordData {
-        .init(
-            id: id,
-            recordDate: .init(recordDate),
-            createdAt: .init(createdAt),
-            analyzedResult: analyzedResult,
-            emotion: emotion,
-        )
-    }
-}
 
 

@@ -11,7 +11,7 @@ import Values
 
 // MARK: Object Model
 @MainActor
-final class MentoryDBModel: Sendable {
+final class MentoryDatabaseFake: Sendable {
     // MARK: core
     nonisolated init() { }
     
@@ -25,7 +25,12 @@ final class MentoryDBModel: Sendable {
         self.createRecordQueue.append(recordData)
     }
     
-    var records: [DailyRecordModel] = []
+    var records: [DailyRecordFake] = []
+    func getDailyRecord(ticketId: UUID) -> DailyRecordFake? {
+        return records.first { dailyRecord in
+            dailyRecord.ticketId == ticketId
+        }
+    }
     func isSameDayRecordExist(_ date: MentoryDate) -> Bool {
         let result = self.records
             .contains { record in
@@ -35,20 +40,19 @@ final class MentoryDBModel: Sendable {
         return result
     }
     
-
-    
     // MARK: action
     func createDailyRecords() {
         // mutate
         while createRecordQueue.isEmpty == false {
-            let data = createRecordQueue.removeFirst()
+            let recordData = createRecordQueue.removeFirst()
             
-            let newRecord = DailyRecordModel(
+            let newRecord = DailyRecordFake(
                 owner: self,
-                recordDate: data.recordDate,
-                createAt: data.createdAt,
-                analyzedContent: data.analyzedResult,
-                emotion: data.emotion
+                ticketId: recordData.id,
+                recordDate: recordData.recordDate,
+                createAt: recordData.createdAt,
+                analyzedContent: recordData.analyzedResult,
+                emotion: recordData.emotion
             )
             
             records.append(newRecord)
