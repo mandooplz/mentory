@@ -39,10 +39,14 @@ struct MentoryDBMock: MentoryDBInterface {
     }
     
     @concurrent func getCharacter() async throws -> MentoryCharacter? {
-        fatalError()
+        return await MainActor.run {
+            object.userCharacter
+        }
     }
     @concurrent func setCharacter(_ character: MentoryCharacter) async throws {
-        fatalError()
+        await MainActor.run {
+            object.userCharacter = character
+        }
     }
     
     @concurrent func getRecordCount() async throws -> Int {

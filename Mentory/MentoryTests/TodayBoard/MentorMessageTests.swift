@@ -13,34 +13,38 @@ import Values
 // MARK: Tests
 @Suite
 struct MentorMessageTests {
-    struct SetRandomCharacter {
+    struct FetchCharacter {
         let mentoryiOS: MentoryiOS
         let mentorMessage: MentorMessage
+        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mentorMessage = try await getMentorMessage(mentoryiOS)
-        }
-        
-        @Test func setCharacter() async throws {
-            // given
-            try await #require(mentorMessage.character == nil)
-            
-            // when
-            await mentorMessage.setRandomCharacter()
-            
-            // then
-            await #expect(mentorMessage.character != nil)
+            self.mentoryDB = mentoryiOS.mentoryDB
         }
         
         @Test(arguments: MentoryCharacter.allCases)
-        func setCharacterRandomlyOnce(_ character: MentoryCharacter) async throws {
+        func setCharacterFromDB(_ character: MentoryCharacter) async throws {
             // given
             await MainActor.run {
                 mentorMessage.character = character
             }
             
             // when
-            await mentorMessage.setRandomCharacter()
+            await mentorMessage.fetchCharacter()
+            
+            // then
+            await #expect(mentorMessage.character == character)
+        }
+        
+        @Test func whenCharacterAlreadyFetched() async throws {
+            // given
+            await mentorMessage.fetchCharacter()
+            
+            let character = try #require(await mentorMessage.character)
+            
+            // when
+            await mentorMessage.fetchCharacter()
             
             // then
             await #expect(mentorMessage.character == character)

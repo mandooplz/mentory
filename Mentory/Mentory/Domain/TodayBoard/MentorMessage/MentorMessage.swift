@@ -31,32 +31,28 @@ final class MentorMessage: Sendable, ObservableObject {
     
     
     // MARK: action
-    func setRandomCharacter() {
+    func fetchCharacter() async {
         // capture
         guard self.character == nil else {
             logger.error("이미 Character가 설정되어 있습니다.")
             return
         }
         
-        // mutate
-        self.character = .random
-        
-    }
-    
-    func fetchUserCharacter() async {
-        // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
         let mentoryDB = mentoryiOS.mentoryDB
         
+        
         // process
-        let character: MentoryCharacter?
+        let character: MentoryCharacter
         do {
-            character = try await mentoryDB.getCharacter()
+            let fetchResult = try await mentoryDB.getCharacter()
+            character = fetchResult ?? .random
         } catch {
-            logger.error("fetchUserCharacter 실패 : \(error)")
+            logger.error("\(#function) 실패 : \(error)")
             return
         }
+        
         
         // mutate
         self.character = character
