@@ -29,12 +29,12 @@ struct MentoryDBMock: MentoryDBInterface {
     
     @concurrent func getMentorMessage() async throws -> Values.MessageData? {
         return await MainActor.run {
-            object.getMentorMessage()
+            object.message
         }
     }
     @concurrent func setMentorMessage(_ data: MessageData) async throws {
         await MainActor.run {
-            object.updateMentorMessage(data)
+            object.message = data
         }
     }
     

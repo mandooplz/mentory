@@ -1,5 +1,5 @@
 //
-//  MentoryDB.swift
+//  MentoryDatabase.swift
 //  MentoryDB
 //
 //  Created by 김민우 on 11/21/25.
@@ -27,7 +27,9 @@ public actor MentoryDatabase: Sendable {
     static let container: ModelContainer = {
         do {
             return try ModelContainer(
-                for: MentoryDBModel.self, DailyRecord.DailyRecordModel.self,
+                for: MentoryDBModel.self,
+                RecordTicket.self,
+                DailyRecord.DailyRecordModel.self,
                 DailySuggestion.DailySuggestionModel.self)
         } catch {
             fatalError("❌ MentoryDB ModelContainer 생성 실패: \(error)")
@@ -95,13 +97,19 @@ public actor MentoryDatabase: Sendable {
                 return nil
             }
             
-            // messages가 비어있을 때
-            guard let mentorMessage = db.messages else {
-                logger.error("MentorMessage가 MentoryDB 안에 존재하지 않습니다.")
+            guard let createdAt = db.messageCreatedAt,
+                  let content = db.messageContent,
+                  let character = db.messageCharacter else {
+                logger.error("MentoryDB에 createAt, content, character 정보가 존재하지 않습니다.")
                 return nil
             }
             
-            return mentorMessage.toMessageData()
+            let messageData = MessageData(
+                createdAt: .init(createdAt),
+                content: content,
+                characterType: character)
+            
+            return messageData
             
         } catch {
             logger.error("DB fetch error → nil 반환")
@@ -115,19 +123,16 @@ public actor MentoryDatabase: Sendable {
         let descriptor = FetchDescriptor<MentoryDBModel>(
             predicate: #Predicate { $0.id == id }
         )
+        let db = try! context.fetch(descriptor).first!
         
         do {
-            guard let db = try context.fetch(descriptor).first else {
-                logger.error("DB가 존재하지 않아 메세지를 저장할수 없습니다.")
-                return
-            }
-
-            let newMessage = MentorMessage.MentorMessageModel(data: data)
             
-            db.messages = newMessage
+            db.messageCreatedAt = data.createdAt.rawValue
+            db.messageContent = data.content
+            db.messageCharacter = data.characterType
+            
             try context.save()
-            logger.debug("MentoryDB에 새로운 멘토 메시지를 저장했습니다.")
-            
+            logger.debug("MentoryDB에 MentorMessage를 업데이트했습니다.")
         } catch {
             logger.error("MentoryDB 저장 오류: \(error)")
             return
@@ -143,7 +148,7 @@ public actor MentoryDatabase: Sendable {
         )
         
         let model = try! context.fetch(descriptor).first!
-        return model.character
+        return model.userCharacter
     }
     public func setCharacter(_ character: MentoryCharacter) {
         let context = ModelContext(MentoryDatabase.container)
@@ -156,7 +161,7 @@ public actor MentoryDatabase: Sendable {
         do {
             let model = try context.fetch(descriptor).first!
             context.insert(model)
-            model.character = character
+            model.userCharacter = character
             
             try context.save()
             logger.debug("MentoryDB에 새로운 캐릭터 \(character.rawValue) 저장했습니다.")
@@ -281,12 +286,16 @@ final class MentoryDBModel {
     // MARK: core
     @Attribute(.unique) var id: UUID
     var userName: String? = nil
-    var character: MentoryCharacter? = nil
+    
+    var userCharacter: MentoryCharacter? = nil
+    
+    var messageCreatedAt: Date? = nil
+    var messageContent: String? = nil
+    var messageCharacter: MentoryCharacter? = nil
     
     @Relationship var createRecordQueue: [RecordTicket] = []
     @Relationship var records: [DailyRecord.DailyRecordModel] = []
     
-    @Relationship var messages: MentorMessage.MentorMessageModel? = nil
     
     init(id: UUID,
          userName: String? = nil) {

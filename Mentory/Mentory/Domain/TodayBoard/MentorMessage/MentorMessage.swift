@@ -91,11 +91,20 @@ final class MentorMessage: Sendable, ObservableObject {
                 // Message가 유효한 경우
                 messageContent = messageFromDB!.content
             } else {
-                // Message가 존재하지 않거나, 유효하지 않을 때
+                // AlanLLM - 새로운 메시지 가져오기
                 let question = AlanQuestion(character.question)
                 
                 async let answer = try await alanLLM.question(question)
-                messageContent = try await answer.content
+                let newMessageContent = try await answer.content
+                messageContent = newMessageContent
+                
+                // MentoryDB - 새로운 메시지 저장
+                let newMessage = MessageData(
+                    createdAt: .now,
+                    content: messageContent,
+                    characterType: character)
+                
+                try await mentoryDB.setMentorMessage(newMessage)
             }
         } catch {
             logger.error("setUpMentorMessage 에러 발생 : \(error)")
