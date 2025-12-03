@@ -16,9 +16,11 @@ struct MindAnalyzerTests {
     struct Analyze {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer
+        let todayBoard: TodayBoard
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
+            self.todayBoard = await mindAnalyzer.owner!.owner!
         }
         
         @Test func setIsAnalyzeFinishedTrue() async throws {
@@ -64,6 +66,22 @@ struct MindAnalyzerTests {
             await #expect(mindAnalyzer.mindType != nil)
             
         }
+        
+        @Test func TodayBoard_createSuggestions() async throws {
+            // given
+            try await #require(todayBoard.suggestions.isEmpty == true)
+            
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+            
+            // when
+            await mindAnalyzer.analyze()
+            
+            // then
+            await #expect(todayBoard.suggestions.isEmpty == false)
+        }
+        
         
         @Test func whenTextInputFromRecordFormIsEmpty() async throws {
             // given

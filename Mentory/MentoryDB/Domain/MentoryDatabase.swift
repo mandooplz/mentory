@@ -193,8 +193,7 @@ public actor MentoryDatabase: Sendable {
         }
     }
     
-    // + createRecordQueue: [RecordTicket]
-    public func insertDataInQueue(_ recordData: RecordData) {
+    public func insertTicket(_ recordData: RecordData) {
         let context = ModelContext(Self.container)
         let id = self.id
         
