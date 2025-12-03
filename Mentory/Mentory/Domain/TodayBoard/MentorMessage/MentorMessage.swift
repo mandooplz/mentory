@@ -46,7 +46,6 @@ final class MentorMessage: Sendable, ObservableObject {
         // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
         
         // process
         do {
@@ -59,14 +58,11 @@ final class MentorMessage: Sendable, ObservableObject {
     }
     
     func updateContent() async {
+        // capture
         let mentoryiOS = self.owner!.owner!
-        
-        let mentoryDB = mentoryiOS.mentoryDB // SwiftData에서 저장된 MentorMessage를 조회하기 위해 필요
         let alanLLM = mentoryiOS.alanLLM
         
         // process
-        
-        
         let messageContent: String
         do {
             // SwiftData에 저장된 MentorMessage를 불러온다.

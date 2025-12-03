@@ -12,59 +12,23 @@ import Values
 
 // MARK: Domain
 nonisolated struct MentoryDBAdapter: MentoryDBInterface {
-    nonisolated let api = MentoryDBAPI()
+    private let object = MentoryDB.shared
     
-    @concurrent
-    func updateName(_ newName: String) async throws {
-        try await api.updateName(newName)
+    @concurrent func getName() async throws -> String? {
+        return await object.getName()
     }
-    
-    @concurrent
-    func getName() async throws -> String? {
-        let name = try await api.getName()
-        
-        return name
+    @concurrent func setName(_ newName: String) async throws {
+        await object.setName(newName)
     }
     
-    @concurrent
-    func saveRecord(_ data: Values.RecordData) async throws {
-        try await api.saveRecord(data)
+    @concurrent func getMentorMessage() async throws -> MessageData? {
+        return await object.getMentorMessage()
     }
-
-    @concurrent
-    func fetchAvailableDatesForWriting() async throws -> [MentoryDate] {
-        try await api.fetchAvailableDatesForWriting()
-    }
-
-    @concurrent
-    func fetchAll() async throws -> [RecordData] {
-        try await api.fetchAll()
+    @concurrent func setMentorMessage(_ data: MessageData) async throws {
+        await object.setMentorMessage(data)
     }
     
-    @concurrent
-    func fetchToday() async throws -> [RecordData] {
-        try await api.fetchToday()
-    }
-    
-    @concurrent
-    func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
-        try await api.fetchToday(from: from, to: to)
-    }
-    
-    @concurrent
-    public func fetchMentorMessage() async throws -> MessageData? {
-        let message = try await api.fetchMentorMessage()
-        
-        return message
-    }
-    
-    @concurrent
-    public func updateMentorMessage(_ data: MessageData) async throws {
-        try await api.updateMentorMessage(data)
-    }
-    
-    @concurrent
-    public func getRecordCount() async throws -> Int {
-        try await api.getRecordCount()
+    @concurrent func getRecordCount() async throws -> Int {
+        await object.getRecordCount()
     }
 }

@@ -10,22 +10,14 @@ import OSLog
 import Values
 
 
+
 // MARK: Interface
 protocol MentoryDBInterface: Sendable {
-    // name
-    func updateName(_ newName: String) async throws -> Void
+    func setName(_ newName: String) async throws -> Void
     func getName() async throws -> String?
-    
-    func saveRecord(_ data: RecordData) async throws -> Void
 
-    func fetchAll() async throws -> [RecordData]
-    func fetchToday() async throws -> [RecordData]
-    func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData]
-    
-    func fetchAvailableDatesForWriting() async throws -> [MentoryDate]
-
-    func fetchMentorMessage() async throws -> MessageData?
-    func updateMentorMessage(_ data: MessageData) async throws -> Void
+    func getMentorMessage() async throws -> MessageData?
+    func setMentorMessage(_ data: MessageData) async throws -> Void
     
     func getRecordCount() async throws -> Int
 }

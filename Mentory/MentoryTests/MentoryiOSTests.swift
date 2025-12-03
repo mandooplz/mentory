@@ -103,7 +103,7 @@ struct MentoryiOSTests {
         
         @Test func setOnboardingNil() async throws {
             // given
-            try await mentoryDB.updateName("TEST_USER_NAME")
+            try await mentoryDB.setName("TEST_USER_NAME")
             
             // when
             await mentoryiOS.loadUserName()
@@ -113,7 +113,7 @@ struct MentoryiOSTests {
         }
         @Test func setOnboardingFinishedTrue() async throws {
             // given
-            try await mentoryDB.updateName("TEST_USER_NAME")
+            try await mentoryDB.setName("TEST_USER_NAME")
             
             try await #require(mentoryiOS.onboardingFinished == false)
             
@@ -126,7 +126,7 @@ struct MentoryiOSTests {
         
         @Test func createSettingBoard() async throws {
             // given
-            try await mentoryDB.updateName("TEST_USER_NAME")
+            try await mentoryDB.setName("TEST_USER_NAME")
             
             try await #require(mentoryiOS.settingBoard == nil)
             

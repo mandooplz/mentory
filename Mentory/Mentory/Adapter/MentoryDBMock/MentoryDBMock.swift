@@ -12,78 +12,33 @@ import Values
 nonisolated
 struct MentoryDBMock: MentoryDBInterface {
     // MARK: core
-    nonisolated let model = MentoryDBModel()
+    nonisolated let object = MentoryDBModel()
     
     
     // MARK: flow
-    @concurrent
-    func updateName(_ newName: String) async throws {
-        await MainActor.run {
-            model.userName = newName
-        }
-    }
-    
-    @concurrent
-    func getName() async throws -> String? {
+    @concurrent func getName() async throws -> String? {
         return await MainActor.run {
-            model.userName
+            object.userName
+        }
+    }
+    @concurrent func setName(_ newName: String) async throws {
+        await MainActor.run {
+            object.userName = newName
         }
     }
     
-    @concurrent
-    func saveRecord(_ data: RecordData) async throws {
-        await MainActor.run {
-            model.createRecordQueue.append(data)
-            
-            model.createDailyRecords()
-        }
-    }
-
-    @concurrent
-    func fetchAvailableDatesForWriting() async throws -> [MentoryDate] {
-        await MainActor.run {
-            model.getAvailableDatesForWriting()
-        }
-    }
-
-    @concurrent
-    func fetchAll() async throws -> [RecordData] {
-        await MainActor.run {
-            model.getAllRecords()
-        }
-    }
-    
-    @concurrent
-    func fetchToday() async throws -> [RecordData] {
-        await MainActor.run {
-            model.getTodayRecords()
-        }
-    }
-    
-    @concurrent
-    func fetchByDateRange(from: Date, to: Date) async throws -> [RecordData] {
-        await MainActor.run {
-            model.getRecords(from: from, to: to)
-        }
-    }
-    
-    @concurrent
-    func fetchMentorMessage() async throws -> Values.MessageData? {
+    @concurrent func getMentorMessage() async throws -> Values.MessageData? {
         return await MainActor.run {
-            model.getMentorMessage()
+            object.getMentorMessage()
         }
-        
     }
-    
-    @concurrent
-    func updateMentorMessage(_ data: MessageData) async throws {
+    @concurrent func setMentorMessage(_ data: MessageData) async throws {
         await MainActor.run {
-            model.updateMentorMessage(data)
+            object.updateMentorMessage(data)
         }
     }
     
-    @concurrent
-    func getRecordCount() async throws -> Int {
+    @concurrent func getRecordCount() async throws -> Int {
         fatalError()
     }
 }

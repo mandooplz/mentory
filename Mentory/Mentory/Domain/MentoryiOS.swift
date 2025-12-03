@@ -108,7 +108,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         
         // process
         do {
-            try await self.mentoryDB.updateName(userName)
+            try await self.mentoryDB.setName(userName)
         } catch {
             logger.error("\(error)")
             return

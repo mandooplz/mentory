@@ -11,9 +11,9 @@ import OSLog
 
 
 // MARK: Object
-actor MentoryDB: Sendable {
+public actor MentoryDB: Sendable {
     // MARK: core
-    init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
+    private init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
         self.id = id
         
         let context = ModelContext(Self.container)
@@ -21,6 +21,7 @@ actor MentoryDB: Sendable {
         context.insert(newModel)
         try! context.save()
     }
+    public static let shared = MentoryDB()
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
     static let container: ModelContainer = {
@@ -40,7 +41,7 @@ actor MentoryDB: Sendable {
     nonisolated public let id: UUID
     
     // + userName: String? = nil
-    func setName(_ newName: String) {
+    public func setName(_ newName: String) {
         let context = ModelContext(MentoryDB.container)
         
         let id = self.id
@@ -60,7 +61,7 @@ actor MentoryDB: Sendable {
             return
         }
     }
-    func getName() -> String? {
+    public func getName() -> String? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -83,7 +84,7 @@ actor MentoryDB: Sendable {
     }
     
     // + character: MentoryCharacter? = nil
-    func getCharacter() -> MentoryCharacter? {
+    public func getCharacter() -> MentoryCharacter? {
         let context = ModelContext(MentoryDB.container)
         
         let id = self.id
@@ -94,7 +95,7 @@ actor MentoryDB: Sendable {
         let model = try! context.fetch(descriptor).first!
         return model.character
     }
-    func setCharacter(_ character: MentoryCharacter) {
+    public func setCharacter(_ character: MentoryCharacter) {
         let context = ModelContext(MentoryDB.container)
         
         let id = self.id
@@ -116,7 +117,7 @@ actor MentoryDB: Sendable {
     }
     
     // + records: [DailyRecord]
-    func getAllRecords() async -> [RecordData] {
+    public func getAllRecords() async -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -145,7 +146,7 @@ actor MentoryDB: Sendable {
             return []
         }
     }
-    func getTodayRecordDatas() async -> [RecordData] {
+    public func getTodayRecordDatas() async -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -175,7 +176,7 @@ actor MentoryDB: Sendable {
             return []
         }
     }
-    func getRecords(from: Date, to: Date) -> [RecordData] {
+    public func getRecords(from: Date, to: Date) -> [RecordData] {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -200,7 +201,7 @@ actor MentoryDB: Sendable {
             return []
         }
     }
-    func getRecordCount() -> Int {
+    public func getRecordCount() -> Int {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -222,7 +223,7 @@ actor MentoryDB: Sendable {
         }
     }
     // 현재, 어제, 그제 Record가 있는지 확인하고 Record가 없는 날짜를 [MentoryDate] 배열로 반환
-    func getAvailableDatesForWriting() async -> [MentoryDate] {
+    public func getAvailableDatesForWriting() async -> [MentoryDate] {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
 
@@ -265,7 +266,7 @@ actor MentoryDB: Sendable {
     }
     
     // + createRecordQueue: [RecordTicket]
-    func insertDataInQueue(_ recordData: RecordData) {
+    public func insertDataInQueue(_ recordData: RecordData) {
         let context = ModelContext(Self.container)
         let id = self.id
         
@@ -295,7 +296,7 @@ actor MentoryDB: Sendable {
     }
     
     // + mentorMessages: MentorMessage? = nil
-    func getMentorMessage() -> MessageData? {
+    public func getMentorMessage() -> MessageData? {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -321,7 +322,7 @@ actor MentoryDB: Sendable {
             return nil
         }
     }
-    func updateMentorMessage(_ data: MessageData) {
+    public func setMentorMessage(_ data: MessageData) {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         
@@ -350,7 +351,7 @@ actor MentoryDB: Sendable {
     
     
     // MARK: action
-    func createDailyRecords() async {
+    public func createDailyRecords() async {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
         

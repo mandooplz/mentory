@@ -59,7 +59,7 @@ final class EditingName: Sendable, ObservableObject{
         
         //process
         do {
-            try await mentoryDB.updateName(newName)
+            try await mentoryDB.setName(newName)
         } catch {
             logger.error("사용자 이름을 변경하는 데 실패했습니다. \(error)")
         }
