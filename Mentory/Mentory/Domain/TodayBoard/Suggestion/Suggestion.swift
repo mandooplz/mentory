@@ -24,7 +24,7 @@ final class Suggestion: Sendable, ObservableObject {
     }
     
     // MARK: state
-    nonisolated let id = UUID()
+    nonisolated let id: UUID = UUID()
     
     weak var owner: TodayBoard?
     

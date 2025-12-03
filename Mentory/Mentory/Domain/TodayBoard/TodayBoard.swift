@@ -35,7 +35,6 @@ final class TodayBoard: Sendable, ObservableObject {
     
     @Published var recordCount: Int? = nil
     
-    // suggestion
     @Published var suggestions: [Suggestion] = []
     
     
@@ -208,4 +207,10 @@ final class TodayBoard: Sendable, ObservableObject {
 //        }
 //    }
 
+    // MARK: Value
+    nonisolated
+    struct ID {
+        // TodayBoard.ID <- UUID
+        // Suggestion.ID <- UUID
+    }
 }

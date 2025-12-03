@@ -24,7 +24,6 @@ actor MentorMessage: Sendable {
     //MARK: action
     
     //MARK: value
-
     @Model
     final class MentorMessageModel {
         // MARK: core
