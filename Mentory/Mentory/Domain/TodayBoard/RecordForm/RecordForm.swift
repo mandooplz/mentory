@@ -78,10 +78,13 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         let text = self.textInput
     
         //process
-        let canProceedResult: Bool = !title.isEmpty && !text.isEmpty
+        let isTitleNotEmpty = !title.isEmpty
+        let isTextNotEmpty = !text.isEmpty
+        
+        let canUserProceed = isTitleNotEmpty && isTextNotEmpty
         
         // mutate
-        self.canProceed = canProceedResult
+        self.canProceed = canUserProceed
     }
     func submit() async {
         // capture
