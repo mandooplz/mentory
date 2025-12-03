@@ -15,7 +15,7 @@ actor WatchConnectivityEngine: NSObject {
     static let shared = WatchConnectivityEngine()
 
     private nonisolated let logger = Logger(subsystem: "MentoryWatch.WatchConnectivityEngine", category: "Service")
-    private nonisolated let session: WCSession
+    private let session: WCSession
 
     // MARK: - State
     private var cachedMentorMessage: String = ""
@@ -35,7 +35,7 @@ actor WatchConnectivityEngine: NSObject {
     // MARK: - Public Methods
 
     /// 엔진 활성화 (WCSession delegate 설정 및 activate)
-    nonisolated func activate() {
+    func activate() {
         guard WCSession.isSupported() else {
             logger.error("WCSession이 지원되지 않는 기기입니다.")
             return
@@ -51,7 +51,7 @@ actor WatchConnectivityEngine: NSObject {
     }
 
     /// iOS 앱에서 보낸 applicationContext 데이터 로드
-    nonisolated func loadInitialDataFromContext() {
+    func loadInitialDataFromContext() {
         // iOS에서 updateApplicationContext로 보낸 최신 데이터 읽기
         let context = session.receivedApplicationContext
         let mentorMsg = context["mentorMessage"] as? String ?? ""
@@ -59,9 +59,7 @@ actor WatchConnectivityEngine: NSObject {
 
         logger.debug("ApplicationContext에서 데이터 로드 완료")
 
-        Task {
-            await handleReceivedData(mentorMsg: mentorMsg, character: character)
-        }
+        handleReceivedData(mentorMsg: mentorMsg, character: character)
     }
 
     // MARK: - Internal Methods
