@@ -152,6 +152,10 @@ fileprivate struct PopupCard: View {
         self.content = content
     }
     
+    private func forMarkdown(_ string: String) -> LocalizedStringKey {
+        .init(string)
+    }
+    
     var body: some View {
         if let content {
             LiquidGlassCard {
@@ -174,7 +178,7 @@ fileprivate struct PopupCard: View {
                     }
                     
                     
-                    Text(content)
+                    Text(forMarkdown(content))
                         .font(.system(size: 16))
                         .foregroundStyle(.secondary)
                         .lineSpacing(4)
