@@ -29,6 +29,8 @@ struct MindAnalyzerView: View {
         !mindAnalyzer.isAnalyzing && mindAnalyzer.isAnalyzeFinished
     }
     
+    
+    
     // MARK: body
     var body: some View {
         MindAnalyzerLayout {
@@ -53,6 +55,7 @@ struct MindAnalyzerView: View {
                         showingSubmitAlert = true
                     }
                 )
+                .preference(key: cancelToolbarHidden.self, value: !mindAnalyzer.isAnalyzing || mindAnalyzer.isAnalyzeFinished)
                 .alert("일기 제출하기", isPresented: $showingSubmitAlert) {
                     Button("취소", role: .cancel) { }
                     Button("제출") {

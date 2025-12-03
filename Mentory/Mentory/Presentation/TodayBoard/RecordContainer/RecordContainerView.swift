@@ -9,12 +9,24 @@ import Foundation
 import SwiftUI
 import Combine
 
+@MainActor
+struct cancelToolbarHidden: PreferenceKey {
+    nonisolated
+    static let defaultValue: Bool = false
+    
+    nonisolated
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+}
+
 
 // MARK: View
 struct RecordContainerView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var navigationPath = NavigationPath()
     @State private var isSubmitEnabled = false
+    @State private var isCancelHidden = false
     @ObservedObject var recordForm: RecordForm
     
     
@@ -22,24 +34,30 @@ struct RecordContainerView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             RecordFormView(recordForm: recordForm)
+                .onPreferenceChange(cancelToolbarHidden.self) { value in
+                    isCancelHidden = value
+                }
                 .navigationDestination(for: String.self) { value in
                     if value == "MindAnalyzerView" {
                         MindAnalyzerView(recordForm.mindAnalyzer!)
                     }
                 }
+            
                 .toolbar {
                     // MARK: 취소 버튼
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            if navigationPath.isEmpty {
-                                // 현재 화면 = RecordFormView
-                                dismiss()                   // RecordContainerView 종료
-                            } else {
-                                // 현재 화면 = MindAnalyzer
-                                navigationPath.removeLast() // MindAnalyzerView → RecordFormView
+                        if !isCancelHidden {
+                            Button {
+                                if navigationPath.isEmpty {
+                                    // 현재 화면 = RecordFormView
+                                    dismiss()                   // RecordContainerView 종료
+                                } else {
+                                    // 현재 화면 = MindAnalyzer
+                                    navigationPath.removeLast() // MindAnalyzerView → RecordFormView
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
                             }
-                        } label: {
-                            Image(systemName: "xmark")
                         }
                     }
                     
