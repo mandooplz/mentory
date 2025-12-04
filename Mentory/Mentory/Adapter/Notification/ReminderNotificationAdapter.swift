@@ -10,7 +10,7 @@ import UserNotifications
 import OSLog
 
 @MainActor
-final class ReminderNotificationAdapter {
+final class ReminderNotificationAdapter: ReminderNotificationInterface {
 
     nonisolated private let logger = Logger(
         subsystem: "MentoryiOS.ReminderNotificationAdapter",
@@ -106,7 +106,7 @@ final class ReminderNotificationAdapter {
     }
 
 
-    // MARK: -   모든 알림 취소
+    // MARK: - 모든 알림 취소
 
     func cancelAllWeeklyReminders() async {
         let center = UNUserNotificationCenter.current()
