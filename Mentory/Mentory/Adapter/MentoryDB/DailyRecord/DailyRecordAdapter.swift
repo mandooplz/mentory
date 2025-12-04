@@ -10,7 +10,7 @@ import Values
 
 // MARK: Adapter
 nonisolated struct DailyRecordAdapter: DailyRecordInterface {
-    public let recordData: RecordData
+    private let recordData: RecordData
 
     public init(recordData: RecordData) {
         self.recordData = recordData
