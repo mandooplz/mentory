@@ -298,6 +298,46 @@ public actor MentoryDatabase: Sendable {
     }
     
     
+    public func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            // 1) 나(MentoryDatabase)에 해당하는 MentoryDBModel 찾기
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("insertSuggestions: MentoryDBModel not found")
+                return
+            }
+
+            // 2) ticketId 로 DailyRecordModel 찾기
+            guard let record = db.records.first(where: { $0.ticketId == ticketId }) else {
+                logger.error("insertSuggestions: DailyRecordModel not found for ticketId \(ticketId)")
+                return
+            }
+
+            // 3) SuggestionData -> DailySuggestionModel 매핑해서 record에 붙이기
+            for item in suggestions {
+                let model = DailySuggestionModel(
+                    id: item.id,
+                    target: item.target.rawValue,  // SuggestionID의 원시값(UUID)
+                    content: item.content,
+                    status: item.isDone
+                )
+                record.suggestions.append(model)
+            }
+            
+            try context.save()
+            logger.debug("insertSuggestions: \(suggestions.count)개의 DailySuggestionModel 저장 완료")
+            
+        } catch {
+            logger.error("insertSuggestions failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+    
     // MARK: action
     public func createDailyRecords() async {
         let context = ModelContext(MentoryDatabase.container)
