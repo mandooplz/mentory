@@ -318,16 +318,20 @@ struct SettingBoardView: View {
                     settingBoard.changeReminderTime(to: newDate)
                 }
                 
-                Button("완료") {
+                Button {
                     settingBoardViewModel.isShowingReminderPickerSheet = false
+                } label: {
+                    Text("완료")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.mentoryAccentPrimary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.mentorySubCard)
+                        )
                 }
-                .font(.system(size: 16, weight: .semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.mentorySubCard))
-                )
+                .buttonStyle(.plain)
             }
             .padding()
             .navigationTitle("알림 설정")
@@ -339,7 +343,7 @@ struct SettingBoardView: View {
                 }
             }
         }
-        .presentationDetents([.height(320)])
+        .presentationDetents([.height(400)])
     }
 }
 
