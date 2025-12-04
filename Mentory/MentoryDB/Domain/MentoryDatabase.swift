@@ -289,7 +289,13 @@ public actor MentoryDatabase: Sendable {
             try context.save()
             
             logger.debug("RecordData \(newModels.count)개를 DailyRecord로 변환했습니다.")
-            
+
+            // 변환된 레코드의 분석 결과 로깅(추후 추천 로직 구현 시 삭제)
+            for model in newModels {
+                logger.info("저장된 분석 결과 - 날짜: \(model.recordDate), 감정: \(model.emotion.rawValue), 메시지: \(model.analyzedResult, privacy: .public)")
+            }
+
+
         } catch {
             logger.error("큐 플러시 중 오류 발생: \(error.localizedDescription)")
         }
