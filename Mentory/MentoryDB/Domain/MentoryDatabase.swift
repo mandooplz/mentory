@@ -192,6 +192,35 @@ public actor MentoryDatabase: Sendable {
             return 0
         }
     }
+    
+    public func isSameDayRecordExist(for date: MentoryDate) -> Bool {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 isSameDayRecordExist에서 false 반환")
+                return false
+            }
+
+            let exists = db.records.contains { record in
+                MentoryDate(record.recordDate).isSameDate(as: date)
+            }
+            logger.debug("isSameDayRecordExist: \(exists)")
+
+            return exists
+        } catch {
+            logger.error("동일 날짜 레코드 조회 중 오류 발생: \(error)")
+            return false
+        }
+    }
+
+
+    
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
     }
