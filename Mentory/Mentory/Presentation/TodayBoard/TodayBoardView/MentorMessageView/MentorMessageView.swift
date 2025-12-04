@@ -18,6 +18,7 @@ struct MentorMessageView: View {
     
     // MARK: body
     var body: some View {
+        //새로만든 팝업카드 (안됨)
         PopupCard(
             image: mentorMessage.character?.imageName,
             defaultImage: "greeting",
@@ -26,6 +27,62 @@ struct MentorMessageView: View {
             content: mentorMessage.content,
             defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
         )
+        //이전 팝업카드 복구 (동작함)
+        PopupCard2(
+            image: mentorMessage.character?.imageName ?? "greeting",
+            title: mentorMessage.character?.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
+            content: mentorMessage.content ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+        )
+    }
+}
+
+fileprivate struct PopupCard2: View {
+    let image: String
+    let title: String
+    let content: String?
+    
+    private func forMarkdown(_ string: String) -> LocalizedStringKey {
+        .init(string)
+    }
+    init(image: String, title: String, content: String) {
+        self.image = image
+        self.title = title
+        self.content = content
+    }
+    
+    var body: some View {
+        if let content {
+            LiquidGlassCard {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(image)
+                            .resizable()
+                            .scaledToFill()
+                            .scaleEffect(1.8, anchor: .top)
+                            .offset(y: 2)
+                            .frame(width: 28, height: 28)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)
+                            )
+                        Text(title)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.primary)
+                    }
+                    
+                    
+                    Text(forMarkdown(content))
+                        .font(.system(size: 16))
+                        .foregroundStyle(.secondary)
+                        .lineSpacing(4)
+                }
+                .padding(.vertical, 24)
+                .padding(.horizontal, 20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .transition(.scale(scale: 0.95).combined(with: .opacity))
+        }
     }
 }
 
@@ -55,7 +112,7 @@ fileprivate struct PopupCard: View {
                             .clipShape(Circle())
                             .overlay(
                                 Circle()
-                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)   // ← 테두리 추가!
+                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)
                             )
                         Text(title ?? defaultTitle)
                             .font(.system(size: 18, weight: .semibold))
