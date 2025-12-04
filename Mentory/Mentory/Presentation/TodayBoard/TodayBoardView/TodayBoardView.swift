@@ -69,7 +69,9 @@ struct TodayBoardView: View {
         }
         .task {
             await todayBoard.setUpMentorMessage()
-            await todayBoard.mentorMessage?.loadTodayMentorMessageTest()
+        }
+        .task {
+//            await todayBoard.mentorMessage?.loadTodayMentorMessageTest()
         }
         .task {
             // WatchConnectivity 설정
