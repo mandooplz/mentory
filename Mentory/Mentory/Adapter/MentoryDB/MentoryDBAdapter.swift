@@ -50,6 +50,6 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         await object.insertTicket(recordData)
         await object.createDailyRecords()
         
-        fatalError("Suggestion 저장 추가 구현 필요합니다.")
+        //fatalError("Suggestion 저장 추가 구현 필요합니다.")
     }
 }

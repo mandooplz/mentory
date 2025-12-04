@@ -251,8 +251,6 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 RecordContainerView(recordForm: form)
             }
         }
-        
-        
     }
 }
 

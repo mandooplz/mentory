@@ -36,7 +36,8 @@ struct RecordContainerView: View {
             RecordFormView(recordForm: recordForm)
                 .navigationDestination(for: String.self) { value in
                     if value == "MindAnalyzerView" {
-                        MindAnalyzerView(recordForm.mindAnalyzer!)
+                        MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!,
+                                         parentDismiss: dismiss)
                     }
                 }
             
@@ -95,7 +96,17 @@ struct RecordContainerView: View {
                         self.isSubmitEnabled = canProceed
                     }
                 }
+//                .task {
+//                    let todayBoard = recordForm.owner!
+//                    let stream = todayBoard.$recordFormSelection.values.map ({ $0 != nil})
+//                    for await isPresent in stream {
+//                        if isPresent == false {
+//                            dismiss()
+//                        }
+//                    }
+//                }
         }
+        
 //        .onPreferenceChange(CancelToolbarHidden.self) { value in
 //            isCancelHidden = value
 //        }
