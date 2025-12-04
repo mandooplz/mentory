@@ -115,8 +115,13 @@ struct FirebaseLLM: FirebaseLLMInterface {
 
         // 음성 추가 (최대 1개, m4a 포맷)
         if let voiceURL = question.voiceURL {
-            parts.append(FileDataPart(uri: voiceURL.absoluteString, mimeType: "audio/m4a"))
-            logger.info("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent))")
+            do {
+                let voiceData = try Data(contentsOf: voiceURL)
+                parts.append(InlineDataPart(data: voiceData, mimeType: "audio/m4a"))
+                logger.info("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent), 크기: \(voiceData.count) bytes, MIME: audio/m4a)")
+            } catch {
+                logger.error("음성 파일 읽기 실패: \(error.localizedDescription)")
+            }
         }
 
         return ModelContent(role: "user", parts: parts)
