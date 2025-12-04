@@ -13,12 +13,11 @@ import Values
 // MARK: View
 struct MentorMessageView: View {
     // MARK: model
-    @ObservedObject var mentorMessage: MentorMessage?
+    @ObservedObject var mentorMessage: MentorMessage
     
     
     // MARK: body
     var body: some View {
-        
         PopupCard(
             image: mentorMessage.character?.imageName,
             defaultImage: "greeting",
@@ -27,10 +26,14 @@ struct MentorMessageView: View {
             content: mentorMessage.content,
             defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
         )
+        .task {
+//            await mentorMessage.loadTodayMentorMessageTest()
+            await mentorMessage.updateContent()
+        }
     }
 }
 
-fileprivate struct PopupCard: View {
+struct PopupCard: View {
     let image: String?
     let defaultImage: String
     let title: String?

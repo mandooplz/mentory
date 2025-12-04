@@ -67,9 +67,12 @@ final class MentorMessage: Sendable, ObservableObject {
 //            logger.error("MentorMessage의 Character가 nil입니다. 먼저 Character를 설정하세요.")
 //            return
 //        }
+        let todayBoard = self.owner!
+        let currentDate = todayBoard.currentDate
+        logger.debug("currentDate는요:\(currentDate.rawValue)")
         
         if let recentUpdate,
-           recentUpdate.isSameDate(as: .now) == true {
+           recentUpdate.isSameDate(as: currentDate) == true {
             logger.error("\(Date.now) 날짜의 MentorMessage가 이미 존재합니다.")
             return
         }
@@ -93,7 +96,7 @@ final class MentorMessage: Sendable, ObservableObject {
         let messageCharacter: MentoryCharacter
         do {
             let isMessageValid = messageFromDB?.createdAt
-                .isSameDate(as: .now)
+                .isSameDate(as: currentDate)
                 
             if isMessageValid == true {
                 // Message가 유효한 경우
@@ -128,9 +131,6 @@ final class MentorMessage: Sendable, ObservableObject {
         self.character = messageCharacter
         self.recentUpdate = .now
     }
-    
-    
-    // MARK: value
     
     func loadTodayMentorMessageTest() async {
         let mentoryiOS = self.owner!.owner!
@@ -171,5 +171,10 @@ final class MentorMessage: Sendable, ObservableObject {
             logger.debug("character: \(messageCharacter.displayName)")
         }
     }
+    
+    
+    // MARK: value
+    
+    
        
 }

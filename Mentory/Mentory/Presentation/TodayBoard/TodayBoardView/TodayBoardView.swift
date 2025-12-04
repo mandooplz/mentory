@@ -39,12 +39,7 @@ struct TodayBoardView: View {
             
             // 멘토리메세지 카드
             
-            MentorMessageView(mentorMessage: todayBoard.mentorMessage)
-//            if let mentormessage = todayBoard.mentorMessage {
-//                MentorMessageView(mentorMessage: mentormessage)
-//            } else {
-//                EmptyView()
-//            }
+           MessageView(mentorMessage: todayBoard.mentorMessage)
             
             // 기분 기록 카드
             RecordStatCard(
@@ -71,9 +66,6 @@ struct TodayBoardView: View {
         }
         .task {
             await todayBoard.setUpMentorMessage()
-        }
-        .task {
-            await todayBoard.mentorMessage?.loadTodayMentorMessageTest()
         }
         .task {
             // WatchConnectivity 설정
@@ -130,6 +122,31 @@ fileprivate struct Title: View {
             Spacer()
         }
         .padding(.top, 0)
+    }
+}
+
+struct MessageView: View {
+    let mentorMessage: MentorMessage?
+    
+    var body: some View {
+        if let mentorMessage {
+            MentorMessageView(mentorMessage: mentorMessage)
+        } else {
+            MentorMessageDefaultView()
+        }
+    }
+}
+
+struct MentorMessageDefaultView: View {
+    var body: some View {
+        PopupCard(
+            image: nil,
+            defaultImage: "greeting",
+            title: nil,
+            defaultTitle: "오늘의 멘토리 조언을 준비하고 있어요",
+            content: nil,
+            defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+        )
     }
 }
 
