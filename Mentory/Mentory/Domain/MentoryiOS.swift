@@ -18,7 +18,7 @@ final class MentoryiOS: Sendable, ObservableObject {
     nonisolated let alanLLM: any AlanLLMInterface
     nonisolated let firebaseLLM: any FirebaseLLMInterface
     
-    let reminderCenter = ReminderNotificationCenter()
+    let reminderCenter = ReminderNotificationAdapter()
     
     init(_ mode: SystemMode = .test) {
         switch mode {
