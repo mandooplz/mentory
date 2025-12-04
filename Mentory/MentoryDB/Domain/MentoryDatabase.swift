@@ -236,7 +236,34 @@ public actor MentoryDatabase: Sendable {
         }
     }
 
+    public func getRecentRecord() -> RecordData? {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
 
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 getRecentRecord에서 nil 반환")
+                return nil
+            }
+
+            // createdAt 기준 최신 DailyRecordModel 찾기
+            guard let latest = db.records.max(by: { $0.createdAt < $1.createdAt }) else {
+                logger.debug("getRecentRecord: DailyRecord가 존재하지 않아 nil 반환")
+                return nil
+            }
+
+            // DailyRecordModel → RecordData 변환
+            return latest.toData()
+
+        } catch {
+            logger.error("최근 DailyRecord 조회 중 오류 발생: \(error)")
+            return nil
+        }
+    }
     
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
