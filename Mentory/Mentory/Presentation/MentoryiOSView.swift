@@ -90,7 +90,7 @@ struct MentoryiOSView: View {
     
     @ViewBuilder
     private var StaticTab: some View {
-        Text("통계 화면 준비 중")
+        StatisticsView()
     }
     
     @ViewBuilder
