@@ -44,8 +44,8 @@ struct FirebaseLLM: FirebaseLLMInterface {
         logger.debug("Firebase LLM 요청 시작")
 
         do {
-            let content = try question.toModelContent()
-            logger.debug("ModelContent 변환 완료 (파트 개수: \(content.parts.count))")
+            let content = try question.buildModelContent()
+            logger.debug("ModelContent 생성 완료")
             let response = try await model.generateContent([content])
 
             guard let rawText = response.text,
@@ -89,8 +89,8 @@ struct FirebaseLLM: FirebaseLLMInterface {
           )
         )
 
-        let content = try question.toModelContent()
-        logger.debug("ModelContent 변환 완료 (파트 개수: \(content.parts.count))")
+        let content = try question.buildModelContent()
+        logger.debug("ModelContent 생성 완료")
         let response = try await newModel.generateContent([content])
         guard let data = response.text?.data(using: .utf8) else {
             throw Error.jsonDecodingFailed
@@ -105,5 +105,29 @@ struct FirebaseLLM: FirebaseLLMInterface {
     enum Error: Swift.Error {
         case emptyResponse
         case jsonDecodingFailed
+    }
+}
+
+
+// MARK: - Helper
+nonisolated extension FirebaseQuestion {
+    func buildModelContent() throws -> ModelContent {
+        var parts: [any Part] = []
+
+        // 텍스트 추가
+        parts.append(TextPart(content))
+
+        // 이미지 추가 (최대 1개)
+        if let imageData = imageData {
+            parts.append(InlineDataPart(data: imageData, mimeType: "image/jpeg"))
+        }
+
+        // 음성 추가 (최대 1개, wav 포맷)
+        if let voiceURL = voiceURL {
+            let voiceData = try Data(contentsOf: voiceURL)
+            parts.append(InlineDataPart(data: voiceData, mimeType: "audio/wav"))
+        }
+
+        return ModelContent(role: "user", parts: parts)
     }
 }
