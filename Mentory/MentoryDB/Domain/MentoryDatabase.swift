@@ -15,13 +15,30 @@ import OSLog
 public actor MentoryDatabase: Sendable {
     // MARK: core
     private init(id: UUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!) {
-        self.id = id
-        
-        let context = ModelContext(Self.container)
-        let newModel = MentoryDBModel(id: id)
-        context.insert(newModel)
-        try! context.save()
-    }
+            self.id = id
+            
+            let context = ModelContext(Self.container)
+            let descriptor = FetchDescriptor<MentoryDBModel>(
+                predicate: #Predicate { $0.id == id }
+            )
+            
+            do {
+                let existing = try context.fetch(descriptor)
+                
+                // 이미 같은 id의 MentoryDBModel 이 있으면 아무 것도 하지 않음
+                if existing.isEmpty {
+                    let newModel = MentoryDBModel(id: id)
+                    context.insert(newModel)
+                    try context.save()
+                    // 필요하면 여기서 logger로 "초기 DB 생성" 정도 남겨도 됨
+                } else {
+                    // 이미 존재 → 초기화 시 재생성하지 않음
+                    // logger.debug("이미 MentoryDBModel 이 존재하므로 새로 생성하지 않습니다.")
+                }
+            } catch {
+                fatalError("❌ MentoryDB 초기화 실패: \(error)")
+            }
+        }
     public static let shared = MentoryDatabase()
     
     nonisolated let logger = Logger(subsystem: "MentoryDB.MentoryDB", category: "Domain")
