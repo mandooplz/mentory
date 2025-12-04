@@ -208,7 +208,7 @@ public actor MentoryDatabase: Sendable {
             }
 
             let exists = db.records.contains { record in
-                MentoryDate(record.recordDate).isSameDate(as: date)
+                MentoryDate(record.createdAt).isSameDate(as: date)
             }
             logger.debug("isSameDayRecordExist: \(exists)")
 
