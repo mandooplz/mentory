@@ -74,10 +74,10 @@ final class MindAnalyzer: Sendable, ObservableObject {
 
         // 멀티모달 입력 로깅
         if imageInput != nil {
-            logger.info("이미지 첨부됨 - 감정 분석에 포함")
+            logger.debug("이미지 첨부됨 - 감정 분석에 포함")
         }
         if voiceInput != nil {
-            logger.info("음성 첨부됨 - 감정 분석에 포함")
+            logger.debug("음성 첨부됨 - 감정 분석에 포함")
         }
 
 
@@ -92,7 +92,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let analysis: FirebaseAnalysis
         do {
             analysis = try await firebaseLLM.getEmotionAnalysis(question, character: character)
-            logger.info("멀티모달 감정 분석 완료")
+            logger.debug("멀티모달 감정 분석 완료")
         } catch {
             logger.error("\(error)")
             return

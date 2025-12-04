@@ -41,7 +41,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
     // MARK: flow
     @concurrent
     func question(_ question: FirebaseQuestion) async throws -> FirebaseAnswer {
-        logger.info("Firebase LLM 요청 시작")
+        logger.debug("Firebase LLM 요청 시작")
 
         do {
             let content = buildModelContent(from: question)
@@ -55,7 +55,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
 
             let answer = FirebaseAnswer(rawText)
             let cleanedAnswer = answer.removeCodeBlockFence()
-            logger.info("Firebase LLM 응답 성공: \(cleanedAnswer.content, privacy: .public)")
+            logger.debug("Firebase LLM 응답 성공: \(cleanedAnswer.content, privacy: .public)")
             
             return cleanedAnswer
         } catch {
@@ -66,7 +66,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
     
     @concurrent
     func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async throws -> FirebaseAnalysis {
-        logger.info("Firebase LLM 요청 시작")
+        logger.debug("Firebase LLM 요청 시작")
         
         let jsonSchema = Schema.object(
             properties: [
@@ -110,7 +110,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
         // 이미지 추가 (최대 1개)
         if let imageData = question.imageData {
             parts.append(InlineDataPart(data: imageData, mimeType: "image/jpeg"))
-            logger.info("이미지 데이터 전송 준비 완료 (크기: \(imageData.count) bytes)")
+            logger.debug("이미지 데이터 전송 준비 완료 (크기: \(imageData.count) bytes)")
         }
 
         // 음성 추가 (최대 1개, wav 포맷)
@@ -118,7 +118,7 @@ struct FirebaseLLM: FirebaseLLMInterface {
             do {
                 let voiceData = try Data(contentsOf: voiceURL)
                 parts.append(InlineDataPart(data: voiceData, mimeType: "audio/wav"))
-                logger.info("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent), 크기: \(voiceData.count) bytes, MIME: audio/wav)")
+                logger.debug("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent), 크기: \(voiceData.count) bytes, MIME: audio/wav)")
             } catch {
                 logger.error("음성 파일 읽기 실패: \(error.localizedDescription)")
             }
