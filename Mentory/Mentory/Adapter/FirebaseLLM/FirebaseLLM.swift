@@ -113,12 +113,12 @@ struct FirebaseLLM: FirebaseLLMInterface {
             logger.info("이미지 데이터 전송 준비 완료 (크기: \(imageData.count) bytes)")
         }
 
-        // 음성 추가 (최대 1개, m4a 포맷)
+        // 음성 추가 (최대 1개, wav 포맷)
         if let voiceURL = question.voiceURL {
             do {
                 let voiceData = try Data(contentsOf: voiceURL)
-                parts.append(InlineDataPart(data: voiceData, mimeType: "audio/m4a"))
-                logger.info("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent), 크기: \(voiceData.count) bytes, MIME: audio/m4a)")
+                parts.append(InlineDataPart(data: voiceData, mimeType: "audio/wav"))
+                logger.info("음성 파일 전송 준비 완료 (경로: \(voiceURL.lastPathComponent), 크기: \(voiceData.count) bytes, MIME: audio/wav)")
             } catch {
                 logger.error("음성 파일 읽기 실패: \(error.localizedDescription)")
             }
