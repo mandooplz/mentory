@@ -22,6 +22,7 @@ struct MindAnalyzerView: View {
         self.mindAnalyzer = mindAnalyzer
         self.parentDismiss = parentDismiss
     }
+    
     private var isSelectingStage: Bool {
         !mindAnalyzer.isAnalyzing && !mindAnalyzer.isAnalyzeFinished
     }
@@ -163,8 +164,8 @@ struct MindAnalyzerView: View {
                 ) {
                     let recordForm = mindAnalyzer.owner!
                     recordForm.removeForm()
-                    mindAnalyzer.finish()
-//                    parentDismiss()
+//                    mindAnalyzer.finish()
+                    parentDismiss()
                 }
             }
         }
