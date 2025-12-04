@@ -38,11 +38,13 @@ struct TodayBoardView: View {
             )
             
             // 멘토리메세지 카드
-            if let mentormessage = todayBoard.mentorMessage {
-                MentorMessageView(mentorMessage: mentormessage)
-            } else {
-                EmptyView()
-            }
+            
+            MentorMessageView(mentorMessage: todayBoard.mentorMessage)
+//            if let mentormessage = todayBoard.mentorMessage {
+//                MentorMessageView(mentorMessage: mentormessage)
+//            } else {
+//                EmptyView()
+//            }
             
             // 기분 기록 카드
             RecordStatCard(
@@ -71,7 +73,7 @@ struct TodayBoardView: View {
             await todayBoard.setUpMentorMessage()
         }
         .task {
-//            await todayBoard.mentorMessage?.loadTodayMentorMessageTest()
+            await todayBoard.mentorMessage?.loadTodayMentorMessageTest()
         }
         .task {
             // WatchConnectivity 설정
