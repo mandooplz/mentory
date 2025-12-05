@@ -54,6 +54,9 @@ final class Suggestion: Sendable, ObservableObject, Identifiable {
         
         // mutate
 //        fatalError()
+
+        // Watch로 전송
+        await todayBoard.sendSuggestionsToWatch()
     }
     
     

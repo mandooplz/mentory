@@ -59,10 +59,15 @@ struct TodayBoardView: View {
                 actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
-        // 로드 시 2개의 비동기 작업 실행
+        // 로드 시 비동기 작업 실행
         .task {
             await todayBoard.setUpMentorMessage()
         }
+        // TODO: DB 구현 완료 후 활성화
+        // Suggestion을 DB에서 로드하고 워치로 전송
+//        .task {
+//            await todayBoard.loadSuggestions()
+//        }
         .task {
             // WatchConnectivity 설정
             await WatchConnectivityManager.shared.setUp()
