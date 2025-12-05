@@ -27,6 +27,9 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var mentorMessage: MentorMessage? = nil
 
     @Published var recordForms: [RecordForm] = []
+    func areAllRecordFormsDisabled() -> Bool {
+        return self.recordForms.allSatisfy(\.isDisabled)
+    }
     @Published var recordFormSelection: RecordForm? = nil
     func recentUpdatedate() -> MentoryDate? {
         guard self.recordForms.isEmpty == false else {
@@ -78,7 +81,7 @@ final class TodayBoard: Sendable, ObservableObject {
     func setUpRecordForms() async {
         // capture
         guard self.recordForms.isEmpty == true else {
-            logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.")
+            logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.\(self.recordForms.count)")
             return
         }
         let now = MentoryDate.now
@@ -96,6 +99,7 @@ final class TodayBoard: Sendable, ObservableObject {
             RecordForm(owner: self, targetDate: date)
         }
         self.recordForms = recordForms
+        logger.debug("recordForms 배열이 생성되었습니다.\(recordForms)")
     }
     func updateRecordForms() async {
         // capture
