@@ -132,6 +132,18 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         todayBoard.recordForms = []
     }
     
+    func finish() {
+        //capture
+        guard let todayBoard = self.owner else {
+            logger.error("RecordForm의 부모인 TodayBoard가 존재하지 않습니다.")
+            return
+        }
+        
+        //mutate
+        
+        todayBoard.recordFormSelection = nil
+    }
+    
 
     // MARK: value
     enum RecordCheckResult: Sendable, Hashable {
