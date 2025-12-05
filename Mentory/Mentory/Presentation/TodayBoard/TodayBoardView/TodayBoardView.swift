@@ -38,11 +38,8 @@ struct TodayBoardView: View {
             )
             
             // 멘토리메세지 카드
-            PopupCard(
-                imageName: todayBoard.mentorMessage?.character?.imageName ?? "greeting",
-                title: todayBoard.mentorMessage?.character?.title ?? "오늘의 멘토리 조언을 준비하고 있어요",
-                content: todayBoard.mentorMessage?.content ?? "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
-            )
+            
+           MessageView(mentorMessage: todayBoard.mentorMessage)
             
             // 기분 기록 카드
             RecordStatCard(
@@ -64,8 +61,7 @@ struct TodayBoardView: View {
         }
         // 로드 시 2개의 비동기 작업 실행
         .task {
-//            await todayBoard.loadTodayRecords()
-//            await todayBoard.loadTodayMentorMessageTest()
+            await todayBoard.setUpMentorMessage()
         }
         .task {
             // WatchConnectivity 설정
@@ -125,6 +121,31 @@ fileprivate struct Title: View {
     }
 }
 
+struct MessageView: View {
+    let mentorMessage: MentorMessage?
+    
+    var body: some View {
+        if let mentorMessage {
+            MentorMessageView(mentorMessage: mentorMessage)
+        } else {
+            MentorMessageDefaultView()
+        }
+    }
+}
+
+struct MentorMessageDefaultView: View {
+    var body: some View {
+        PopupCard(
+            image: nil,
+            defaultImage: "greeting",
+            title: nil,
+            defaultTitle: "오늘의 멘토리 조언을 준비하고 있어요",
+            content: nil,
+            defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+        )
+    }
+}
+
 fileprivate struct GreetingHeader: View {
     @ObservedObject var todayBoard: TodayBoard
     let userName: String
@@ -151,56 +172,6 @@ fileprivate struct GreetingHeader: View {
             value: todayBoard.mentorMessage?.content != nil)
         .task {
             await todayBoard.fetchUserRecordCoount()
-        }
-    }
-}
-
-fileprivate struct PopupCard: View {
-    let imageName: String
-    let title: String
-    let content: String?
-    init(imageName: String, title: String, content: String) {
-        self.imageName = imageName
-        self.title = title
-        self.content = content
-    }
-    
-    private func forMarkdown(_ string: String) -> LocalizedStringKey {
-        .init(string)
-    }
-    
-    var body: some View {
-        if let content {
-            LiquidGlassCard {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack(spacing: 8) {
-                        Image(imageName)
-                            .resizable()
-                            .scaledToFill()
-                            .scaleEffect(1.8, anchor: .top)
-                            .offset(y: 2)
-                            .frame(width: 28, height: 28)
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)   // ← 테두리 추가!
-                            )
-                        Text(title)
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.primary)
-                    }
-                    
-                    
-                    Text(forMarkdown(content))
-                        .font(.system(size: 16))
-                        .foregroundStyle(.secondary)
-                        .lineSpacing(4)
-                }
-                .padding(.vertical, 24)
-                .padding(.horizontal, 20)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .transition(.scale(scale: 0.95).combined(with: .opacity))
         }
     }
 }
@@ -260,7 +231,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
             let stream = todayBoard.$recordFormSelection.values
                 .map { recordFormState in recordFormState != nil }
 
-            for await isPresent in todayBoard.$recordFormSelection.values.map({ $0 != nil }) {
+            for await isPresent in stream {
                 self.showFullScreenCover = isPresent
             }
         }
@@ -276,8 +247,6 @@ fileprivate struct RecordStatCard<Content: View>: View {
                 RecordContainerView(recordForm: form)
             }
         }
-        
-        
     }
 }
 
@@ -350,24 +319,10 @@ fileprivate struct SuggestionActionRows: View {
     }
     
     var body: some View {
-//        ForEach(todayBoard.suggestions, id: \.self.id) { index in
-//            // 각 아이템마다 ActionRow를 하나씩 만들어준다.
-//            ActionRow(
-//                checked: Binding(
-//                    get: { todayBoard.actionKeyWordItems[index].1 },
-//                    set: { newValue in
-//                        todayBoard.actionKeyWordItems[index].1 = newValue
-//                        // 체크 상태 변경 시 DB에 실시간 업데이트
-//                        Task {
-//                            await todayBoard.updateActionCompletion()
-//                            await todayBoard.loadTodayRecords()
-//                        }
-//                    }
-//                ),
-//                text: todayBoard.actionKeyWordItems[index].0
-//            )
-//        }
-        
+        ForEach(todayBoard.suggestions, id: \.self.id) { suggestion in
+        SuggestionView(suggestion: suggestion)
+            
+        }
     }
 }
 
