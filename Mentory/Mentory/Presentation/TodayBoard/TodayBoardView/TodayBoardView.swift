@@ -48,7 +48,7 @@ struct TodayBoardView: View {
                 content: "오늘 기분을 기록해볼까요?",
                 navLabel: "기록하러 가기",
                 navDestination: { recordForm in
-                    RecordFormView(recordForm: recordForm)
+                    RecordContainerView(recordForm: recordForm)
                 }
             )
             
@@ -59,7 +59,6 @@ struct TodayBoardView: View {
                 actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
-        // 로드 시 비동기 작업 실행
         .task {
             await todayBoard.setUpMentorMessage()
         }
@@ -249,7 +248,8 @@ fileprivate struct RecordStatCard<Content: View>: View {
         }
         .fullScreenCover(isPresented: $showFullScreenCover) {
             if let form = todayBoard.recordFormSelection {
-                RecordContainerView(recordForm: form)
+            navDestination(form)
+                
             }
         }
     }
