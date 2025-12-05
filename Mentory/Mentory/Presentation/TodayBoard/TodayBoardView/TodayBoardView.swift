@@ -212,7 +212,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                         .padding(.vertical, 14)
                         .background(
                             LinearGradient(
-                                colors: [Color.blue, Color.blue.opacity(0.8)],
+                                colors: [Color.mentoryAccentPrimary, Color.mentoryAccentPrimary.opacity(0.8)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
