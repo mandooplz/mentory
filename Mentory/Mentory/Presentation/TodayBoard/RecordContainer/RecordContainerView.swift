@@ -94,15 +94,6 @@ struct RecordContainerView: View {
                         self.isSubmitEnabled = canProceed
                     }
                 }
-//                .task {
-//                    let todayBoard = recordForm.owner!
-//                    let stream = todayBoard.$recordFormSelection.values.map ({ $0 != nil})
-//                    for await isPresent in stream {
-//                        if isPresent == false {
-//                            dismiss()
-//                        }
-//                    }
-//                }
         }
     }
 }

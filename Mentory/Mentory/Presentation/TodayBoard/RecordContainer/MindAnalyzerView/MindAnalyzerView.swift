@@ -164,13 +164,10 @@ struct MindAnalyzerView: View {
                 ) {
                     let recordForm = mindAnalyzer.owner!
                     recordForm.removeForm()
-//                    mindAnalyzer.finish()
                     parentDismiss()
                 }
             }
         }
-        //    }
-        //        .preference(key: CancelToolbarHidden.self, value: mindAnalyzer.isAnalyzing || mindAnalyzer.isAnalyzeFinished)
         .navigationBarBackButtonHidden(!isSelectingStage)
     }
 }

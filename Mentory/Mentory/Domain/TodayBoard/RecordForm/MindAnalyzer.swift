@@ -124,17 +124,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         self.isAnalyzeFinished = true
     }
-    
-    func finish() {
-        //capture
-        let recordForm = self.owner!
-        let todayBoard = recordForm.owner!
-        
-        //mutate
-        
-        todayBoard.recordFormSelection = nil
-    }
-    
     func cancel() {
         // capture
         let recordForm = self.owner
