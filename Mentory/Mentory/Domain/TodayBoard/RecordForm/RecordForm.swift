@@ -43,7 +43,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     func checkDisability() async {
         // capture
         let recordDate = self.targetDate
-        
+        logger.debug("targetDate: \(recordDate.rawValue)")
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
         
@@ -70,6 +70,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         case .recordNotExist:
             self.isDisabled = false
         }
+        logger.debug("isDisabled: \(self.isDisabled)")
     }
     
     func validateInput() {
@@ -98,7 +99,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         }
         
         let todayBoard = self.owner!
-        let mentoryiOS = todayBoard.owner!
+//        let mentoryiOS = todayBoard.owner!
 
         // 이를 어디에서 설명해야 하는가.
 //        let settingBoard = mentoryiOS.settingBoard!
@@ -123,10 +124,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
 
     func removeForm() {
         // capture
-        guard let todayBoard = self.owner else {
-            logger.error("RecordForm의 부모인 TodayBoard가 존재하지 않습니다.")
-            return
-        }
+        let todayBoard = self.owner!
         
         // mutate
         todayBoard.recordForms = []
@@ -134,16 +132,11 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     
     func finish() {
         //capture
-        guard let todayBoard = self.owner else {
-            logger.error("RecordForm의 부모인 TodayBoard가 존재하지 않습니다.")
-            return
-        }
+        let todayBoard = self.owner!
         
         //mutate
-        
         todayBoard.recordFormSelection = nil
     }
-    
 
     // MARK: value
     enum RecordCheckResult: Sendable, Hashable {
