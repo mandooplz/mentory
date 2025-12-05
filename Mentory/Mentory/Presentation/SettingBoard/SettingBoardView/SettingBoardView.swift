@@ -145,12 +145,6 @@ struct SettingBoardView: View {
                 } label: {
                     Image(systemName: "info.circle")
                         .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                            .padding(8)
-                            .background(
-                                Color.mentorySubCard.opacity(0.9),
-                                in: Circle()
-                            )
                 }
             }
         }
@@ -295,7 +289,7 @@ struct SettingBoardView: View {
                 }
             },
             message: {
-                Text("삭제를 누르면 멘토리 데이터가 모두 제거됩니다.")
+                Text("삭제를 누르면 앱 데이터가 모두 제거됩니다.")
             }
         )
     }

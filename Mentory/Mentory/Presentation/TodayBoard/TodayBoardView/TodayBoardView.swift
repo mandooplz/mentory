@@ -217,7 +217,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
                         .padding(.vertical, 14)
                         .background(
                             LinearGradient(
-                                colors: [Color.blue, Color.blue.opacity(0.8)],
+                                colors: [Color.mentoryAccentPrimary, Color.mentoryAccentPrimary.opacity(0.8)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
@@ -337,87 +337,78 @@ fileprivate struct DateSelectionSheet: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        VStack(spacing: 24) {
-            // 헤더
-            VStack(spacing: 8) {
-                Text("어느 날의 일기를 쓸까요?")
-                    .font(.system(size: 24, weight: .bold))
-                
-                Text("작성 가능한 날짜를 선택해주세요.")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                
-                Text("일기는 최대 이틀 전까지의 날짜만 작성할 수 있어요.")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-            }
-            .padding(.top, 32)
-            
-            // 날짜 선택 버튼들 또는 완료 메시지
-            if todayBoard.recordForms.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(.green)
-                        .padding(.top, 32)
-                    
-                    Text("모든 일기를 작성했어요!")
-                        .font(.system(size: 20, weight: .bold))
-                    
-                    Text("오늘, 어제, 그제의 일기를\n모두 작성하셨습니다.")
+        NavigationStack {
+            VStack(spacing: 16) {
+                // 제목 및 설명 텍스트
+                VStack(spacing: 8) {
+                    Text("어느 날의 일기를 쓸까요?")
+                        .font(.system(size: 26, weight: .bold))
+                        .foregroundColor(.primary)
+
+                    Text("작성 가능한 날짜를 선택해주세요.")
                         .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                    
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("확인")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.blue]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                        .foregroundColor(.secondary)
+
+                    Text("일기는 최대 이틀 전까지의 날짜만 작성할 수 있어요.")
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+
+                // 날짜 선택 버튼들 또는 완료 메시지
+                if todayBoard.recordForms.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(.green)
+                            .padding(.top, 32)
+
+                        Text("모든 일기를 작성했어요!")
+                            .font(.system(size: 20, weight: .bold))
+
+                        Text("오늘, 어제, 그제의 일기를\n모두 작성하셨습니다.")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("확인")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(Color.mentoryAccentPrimary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.mentorySubCard)
                                 )
-                            )
-                            .cornerRadius(12)
-                            .shadow(
-                                color: Color.blue.opacity(0.3),
-                                radius: 8,
-                                x: 0,
-                                y: 4
-                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, 16)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
-                }
-                
-                Spacer()
-            } else {
-                VStack(spacing: 12) {
-                    ForEach(todayBoard.recordForms) { recordForm in
-                        DateButton(
-                            date: recordForm.targetDate,
-                            action: {
-                                // recordForm 설정
-                                todayBoard.recordFormSelection = recordForm
-                                // Sheet 닫기
-                                dismiss()
-                            }
-                        )
+
+                    Spacer()
+                } else {
+                    VStack(spacing: 12) {
+                        ForEach(todayBoard.recordForms) { recordForm in
+                            DateButton(
+                                date: recordForm.targetDate,
+                                action: {
+                                    // recordForm 설정
+                                    todayBoard.recordFormSelection = recordForm
+                                    // Sheet 닫기
+                                    dismiss()
+                                }
+                            )
+                        }
                     }
+                    Spacer()
                 }
-                .padding(.horizontal, 24)
-                
-                Spacer()
             }
+            .padding()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground))
+        .presentationDetents([.height(450)])
     }
 }
 
@@ -429,10 +420,10 @@ fileprivate struct DateButton: View {
         Button(action: action) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(date.formatted())
+                    Text(date.relativeDay(from: .now).rawValue)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
-                    
+
                     Text(date.formatted())
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
@@ -455,12 +446,5 @@ fileprivate struct DateButton: View {
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
         }
-    }
-    
-    private func dateDescription(for recordDate: RecordDate) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "M월 d일 (E)"
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        return dateFormatter.string(from: recordDate.toDate())
     }
 }
