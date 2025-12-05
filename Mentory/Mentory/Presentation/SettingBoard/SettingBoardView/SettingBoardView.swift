@@ -145,12 +145,6 @@ struct SettingBoardView: View {
                 } label: {
                     Image(systemName: "info.circle")
                         .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                            .padding(8)
-                            .background(
-                                Color.mentorySubCard.opacity(0.9),
-                                in: Circle()
-                            )
                 }
             }
         }
