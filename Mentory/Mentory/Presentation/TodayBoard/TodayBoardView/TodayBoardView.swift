@@ -46,10 +46,7 @@ struct TodayBoardView: View {
                 todayBoard: todayBoard,
                 imageName: "greeting",
                 content: "오늘 기분을 기록해볼까요?",
-                navLabel: "기록하러 가기",
-                navDestination: { recordForm in
-                    RecordFormView(recordForm: recordForm)
-                }
+                navLabel: "기록하러 가기"
             )
             
             // 행동 추천 카드
@@ -59,7 +56,6 @@ struct TodayBoardView: View {
                 actionRows: SuggestionActionRows(todayBoard: todayBoard)
             )
         }
-        // 로드 시 2개의 비동기 작업 실행
         .task {
             await todayBoard.setUpMentorMessage()
         }
@@ -176,7 +172,7 @@ fileprivate struct GreetingHeader: View {
     }
 }
 
-fileprivate struct RecordStatCard<Content: View>: View {
+fileprivate struct RecordStatCard: View {
     @ObservedObject var todayBoard: TodayBoard
     @State var showFullScreenCover: Bool = false
     @State var showDateSelectionSheet: Bool = false
@@ -184,7 +180,6 @@ fileprivate struct RecordStatCard<Content: View>: View {
     let imageName: String
     let content: String
     let navLabel: String
-    @ViewBuilder let navDestination: (RecordForm) -> Content
     
     
     var body: some View {
