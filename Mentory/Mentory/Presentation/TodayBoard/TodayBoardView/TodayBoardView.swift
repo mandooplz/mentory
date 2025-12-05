@@ -46,7 +46,10 @@ struct TodayBoardView: View {
                 todayBoard: todayBoard,
                 imageName: "greeting",
                 content: "오늘 기분을 기록해볼까요?",
-                navLabel: "기록하러 가기"
+                navLabel: "기록하러 가기",
+                navDestination: { recordForm in
+                    RecordContainerView(recordForm: recordForm)
+                }
             )
             
             // 행동 추천 카드
@@ -172,7 +175,7 @@ fileprivate struct GreetingHeader: View {
     }
 }
 
-fileprivate struct RecordStatCard: View {
+fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     @State var showFullScreenCover: Bool = false
     @State var showDateSelectionSheet: Bool = false
@@ -180,6 +183,7 @@ fileprivate struct RecordStatCard: View {
     let imageName: String
     let content: String
     let navLabel: String
+    @ViewBuilder let navDestination: (RecordForm) -> Content
     
     
     var body: some View {
@@ -239,7 +243,8 @@ fileprivate struct RecordStatCard: View {
         }
         .fullScreenCover(isPresented: $showFullScreenCover) {
             if let form = todayBoard.recordFormSelection {
-                RecordContainerView(recordForm: form)
+            navDestination(form)
+                
             }
         }
     }
