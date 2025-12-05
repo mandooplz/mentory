@@ -66,6 +66,13 @@ final class MindAnalyzer: Sendable, ObservableObject {
         let firebaseLLM = mentoryiOS.firebaseLLM
         let mentoryDB = mentoryiOS.mentoryDB
         
+        do {
+            try await mentoryDB.setCharacter(character)
+            logger.debug("MindAnalyzer에서 선택한 캐릭터 \(character.rawValue)를 MentoryDB에 저장 요청했습니다.")
+        } catch {
+            logger.error("MindAnalyzer에서 setCharacter 실패: \(error)")
+        }
+        
         let targetDate = recordForm.targetDate
 
         // 이미지와 음성 입력 가져오기
