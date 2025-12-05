@@ -74,11 +74,11 @@ final class MindAnalyzer: Sendable, ObservableObject {
         }
         
         let targetDate = recordForm.targetDate
-
+        
         // 이미지와 음성 입력 가져오기
         let imageInput = recordForm.imageInput
         let voiceInput = recordForm.voiceInput
-
+        
         // 멀티모달 입력 로깅
         if imageInput != nil {
             logger.debug("이미지 첨부됨 - 감정 분석에 포함")
@@ -86,8 +86,8 @@ final class MindAnalyzer: Sendable, ObservableObject {
         if voiceInput != nil {
             logger.debug("음성 첨부됨 - 감정 분석에 포함")
         }
-
-
+        
+        
         // process - FirebaseLLM
         // 감정 분석 (텍스트 + 이미지 + 음성)
         let question = FirebaseQuestion(
@@ -95,7 +95,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
             imageData: imageInput,
             voiceURL: voiceInput
         )
-
+        
         let analysis: FirebaseAnalysis
         do {
             analysis = try await firebaseLLM.getEmotionAnalysis(question, character: character)
@@ -151,9 +151,23 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     func cancel() {
         // capture
-        let recordForm = self.owner
+        let recordForm = self.owner!
         
         // mutate
-        recordForm?.mindAnalyzer = nil
-    }     
+        recordForm.mindAnalyzer = nil
+    }
+    
+    func finish() {
+        //capture
+        let recordForm = self.owner!
+        let todayBoard = recordForm.owner!
+        
+        //mutate
+        todayBoard.recordFormSelection = nil
+//        todayBoard.recordForms.removeAll { recordForm in
+//            logger.debug("remove: 전체 \(recordForm.id)/ \(self.owner!.id)")
+//            return recordForm.id == self.owner!.id
+//        }
+        
+    }
 }

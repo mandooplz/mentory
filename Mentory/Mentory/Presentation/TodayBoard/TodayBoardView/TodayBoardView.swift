@@ -334,6 +334,7 @@ fileprivate struct DateSelectionSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
+                Spacer()
                 // 제목 및 설명 텍스트
                 VStack(spacing: 8) {
                     Text("어느 날의 일기를 쓸까요?")
@@ -388,6 +389,7 @@ fileprivate struct DateSelectionSheet: View {
                     VStack(spacing: 12) {
                         ForEach(todayBoard.recordForms) { recordForm in
                             DateButton(
+                                recordForm: recordForm,
                                 date: recordForm.targetDate,
                                 action: {
                                     // recordForm 설정
@@ -408,11 +410,16 @@ fileprivate struct DateSelectionSheet: View {
 }
 
 fileprivate struct DateButton: View {
+    @ObservedObject var recordForm: RecordForm
     let date: MentoryDate
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button {
+            if !recordForm.isDisabled {
+                action()
+            }
+        } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(date.relativeDay(from: .now).rawValue)
@@ -440,6 +447,10 @@ fileprivate struct DateButton: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(Color.gray.opacity(0.2), lineWidth: 1)
             )
+            .opacity(recordForm.isDisabled ? 0.4 : 1.0) // 시각적 피드백
+        }
+        .task {
+            await recordForm.checkDisability()
         }
     }
 }
