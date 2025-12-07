@@ -5,21 +5,20 @@
 //  Created by 김민우 on 11/22/25.
 //
 import Foundation
+import MentoryDB
 import Values
 
 
-// MARK: Adapter
+// MARK: Adapter - wrong!
 nonisolated struct DailyRecordAdapter: DailyRecordInterface {
-    private let recordData: RecordData
-    private let db: any MentoryDBInterface
+    private let dailyRecord: DailyRecord
 
-    public init(recordData: RecordData, db: any MentoryDBInterface) {
-        self.recordData = recordData
-        self.db = db
+    init(_ recordData: DailyRecord) {
+        self.dailyRecord = recordData
     }
-
+    
     @concurrent func getSuggestions() async throws -> [SuggestionData] {
-        //fatalError("구현 예정입니다.")
-        try await db.getSuggestions(by: recordData.id)
+        await dailyRecord.getSuggestions()
     }
 }
+
