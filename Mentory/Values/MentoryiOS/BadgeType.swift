@@ -33,13 +33,13 @@ public enum BadgeType: String, Sendable, Hashable, Codable, CaseIterable {
     /// 뱃지 아이콘 (SF Symbol)
     public var iconName: String {
         switch self {
-        case .first: return "star.fill"
+        case .first: return "sparkles"
         case .five: return "star.circle.fill"
-        case .ten: return "trophy.fill"
-        case .twenty: return "medal.fill"
-        case .thirty: return "crown.fill"
-        case .forty: return "sparkles"
-        case .fifty: return "flame.fill"
+        case .ten: return "star.fill"
+        case .twenty: return "flame.fill"
+        case .thirty: return "medal.fill"
+        case .forty: return "trophy.fill"
+        case .fifty: return "crown.fill"
         }
     }
 
