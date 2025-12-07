@@ -16,11 +16,6 @@ struct TodayBoardView: View {
     @ObservedObject var todayBoard: TodayBoard
     @ObservedObject var mentoryiOS: MentoryiOS
     
-    init(_ todayBoard: TodayBoard) {
-        self.todayBoard = todayBoard
-        self.mentoryiOS = todayBoard.owner!
-    }
-    
     // MARK: body
     var body: some View {
         TodayBoardLayout(
@@ -87,7 +82,10 @@ fileprivate struct TodayBoardPreview: View {
     
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard {
-            TodayBoardView(todayBoard)
+            TodayBoardView(
+                todayBoard: todayBoard,
+                mentoryiOS: todayBoard.owner!
+            )
         } else {
             ProgressView("프리뷰 준비 중")
                 .task {
