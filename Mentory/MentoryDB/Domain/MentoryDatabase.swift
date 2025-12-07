@@ -264,6 +264,34 @@ public actor MentoryDatabase: Sendable {
             return nil
         }
     }
+
+    public func getCompletedSuggestionsCount() -> Int {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 getCompletedSuggestionsCount에서 0 반환")
+                return 0
+            }
+
+            // 모든 DailyRecord의 완료된 Suggestion 개수 카운트
+            let completedCount = db.records.reduce(0) { total, record in
+                total + record.suggestions.filter { $0.status == true }.count
+            }
+
+            logger.debug("완료된 제안 개수: \(completedCount)")
+            return completedCount
+
+        } catch {
+            logger.error("완료된 제안 개수 조회 중 오류 발생: \(error)")
+            return 0
+        }
+    }
     
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
