@@ -57,6 +57,9 @@ final class Suggestion: Sendable, ObservableObject, Identifiable {
 
         // Watch로 전송
         await todayBoard.sendSuggestionsToWatch()
+
+        // 뱃지 갱신
+        await todayBoard.fetchEarnedBadges()
     }
     
     
