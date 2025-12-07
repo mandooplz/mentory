@@ -65,6 +65,20 @@ struct MentoryDatabaseMock: MentoryDBInterface {
         
         return .init(dailyRecord)
     }
+    
+    @concurrent
+    func getSuggestions(by id: UUID) async throws -> [SuggestionData] {
+
+        // 1) DailyRecordFake 찾기
+        guard let dailyRecord = await object.getDailyRecord(ticketId: id) else {
+            logger.error("Mock: DailyRecord(id: \(id)) 없음 → 빈 배열 반환")
+            return []
+        }
+
+        // 2) DailyRecordFake 내에서 SuggestionData 가져오기
+        return await dailyRecord.getSuggestions()
+    }
+    
 
     @concurrent func getCompletedSuggestionsCount() async throws -> Int {
         return await object.getCompletedSuggestionsCount()

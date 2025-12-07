@@ -60,7 +60,14 @@ final class TodayBoard: Sendable, ObservableObject {
     @Published var suggestions: [Suggestion] = []
     var recentSuggestionUpdate: MentoryDate? = nil
     func getSuggestionIndicator() -> String {
-        "2/3"
+        let totalCount = self.suggestions
+            .count
+        
+        let doneCount = self.suggestions
+            .filter { $0.isDone == true }
+            .count
+        
+        return "\(doneCount)/\(totalCount)"
     }
 
     @Published var completedSuggestionsCount: Int = 0
@@ -145,7 +152,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForms = newRecordForms
     }
     
-    func loadSuggestions() async {
+    func loadSuggestions() async {        
         // capture
         let currentDate = self.currentDate
         
@@ -156,6 +163,7 @@ final class TodayBoard: Sendable, ObservableObject {
         let recentRecord: (any DailyRecordInterface)?
         do {
             recentRecord = try await mentoryDB.getRecentRecord()
+            logger.debug("최근일기가져오기")
         } catch {
             logger.error("\(#function) 실패: \(error)")
             return
@@ -184,7 +192,7 @@ final class TodayBoard: Sendable, ObservableObject {
                 isDone: $0.isDone)
             }
         self.recentSuggestionUpdate = currentDate
-
+        logger.debug("추천행동가져오기\(suggestionDatas)")
         // Watch로 전송
         await sendSuggestionsToWatch()
     }
