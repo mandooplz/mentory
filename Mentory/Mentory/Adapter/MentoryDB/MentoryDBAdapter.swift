@@ -48,7 +48,11 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         }
         return DailyRecordAdapter(recordData: recordData)
     }
-    
+
+    @concurrent func getCompletedSuggestionsCount() async throws -> Int {
+        await object.getCompletedSuggestionsCount()
+    }
+
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         await object.insertTicket(recordData)
         await object.createDailyRecords()
