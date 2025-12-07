@@ -62,6 +62,9 @@ final class TodayBoard: Sendable, ObservableObject {
     func getSuggestionIndicator() -> String {
         "2/3"
     }
+
+    @Published var completedSuggestionsCount: Int = 0
+    @Published var earnedBadges: [BadgeType] = []
     
     
     // MARK: action
@@ -203,6 +206,27 @@ final class TodayBoard: Sendable, ObservableObject {
         
         // mutate
         self.recordCount = recordCount
+    }
+
+    func fetchEarnedBadges() async {
+        // capture
+        let mentoryiOS = self.owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+
+        // process
+        let completedCount: Int
+        do {
+            async let count = try await mentoryDB.getCompletedSuggestionsCount()
+            completedCount = try await count
+        } catch {
+            logger.error("완료된 제안 개수 조회 실패: \(error)")
+            return
+        }
+
+        // mutate
+        self.completedSuggestionsCount = completedCount
+        self.earnedBadges = BadgeType.earnedBadges(completedCount: completedCount)
+        logger.debug("완료된 제안: \(completedCount)개, 획득한 뱃지: \(self.earnedBadges.count)개")
     }
 
 

@@ -259,7 +259,9 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     let header: String
     let actionRows: ActionRows
-    
+
+    @State private var isFlipped = false
+
     init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
         self.todayBoard = todayBoard
         self.header = header
@@ -267,17 +269,73 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     }
     
     var body: some View {
-        LiquidGlassCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(header)
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(.primary)
-                ProgressBar
-                actionRows
-                    .padding(.top, 0)
+        Group {
+            if !isFlipped {
+                // 앞면: Suggestion 리스트
+                LiquidGlassCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text(header)
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Button {
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                    isFlipped.toggle()
+                                }
+                            } label: {
+                                Image(systemName: "trophy.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(todayBoard.earnedBadges.isEmpty ? .gray.opacity(0.5) : .mentoryAccentPrimary)
+                            }
+                        }
+                        ProgressBar
+                        actionRows
+                            .padding(.top, 0)
+                    }
+                    .padding(.vertical, 22)
+                    .padding(.horizontal, 18)
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                    removal: .scale(scale: 0.95).combined(with: .opacity)
+                ))
+            } else {
+                // 뒷면: Badge 그리드
+                LiquidGlassCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("획득한 뱃지")
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Button {
+                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                    isFlipped.toggle()
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.mentoryAccentPrimary)
+                            }
+                        }
+
+                        BadgeGridView(
+                            earnedBadges: todayBoard.earnedBadges,
+                            completedCount: todayBoard.completedSuggestionsCount
+                        )
+                    }
+                    .padding(.vertical, 22)
+                    .padding(.horizontal, 18)
+                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                    removal: .scale(scale: 0.95).combined(with: .opacity)
+                ))
             }
-            .padding(.vertical, 22)
-            .padding(.horizontal, 18)
+        }
+        .task {
+            await todayBoard.fetchEarnedBadges()
         }
     }
     
