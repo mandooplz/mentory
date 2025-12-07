@@ -322,9 +322,21 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     }
     
     private var Header: some View {
-        Text(header)
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(.primary)
+        HStack {
+            Text(header)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(.primary)
+            Spacer()
+            Button {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                    isFlipped.toggle()
+                }
+            } label: {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(todayBoard.earnedBadges.isEmpty ? .gray.opacity(0.5) : .mentoryAccentPrimary)
+            }
+        }
     }
     
     private var ProgressBar: some View {
