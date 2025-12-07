@@ -52,7 +52,7 @@ nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     }
 
     @concurrent func getCompletedSuggestionsCount() async throws -> Int {
-        await object.getCompletedSuggestionsCount()
+        await mentoryDB.getCompletedSuggestionsCount()
     }
 
     @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
