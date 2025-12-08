@@ -26,6 +26,7 @@
 ## 목차
 
 - [목차](#목차)
+- [주요 기능](#주요-기능)
 - [사용 기술](#사용-기술)
 - [시작하기](#시작하기)
   - [필요 조건](#필요-조건)
@@ -33,6 +34,30 @@
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
+
+## 주요 기능
+
+### 📝 감정 기록
+- **음성 기록**: 마이크를 통해 음성으로 감정을 기록
+- **텍스트 기록**: 직접 입력으로 감정을 기록
+- **사진 기록**: 사진을 통해 감정을 기록
+
+### 🤖 AI 감정 분석
+- **LLM 기반 분석**: ESTSOFT Alan LLM 및 Firebase AI를 활용한 감정 분석
+- **멘토 메시지**: AI가 분석한 결과를 바탕으로 맞춤형 조언 제공
+- **활동 추천**: 현재 감정 상태에 적합한 활동 제안
+
+### 📊 감정 통계
+- **기록 히스토리**: 과거 감정 기록 조회
+- **통계 분석**: 감정 변화 추이 확인
+
+### ⌚ 멀티 플랫폼 지원
+- **watchOS 앱**: Apple Watch에서 멘토 메시지 조회 및 활동 추천 완료 체크 가능
+- **위젯**: 홈 화면 위젯으로 빠른 접근
+- **데이터 동기화**: iPhone과 Apple Watch 간 실시간 데이터 동기화
+
+### 🔔 스마트 알림
+- **리마인더**: 정기적인 감정 기록을 위한 알림 기능
 
 ## 사용 기술
 
@@ -98,10 +123,18 @@
   </tr>
   <tr>
     <td align="center" width="">
-      <img src="https://img.shields.io/badge/-18.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
+      <img src="https://img.shields.io/badge/-26.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
     </td>
     <td>
-      <b>iOS 18.0 이상</b> (시뮬레이터 또는 실제 디바이스)
+      <b>iOS 26.0 이상</b> (시뮬레이터 또는 실제 디바이스)
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="120">
+      <img src="https://img.shields.io/badge/-26.0+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="watchOS">
+    </td>
+    <td>
+      <b>watchOS 26.0 이상</b>
     </td>
   </tr>
   <tr>
