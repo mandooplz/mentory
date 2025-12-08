@@ -292,7 +292,38 @@ public actor MentoryDatabase: Sendable {
             return 0
         }
     }
-    
+
+    public func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
+        let context = ModelContext(MentoryDatabase.container)
+        let id = self.id
+
+        let descriptor = FetchDescriptor<MentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+
+        do {
+            guard let db = try context.fetch(descriptor).first else {
+                logger.error("MentoryDB가 존재하지 않아 updateSuggestionStatus 실패")
+                return
+            }
+
+            // 모든 DailyRecord의 Suggestion 중에서 target이 일치하는 것 찾기
+            for record in db.records {
+                if let suggestion = record.suggestions.first(where: { $0.target == targetId }) {
+                    suggestion.status = isDone
+                    try context.save()
+                    logger.debug("Suggestion(target: \(targetId)) 상태 업데이트: \(isDone)")
+                    return
+                }
+            }
+
+            logger.warning("targetId \(targetId)에 해당하는 Suggestion을 찾지 못했습니다.")
+
+        } catch {
+            logger.error("Suggestion 상태 업데이트 중 오류 발생: \(error)")
+        }
+    }
+
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
     }
