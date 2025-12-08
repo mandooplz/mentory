@@ -23,16 +23,132 @@
   </p>
 </div>
 
+<p align="center">
+  <img src="./mentory-intro.png" alt="App Introduction" width="800">
+</p>
+
 ## 목차
 
 - [목차](#목차)
+- [주요 기능](#주요-기능)
 - [사용 기술](#사용-기술)
 - [시작하기](#시작하기)
   - [필요 조건](#필요-조건)
+  - [설치 방법](#설치-방법)
+  - [환경 설정](#환경-설정)
+  - [실행 방법](#실행-방법)
 - [소프트웨어 디자인](#소프트웨어-디자인)
+- [프로젝트 구조](#프로젝트-구조)
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
+
+## 주요 기능
+
+### 📝 감정 기록
+- **음성 기록**: 마이크를 통해 음성으로 감정을 기록
+- **텍스트 기록**: 직접 입력으로 감정을 기록
+- **사진 기록**: 사진을 통해 감정을 기록
+
+### 🤖 AI 감정 분석
+- **LLM 기반 분석**: ESTSOFT Alan LLM 및 Firebase AI를 활용한 감정 분석
+- **멘토 메시지**: AI가 분석한 결과를 바탕으로 맞춤형 조언 제공
+- **활동 추천**: 현재 감정 상태에 적합한 활동 제안
+
+### 📊 감정 통계
+- **기록 히스토리**: 과거 감정 기록 조회
+- **통계 분석**: 감정 변화 추이 확인
+
+### ⌚ 멀티 플랫폼 지원
+- **watchOS 앱**: Apple Watch에서 멘토 메시지 조회 및 활동 추천 완료 체크 가능
+- **위젯**: 홈 화면 위젯으로 빠른 접근
+- **데이터 동기화**: iPhone과 Apple Watch 간 실시간 데이터 동기화
+
+### 🔔 스마트 알림
+- **리마인더**: 정기적인 감정 기록을 위한 알림 기능
+
+## 스크린샷
+
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <img src="./screenshots/todayboard.png" alt="todayboard" width="100%">
+      <br>
+      <b>오늘의 감정 보드</b>
+      <br>
+      <sub>오늘 하루의 감정 기록</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/suggestion.png" alt="suggestion" width="100%">
+      <br>
+      <b>활동 추천</b>
+      <br>
+      <sub>AI가 추천하는 맞춤형 활동</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/badge.png" alt="badge" width="100%">
+      <br>
+      <b>뱃지</b>
+      <br>
+      <sub>기록 달성에 따른 뱃지 획득</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/todayboard-record.png" alt="todayboard-record" width="100%">
+      <br>
+      <b>기록 히스토리</b>
+      <br>
+      <sub>이틀 전까지 기록 가능</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <img src="./screenshots/recordform.png" alt="recordform" width="100%">
+      <br>
+      <b>감정 기록 폼</b>
+      <br>
+      <sub>텍스트, 음성, 사진 기록</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/recordform-pic.png" alt="recordform-pic" width="100%">
+      <br>
+      <b>사진으로 기록</b>
+      <br>
+      <sub>이미지를 통한 감정 표현</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/recordform-audio.png" alt="recordform-audio" width="100%">
+      <br>
+      <b>음성으로 기록</b>
+      <br>
+      <sub>음성 녹음을 통한 감정 기록</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/analyze.png" alt="analyze" width="100%">
+      <br>
+      <b>AI 감정 분석</b>
+      <br>
+      <sub>LLM 기반 감정 분석, 조언</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <img src="./screenshots/setting.png" alt="setting" width="100%">
+      <br>
+      <b>설정</b>
+      <br>
+      <sub>알림 및 개인 설정 관리</sub>
+    </td>
+    <td align="center" width="25%">
+      <!-- 추가 스크린샷 -->
+    </td>
+    <td align="center" width="25%">
+      <!-- 추가 스크린샷 -->
+    </td>
+    <td align="center" width="25%">
+      <!-- 추가 스크린샷 -->
+    </td>
+  </tr>
+</table>
 
 ## 사용 기술
 
@@ -98,10 +214,18 @@
   </tr>
   <tr>
     <td align="center" width="">
-      <img src="https://img.shields.io/badge/-18.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
+      <img src="https://img.shields.io/badge/-26.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
     </td>
     <td>
-      <b>iOS 18.0 이상</b> (시뮬레이터 또는 실제 디바이스)
+      <b>iOS 26.0 이상</b> (시뮬레이터 또는 실제 디바이스)
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="120">
+      <img src="https://img.shields.io/badge/-26.0+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="watchOS">
+    </td>
+    <td>
+      <b>watchOS 26.0 이상</b>
     </td>
   </tr>
   <tr>
@@ -114,6 +238,75 @@
   </tr>
 </table>
 
+### 설치 방법
+
+1. **저장소 클론**
+   ```bash
+   git clone https://github.com/EST-iOS4/Mentory.git
+   cd Mentory
+   ```
+
+2. **프로젝트 열기**
+   ```bash
+   cd Mentory
+   open Mentory.xcodeproj
+   ```
+
+### 환경 설정
+
+#### 1. ESTSOFT Alan LLM API 토큰 설정
+
+1. `Secrets.xcconfig.sample` 파일을 복사하여 `Secrets.xcconfig` 파일 생성
+   ```bash
+   cp Mentory/Secrets.xcconfig.sample Mentory/Secrets.xcconfig
+   ```
+
+2. `Secrets.xcconfig` 파일을 열어 ESTSOFT에서 제공받은 API 토큰 입력
+   ```
+   TOKEN = 여기에-발급받은-토큰-입력
+   ```
+
+3. Xcode에서 프로젝트 설정 확인
+   - [Mentory.xcodeproj](Mentory/Mentory.xcodeproj)를 선택
+   - **Info** 탭에서 `ALAN_API_TOKEN` 값이 `$(TOKEN)`으로 설정되어 있는지 확인
+
+#### 2. Firebase 설정
+
+1. [Firebase Console](https://console.firebase.google.com/)에서 프로젝트 생성
+
+2. iOS 앱 추가 및 `GoogleService-Info.plist` 다운로드
+
+3. 다운로드한 파일을 프로젝트의 `Mentory/Mentory/` 디렉토리에 추가
+   - Xcode에서 [Mentory/Mentory](Mentory/Mentory) 폴더에 드래그 앤 드롭
+   - **Copy items if needed** 체크
+
+4. Firebase AI 기능 활성화
+   - Firebase Console에서 **Build** > **AI** 메뉴로 이동
+   - Gemini API 활성화
+
+### 실행 방법
+
+#### iOS 앱 실행
+
+1. Xcode에서 타겟을 **Mentory**로 선택
+2. 시뮬레이터 또는 실제 디바이스 선택
+3. `Cmd + R` 또는 실행 버튼 클릭
+
+#### watchOS 앱 실행
+
+1. Xcode에서 타겟을 **MentoryWatch Watch App**으로 선택
+2. Watch 시뮬레이터 선택
+3. `Cmd + R` 또는 실행 버튼 클릭
+
+> **참고**: watchOS 앱을 실행하려면 먼저 iOS 앱이 실행되어 있어야 데이터 동기화가 정상적으로 작동합니다.
+
+#### 위젯 테스트
+
+1. iOS 앱을 먼저 실행
+2. 홈 화면으로 이동
+3. 위젯 추가 화면에서 **Mentory** 위젯 선택
+4. 원하는 크기의 위젯을 홈 화면에 배치
+
 ## 소프트웨어 디자인
 
 아래 사진을 통해 MentoryiOS, MentoryLLM, MentoryDB 도메인을 확인할 수 있습니다.
@@ -121,6 +314,81 @@
 <p align="center">
   <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
+
+## 프로젝트 구조
+
+```
+Mentory/
+├── Mentory/                          # 메인 iOS 앱
+│   ├── MentoryApp.swift             # 앱 진입점
+│   ├── Domain/                      # 비즈니스 로직 계층
+│   │   ├── MentoryiOS.swift        # 메인 도메인 모델
+│   │   ├── TodayBoard/             # 오늘의 감정 기록 관련 도메인
+│   │   │   ├── TodayBoard.swift
+│   │   │   ├── RecordForm/         # 감정 기록 폼
+│   │   │   ├── MentorMessage/      # 멘토 메시지
+│   │   │   └── Suggestion/         # 활동 추천
+│   │   ├── Onboarding/             # 온보딩 도메인
+│   │   └── SettingBoard/           # 설정 도메인
+│   ├── Presentation/                # UI 계층 (SwiftUI Views & ViewModels)
+│   │   ├── Components/             # 재사용 가능한 UI 컴포넌트
+│   │   ├── TodayBoard/             # 오늘의 감정 기록 화면
+│   │   ├── Onboarding/             # 온보딩 화면
+│   │   └── SettingBoard/           # 설정 화면
+│   ├── Adapter/                     # 외부 서비스 어댑터 계층
+│   │   ├── AlanLLM/                # ESTSOFT Alan LLM 어댑터
+│   │   ├── AlanLLMMock/            # Alan LLM 목 객체
+│   │   ├── FirebaseLLM/            # Firebase AI 어댑터
+│   │   ├── FirebaseLLMMock/        # Firebase LLM 목 객체
+│   │   ├── MentoryDB/              # 데이터베이스 어댑터
+│   │   ├── MentoryDBMock/          # DB 목 객체
+│   │   └── Notification/           # 알림 어댑터
+│   ├── Service/                     # 서비스 계층
+│   │   ├── Microphone/             # 음성 녹음 서비스
+│   │   ├── ImagePicker/            # 이미지 선택 서비스
+│   │   └── WatchConnectivity/      # Watch 연동 서비스
+│   ├── Assets.xcassets/            # 이미지, 컬러 리소스
+│   ├── GoogleService-Info.plist    # Firebase 설정 파일
+│   └── Info.plist                  # 앱 설정 파일
+│
+├── MentoryDB/                       # 데이터베이스 모듈
+│   └── Domain/                     # DB 도메인 모델
+│       └── DailyRecord/            # 일일 감정 기록 모델
+│
+├── MentoryWatch Watch App/          # watchOS 앱
+│   ├── Domain/                     # Watch 앱 비즈니스 로직
+│   ├── Service/                    # Watch 앱 서비스
+│   └── Presentation/.              # UI 계층
+│
+├── MentoryWidget/                   # 위젯 확장
+│   ├── MentoryWidgetBundle.swift   # 위젯 번들
+│   └── Presentation/               # 위젯 UI
+│
+├── Values/                          # 공유 값 타입 및 프로토콜
+│   ├── MentoryiOS/                 # iOS 앱 관련 값 타입
+│   ├── MentoryDB/                  # DB 관련 값 타입
+│   ├── AlanLLM/                    # Alan LLM 관련 값 타입
+│   └── FirebaseLLM/                # Firebase LLM 관련 값 타입
+│
+├── MentoryTests/                    # 단위 테스트
+│   ├── TodayBoard/                 # TodayBoard 도메인 테스트
+│   └── Onboarding/                 # Onboarding 도메인 테스트
+│
+├── Secrets.xcconfig                 # API 키 설정 파일 (git에서 제외됨)
+└── Secrets.xcconfig.sample          # API 키 설정 템플릿
+```
+
+### 아키텍처 설명
+
+이 프로젝트는 **MVVM 패턴**과 **클린 아키텍처** 원칙을 따라 설계되었습니다:
+
+- **Domain**: 비즈니스 로직과 규칙을 담당하는 핵심 계층
+- **Presentation**: SwiftUI 뷰와 뷰모델을 포함하는 UI 계층
+- **Adapter**: 외부 서비스(LLM, DB, 알림 등)와의 통신을 담당하는 계층
+- **Service**: 공통 기능(마이크, 이미지 피커, Watch 연동)을 제공하는 계층
+- **Values**: 도메인 간 공유되는 값 타입과 프로토콜
+
+각 계층은 의존성 역전 원칙(DIP)을 따르며, Mock 객체를 통해 테스트 가능하도록 설계되었습니다.
 
 ## 개발 문서
 
