@@ -69,7 +69,10 @@ final class TodayBoard: Sendable, ObservableObject {
         
         return "\(doneCount)/\(totalCount)"
     }
-
+    var suggestionProgress: Double {
+        guard suggestions.count > 0 else { return 0 }
+        return Double(suggestions.filter { $0.isDone }.count) / Double(suggestions.count)
+    }
     @Published var completedSuggestionsCount: Int = 0
     @Published var earnedBadges: [BadgeType] = []
     
