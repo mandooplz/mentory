@@ -38,6 +38,7 @@
   - [환경 설정](#환경-설정)
   - [실행 방법](#실행-방법)
 - [소프트웨어 디자인](#소프트웨어-디자인)
+- [프로젝트 구조](#프로젝트-구조)
 - [개발 문서](#개발-문서)
 - [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
@@ -250,6 +251,81 @@
 <p align="center">
   <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
+
+## 프로젝트 구조
+
+```
+Mentory/
+├── Mentory/                          # 메인 iOS 앱
+│   ├── MentoryApp.swift             # 앱 진입점
+│   ├── Domain/                      # 비즈니스 로직 계층
+│   │   ├── MentoryiOS.swift        # 메인 도메인 모델
+│   │   ├── TodayBoard/             # 오늘의 감정 기록 관련 도메인
+│   │   │   ├── TodayBoard.swift
+│   │   │   ├── RecordForm/         # 감정 기록 폼
+│   │   │   ├── MentorMessage/      # 멘토 메시지
+│   │   │   └── Suggestion/         # 활동 추천
+│   │   ├── Onboarding/             # 온보딩 도메인
+│   │   └── SettingBoard/           # 설정 도메인
+│   ├── Presentation/                # UI 계층 (SwiftUI Views & ViewModels)
+│   │   ├── Components/             # 재사용 가능한 UI 컴포넌트
+│   │   ├── TodayBoard/             # 오늘의 감정 기록 화면
+│   │   ├── Onboarding/             # 온보딩 화면
+│   │   └── SettingBoard/           # 설정 화면
+│   ├── Adapter/                     # 외부 서비스 어댑터 계층
+│   │   ├── AlanLLM/                # ESTSOFT Alan LLM 어댑터
+│   │   ├── AlanLLMMock/            # Alan LLM 목 객체
+│   │   ├── FirebaseLLM/            # Firebase AI 어댑터
+│   │   ├── FirebaseLLMMock/        # Firebase LLM 목 객체
+│   │   ├── MentoryDB/              # 데이터베이스 어댑터
+│   │   ├── MentoryDBMock/          # DB 목 객체
+│   │   └── Notification/           # 알림 어댑터
+│   ├── Service/                     # 서비스 계층
+│   │   ├── Microphone/             # 음성 녹음 서비스
+│   │   ├── ImagePicker/            # 이미지 선택 서비스
+│   │   └── WatchConnectivity/      # Watch 연동 서비스
+│   ├── Assets.xcassets/            # 이미지, 컬러 리소스
+│   ├── GoogleService-Info.plist    # Firebase 설정 파일
+│   └── Info.plist                  # 앱 설정 파일
+│
+├── MentoryDB/                       # 데이터베이스 모듈
+│   └── Domain/                     # DB 도메인 모델
+│       └── DailyRecord/            # 일일 감정 기록 모델
+│
+├── MentoryWatch Watch App/          # watchOS 앱
+│   ├── Domain/                     # Watch 앱 비즈니스 로직
+│   ├── Service/                    # Watch 앱 서비스
+│   └── Presentation/.              # UI 계층
+│
+├── MentoryWidget/                   # 위젯 확장
+│   ├── MentoryWidgetBundle.swift   # 위젯 번들
+│   └── Presentation/               # 위젯 UI
+│
+├── Values/                          # 공유 값 타입 및 프로토콜
+│   ├── MentoryiOS/                 # iOS 앱 관련 값 타입
+│   ├── MentoryDB/                  # DB 관련 값 타입
+│   ├── AlanLLM/                    # Alan LLM 관련 값 타입
+│   └── FirebaseLLM/                # Firebase LLM 관련 값 타입
+│
+├── MentoryTests/                    # 단위 테스트
+│   ├── TodayBoard/                 # TodayBoard 도메인 테스트
+│   └── Onboarding/                 # Onboarding 도메인 테스트
+│
+├── Secrets.xcconfig                 # API 키 설정 파일 (git에서 제외됨)
+└── Secrets.xcconfig.sample          # API 키 설정 템플릿
+```
+
+### 아키텍처 설명
+
+이 프로젝트는 **MVVM 패턴**과 **클린 아키텍처** 원칙을 따라 설계되었습니다:
+
+- **Domain**: 비즈니스 로직과 규칙을 담당하는 핵심 계층
+- **Presentation**: SwiftUI 뷰와 뷰모델을 포함하는 UI 계층
+- **Adapter**: 외부 서비스(LLM, DB, 알림 등)와의 통신을 담당하는 계층
+- **Service**: 공통 기능(마이크, 이미지 피커, Watch 연동)을 제공하는 계층
+- **Values**: 도메인 간 공유되는 값 타입과 프로토콜
+
+각 계층은 의존성 역전 원칙(DIP)을 따르며, Mock 객체를 통해 테스트 가능하도록 설계되었습니다.
 
 ## 개발 문서
 
