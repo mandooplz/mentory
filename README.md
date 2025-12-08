@@ -23,6 +23,10 @@
   </p>
 </div>
 
+<p align="center">
+  <img src="./mentory-intro.png" alt="App Introduction" width="800">
+</p>
+
 ## 목차
 
 - [목차](#목차)
