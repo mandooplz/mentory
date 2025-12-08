@@ -50,6 +50,15 @@ final class MentoryDatabaseFake: Sendable {
         }
     }
 
+    func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
+        for record in records {
+            if let suggestion = record.suggestions.first(where: { $0.id == targetId }) {
+                suggestion.isDone = isDone
+                return
+            }
+        }
+    }
+
     // MARK: action
     func createDailyRecords() {
         // mutate
