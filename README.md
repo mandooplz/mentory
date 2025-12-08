@@ -69,23 +69,86 @@
 
 ## 스크린샷
 
-<p align="center">
-  <img src="./screenshots/todayboard.png" alt="todayboard" width="250">
-  <img src="./screenshots/suggestion.png" alt="suggestion" width="250">
-  <img src="./screenshots/badge.png" alt="badge" width="250">
-  <img src="./screenshots/todayboard-record.png" alt="todayboard-record" width="250">
-</p>
-
-<p align="center">
-  <img src="./screenshots/recordform.png" alt="recordform" width="250">
-  <img src="./screenshots/recordform-pic.png" alt="recordform-pic" width="250">
-  <img src="./screenshots/recordform-audio.png" alt="recordform-audio" width="250">
-  <img src="./screenshots/analyze.png" alt="analyze" width="250">
-</p>
-
-<p align="center">
-  <img src="./screenshots/setting.png" alt="setting" width="250">
-</p>
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <img src="./screenshots/todayboard.png" alt="todayboard" width="100%">
+      <br>
+      <b>오늘의 감정 보드</b>
+      <br>
+      <sub>오늘 하루의 감정 기록</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/suggestion.png" alt="suggestion" width="100%">
+      <br>
+      <b>활동 추천</b>
+      <br>
+      <sub>AI가 추천하는 맞춤형 활동</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/badge.png" alt="badge" width="100%">
+      <br>
+      <b>뱃지</b>
+      <br>
+      <sub>기록 달성에 따른 뱃지 획득</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/todayboard-record.png" alt="todayboard-record" width="100%">
+      <br>
+      <b>기록 히스토리</b>
+      <br>
+      <sub>이틀 전까지 기록 가능</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <img src="./screenshots/recordform.png" alt="recordform" width="100%">
+      <br>
+      <b>감정 기록 폼</b>
+      <br>
+      <sub>텍스트, 음성, 사진 기록</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/recordform-pic.png" alt="recordform-pic" width="100%">
+      <br>
+      <b>사진으로 기록</b>
+      <br>
+      <sub>이미지를 통한 감정 표현</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/recordform-audio.png" alt="recordform-audio" width="100%">
+      <br>
+      <b>음성으로 기록</b>
+      <br>
+      <sub>음성 녹음을 통한 감정 기록</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="./screenshots/analyze.png" alt="analyze" width="100%">
+      <br>
+      <b>AI 감정 분석</b>
+      <br>
+      <sub>LLM 기반 감정 분석, 조언</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <img src="./screenshots/setting.png" alt="setting" width="100%">
+      <br>
+      <b>설정</b>
+      <br>
+      <sub>알림 및 개인 설정 관리</sub>
+    </td>
+    <td align="center" width="25%">
+      <!-- 추가 스크린샷 -->
+    </td>
+    <td align="center" width="25%">
+      <!-- 추가 스크린샷 -->
+    </td>
+    <td align="center" width="25%">
+      <!-- 추가 스크린샷 -->
+    </td>
+  </tr>
+</table>
 
 ## 사용 기술
 
