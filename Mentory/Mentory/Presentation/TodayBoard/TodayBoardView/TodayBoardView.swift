@@ -327,6 +327,8 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
         }
         .task {
             await todayBoard.loadSuggestions()
+            // Watch로 전송
+            await todayBoard.sendSuggestionsToWatch()
         }
         .task(id: isFlipped) {
             // 뱃지 화면을 열면 현재 뱃지 개수로 업데이트 (dot 제거)

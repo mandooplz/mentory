@@ -193,8 +193,6 @@ final class TodayBoard: Sendable, ObservableObject {
             }
         self.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")
-        // Watch로 전송
-        await sendSuggestionsToWatch()
     }
     
     func fetchUserRecordCoount() async {
