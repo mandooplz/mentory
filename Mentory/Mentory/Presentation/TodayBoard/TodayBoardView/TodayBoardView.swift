@@ -64,6 +64,7 @@ struct TodayBoardView: View {
                         todoText: todoText,
                         isCompleted: isCompleted
                     )
+                    await todayBoard.fetchEarnedBadges()
                 }
             }
         }
