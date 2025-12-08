@@ -63,6 +63,26 @@
 ### 🔔 스마트 알림
 - **리마인더**: 정기적인 감정 기록을 위한 알림 기능
 
+## 스크린샷
+
+<p align="center">
+  <img src="./screenshots/todayboard.png" alt="todayboard" width="250">
+  <img src="./screenshots/suggestion.png" alt="suggestion" width="250">
+  <img src="./screenshots/badge.png" alt="badge" width="250">
+  <img src="./screenshots/todayboard-record.png" alt="todayboard-record" width="250">
+</p>
+
+<p align="center">
+  <img src="./screenshots/recordform.png" alt="recordform" width="250">
+  <img src="./screenshots/recordform-pic.png" alt="recordform-pic" width="250">
+  <img src="./screenshots/recordform-audio.png" alt="recordform-audio" width="250">
+  <img src="./screenshots/analyze.png" alt="analyze" width="250">
+</p>
+
+<p align="center">
+  <img src="./screenshots/setting.png" alt="setting" width="250">
+</p>
+
 ## 사용 기술
 
 <table>
