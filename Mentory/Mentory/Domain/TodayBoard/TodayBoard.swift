@@ -69,7 +69,10 @@ final class TodayBoard: Sendable, ObservableObject {
         
         return "\(doneCount)/\(totalCount)"
     }
-
+    var suggestionProgress: Double {
+        guard suggestions.count > 0 else { return 0 }
+        return Double(suggestions.filter { $0.isDone }.count) / Double(suggestions.count)
+    }
     @Published var completedSuggestionsCount: Int = 0
     @Published var earnedBadges: [BadgeType] = []
     
@@ -256,9 +259,16 @@ final class TodayBoard: Sendable, ObservableObject {
         suggestion.isDone = isCompleted
         logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
 
-        // TODO: MentoryDB에 저장하는 로직 구현 필요
-        // let mentoryiOS = owner!
-        // let mentoryDB = mentoryiOS.mentoryDB
-        // try await mentoryDB.updateSuggestionCompletion(...)
+        // MentoryDB에 저장
+        let mentoryiOS = owner!
+        let mentoryDB = mentoryiOS.mentoryDB
+        let targetId = suggestion.target.rawValue
+
+        do {
+            try await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isCompleted)
+            logger.debug("Watch 투두 완료 상태 DB 저장 완료: \(todoText)")
+        } catch {
+            logger.error("Watch 투두 완료 상태 DB 저장 실패: \(error)")
+        }
     }
 }

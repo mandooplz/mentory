@@ -75,7 +75,12 @@ struct MindAnalyzerView: View {
                             
                             await mindAnalyzer.analyze()
                             await mindAnalyzer.updateSuggestions()
-                            
+
+                            // Watch로 투두 전송
+                            let recordForm = mindAnalyzer.owner!
+                            let todayBoard = recordForm.owner!
+                            await todayBoard.sendSuggestionsToWatch()
+
                             withAnimation {
                                 mindAnalyzer.stopAnalyze()
                             }

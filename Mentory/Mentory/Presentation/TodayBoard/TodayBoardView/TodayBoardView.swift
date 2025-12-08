@@ -64,6 +64,7 @@ struct TodayBoardView: View {
                         todoText: todoText,
                         isCompleted: isCompleted
                     )
+                    await todayBoard.fetchEarnedBadges()
                 }
             }
         }
@@ -227,7 +228,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
         .task {
             let stream = todayBoard.$recordFormSelection.values
                 .map { recordFormState in recordFormState != nil }
-
+            
             for await isPresent in stream {
                 self.showFullScreenCover = isPresent
             }
@@ -241,7 +242,7 @@ fileprivate struct RecordStatCard<Content: View>: View {
         }
         .fullScreenCover(isPresented: $showFullScreenCover) {
             if let form = todayBoard.recordFormSelection {
-            navDestination(form)
+                navDestination(form)
                 
             }
         }
@@ -252,16 +253,16 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     @ObservedObject var todayBoard: TodayBoard
     let header: String
     let actionRows: ActionRows
-
+    
     @State private var isFlipped = false
     @State private var initialBadgeCount: Int = 0
-
+    
     init(todayBoard: TodayBoard, header: String, actionRows: ActionRows) {
         self.todayBoard = todayBoard
         self.header = header
         self.actionRows = actionRows
     }
-
+    
     private var hasNewBadge: Bool {
         todayBoard.earnedBadges.count > initialBadgeCount
     }
@@ -303,7 +304,7 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
                                     .foregroundColor(.mentoryAccentPrimary)
                             }
                         }
-
+                        
                         BadgeGridView(
                             earnedBadges: todayBoard.earnedBadges,
                             completedCount: todayBoard.completedSuggestionsCount
@@ -353,7 +354,7 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
                     Image(systemName: "trophy.fill")
                         .font(.system(size: 16))
                         .foregroundColor(todayBoard.earnedBadges.isEmpty ? .gray.opacity(0.5) : .mentoryAccentPrimary)
-
+                    
                     // 새 뱃지 알림 dot
                     if hasNewBadge {
                         Circle()
@@ -368,27 +369,33 @@ fileprivate struct SuggestionCard<ActionRows: View>: View {
     
     private var ProgressBar: some View {
         HStack {
-            ZStack {
-                // 배경 캡슐
-                Capsule()
-                    .fill(Color.mentoryProgressTrack)
-                    .frame(height: 10)
-                
-                // 상태 캡슐
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                .purple,
-                                .purple.opacity(0.55)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    // 배경 캡슐
+                    Capsule()
+                        .fill(Color.mentoryProgressTrack)
+                        .frame(height: 10)
+                    
+                    // 상태 캡슐
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    .purple,
+                                    .purple.opacity(0.55)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
+                        .frame(
+                            width: geo.size.width * todayBoard.suggestionProgress,
+                            height: 10
+                        )
+                        .animation(.spring(), value: todayBoard.suggestionProgress)
+                }
+                .frame(height: 10)
             }
-            .frame(height: 10)
-            
             Text(todayBoard.getSuggestionIndicator())
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.secondary)
@@ -407,7 +414,7 @@ fileprivate struct SuggestionActionRows: View {
     
     var body: some View {
         ForEach(todayBoard.suggestions, id: \.self.id) { suggestion in
-        SuggestionView(suggestion: suggestion)
+            SuggestionView(suggestion: suggestion)
             
         }
     }
@@ -427,17 +434,17 @@ fileprivate struct DateSelectionSheet: View {
                     Text("어느 날의 일기를 쓸까요?")
                         .font(.system(size: 26, weight: .bold))
                         .foregroundColor(.primary)
-
+                    
                     Text("작성 가능한 날짜를 선택해주세요.")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
-
+                    
                     Text("일기는 최대 이틀 전까지의 날짜만 작성할 수 있어요.")
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity)
-
+                
                 // 날짜 선택 버튼들 또는 완료 메시지
                 if todayBoard.recordForms.isEmpty {
                     VStack(spacing: 16) {
@@ -445,15 +452,15 @@ fileprivate struct DateSelectionSheet: View {
                             .font(.system(size: 60))
                             .foregroundColor(.green)
                             .padding(.top, 32)
-
+                        
                         Text("모든 일기를 작성했어요!")
                             .font(.system(size: 20, weight: .bold))
-
+                        
                         Text("오늘, 어제, 그제의 일기를\n모두 작성하셨습니다.")
                             .font(.system(size: 14))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
-
+                        
                         Button {
                             dismiss()
                         } label: {
@@ -470,7 +477,7 @@ fileprivate struct DateSelectionSheet: View {
                         .buttonStyle(.plain)
                         .padding(.top, 16)
                     }
-
+                    
                     Spacer()
                 } else {
                     VStack(spacing: 12) {
@@ -512,7 +519,7 @@ fileprivate struct DateButton: View {
                     Text(date.relativeDay(from: .now).rawValue)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.primary)
-
+                    
                     Text(date.formatted())
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
