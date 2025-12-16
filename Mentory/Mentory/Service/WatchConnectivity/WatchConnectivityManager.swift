@@ -49,18 +49,28 @@ final class WatchConnectivityManager {
         // mutate
         self.engine = engine
     }
+    
+    func updateMentorMessages() async {
+        fatalError("구현 예정입니다.")
+    }
+    
+    func updateActionTodos() async {
+        fatalError("구현 예정입니다.")
+    }
 
-    /// 멘토 메시지를 Watch로 전송
+    
+    // MARK: fix
+    // 멘토 메시지를 Watch로 전송
     func updateMentorMessage(_ message: String, character: String) async {
         await engine?.sendMentorMessage(message, character: character)
     }
 
-    /// 행동 추천 투두를 Watch로 전송
+    // 행동 추천 투두를 Watch로 전송
     func updateActionTodos(_ todos: [String], completionStatus: [Bool]) async {
         await engine?.sendActionTodos(todos, completionStatus: completionStatus)
     }
 
-    /// 투두 완료 처리 핸들러 설정
+    // 투두 완료 처리 핸들러 설정
     func setTodoCompletionHandler(_ handler: @escaping @Sendable (String, Bool) -> Void) async {
         await engine?.setTodoCompletionHandler(handler)
     }
