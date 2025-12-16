@@ -61,13 +61,24 @@ final class WatchConnectivityManager {
         
         // mutate
         self.handlers = newHandlers
+        
+        logger.debug("WatchConnectivityManager 설정 완료")
     }
     
     func updateContext() async {
+        // capture
+        let message = self.message ?? ""
+        let character = self.character ?? ""
+        let todos = self.todos
+        let todoCompletions = self.todoCompletions
+        
+        logger.debug("message: \(message), character: \(character)")
+        logger.debug("todos: \(todos), todoCompletions: \(todoCompletions)")
+        
         // process
         let context: [String: Any] = [
-            "mentorMessage": message ?? "",
-            "mentorCharacter": character ?? "",
+            "mentorMessage": message,
+            "mentorCharacter": character,
             "actionTodos": todos,
             "todoCompletionStatus": todoCompletions,
             "timestamp": Date().timeIntervalSince1970
