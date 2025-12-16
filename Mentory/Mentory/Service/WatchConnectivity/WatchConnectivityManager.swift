@@ -8,6 +8,7 @@ import Foundation
 import Combine
 import OSLog
 import WatchConnectivity
+import Collections
 
 
 
@@ -20,24 +21,35 @@ final class WatchConnectivityManager {
     private init() { }
 
     // MARK: state
-    var isPaired: Bool = false
-    var isWatchAppInstalled: Bool = false
-    var isReachable: Bool = false
+    var message: String? = nil
+    var character: String? = nil
+    var todos: [String] = []
+    var todoCompletions: [Bool] = []
+    
+    private(set) var isPaired: Bool = false
+    private(set) var isWatchAppInstalled: Bool = false
+    private(set) var isReachable: Bool = false
 
-    private(set) var engine: WatchConnectivityEngine? = nil
+//    private(set) var engine: WatchConnectivityEngine? = nil
+    private var session: WCSession = .default
+    var handlers: HandlerSet? = nil
+    
 
 
     // MARK: action
     func setUp() async {
         // capture
-        guard engine == nil else {
-            logger.error("이미 세팅된 상태입니다.")
+        guard let handlers else {
+            logger.error("Handler가 설정되지 않았습니다.")
             return
         }
-
+        guard WCSession.isSupported() else {
+            logger.error("WCSession.isSupported()가 false입니다.")
+            return
+        }
+        
         // process
-        let engine = WatchConnectivityEngine()
-        await engine.setStateUpdateHandler { [weak self] state in
+        let newHandlers = handlers.with { [weak self] state in
             Task { @MainActor in
                 self?.isPaired = state.isPaired
                 self?.isWatchAppInstalled = state.isWatchAppInstalled
@@ -45,20 +57,31 @@ final class WatchConnectivityManager {
             }
         }
         
-        engine.activate()
-
+        session.delegate = newHandlers
+        session.activate()
+        
         // mutate
-        self.engine = engine
+        self.handlers = newHandlers
     }
     
-    func updateMentorMessages() async {
-        fatalError("구현 예정입니다.")
+    func updateContext() async {
+        // process
+        let context: [String: Any] = [
+            "mentorMessage": message ?? "",
+            "mentorCharacter": character ?? "",
+            "actionTodos": todos,
+            "todoCompletionStatus": todoCompletions,
+            "timestamp": Date().timeIntervalSince1970
+        ]
+        
+        do {
+            try session.updateApplicationContext(context)
+            logger.debug("Watch로 데이터 전송 성공")
+        } catch {
+            logger.error("Watch로 데이터 전송 실패: \(error.localizedDescription)")
+        }
     }
     
-    func updateActionTodos() async {
-        fatalError("구현 예정입니다.")
-    }
-
     
     // MARK: value
     typealias StateHandler = @Sendable (ConnectionState) -> Void
@@ -70,18 +93,26 @@ final class WatchConnectivityManager {
         let isReachable: Bool
     }
     
-    final class HandlerSet: NSObject, WCSessionDelegate {
+    final nonisolated class HandlerSet: NSObject, WCSessionDelegate {
         // MARK: core
         private let logger = Logger()
-        let activateHandler: StateHandler
+        let activateHandler: StateHandler?
         let todoHandler: TodoHandler
         
-        init(activateHandler: @escaping StateHandler, todoHandler: @escaping TodoHandler) {
+        private init(activateHandler: StateHandler?, todoHandler: @escaping TodoHandler) {
             self.activateHandler = activateHandler
             self.todoHandler = todoHandler
         }
+        convenience init(todoHandler: @escaping TodoHandler) {
+            self.init(activateHandler: nil, todoHandler: todoHandler)
+        }
         
         // MARK: operator
+        fileprivate func with(_ handler: @escaping StateHandler) -> HandlerSet {
+            return HandlerSet(activateHandler: handler, todoHandler: self.todoHandler)
+        }
+        
+        
         func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
             let connectionState = ConnectionState(
                 isPaired: session.isPaired,
@@ -89,7 +120,7 @@ final class WatchConnectivityManager {
                 isReachable: session.isReachable
             )
             
-            activateHandler(connectionState)
+            activateHandler?(connectionState)
         }
         
         func sessionDidBecomeInactive(_ session: WCSession) {
@@ -108,7 +139,7 @@ final class WatchConnectivityManager {
                 isReachable: session.isReachable
             )
             
-            activateHandler(connectionState)
+            activateHandler?(connectionState)
         }
         
         func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
@@ -120,7 +151,6 @@ final class WatchConnectivityManager {
             }
 
             todoHandler(todoText, isCompleted)
-
         }
     }
 }
@@ -128,19 +158,19 @@ final class WatchConnectivityManager {
 
 
 // MARK: Extension
-extension WatchConnectivityManager {
-    func updateMentorMessage(_ message: String, character: String) async {
-        // 멘토 메시지를 Watch로 전송
-        await engine?.sendMentorMessage(message, character: character)
-    }
-
-    func updateActionTodos(_ todos: [String], completionStatus: [Bool]) async {
-        // 행동 추천 투두를 Watch로 전송
-        await engine?.sendActionTodos(todos, completionStatus: completionStatus)
-    }
-
-    func setTodoCompletionHandler(_ handler: @escaping @Sendable (String, Bool) -> Void) async {
-        // 투두 완료 처리 핸들러 설정
-        await engine?.setTodoCompletionHandler(handler)
-    }
-}
+//extension WatchConnectivityManager {
+//    func updateMentorMessage(_ message: String, character: String) async {
+//        // 멘토 메시지를 Watch로 전송
+//        await engine?.sendMentorMessage(message, character: character)
+//    }
+//
+//    func updateActionTodos(_ todos: [String], completionStatus: [Bool]) async {
+//        // 행동 추천 투두를 Watch로 전송
+//        await engine?.sendActionTodos(todos, completionStatus: completionStatus)
+//    }
+//
+//    func setTodoCompletionHandler(_ handler: @escaping @Sendable (String, Bool) -> Void) async {
+//        // 투두 완료 처리 핸들러 설정
+//        await engine?.setTodoCompletionHandler(handler)
+//    }
+//}

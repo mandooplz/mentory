@@ -1,265 +1,264 @@
+////
+////  WatchConnectivityEngine.swift
+////  Mentory
+////
+////  Created by 구현모 on 12/2/25.
+////
+//import Foundation
+//@preconcurrency import WatchConnectivity
+//import OSLog
 //
-//  WatchConnectivityEngine.swift
-//  Mentory
 //
-//  Created by 구현모 on 12/2/25.
+//// MARK: Object
+//actor WatchConnectivityEngine: NSObject {
+//    // MARK: core
+//    private nonisolated let logger = Logger()
+//    private nonisolated let session: WCSession = .default
+//    
 //
-import Foundation
-@preconcurrency import WatchConnectivity
-import OSLog
-
-
-// MARK: Object
-actor WatchConnectivityEngine: NSObject {
-    // MARK: core
-    private nonisolated let logger = Logger()
-    private nonisolated let session: WCSession = .default
-    
-
-    // MARK: state
-    private var cachedMentorMessage: String = ""
-    private var cachedMentorCharacter: String = ""
-    private var cachedActionTodos: [String] = []
-    private var cachedTodoCompletionStatus: [Bool] = []
-    
-    private var cachedIsPaired: Bool = false
-    private var cachedIsWatchAppInstalled: Bool = false
-    private var cachedIsReachable: Bool = false
-
-    private var stateUpdateHandler: StateUpdateHandler?
-    func setStateUpdateHandler(_ handler: @escaping StateUpdateHandler) {
-        self.stateUpdateHandler = handler
-    }
-    
-    private var todoCompletionHandler: TodoCompletionHandler?
-    func setTodoCompletionHandler(_ handler: @escaping TodoCompletionHandler) {
-        self.todoCompletionHandler = handler
-    }
-    
-
-    // MARK: action
-    nonisolated func activate() {
-        guard WCSession.isSupported() else {
-            logger.error("WCSession이 지원되지 않는 기기입니다.")
-            return
-        }
-
-        let handlers = HandlerSet(
-            activateHandler: { state in
-                fatalError("구현 예정입니다.")
-            },
-            todoHandler: { todoText, isCompleted in
-                fatalError("구현 예정입니다.")
-            })
-        session.delegate = handlers
-        
-        session.activate()
-    }
-
-    /// 멘토 메시지를 Watch로 전송
-    func sendMentorMessage(_ message: String, character: String) {
-        guard session.activationState == .activated else {
-            logger.warning("WCSession이 활성화되지 않음")
-            return
-        }
-
-        cachedMentorMessage = message
-        cachedMentorCharacter = character
-
-        sendAllDataToWatch()
-    }
-
-    private func sendAllDataToWatch() {
-        guard session.activationState == .activated else {
-            logger.warning("WCSession이 활성화되지 않음")
-            return
-        }
-
-        let context: [String: Any] = [
-            "mentorMessage": cachedMentorMessage,
-            "mentorCharacter": cachedMentorCharacter,
-            "actionTodos": cachedActionTodos,
-            "todoCompletionStatus": cachedTodoCompletionStatus,
-            "timestamp": Date().timeIntervalSince1970
-        ]
-
-        do {
-            try session.updateApplicationContext(context)
-            logger.debug("Watch로 데이터 전송 성공")
-        } catch {
-            logger.error("Watch로 데이터 전송 실패: \(error.localizedDescription)")
-        }
-    }
-
-    /// Reachability 변경 처리
-    func handleReachabilityChange(isReachable: Bool) {
-        cachedIsReachable = isReachable
-        notifyStateUpdate()
-    }
-
-    /// Watch로부터 받은 투두 완료 처리
-    func handleTodoCompletion(todoText: String, isCompleted: Bool) {
-        // 로컬 캐시 업데이트
-        guard let index = cachedActionTodos.firstIndex(of: todoText) else {
-            logger.error("투두를 찾을 수 없음: \(todoText)")
-            return
-        }
-
-        cachedTodoCompletionStatus[index] = isCompleted
-        logger.debug("투두 완료 상태 업데이트: todoText=\(todoText), isCompleted=\(isCompleted)")
-
-        // 핸들러를 통해 TodayBoard로 전달
-        todoCompletionHandler?(todoText, isCompleted)
-
-        // 업데이트된 상태를 Watch로 다시 전송하여 동기화 유지
-        sendAllDataToWatch()
-    }
-
-    // MARK: value
-    typealias StateUpdateHandler = @Sendable (ConnectionState) -> Void
-    typealias TodoCompletionHandler = @Sendable (String, Bool) -> Void
-    
-    struct ConnectionState: Sendable, Hashable {
-        let isPaired: Bool
-        let isWatchAppInstalled: Bool
-        let isReachable: Bool
-    }
-    
-    final class HandlerSet: NSObject, WCSessionDelegate {
-        // MARK: core
-        private let logger = Logger()
-        let activateHandler: @Sendable (ConnectionState) -> Void
-        let todoHandler: @Sendable (String, Bool) -> Void
-        
-        init(activateHandler: @Sendable @escaping (ConnectionState) -> Void, todoHandler: @Sendable @escaping (String, Bool) -> Void) {
-            self.activateHandler = activateHandler
-            self.todoHandler = todoHandler
-        }
-        
-        // MARK: operator
-        func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
-            let connectionState = ConnectionState(
-                isPaired: session.isPaired,
-                isWatchAppInstalled: session.isWatchAppInstalled,
-                isReachable: session.isReachable
-            )
-            
-            activateHandler(connectionState)
-        }
-        
-        func sessionDidBecomeInactive(_ session: WCSession) {
-            // Watch가 새로운 기기로 전환하는 중
-        }
-        
-        func sessionDidDeactivate(_ session: WCSession) {
-            // Watch가 전환 완료
-            session.activate()
-        }
-        
-        func sessionReachabilityDidChange(_ session: WCSession) {
-            let connectionState = ConnectionState(
-                isPaired: session.isPaired,
-                isWatchAppInstalled: session.isWatchAppInstalled,
-                isReachable: session.isReachable
-            )
-            
-            activateHandler(connectionState)
-        }
-        
-        func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-            guard let action = message["action"] as? String,
-                  action == "todoCompletion",
-                  let todoText = message["todoText"] as? String,
-                  let isCompleted = message["isCompleted"] as? Bool else {
-                return
-            }
-
-            todoHandler(todoText, isCompleted)
-
-        }
-    }
-}
-
-// MARK: - WCSessionDelegate
-extension WatchConnectivityEngine {
-    func sendActionTodos(_ todos: [String], completionStatus: [Bool]) {
-        guard session.activationState == .activated else {
-            logger.warning("WCSession이 활성화되지 않음")
-            return
-        }
-
-        cachedActionTodos = todos
-        cachedTodoCompletionStatus = completionStatus
-
-        sendAllDataToWatch()
-    }
-}
-
-extension WatchConnectivityEngine {
-    func handleActivation(state: WCSessionActivationState,
-                          session: WCSession, error: Error?) {
-        cachedIsPaired = session.isPaired
-        cachedIsWatchAppInstalled = session.isWatchAppInstalled
-        cachedIsReachable = session.isReachable
-
-        if let error = error {
-            logger.error("WCSession 활성화 오류: \(error.localizedDescription)")
-        } else {
-            logger.debug("WCSession 활성화 완료")
-            // 활성화 완료 시 현재 데이터 전송
-            if !cachedMentorMessage.isEmpty || !cachedActionTodos.isEmpty {
-                sendAllDataToWatch()
-            }
-        }
-
-        notifyStateUpdate()
-    }
-    
-    private func notifyStateUpdate() {
-        let state = ConnectionState(
-            isPaired: cachedIsPaired,
-            isWatchAppInstalled: cachedIsWatchAppInstalled,
-            isReachable: cachedIsReachable
-        )
-
-        stateUpdateHandler?(state)
-    }
-}
-
-extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
-    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        Task {
-            await handleActivation(state: activationState, session: session, error: error)
-        }
-    }
-
-    nonisolated func sessionDidBecomeInactive(_ session: WCSession) {
-        // iOS 전용: Watch가 새로운 기기로 전환 중
-    }
-
-    nonisolated func sessionDidDeactivate(_ session: WCSession) {
-        // iOS 전용: Watch 전환 완료, 재활성화 필요
-        session.activate()
-    }
-
-    nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
-        Task {
-            await handleReachabilityChange(isReachable: session.isReachable)
-        }
-    }
-
-    /// Watch로부터 메시지 수신 (투두 완료 처리)
-    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        guard let action = message["action"] as? String,
-              action == "todoCompletion",
-              let todoText = message["todoText"] as? String,
-              let isCompleted = message["isCompleted"] as? Bool else {
-            return
-        }
-
-        Task {
-            await handleTodoCompletion(todoText: todoText, isCompleted: isCompleted)
-        }
-    }
-
-}
+//    // MARK: state
+//    private var cachedMentorMessage: String = ""
+//    private var cachedMentorCharacter: String = ""
+//    private var cachedActionTodos: [String] = []
+//    private var cachedTodoCompletionStatus: [Bool] = []
+//    
+//    private var cachedIsPaired: Bool = false
+//    private var cachedIsWatchAppInstalled: Bool = false
+//    private var cachedIsReachable: Bool = false
+//
+//    private var stateUpdateHandler: StateUpdateHandler?
+//    func setStateUpdateHandler(_ handler: @escaping StateUpdateHandler) {
+//        self.stateUpdateHandler = handler
+//    }
+//    
+//    private var todoCompletionHandler: TodoCompletionHandler?
+//    func setTodoCompletionHandler(_ handler: @escaping TodoCompletionHandler) {
+//        self.todoCompletionHandler = handler
+//    }
+//    
+//
+//    // MARK: action
+//    nonisolated func activate() {
+//        guard WCSession.isSupported() else {
+//            logger.error("WCSession이 지원되지 않는 기기입니다.")
+//            return
+//        }
+//
+//        let handlers = HandlerSet(
+//            activateHandler: { state in
+//                fatalError("구현 예정입니다.")
+//            },
+//            todoHandler: { todoText, isCompleted in
+//                fatalError("구현 예정입니다.")
+//            })
+//        session.delegate = handlers
+//        
+//        session.activate()
+//    }
+//
+//    /// 멘토 메시지를 Watch로 전송
+//    func sendMentorMessage(_ message: String, character: String) {
+//        guard session.activationState == .activated else {
+//            logger.warning("WCSession이 활성화되지 않음")
+//            return
+//        }
+//
+//        cachedMentorMessage = message
+//        cachedMentorCharacter = character
+//
+//        sendAllDataToWatch()
+//    }
+//    private func sendAllDataToWatch() {
+//        guard session.activationState == .activated else {
+//            logger.warning("WCSession이 활성화되지 않음")
+//            return
+//        }
+//
+//        let context: [String: Any] = [
+//            "mentorMessage": cachedMentorMessage,
+//            "mentorCharacter": cachedMentorCharacter,
+//            "actionTodos": cachedActionTodos,
+//            "todoCompletionStatus": cachedTodoCompletionStatus,
+//            "timestamp": Date().timeIntervalSince1970
+//        ]
+//
+//        do {
+//            try session.updateApplicationContext(context)
+//            logger.debug("Watch로 데이터 전송 성공")
+//        } catch {
+//            logger.error("Watch로 데이터 전송 실패: \(error.localizedDescription)")
+//        }
+//    }
+//
+//    /// Reachability 변경 처리
+//    func handleReachabilityChange(isReachable: Bool) {
+//        cachedIsReachable = isReachable
+//        notifyStateUpdate()
+//    }
+//
+//    /// Watch로부터 받은 투두 완료 처리
+//    func handleTodoCompletion(todoText: String, isCompleted: Bool) {
+//        // 로컬 캐시 업데이트
+//        guard let index = cachedActionTodos.firstIndex(of: todoText) else {
+//            logger.error("투두를 찾을 수 없음: \(todoText)")
+//            return
+//        }
+//
+//        cachedTodoCompletionStatus[index] = isCompleted
+//        logger.debug("투두 완료 상태 업데이트: todoText=\(todoText), isCompleted=\(isCompleted)")
+//
+//        // 핸들러를 통해 TodayBoard로 전달
+//        todoCompletionHandler?(todoText, isCompleted)
+//
+//        // 업데이트된 상태를 Watch로 다시 전송하여 동기화 유지
+//        sendAllDataToWatch()
+//    }
+//
+//    // MARK: value
+//    typealias StateUpdateHandler = @Sendable (ConnectionState) -> Void
+//    typealias TodoCompletionHandler = @Sendable (String, Bool) -> Void
+//    
+//    struct ConnectionState: Sendable, Hashable {
+//        let isPaired: Bool
+//        let isWatchAppInstalled: Bool
+//        let isReachable: Bool
+//    }
+//    
+//    final class HandlerSet: NSObject, WCSessionDelegate {
+//        // MARK: core
+//        private let logger = Logger()
+//        let activateHandler: @Sendable (ConnectionState) -> Void
+//        let todoHandler: @Sendable (String, Bool) -> Void
+//        
+//        init(activateHandler: @Sendable @escaping (ConnectionState) -> Void, todoHandler: @Sendable @escaping (String, Bool) -> Void) {
+//            self.activateHandler = activateHandler
+//            self.todoHandler = todoHandler
+//        }
+//        
+//        // MARK: operator
+//        func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+//            let connectionState = ConnectionState(
+//                isPaired: session.isPaired,
+//                isWatchAppInstalled: session.isWatchAppInstalled,
+//                isReachable: session.isReachable
+//            )
+//            
+//            activateHandler(connectionState)
+//        }
+//        
+//        func sessionDidBecomeInactive(_ session: WCSession) {
+//            // Watch가 새로운 기기로 전환하는 중
+//        }
+//        
+//        func sessionDidDeactivate(_ session: WCSession) {
+//            // Watch가 전환 완료
+//            session.activate()
+//        }
+//        
+//        func sessionReachabilityDidChange(_ session: WCSession) {
+//            let connectionState = ConnectionState(
+//                isPaired: session.isPaired,
+//                isWatchAppInstalled: session.isWatchAppInstalled,
+//                isReachable: session.isReachable
+//            )
+//            
+//            activateHandler(connectionState)
+//        }
+//        
+//        func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+//            guard let action = message["action"] as? String,
+//                  action == "todoCompletion",
+//                  let todoText = message["todoText"] as? String,
+//                  let isCompleted = message["isCompleted"] as? Bool else {
+//                return
+//            }
+//
+//            todoHandler(todoText, isCompleted)
+//
+//        }
+//    }
+//}
+//
+//// MARK: - WCSessionDelegate
+//extension WatchConnectivityEngine {
+//    func sendActionTodos(_ todos: [String], completionStatus: [Bool]) {
+//        guard session.activationState == .activated else {
+//            logger.warning("WCSession이 활성화되지 않음")
+//            return
+//        }
+//
+//        cachedActionTodos = todos
+//        cachedTodoCompletionStatus = completionStatus
+//
+//        sendAllDataToWatch()
+//    }
+//}
+//
+//extension WatchConnectivityEngine {
+//    func handleActivation(state: WCSessionActivationState,
+//                          session: WCSession, error: Error?) {
+//        cachedIsPaired = session.isPaired
+//        cachedIsWatchAppInstalled = session.isWatchAppInstalled
+//        cachedIsReachable = session.isReachable
+//
+//        if let error = error {
+//            logger.error("WCSession 활성화 오류: \(error.localizedDescription)")
+//        } else {
+//            logger.debug("WCSession 활성화 완료")
+//            // 활성화 완료 시 현재 데이터 전송
+//            if !cachedMentorMessage.isEmpty || !cachedActionTodos.isEmpty {
+//                sendAllDataToWatch()
+//            }
+//        }
+//
+//        notifyStateUpdate()
+//    }
+//    
+//    private func notifyStateUpdate() {
+//        let state = ConnectionState(
+//            isPaired: cachedIsPaired,
+//            isWatchAppInstalled: cachedIsWatchAppInstalled,
+//            isReachable: cachedIsReachable
+//        )
+//
+//        stateUpdateHandler?(state)
+//    }
+//}
+//
+//extension WatchConnectivityEngine: @preconcurrency WCSessionDelegate {
+//    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+//        Task {
+//            await handleActivation(state: activationState, session: session, error: error)
+//        }
+//    }
+//
+//    nonisolated func sessionDidBecomeInactive(_ session: WCSession) {
+//        // iOS 전용: Watch가 새로운 기기로 전환 중
+//    }
+//
+//    nonisolated func sessionDidDeactivate(_ session: WCSession) {
+//        // iOS 전용: Watch 전환 완료, 재활성화 필요
+//        session.activate()
+//    }
+//
+//    nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
+//        Task {
+//            await handleReachabilityChange(isReachable: session.isReachable)
+//        }
+//    }
+//
+//    /// Watch로부터 메시지 수신 (투두 완료 처리)
+//    nonisolated func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+//        guard let action = message["action"] as? String,
+//              action == "todoCompletion",
+//              let todoText = message["todoText"] as? String,
+//              let isCompleted = message["isCompleted"] as? Bool else {
+//            return
+//        }
+//
+//        Task {
+//            await handleTodoCompletion(todoText: todoText, isCompleted: isCompleted)
+//        }
+//    }
+//
+//}
