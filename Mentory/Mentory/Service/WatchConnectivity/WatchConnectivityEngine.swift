@@ -13,11 +13,7 @@ import OSLog
 actor WatchConnectivityEngine: NSObject {
     // MARK: core
     private nonisolated let logger = Logger()
-    private nonisolated let session: WCSession
-    
-    override init() {
-        self.session = WCSession.default
-    }
+    private nonisolated let session: WCSession = .default
     
 
     // MARK: state
@@ -42,8 +38,6 @@ actor WatchConnectivityEngine: NSObject {
     
 
     // MARK: action
-
-    // 엔진 활성화
     nonisolated func activate() {
         guard WCSession.isSupported() else {
             logger.error("WCSession이 지원되지 않는 기기입니다.")
@@ -52,10 +46,10 @@ actor WatchConnectivityEngine: NSObject {
 
         let handlers = HandlerSet(
             activateHandler: { state in
-                
+                fatalError("구현 예정입니다.")
             },
             todoHandler: { todoText, isCompleted in
-                
+                fatalError("구현 예정입니다.")
             })
         session.delegate = handlers
         
