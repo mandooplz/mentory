@@ -4,14 +4,14 @@
 //
 //  Created by 구현모 on 12/2/25.
 //
-
 import Foundation
 @preconcurrency import WatchConnectivity
 import OSLog
 
-/// WCSessionDelegate를 구현하는 백그라운드 처리 전용 액터
+
+// MARK: Object
 actor WatchConnectivityEngine: NSObject {
-    // MARK: - Core
+    // MARK: core
     static let shared = WatchConnectivityEngine()
 
     private nonisolated let logger = Logger(subsystem: "Mentory.WatchConnectivityEngine", category: "Service")

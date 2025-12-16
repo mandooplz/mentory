@@ -4,20 +4,19 @@
 //
 //  Created by 구현모 on 11/26/25.
 //
-
 import Foundation
 import Combine
 
 /// iOS 앱에서 Watch 앱과 통신하기 위한 매니저
-@MainActor
-final class WatchConnectivityManager: ObservableObject {
+@MainActor @Observable
+final class WatchConnectivityManager {
     // MARK: - Core
     static let shared = WatchConnectivityManager()
 
     // MARK: - State
-    @Published var isPaired: Bool = false
-    @Published var isWatchAppInstalled: Bool = false
-    @Published var isReachable: Bool = false
+    var isPaired: Bool = false
+    var isWatchAppInstalled: Bool = false
+    var isReachable: Bool = false
 
     private var engine: WatchConnectivityEngine? = nil
 

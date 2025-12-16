@@ -15,7 +15,7 @@ struct MentoryApp: App {
     @State var mentoryiOS = MentoryiOS(.real)
 
     // MARK: WatchConnectivity
-    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
+    @State private var watchConnectivity = WatchConnectivityManager.shared
 
     init() {
         Task {
@@ -27,7 +27,7 @@ struct MentoryApp: App {
     var body: some Scene {
         WindowGroup {
             MentoryiOSView(mentoryiOS)
-                .environmentObject(watchConnectivity)
+                .environment(watchConnectivity)
         }
     }
 }
