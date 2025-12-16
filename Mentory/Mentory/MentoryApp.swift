@@ -22,9 +22,6 @@ struct MentoryApp: App {
                 .environment(watchConnectivity)
                 .task {
                     await watchConnectivity.setUp()
-                    
-                    let engine = watchConnectivity.engine
-                    engine?.activate()
                 }
         }
     }

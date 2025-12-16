@@ -6,11 +6,15 @@
 //
 import Foundation
 import Combine
+import OSLog
 
-/// iOS 앱에서 Watch 앱과 통신하기 위한 매니저
+
+
+// MARK: Object
 @MainActor @Observable
 final class WatchConnectivityManager {
     // MARK: core
+    private let logger = Logger()
     static let shared = WatchConnectivityManager()
     private init() { }
 
@@ -22,10 +26,11 @@ final class WatchConnectivityManager {
     private(set) var engine: WatchConnectivityEngine? = nil
 
 
-    // MARK: actiongit ad
+    // MARK: action
     func setUp() async {
         // capture
         guard engine == nil else {
+            logger.error("이미 세팅된 상태입니다.")
             return
         }
 
@@ -38,6 +43,8 @@ final class WatchConnectivityManager {
                 self?.isReachable = state.isReachable
             }
         }
+        
+        engine.activate()
 
         // mutate
         self.engine = engine
