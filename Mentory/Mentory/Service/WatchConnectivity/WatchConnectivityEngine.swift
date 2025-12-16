@@ -12,12 +12,15 @@ import OSLog
 // MARK: Object
 actor WatchConnectivityEngine: NSObject {
     // MARK: core
-    static let shared = WatchConnectivityEngine()
-
     private nonisolated let logger = Logger()
     private nonisolated let session: WCSession
+    
+    override init() {
+        self.session = WCSession.default
+    }
+    
 
-    // MARK: - State
+    // MARK: state
     private var cachedMentorMessage: String = ""
     private var cachedMentorCharacter: String = ""
     private var cachedActionTodos: [String] = []
@@ -26,7 +29,6 @@ actor WatchConnectivityEngine: NSObject {
     private var cachedIsWatchAppInstalled: Bool = false
     private var cachedIsReachable: Bool = false
 
-    // MARK: - Handler
     private var stateUpdateHandler: StateUpdateHandler?
     func setStateUpdateHandler(_ handler: @escaping StateUpdateHandler) {
         self.stateUpdateHandler = handler
@@ -36,16 +38,11 @@ actor WatchConnectivityEngine: NSObject {
     func setTodoCompletionHandler(_ handler: @escaping TodoCompletionHandler) {
         self.todoCompletionHandler = handler
     }
+    
 
+    // MARK: action
 
-    // MARK: - Initialization
-    private override init() {
-        self.session = WCSession.default
-    }
-
-    // MARK: - Public Methods
-
-    /// 엔진 활성화 (WCSession delegate 설정 및 activate)
+    // 엔진 활성화
     nonisolated func activate() {
         guard WCSession.isSupported() else {
             logger.error("WCSession이 지원되지 않는 기기입니다.")

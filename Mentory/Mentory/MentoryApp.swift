@@ -21,7 +21,10 @@ struct MentoryApp: App {
             MentoryiOSView(mentoryiOS)
                 .environment(watchConnectivity)
                 .task {
-                    await WatchConnectivityManager.shared.setUp()
+                    await watchConnectivity.setUp()
+                    
+                    let engine = watchConnectivity.engine
+                    engine?.activate()
                 }
         }
     }

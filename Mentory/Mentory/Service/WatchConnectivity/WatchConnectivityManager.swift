@@ -19,10 +19,10 @@ final class WatchConnectivityManager {
     var isWatchAppInstalled: Bool = false
     var isReachable: Bool = false
 
-    private var engine: WatchConnectivityEngine? = nil
+    private(set) var engine: WatchConnectivityEngine? = nil
 
 
-    // MARK: action
+    // MARK: actiongit ad
     func setUp() async {
         // capture
         guard engine == nil else {
@@ -30,7 +30,7 @@ final class WatchConnectivityManager {
         }
 
         // process
-        let engine = WatchConnectivityEngine.shared
+        let engine = WatchConnectivityEngine()
         await engine.setStateUpdateHandler { [weak self] state in
             Task { @MainActor in
                 self?.isPaired = state.isPaired
@@ -38,8 +38,6 @@ final class WatchConnectivityManager {
                 self?.isReachable = state.isReachable
             }
         }
-        
-        engine.activate()
 
         // mutate
         self.engine = engine
