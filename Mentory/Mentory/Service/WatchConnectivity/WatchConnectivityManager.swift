@@ -30,7 +30,6 @@ final class WatchConnectivityManager {
     private(set) var isWatchAppInstalled: Bool = false
     private(set) var isReachable: Bool = false
 
-//    private(set) var engine: WatchConnectivityEngine? = nil
     private var session: WCSession = .default
     var handlers: HandlerSet? = nil
     
@@ -154,23 +153,3 @@ final class WatchConnectivityManager {
         }
     }
 }
-
-
-
-// MARK: Extension
-//extension WatchConnectivityManager {
-//    func updateMentorMessage(_ message: String, character: String) async {
-//        // 멘토 메시지를 Watch로 전송
-//        await engine?.sendMentorMessage(message, character: character)
-//    }
-//
-//    func updateActionTodos(_ todos: [String], completionStatus: [Bool]) async {
-//        // 행동 추천 투두를 Watch로 전송
-//        await engine?.sendActionTodos(todos, completionStatus: completionStatus)
-//    }
-//
-//    func setTodoCompletionHandler(_ handler: @escaping @Sendable (String, Bool) -> Void) async {
-//        // 투두 완료 처리 핸들러 설정
-//        await engine?.setTodoCompletionHandler(handler)
-//    }
-//}
