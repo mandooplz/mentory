@@ -120,7 +120,7 @@ actor WatchConnectivityEngine: NSObject {
     }
 
     /// 활성화 상태 업데이트
-    func handleActivation(state: WCSessionActivationState, error: Error?) {
+    private func handleActivation(state: WCSessionActivationState, error: Error?) {
         let statusMessage: String
 
         switch state {
