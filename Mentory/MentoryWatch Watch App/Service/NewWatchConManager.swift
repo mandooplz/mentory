@@ -56,6 +56,32 @@ final class NewWatchConManager: Sendable {
         self.handler = handler
     }
     
+    func loadContext() {
+        // capture
+        guard let handler else {
+            logger.error("Handler가 등록되어 있지 않습니다.")
+            return
+        }
+        
+        // process
+        let context = session.receivedApplicationContext
+        let mentorMsg = context["mentorMessage"] as? String ?? ""
+        let character = context["mentorCharacter"] as? String ?? ""
+        let todos = context["actionTodos"] as? [String] ?? []
+        let completionStatus = context["todoCompletionStatus"] as? [Bool] ?? []
+
+        logger.debug("ApplicationContext에서 데이터 로드 완료")
+        
+        let data = WatchData(
+            mentorMessage: mentorMsg,
+            mentorCharacter: character,
+            actionTodos: todos,
+            todoCompletionStatus: completionStatus,
+            connectionStatus: "연결됨"
+        )
+
+        handler.updateHandler(data)
+    }
     func updateContext() {
         // capture
         let message = self.mentorMessage ?? ""
