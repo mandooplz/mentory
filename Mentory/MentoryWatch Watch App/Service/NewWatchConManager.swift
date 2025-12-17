@@ -13,6 +13,7 @@ import WatchConnectivity
 @MainActor @Observable
 final class NewWatchConManager: Sendable {
     // MARK: core
+    static let shared = NewWatchConManager()
     
     
     // MARK: state
@@ -33,6 +34,11 @@ final class NewWatchConManager: Sendable {
     // MARK: action
     func setUp() {
         // capture
+        guard handler == nil else {
+            logger.error("이미 세팅된 상태입니다.")
+            return
+        }
+        
         guard WCSession.isSupported() else {
             logger.error("WCSession이 지원되지 않는 기기입니다.")
             return
