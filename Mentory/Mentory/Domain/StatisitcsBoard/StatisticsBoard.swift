@@ -14,16 +14,20 @@ final class StatisticsBoard {
 
     struct State: Equatable {
         var isLoading: Bool = false
-        var records: [RecordData] = []
-        var emotionCounts: [Emotion: Int] = [:]
+        var allRecords: [RecordData] = []
+
+        var selectedMonth: Date = Date()
+        var selectedDate: Date? = nil
         var errorMessage: String? = nil
     }
 
     private(set) var state = State()
     private let mentoryDB: MentoryDBAdapter
+    private let calendar = Calendar.current
 
     init(mentoryDB: MentoryDBAdapter) {
         self.mentoryDB = mentoryDB
+        self.state.selectedMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date())) ?? Date()
     }
 
     func load() {
@@ -33,23 +37,30 @@ final class StatisticsBoard {
         Task {
             do {
                 let records = try await mentoryDB.getRecords()
-
-                let counts = Dictionary(grouping: records, by: { $0.emotion })
-                    .mapValues { $0.count }
-
                 await MainActor.run {
-                    self.state.records = records
-                    self.state.emotionCounts = counts
+                    self.state.allRecords = records
                     self.state.isLoading = false
                 }
             } catch {
                 await MainActor.run {
-                    self.state.records = []
-                    self.state.emotionCounts = [:]
+                    self.state.allRecords = []
                     self.state.isLoading = false
                     self.state.errorMessage = "통계 데이터를 불러오지 못했습니다."
                 }
             }
+        }
+    }
+    func selectDate(_ date: Date?) {
+        state.selectedDate = date
+    }
+    func moveMonth(_ delta: Int) {
+        guard let next = calendar.date(byAdding: .month, value: delta, to: state.selectedMonth) else { return }
+        state.selectedMonth = next
+        state.selectedDate = nil
+    }
+    func record(for day: Date) -> RecordData? {
+        state.allRecords.first { record in
+            calendar.isDate(record.recordDate.rawValue, inSameDayAs: day)
         }
     }
 }

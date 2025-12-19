@@ -20,32 +20,39 @@ struct StatisticsBoardView: View {
         NavigationStack {
             Group {
                 if board.state.isLoading {
-                    ProgressView()
+                    ProgressView("통계를 불러오는 중입니다.")
                 } else if let message = board.state.errorMessage {
-                    ContentUnavailableView(
-                        "불러오기 실패",
-                        systemImage: "exclamationmark.triangle",
-                        description: Text(message)
-                    )
-                } else if board.state.records.isEmpty {
-                    ContentUnavailableView(
-                        "분석 결과가 없어요",
-                        systemImage: "chart.bar",
-                        description: Text("기록을 작성하고 분석을 완료하면 통계가 표시됩니다.")
-                    )
+                    ContentUnavailableView("불러오기 실패", systemImage: "exclamationmark.triangle", description: Text(message))
+                } else if board.state.allRecords.isEmpty {
+                    ContentUnavailableView("분석 결과가 없어요", systemImage: "chart.bar",
+                                           description: Text("기록을 작성하고 분석을 완료하면 통계가 표시됩니다."))
                 } else {
-                    List {
-                        Section("감정 분포") {
-                            EmotionCountList(counts: board.state.emotionCounts)
-                        }
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            MonthHeader(
+                                month: board.state.selectedMonth,
+                                onPrev: { board.moveMonth(-1) },
+                                onNext: { board.moveMonth(1) }
+                            )
 
-                        Section("기록 히스토리") {
-                            ForEach(board.state.records, id: \.id) { record in
-                                RecordRow(record: record)
+                            CalendarGrid(
+                                month: board.state.selectedMonth,
+                                selectedDate: board.state.selectedDate,
+                                recordForDay: { board.record(for: $0) },
+                                onSelect: { board.selectDate($0) }
+                            )
+
+                            if let selected = board.state.selectedDate,
+                               let record = board.record(for: selected) {
+                                SelectedDayCard(day: selected, record: record)
+                            } else if let selected = board.state.selectedDate {
+                                Text("\(selected.formatted(date: .abbreviated, time: .omitted)) 기록이 없어요")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
                             }
                         }
+                        .padding()
                     }
-                    .listStyle(.insetGrouped)
                 }
             }
             .navigationTitle("통계")
@@ -54,44 +61,138 @@ struct StatisticsBoardView: View {
     }
 }
 
-private struct EmotionCountList: View {
-    let counts: [Emotion: Int]
+private struct MonthHeader: View {
+    let month: Date
+    let onPrev: () -> Void
+    let onNext: () -> Void
 
     var body: some View {
-        let sorted = counts.keys.sorted { counts[$0, default: 0] > counts[$1, default: 0] }
-
-        ForEach(sorted, id: \.self) { emotion in
-            HStack {
-                Text(emotion.rawValue)
-                Spacer()
-                Text("\(counts[emotion, default: 0])")
-                    .foregroundStyle(.secondary)
-            }
+        HStack {
+            Button(action: onPrev) { Image(systemName: "chevron.left") }
+            Spacer()
+            Text(month, format: .dateTime.year().month())
+                .font(.headline)
+            Spacer()
+            Button(action: onNext) { Image(systemName: "chevron.right") }
         }
     }
 }
 
-private struct RecordRow: View {
+private struct CalendarGrid: View {
+    let month: Date
+    let selectedDate: Date?
+    let recordForDay: (Date) -> RecordData?
+    let onSelect: (Date) -> Void
+
+    private let calendar = Calendar.current
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 7)
+    private let weekdaySymbols = ["일","월","화","수","목","금","토"]
+
+    var body: some View {
+        VStack(spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(weekdaySymbols, id: \.self) { w in
+                    Text(w).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(daysInMonthGrid(month), id: \.self) { day in
+                    DayCell(
+                        day: day,
+                        isCurrentMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
+                        isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: day) } ?? false,
+                        record: recordForDay(day),
+                        onTap: { onSelect(day) }
+                    )
+                }
+            }
+        }
+    }
+
+    // 달력 그리드용 날짜 배열(앞/뒤 공백 포함)
+    private func daysInMonthGrid(_ month: Date) -> [Date] {
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: month))!
+        let range = calendar.range(of: .day, in: .month, for: startOfMonth)!
+        let firstWeekday = calendar.component(.weekday, from: startOfMonth) // 1=일
+
+        var days: [Date] = []
+
+        // 앞쪽 빈칸(이전 달 날짜로 채우기)
+        let leading = firstWeekday - 1
+        if leading > 0 {
+            for i in stride(from: leading, to: 0, by: -1) {
+                days.append(calendar.date(byAdding: .day, value: -i, to: startOfMonth)!)
+            }
+        }
+
+        // 이번 달 날짜
+        for d in range {
+            days.append(calendar.date(byAdding: .day, value: d - 1, to: startOfMonth)!)
+        }
+
+        // 뒤쪽 채우기(7의 배수로)
+        while days.count % 7 != 0 {
+            days.append(calendar.date(byAdding: .day, value: 1, to: days.last!)!)
+        }
+
+        return days
+    }
+}
+
+private struct DayCell: View {
+    let day: Date
+    let isCurrentMonth: Bool
+    let isSelected: Bool
+    let record: RecordData?
+    let onTap: () -> Void
+
+    private let calendar = Calendar.current
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 4) {
+                Text("\(calendar.component(.day, from: day))")
+                    .font(.subheadline)
+                    .foregroundStyle(isCurrentMonth ? .primary : .secondary)
+
+                // 기록이 있으면 감정 표시(일단 텍스트/점으로 MVP)
+                if let record {
+                    Text(record.emotion.rawValue)
+                        .font(.caption2)
+                        .lineLimit(1)
+                } else {
+                    Text(" ")
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 44)
+            .frame(maxWidth: .infinity)
+            .background(isSelected ? Color.primary.opacity(0.08) : Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct SelectedDayCard: View {
+    let day: Date
     let record: RecordData
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(record.emotion.rawValue)
-                    .font(.headline)
+        VStack(alignment: .leading, spacing: 8) {
+            Text(day.formatted(date: .long, time: .omitted))
+                .font(.headline)
 
-                Spacer()
-
-                Text(record.recordDate.rawValue.formatted(date: .abbreviated, time: .omitted))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Text(record.emotion.rawValue)
+                .font(.subheadline)
 
             Text(record.analyzedResult)
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
-                .lineLimit(2)
         }
-        .padding(.vertical, 4)
+        .padding()
+        .background(.thinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
