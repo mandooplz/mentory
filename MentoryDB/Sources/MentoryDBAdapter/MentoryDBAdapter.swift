@@ -10,59 +10,64 @@ import Values
 
 
 
-// MARK: Domain
-nonisolated struct MentoryDBAdapter: MentoryDBInterface {
+// MARK: Adapter
+public nonisolated struct MentoryDBAdapter: MentoryDBInterface {
+    // MARK: core
     private let mentoryDB = MentoryDBReal.shared
     
-    @concurrent func getName() async throws -> String? {
+    public init() { }
+    
+    
+    // MARK: task
+    public func getName() async throws -> String? {
         return await mentoryDB.getName()
     }
-    @concurrent func setName(_ newName: String) async throws {
+    public func setName(_ newName: String) async throws {
         await mentoryDB.setName(newName)
     }
     
-    @concurrent func getMentorMessage() async throws -> MessageData? {
+    public func getMentorMessage() async throws -> MessageData? {
         return await mentoryDB.getMentorMessage()
     }
-    @concurrent func setMentorMessage(_ data: MessageData) async throws {
+    public func setMentorMessage(_ data: MessageData) async throws {
         await mentoryDB.setMentorMessage(data)
     }
     
-    @concurrent func getCharacter() async throws -> MentoryCharacter? {
+    public func getCharacter() async throws -> MentoryCharacter? {
         return await mentoryDB.getCharacter()
     }
-    @concurrent func setCharacter(_ character: MentoryCharacter) async throws {
+    public func setCharacter(_ character: MentoryCharacter) async throws {
         await mentoryDB.setCharacter(character)
     }
     
-    @concurrent func getRecordCount() async throws -> Int {
+    public func getRecordCount() async throws -> Int {
         await mentoryDB.getRecordCount()
     }
-    @concurrent func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
+    public func isSameDayRecordExist(for date: MentoryDate) async throws -> Bool {
         await mentoryDB.isSameDayRecordExist(for: date)
     }
     
 
-    @concurrent func getRecentRecord() async throws -> DailyRecordAdapter? {
+    public func getRecentRecord() async throws -> DailyRecordAdapter? {
         guard let dailyRecord = await mentoryDB.getRecentRecord() else {
             return nil
         }
         
         return DailyRecordAdapter(dailyRecord)
     }
-    @concurrent func getRecords() async throws -> [RecordData] {
+    public func getRecords() async throws -> [RecordData] {
         return await mentoryDB.getRecords()
     }
 
-    @concurrent func getCompletedSuggestionsCount() async throws -> Int {
+    public func getCompletedSuggestionsCount() async throws -> Int {
         await mentoryDB.getCompletedSuggestionsCount()
     }
 
-    @concurrent func updateSuggestionStatus(targetId: UUID, isDone: Bool) async throws {
+    public func updateSuggestionStatus(targetId: UUID, isDone: Bool) async throws {
         await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
     }
 
-    @concurrent func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
+    public func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
         await mentoryDB.insertTicket(recordData)
         await mentoryDB.createDailyRecords()
         

@@ -10,8 +10,8 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "MentoryDB",
-            targets: ["MentoryDB"]
+            name: "MentoryDBAdapter",
+            targets: ["MentoryDBAdapter"]
         ),
     ],
     dependencies: [
@@ -19,7 +19,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "MentoryDB"
+            name: "MentoryDB",
+            dependencies: [
+                .product(name: "Values", package: "Values")
+            ]
         ),
         
         .target(

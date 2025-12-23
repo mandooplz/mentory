@@ -17,7 +17,7 @@ public nonisolated struct DailyRecordAdapter: DailyRecordInterface {
         self.dailyRecord = recordData
     }
     
-    @concurrent func getSuggestions() async throws -> [SuggestionData] {
+    public func getSuggestions() async throws -> [SuggestionData] {
         await dailyRecord.getSuggestions()
     }
 }

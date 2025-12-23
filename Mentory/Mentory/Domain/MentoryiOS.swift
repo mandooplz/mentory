@@ -9,6 +9,7 @@ import Combine
 import OSLog
 import Values
 import FirebaseLLMAdapter
+import MentoryDBAdapter
 
 
 // MARK: Object
@@ -25,11 +26,10 @@ final class MentoryiOS: Sendable, ObservableObject {
         switch mode {
         case .real:
             self.mentoryDB = MentoryDBAdapter()
-
             self.firebaseLLM = FirebaseLLMAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
         case .test:
-            self.mentoryDB = MentoryDatabaseMock()
+            self.mentoryDB = MentoryDBFakeAdapter()
             self.firebaseLLM = FirebaseLLMFakeAdapter()
             self.reminderCenter = ReminderNotificationAdapter() // 임시
         }

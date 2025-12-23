@@ -16,6 +16,10 @@ public nonisolated struct MentoryDBFakeAdapter: MentoryDBInterface {
     nonisolated let object = MentoryDatabaseFake()
     nonisolated let logger = Logger(subsystem: "MentoryDatabaseMock", category: "Adapter")
     
+    public init() {
+        
+    }
+    
     
     // MARK: flow
     public func getName() async throws -> String? {

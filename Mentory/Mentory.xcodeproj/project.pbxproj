@@ -20,6 +20,7 @@
 		CE26C2DD2ED1E385008668E0 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DC2ED1E385008668E0 /* Collections */; };
 		CE26C2DF2ED1E385008668E0 /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CE26C2DE2ED1E385008668E0 /* DequeModule */; };
 		CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */; };
+		CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA82EFA49C0005901BA /* MentoryDBAdapter */; };
 		CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
@@ -241,6 +242,7 @@
 				CEB755832ECB9FF900FCE15A /* Collections in Frameworks */,
 				CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */,
 				CE00287A2ECF8D3B003324B0 /* MentoryDB.framework in Frameworks */,
+				CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */,
 				CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */,
 				CE00288D2ECF906E003324B0 /* Values.framework in Frameworks */,
 				CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */,
@@ -441,6 +443,7 @@
 				CEB755842ECB9FF900FCE15A /* DequeModule */,
 				CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */,
 				CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */,
+				CE302CA82EFA49C0005901BA /* MentoryDBAdapter */,
 			);
 			productName = Mentory;
 			productReference = CE39BFBC2EC313F20090DF78 /* Mentory.app */;
@@ -513,6 +516,7 @@
 				CEB755812ECB9FF900FCE15A /* XCRemoteSwiftPackageReference "swift-collections" */,
 				CE6CB1402ED385AD00390FF3 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 				CE302CA42EFA460D005901BA /* XCLocalSwiftPackageReference "../FirebaseLLM" */,
+				CE302CA72EFA49C0005901BA /* XCLocalSwiftPackageReference "../MentoryDB" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CE39BFBD2EC313F20090DF78 /* Products */;
@@ -693,7 +697,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.1;
+				WATCHOS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Debug;
 		};
@@ -730,7 +734,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 26.1;
+				WATCHOS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Release;
 		};
@@ -1352,6 +1356,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../FirebaseLLM;
 		};
+		CE302CA72EFA49C0005901BA /* XCLocalSwiftPackageReference "../MentoryDB" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MentoryDB;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1387,6 +1395,10 @@
 		CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FirebaseLLMAdapter;
+		};
+		CE302CA82EFA49C0005901BA /* MentoryDBAdapter */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MentoryDBAdapter;
 		};
 		CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */ = {
 			isa = XCSwiftPackageProductDependency;

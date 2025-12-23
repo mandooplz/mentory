@@ -20,7 +20,7 @@ public struct DailyRecordFakeAdapter: DailyRecordInterface {
     
     
     // MARK: flow
-    @concurrent func getSuggestions() async throws -> [SuggestionData] {
+    public func getSuggestions() async throws -> [SuggestionData] {
         return await object.getSuggestions()
     }
 }

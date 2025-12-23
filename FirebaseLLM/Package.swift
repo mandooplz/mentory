@@ -26,7 +26,8 @@ let package = Package(
                 "FirebaseLLMFake",
                 .product(name: "FirebaseAI", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAILogic", package: "firebase-ios-sdk"),
-                .product(name: "FirebaseCore", package: "firebase-ios-sdk")
+                .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
+                .product(name: "Values", package: "Values")
             ]
         ),
         
