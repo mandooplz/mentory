@@ -22,6 +22,10 @@ public nonisolated struct FirebaseLLMFakeAdapter: FirebaseLLMAdapterInterface {
     private let negativeKeywords: [String] = [
         "힘들", "지치", "짜증", "화나", "불안", "걱정", "슬프", "우울", "외롭", "답답", "피곤", "lonely", "tired", "anxious", "stressed", "depressed"
     ]
+    
+    public init() {
+        
+    }
 
     // MARK: task
     public func question(_ question: FirebaseQuestion) async -> FirebaseAnswer? {

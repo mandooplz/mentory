@@ -9,6 +9,6 @@ import Foundation
 
 
 // MARK: Interface
-protocol DailyRecordInterface: Sendable {
+public protocol DailyRecordInterface: Sendable {
     func getSuggestions() async throws -> [SuggestionData]
 }
