@@ -15,7 +15,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../Values")
+        .package(path: "../Values"),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0"))
     ],
     targets: [
         .target(
@@ -28,13 +29,18 @@ let package = Package(
         .target(
             name: "MentoryDBAdapter",
             dependencies: [
+                .product(name: "Values", package: "Values"),
                 "MentoryDB",
                 "MentoryDBFake"
             ]
         ),
         
         .target(
-            name: "MentoryDBFake"
+            name: "MentoryDBFake",
+            dependencies: [
+                .product(name: "Values", package: "Values"),
+                .product(name: "Collections", package: "swift-collections")
+            ]
         )
     ]
 )

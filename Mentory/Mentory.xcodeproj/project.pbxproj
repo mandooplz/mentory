@@ -15,6 +15,9 @@
 		CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */; };
 		CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA82EFA49C0005901BA /* MentoryDBAdapter */; };
 		CE302CAC2EFA4D33005901BA /* Values in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CAB2EFA4D33005901BA /* Values */; };
+		CE302CB72EFA52D9005901BA /* iOSManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE302CB62EFA529A005901BA /* iOSManager.framework */; };
+		CE302CB82EFA52D9005901BA /* iOSManager.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE302CB62EFA529A005901BA /* iOSManager.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CE302CBA2EFA5552005901BA /* Values in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CB92EFA5552005901BA /* Values */; };
 		CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = CE6CB1412ED385AD00390FF3 /* AsyncAlgorithms */; };
 		CEB755832ECB9FF900FCE15A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755822ECB9FF900FCE15A /* Collections */; };
 		CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = CEB755842ECB9FF900FCE15A /* DequeModule */; };
@@ -34,6 +37,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7B1337642ECD63A2009931A4;
 			remoteInfo = MentoryWidgetExtension;
+		};
+		CE302CB52EFA529A005901BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CEEDAA262EFA1E5B0019DA1E;
+			remoteInfo = iOSManager;
 		};
 		CE8EE8352EC5D1600006E5A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -73,6 +83,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CE302CB82EFA52D9005901BA /* iOSManager.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,6 +109,9 @@
 		7BEACE232ED44E5F00E2ADA9 /* MentoryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MentoryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		CE0027132ECF3EB8003324B0 /* Mentory.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mentory.xctestplan; sourceTree = "<group>"; };
 		CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.sample; sourceTree = "<group>"; };
+		CE302CAD2EFA529A005901BA /* ReminderNotificationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationAdapter.swift; sourceTree = "<group>"; };
+		CE302CAE2EFA529A005901BA /* ReminderNotificationInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationInterface.swift; sourceTree = "<group>"; };
+		CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = iOSManager.xcodeproj; sourceTree = "<group>"; };
 		CE39BFBC2EC313F20090DF78 /* Mentory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mentory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MentoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CED16A5E2ECB7FCD00CF012B /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
@@ -172,6 +186,7 @@
 			files = (
 				CEB755832ECB9FF900FCE15A /* Collections in Frameworks */,
 				CEB755852ECB9FF900FCE15A /* DequeModule in Frameworks */,
+				CE302CB72EFA52D9005901BA /* iOSManager.framework in Frameworks */,
 				CE302CAC2EFA4D33005901BA /* Values in Frameworks */,
 				CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */,
 				CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */,
@@ -183,6 +198,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE302CBA2EFA5552005901BA /* Values in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,11 +208,39 @@
 		7B1337662ECD63A2009931A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE302CB12EFA529A005901BA /* iOSManager */,
 				694B366D2ECE207F0094E855 /* Speech.framework */,
 				7B1337672ECD63A2009931A4 /* WidgetKit.framework */,
 				7B1337692ECD63A2009931A4 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CE302CAF2EFA529A005901BA /* iOSManager */ = {
+			isa = PBXGroup;
+			children = (
+				CE302CAD2EFA529A005901BA /* ReminderNotificationAdapter.swift */,
+				CE302CAE2EFA529A005901BA /* ReminderNotificationInterface.swift */,
+			);
+			path = iOSManager;
+			sourceTree = "<group>";
+		};
+		CE302CB12EFA529A005901BA /* iOSManager */ = {
+			isa = PBXGroup;
+			children = (
+				CE302CAF2EFA529A005901BA /* iOSManager */,
+				CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */,
+			);
+			name = iOSManager;
+			path = ../iOSManager;
+			sourceTree = "<group>";
+		};
+		CE302CB22EFA529A005901BA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CE302CB62EFA529A005901BA /* iOSManager.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		CE39BFB32EC313F20090DF78 = {
@@ -325,6 +369,7 @@
 			);
 			name = MentoryTests;
 			packageProductDependencies = (
+				CE302CB92EFA5552005901BA /* Values */,
 			);
 			productName = MentoryTests;
 			productReference = CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */;
@@ -374,6 +419,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CE39BFBD2EC313F20090DF78 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CE302CB22EFA529A005901BA /* Products */;
+					ProjectRef = CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CE39BFBB2EC313F20090DF78 /* Mentory */,
@@ -383,6 +434,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CE302CB62EFA529A005901BA /* iOSManager.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = iOSManager.framework;
+			remoteRef = CE302CB52EFA529A005901BA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5888796A2ECD98EB00083137 /* Resources */ = {
@@ -987,6 +1048,10 @@
 			productName = MentoryDBAdapter;
 		};
 		CE302CAB2EFA4D33005901BA /* Values */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Values;
+		};
+		CE302CB92EFA5552005901BA /* Values */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Values;
 		};

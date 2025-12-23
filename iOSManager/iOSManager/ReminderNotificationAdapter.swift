@@ -10,11 +10,13 @@ import OSLog
 
 @MainActor
 public final class ReminderNotificationAdapter: ReminderNotificationInterface {
-
+    // MARK: core
     nonisolated private let logger = Logger(
         subsystem: "MentoryiOS.ReminderNotificationAdapter",
         category: "Notification"
     )
+    
+    public init() { }
 
     // MARK: - 알림 권한 요청
 

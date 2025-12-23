@@ -32,7 +32,10 @@ let package = Package(
         ),
         
         .target(
-            name: "FirebaseLLMFake"
+            name: "FirebaseLLMFake",
+            dependencies: [
+                .product(name: "Values", package: "Values")
+            ]
         )
 
     ]
