@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CEEDAA322EFA27470019DA1E /* Values in Frameworks */ = {isa = PBXBuildFile; productRef = CEEDAA312EFA27470019DA1E /* Values */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CEEDAA262EFA1E5B0019DA1E /* iOSManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = iOSManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEEDAA322EFA27470019DA1E /* Values in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +81,7 @@
 			);
 			name = iOSManager;
 			packageProductDependencies = (
+				CEEDAA312EFA27470019DA1E /* Values */,
 			);
 			productName = iOSManager;
 			productReference = CEEDAA262EFA1E5B0019DA1E /* iOSManager.framework */;
@@ -105,6 +111,9 @@
 			);
 			mainGroup = CEEDAA1C2EFA1E5B0019DA1E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CEEDAA302EFA27470019DA1E /* XCLocalSwiftPackageReference "../Values" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEEDAA272EFA1E5B0019DA1E /* Products */;
 			projectDirPath = "";
@@ -357,6 +366,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CEEDAA302EFA27470019DA1E /* XCLocalSwiftPackageReference "../Values" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Values;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CEEDAA312EFA27470019DA1E /* Values */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Values;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CEEDAA1D2EFA1E5B0019DA1E /* Project object */;
 }

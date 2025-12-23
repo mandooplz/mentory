@@ -13,7 +13,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "./Values")
+        .package(path: "../Values")
     ],
     targets: [
         .target(
