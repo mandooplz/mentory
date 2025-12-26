@@ -195,19 +195,19 @@ private struct DayCell: View {
         Button(action: onTap) {
             VStack(spacing: 4) {
                 Text("\(calendar.component(.day, from: day))")
-                    .font(.subheadline)
+                    .font(.caption)
                     .foregroundStyle(isCurrentMonth ? .primary : .secondary)
                 
                 if let record {
-                    Text(record.emotion.rawValue)
-                        .font(.caption2)
+                    Text(record.emotion.emoji)
+                        .font(.headline)
                         .lineLimit(1)
                 } else {
                     Text(" ")
-                        .font(.caption2)
+                        .font(.headline)
                 }
             }
-            .frame(height: 44)
+            .frame(height: 48)
             .frame(maxWidth: .infinity)
             .background(isSelected ? Color.primary.opacity(0.08) : Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -221,19 +221,17 @@ private struct SelectedDayCard: View {
     let record: RecordData
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .center, spacing: 10) {
             Text(day.formatted(date: .long, time: .omitted))
                 .font(.headline)
-            
-            Text(record.emotion.rawValue)
-                .font(.subheadline)
-            
-            Text(record.analyzedResult)
-                .font(.footnote)
                 .foregroundStyle(.secondary)
+            
+            Text(record.emotion.emoji)
+                .font(.system(size: 44))
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
         .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
     }
 }
