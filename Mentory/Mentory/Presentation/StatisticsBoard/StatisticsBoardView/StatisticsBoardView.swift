@@ -242,7 +242,6 @@ private struct CalendarGrid: View {
                         isSelected: selectedDate.map {
                             calendar.isDate($0, inSameDayAs: day)
                         } ?? false,
-                        isToday: calendar.isDateInToday(day),
                         record: recordForDay(day),
                         onTap: { onSelect(day) }
                     )
@@ -281,7 +280,6 @@ private struct DayCell: View {
     let day: Date
     let isCurrentMonth: Bool
     let isSelected: Bool
-    let isToday: Bool
     let record: RecordData?
     let onTap: () -> Void
     
