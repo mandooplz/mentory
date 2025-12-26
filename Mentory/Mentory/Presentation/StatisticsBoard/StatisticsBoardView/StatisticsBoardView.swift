@@ -72,6 +72,12 @@ private struct MonthHeader: View {
     let onPickMonth: (Date) -> Void
     let onToday: () -> Void
     
+    @State private var isShowingMonthPicker = false
+    @State private var tempYear: Int = 0
+    @State private var tempMonth: Int = 0
+    
+    private let calendar = Calendar.current
+    
     private var isCurrentMonth: Bool {
         Calendar.current.isDate(month, equalTo: Date(), toGranularity: .month)
     }
@@ -79,7 +85,7 @@ private struct MonthHeader: View {
     private var monthFormatter: DateFormatter {
         let f = DateFormatter()
         f.locale = Locale(identifier: "ko_KR")
-        f.dateFormat = "yyyy년 M월"
+        f.dateFormat = "yyyy. M."
         return f
     }
     
@@ -89,17 +95,20 @@ private struct MonthHeader: View {
                 Image(systemName: "chevron.left")
             }
             
-            DatePicker(
-                "",
-                selection: Binding(
-                    get: { month },
-                    set: { onPickMonth($0) }
-                ),
-                displayedComponents: [.date]
-            )
-            .labelsHidden()
-            .datePickerStyle(.compact)
-            .environment(\.locale, Locale(identifier: "ko_KR"))
+            Button {
+                let comps = calendar.dateComponents([.year, .month], from: month)
+                tempYear = comps.year ?? calendar.component(.year, from: Date())
+                tempMonth = comps.month ?? calendar.component(.month, from: Date())
+                isShowingMonthPicker = true
+            } label: {
+                Text(monthFormatter.string(from: month))
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.thinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
             Spacer()
             
             Button("오늘로 이동") {
@@ -115,6 +124,93 @@ private struct MonthHeader: View {
             
             Button(action: onNext) {
                 Image(systemName: "chevron.right")
+            }
+        }
+        .sheet(isPresented: $isShowingMonthPicker) {
+            MonthPickerSheet(
+                tempYear: $tempYear,
+                tempMonth: $tempMonth,
+                onCancel: { isShowingMonthPicker = false },
+                onDone: {
+                    if let date = calendar.date(from: DateComponents(year: tempYear, month: tempMonth, day: 1)) {
+                        onPickMonth(date)
+                    }
+                    isShowingMonthPicker = false
+                }
+            )
+            .presentationDetents([.height(280)])
+        }
+    }
+}
+
+private struct MonthPickerSheet: View {
+    @Binding var tempYear: Int
+    @Binding var tempMonth: Int
+    let onCancel: () -> Void
+    let onDone: () -> Void
+    
+    @State private var yearCenter: Int = 0
+    @State private var yearIndex: Int = 0
+    @State private var monthIndex: Int = 0
+    
+    private let yearSpan: Int = 200
+    private let monthItems: [Int] = Array(1...12) + Array(1...12) + Array(1...12)
+    
+    private var yearItems: [Int] {
+        let half = yearSpan / 2
+        return Array((yearCenter - half)...(yearCenter + half))
+    }
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Button("취소", action: onCancel)
+                Spacer()
+                Button("선택", action: onDone)
+            }
+            .font(.headline)
+            
+            HStack {
+                Picker("년도", selection: $yearIndex) {
+                    ForEach(Array(yearItems.enumerated()), id: \.offset) { index, year in
+                        Text(verbatim: "\(year)년").tag(index)
+                    }
+                }
+                .pickerStyle(.wheel)
+                
+                Picker("월", selection: $monthIndex) {
+                    ForEach(Array(monthItems.enumerated()), id: \.offset) { index, month in
+                        Text("\(month)월").tag(index)
+                    }
+                }
+                .pickerStyle(.wheel)
+            }
+        }
+        .padding()
+        .onAppear {
+            yearCenter = tempYear
+            yearIndex = yearSpan / 2
+            monthIndex = 12 + (tempMonth - 1)
+        }
+        .onChange(of: yearIndex) { _, newValue in
+            guard yearItems.indices.contains(newValue) else { return }
+            tempYear = yearItems[newValue]
+            
+            if newValue < 20 || newValue > yearItems.count - 21 {
+                yearCenter = tempYear
+                DispatchQueue.main.async {
+                    yearIndex = yearSpan / 2
+                }
+            }
+        }
+        .onChange(of: monthIndex) { _, newValue in
+            guard monthItems.indices.contains(newValue) else { return }
+            tempMonth = monthItems[newValue]
+            
+            if newValue < 6 {
+                monthIndex += 12
+            } else if newValue > monthItems.count - 7 {
+                monthIndex -= 12
             }
         }
     }
@@ -134,7 +230,7 @@ private struct CalendarGrid: View {
         VStack(spacing: 8) {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(weekdaySymbols, id: \.self) { w in
-                    Text(w).font(.caption).foregroundStyle(.secondary)
+                    Text(w).font(.footnote).foregroundStyle(.secondary)
                 }
             }
             
@@ -146,7 +242,6 @@ private struct CalendarGrid: View {
                         isSelected: selectedDate.map {
                             calendar.isDate($0, inSameDayAs: day)
                         } ?? false,
-                        isToday: calendar.isDateInToday(day),
                         record: recordForDay(day),
                         onTap: { onSelect(day) }
                     )
@@ -185,7 +280,6 @@ private struct DayCell: View {
     let day: Date
     let isCurrentMonth: Bool
     let isSelected: Bool
-    let isToday: Bool
     let record: RecordData?
     let onTap: () -> Void
     
@@ -195,19 +289,19 @@ private struct DayCell: View {
         Button(action: onTap) {
             VStack(spacing: 4) {
                 Text("\(calendar.component(.day, from: day))")
-                    .font(.subheadline)
+                    .font(.callout)
                     .foregroundStyle(isCurrentMonth ? .primary : .secondary)
                 
                 if let record {
-                    Text(record.emotion.rawValue)
-                        .font(.caption2)
+                    Text(record.emotion.emoji)
+                        .font(.headline)
                         .lineLimit(1)
                 } else {
                     Text(" ")
-                        .font(.caption2)
+                        .font(.headline)
                 }
             }
-            .frame(height: 44)
+            .frame(height: 48)
             .frame(maxWidth: .infinity)
             .background(isSelected ? Color.primary.opacity(0.08) : Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -221,19 +315,17 @@ private struct SelectedDayCard: View {
     let record: RecordData
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .center, spacing: 10) {
             Text(day.formatted(date: .long, time: .omitted))
                 .font(.headline)
-            
-            Text(record.emotion.rawValue)
-                .font(.subheadline)
-            
-            Text(record.analyzedResult)
-                .font(.footnote)
                 .foregroundStyle(.secondary)
+            
+            Text(record.emotion.emoji)
+                .font(.system(size: 44))
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
         .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
     }
 }

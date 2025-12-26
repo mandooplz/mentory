@@ -24,4 +24,16 @@ nonisolated public enum Emotion: String, Codable, Sendable, CaseIterable {
     public static func getAllEmotions() -> [String] {
         return Self.allCases.map { $0.rawValue }
     }
+
+    public var emoji: String {
+        switch self {
+        case .veryUnpleasant: return "😣"
+        case .unPleasant: return "😕"
+        case .slightlyUnpleasant: return "🙁"
+        case .neutral: return "😐"
+        case .slightlyPleasant: return "🙂"
+        case .pleasant: return "😄"
+        case .veryPleasant: return "🤩"
+        }
+    }
 }
