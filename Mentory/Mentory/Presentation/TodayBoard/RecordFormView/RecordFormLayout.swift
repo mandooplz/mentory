@@ -9,7 +9,8 @@ import UIKit
 
 
 // MARK: Layout
-struct RecordFormLayout<TodayDate: View, Main: View, BottomBar: View>: View {
+struct RecordFormLayout<ToolBar: CustomizableToolbarContent, TodayDate: View, Main: View, BottomBar: View>: View {
+    @ToolbarContentBuilder let topBar: () -> ToolBar
     @ViewBuilder let todayDate: () -> TodayDate
     @ViewBuilder let main: () -> Main
     @ViewBuilder let bottomBar: () -> BottomBar
@@ -45,6 +46,8 @@ struct RecordFormLayout<TodayDate: View, Main: View, BottomBar: View>: View {
                 }
             }
             .toolbar {
+                self.topBar()
+                
                 ToolbarItemGroup(placement: .bottomBar) {
                     self.bottomBar()
                 }

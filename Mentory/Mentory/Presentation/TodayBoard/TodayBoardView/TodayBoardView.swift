@@ -12,9 +12,10 @@ import Values
 
 // MARK: View
 struct TodayBoardView: View {
-    // MARK: model
+    // MARK: core
     @ObservedObject var todayBoard: TodayBoard
     @ObservedObject var mentoryiOS: MentoryiOS
+    
     
     // MARK: body
     var body: some View {
@@ -41,7 +42,7 @@ struct TodayBoardView: View {
                 content: "오늘 기분을 기록해볼까요?",
                 navLabel: "기록하러 가기",
                 navDestination: { recordForm in
-                    RecordContainerView(recordForm: recordForm)
+                    RecordFormView(recordForm: recordForm)
                 }
             )
             
@@ -181,9 +182,7 @@ fileprivate struct GreetingHeader: View {
 
 fileprivate struct RecordStatCard<Content: View>: View {
     @ObservedObject var todayBoard: TodayBoard
-    @State var showFullScreenCover: Bool = false
     @State var showDateSelectionSheet: Bool = false
-    @Environment(\.dismiss) var dismissAction
     
     let imageName: String
     let content: String
@@ -230,14 +229,6 @@ fileprivate struct RecordStatCard<Content: View>: View {
         }
         .task {
             await todayBoard.setUpRecordForms()
-        }
-        .task {
-            let stream = todayBoard.$recordFormSelection.values
-                .map { recordFormState in recordFormState != nil }
-            
-            for await isPresent in stream {
-                self.showFullScreenCover = isPresent
-            }
         }
         
         // 날짜 선택 Sheet (반쯤 올라옴)

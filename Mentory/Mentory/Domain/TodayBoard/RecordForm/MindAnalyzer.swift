@@ -14,16 +14,16 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class MindAnalyzer: Sendable, ObservableObject {
+final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
+    nonisolated let logger = Logger()
     init(owner: RecordForm) {
         self.owner = owner
     }
     
     
     // MARK: state
-    nonisolated let id = UUID()
+    public nonisolated let id = UUID()
     weak var owner: RecordForm?
     
     @Published private(set) var isAnalyzing: Bool = false
@@ -190,14 +190,6 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
     }
     
-    func cancel() {
-        // capture
-        let recordForm = self.owner!
-        
-        // mutate
-        recordForm.mindAnalyzer = nil
-    }
-    
     func finish() {
         //capture
         let recordForm = self.owner!
@@ -205,10 +197,5 @@ final class MindAnalyzer: Sendable, ObservableObject {
         
         //mutate
         todayBoard.recordFormSelection = nil
-//        todayBoard.recordForms.removeAll { recordForm in
-//            logger.debug("remove: 전체 \(recordForm.id)/ \(self.owner!.id)")
-//            return recordForm.id == self.owner!.id
-//        }
-        
     }
 }

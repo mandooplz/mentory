@@ -99,24 +99,6 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
             return
         }
         
-//        let mentoryiOS = todayBoard.owner!
-
-        // 이를 어디에서 설명해야 하는가.
-//        let settingBoard = mentoryiOS.settingBoard!
-
-        
-//        // process
-//        let reminderTime = settingBoard.reminderTime
-//        
-//        // 기존 알림 전부 삭제
-//        await mentory.reminderCenter.cancelAllWeeklyReminders()
-//        
-//        // 마지막 기록(baseDate) 기준으로 알림 1개만 다시 예약
-//        await mentory.reminderCenter.scheduleWeeklyReminder(
-//            baseDate: .now,
-//            reminderTime: reminderTime
-//        )
-        
 
         // mutate
         self.mindAnalyzer = MindAnalyzer(owner: self)

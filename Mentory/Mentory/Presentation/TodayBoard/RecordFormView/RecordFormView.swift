@@ -16,26 +16,54 @@ import Values
 // MARK: View
 struct RecordFormView: View {
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.RecordForm", category: "Presentation")
-    @ObservedObject var recordForm: RecordForm
+    private nonisolated let logger = Logger()
+    @ObservedObject private(set) var recordForm: RecordForm
     
     
-    // MARK: - Body
+    // MARK: body
     var body: some View {
         RecordFormLayout(
+            topBar: {
+                ToolbarItem(id: "recordForm.finish", placement: .topBarLeading) {
+                    Button {
+                        recordForm.finish()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                
+                ToolbarItem(id: "recordForm.next", placement: .topBarTrailing) {
+                    Button {
+                        Task {
+                            recordForm.validateInput()
+                            
+                            await recordForm.submit()
+                        }
+                    } label: {
+                        Image(systemName: "checkmark")
+                    }
+                    .disabled(!recordForm.canProceed)
+                    .navigationDestination(item: $recordForm.mindAnalyzer) { mindAnalyzer in
+                        MindAnalyzerView(mindAnalyzer: mindAnalyzer)
+                    }
+                }
+            },
             todayDate: {
                 TodayDate(targetDate: recordForm.targetDate)
             },
             main: {
                 TitleField(
+                    recordForm: recordForm,
                     prompt: "제목",
                     text: $recordForm.titleInput
                 )
                 
                 BodyField(
+                    recordForm: recordForm,
                     prompt: "글쓰기 시작...",
                     text: $recordForm.textInput
                 )
+                
                 
                 ImagePreviewCard(
                     model: recordForm
@@ -133,6 +161,7 @@ fileprivate struct LiquidGlassIconButtonLabel: View {
 
 
 fileprivate struct TitleField: View {
+    let recordForm: RecordForm
     let prompt: String
     @Binding var text: String
     
@@ -142,10 +171,14 @@ fileprivate struct TitleField: View {
                 .font(.title3)
                 .padding()
         }
+        .onReceive(recordForm.$titleInput) { _ in
+            recordForm.validateInput()
+        }
     }
 }
 
 fileprivate struct BodyField: View {
+    let recordForm: RecordForm
     let prompt: String
     @Binding var text: String
     
@@ -166,6 +199,9 @@ fileprivate struct BodyField: View {
                     .frame(minHeight: 300)
                     .padding()
             }
+        }
+        .onReceive(recordForm.$textInput) { _ in
+            recordForm.validateInput()
         }
     }
 }
