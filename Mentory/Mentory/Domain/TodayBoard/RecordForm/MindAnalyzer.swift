@@ -14,9 +14,9 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
+public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     // MARK: core
-    nonisolated let logger = Logger()
+    private nonisolated let logger = Logger()
     init(owner: RecordForm) {
         self.owner = owner
     }
@@ -24,19 +24,21 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     
     // MARK: state
     public nonisolated let id = UUID()
-    weak var owner: RecordForm?
+    internal weak var owner: RecordForm?
     
-    @Published private(set) var isAnalyzing: Bool = false
-    func startAnalyze() {
-        isAnalyzing = true
-    }
-    func stopAnalyze() {
-        isAnalyzing = false
-    }
+//    @Published private(set) var isAnalyzing: Bool = false
+//    @Published var isAnalyzeFinished: Bool = false
+    @Published var status: Status = .ready
     
+//    func startAnalyze() {
+//        isAnalyzing = true
+//    }
+//    func stopAnalyze() {
+//        isAnalyzing = false
+//    }
+//    
     @Published var character: MentoryCharacter? = nil
     
-    @Published var isAnalyzeFinished: Bool = false
     @Published var analyzedResult: String? = nil
     @Published var mindType: Emotion? = nil
     
@@ -138,7 +140,6 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
-        self.isAnalyzeFinished = true
     }
     
     func updateSuggestions() async {
@@ -197,5 +198,27 @@ final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         //mutate
         todayBoard.recordFormSelection = nil
+    }
+    
+    
+    // MARK: value
+    public enum Status: Sendable, Hashable {
+        // MARK: core
+        case ready
+        case analyzing
+        case finished
+        
+        // MARK: operator
+        public var isAnalyzing: Bool {
+            self == .analyzing
+        }
+        
+        public var isAnalyzeFinished: Bool {
+            self == .finished
+        }
+        
+        public var isSelectingStage: Bool {
+            self == .ready
+        }
     }
 }
