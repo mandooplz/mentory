@@ -192,7 +192,7 @@ extension Emotion {
 }
 
 // MARK: Component
-private struct Header: View {
+fileprivate struct Header: View {
     let title: String
     let description: String
     
@@ -208,7 +208,7 @@ private struct Header: View {
     }
 }
 
-private struct CharacterPicker: View {
+fileprivate struct CharacterPicker: View {
     let characters: [MentoryCharacter]
     @Binding var selection: MentoryCharacter?
     
@@ -302,7 +302,7 @@ private struct CharacterPicker: View {
     }
 }
 
-private struct AnalyzeButton: View {
+fileprivate struct AnalyzeButton: View {
     let iconName: String
     let label: String
     let isActive: Bool
@@ -330,7 +330,7 @@ private struct AnalyzeButton: View {
     }
 }
 
-private struct AnalyzedResult: View {
+fileprivate struct AnalyzedResult: View {
     let readyPrompt: String
     let progressPrompt: String
     let isProgress: Bool
@@ -362,7 +362,7 @@ private struct AnalyzedResult: View {
         }
     }
     
-    private struct MindTypeResultView: View {
+    fileprivate struct MindTypeResultView: View {
         let mindType: Emotion
         
         var body: some View {
@@ -387,7 +387,7 @@ private struct AnalyzedResult: View {
             )
         }
     }
-    private struct StatusBadge: View {
+    fileprivate struct StatusBadge: View {
         let text: String
         
         var body: some View {
@@ -407,7 +407,7 @@ private struct AnalyzedResult: View {
     }
 }
 
-private struct ConfirmButton: View {
+fileprivate struct ConfirmButton: View {
     let icon: String
     let label: String
     let isPresented: Bool
@@ -434,7 +434,7 @@ private struct ConfirmButton: View {
 }
 
 // MARK: Preview
-private struct MindAnalyzerPreview: View {
+fileprivate struct MindAnalyzerPreview: View {
     @StateObject private var mentoryiOS = MentoryiOS()
     
     var body: some View {
