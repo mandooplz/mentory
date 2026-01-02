@@ -23,6 +23,28 @@ struct RecordFormView: View {
     // MARK: - Body
     var body: some View {
         RecordFormLayout(
+            topBar: {
+                ToolbarItem(id: "recordForm.finish", placement: .topBarLeading) {
+                    Button {
+                        recordForm.finish() // RecordFormView에서 보일 뒤로가기 버튼
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                
+                ToolbarItem(id: "recordForm.next", placement: .topBarTrailing) {
+                    Button {
+                        Task {
+                            recordForm.validateInput()
+                            
+                            await recordForm.submit()
+                        }
+                    } label: {
+                        Image(systemName: "checkmark")
+                    }
+                    .disabled(!recordForm.canProceed)
+                }
+            },
             todayDate: {
                 TodayDate(targetDate: recordForm.targetDate)
             },
@@ -31,11 +53,17 @@ struct RecordFormView: View {
                     prompt: "제목",
                     text: $recordForm.titleInput
                 )
+                .onReceive(recordForm.$titleInput) { _ in
+                    recordForm.validateInput()
+                }
                 
                 BodyField(
                     prompt: "글쓰기 시작...",
                     text: $recordForm.textInput
                 )
+                .onReceive(recordForm.$textInput) { _ in
+                    recordForm.validateInput()
+                }
                 
                 ImagePreviewCard(
                     model: recordForm

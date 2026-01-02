@@ -14,7 +14,7 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class MindAnalyzer: Sendable, ObservableObject {
+final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {    
     // MARK: core
     nonisolated let logger = Logger(subsystem: "MentoryiOS.MindAnalyzer", category: "Domain")
     init(owner: RecordForm) {
@@ -23,7 +23,7 @@ final class MindAnalyzer: Sendable, ObservableObject {
     
     
     // MARK: state
-    nonisolated let id = UUID()
+    public nonisolated let id = UUID()
     weak var owner: RecordForm?
     
     @Published private(set) var isAnalyzing: Bool = false
