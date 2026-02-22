@@ -11,7 +11,6 @@ import Values
 import FirebaseLLMAdapter
 import MentoryDBAdapter
 import iOSManager
-import MentoryDomain
 
 
 // MARK: Object
