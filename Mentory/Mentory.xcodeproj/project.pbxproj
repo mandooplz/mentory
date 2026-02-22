@@ -12,6 +12,7 @@
 		7B1337682ECD63A2009931A4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337672ECD63A2009931A4 /* WidgetKit.framework */; };
 		7B13376A2ECD63A2009931A4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B1337692ECD63A2009931A4 /* SwiftUI.framework */; };
 		CE127F672ECB8858006A55E6 /* Secrets.xcconfig.sample in Resources */ = {isa = PBXBuildFile; fileRef = CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */; };
+		CE2409D02F4AB877008E0977 /* libMentoryDomain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE2409C82F4AB864008E0977 /* libMentoryDomain.a */; };
 		CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA52EFA460D005901BA /* FirebaseLLMAdapter */; };
 		CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CA82EFA49C0005901BA /* MentoryDBAdapter */; };
 		CE302CAC2EFA4D33005901BA /* Values in Frameworks */ = {isa = PBXBuildFile; productRef = CE302CAB2EFA4D33005901BA /* Values */; };
@@ -37,6 +38,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7B1337642ECD63A2009931A4;
 			remoteInfo = MentoryWidgetExtension;
+		};
+		CE2409D12F4AB877008E0977 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE39BFB42EC313F20090DF78 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE2409C72F4AB864008E0977;
+			remoteInfo = MentoryDomain;
 		};
 		CE302CB52EFA529A005901BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -88,6 +96,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CE2409C62F4AB864008E0977 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CEE4F0C72EF16BC200AA1AB0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -109,6 +126,7 @@
 		7BEACE232ED44E5F00E2ADA9 /* MentoryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MentoryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		CE0027132ECF3EB8003324B0 /* Mentory.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mentory.xctestplan; sourceTree = "<group>"; };
 		CE127F662ECB8858006A55E6 /* Secrets.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = Secrets.xcconfig.sample; sourceTree = "<group>"; };
+		CE2409C82F4AB864008E0977 /* libMentoryDomain.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMentoryDomain.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE302CAD2EFA529A005901BA /* ReminderNotificationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationAdapter.swift; sourceTree = "<group>"; };
 		CE302CAE2EFA529A005901BA /* ReminderNotificationInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationInterface.swift; sourceTree = "<group>"; };
 		CE302CB02EFA529A005901BA /* iOSManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = iOSManager.xcodeproj; sourceTree = "<group>"; };
@@ -150,6 +168,11 @@
 			path = MentoryWidget;
 			sourceTree = "<group>";
 		};
+		CE2409C92F4AB864008E0977 /* MentoryDomain */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MentoryDomain;
+			sourceTree = "<group>";
+		};
 		CE39BFBE2EC313F20090DF78 /* Mentory */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -182,6 +205,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CE2409C52F4AB864008E0977 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE39BFB92EC313F20090DF78 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -192,6 +222,7 @@
 				CE302CAC2EFA4D33005901BA /* Values in Frameworks */,
 				CE302CA92EFA49C0005901BA /* MentoryDBAdapter in Frameworks */,
 				CE302CA62EFA460D005901BA /* FirebaseLLMAdapter in Frameworks */,
+				CE2409D02F4AB877008E0977 /* libMentoryDomain.a in Frameworks */,
 				CE6CB1422ED385AD00390FF3 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,6 +287,7 @@
 				CE8EE8322EC5D1600006E5A4 /* MentoryTests */,
 				7B13376B2ECD63A2009931A4 /* MentoryWidget */,
 				5888796D2ECD98EB00083137 /* MentoryWatch Watch App */,
+				CE2409C92F4AB864008E0977 /* MentoryDomain */,
 				7B1337662ECD63A2009931A4 /* Frameworks */,
 				CE39BFBD2EC313F20090DF78 /* Products */,
 			);
@@ -268,6 +300,7 @@
 				CE8EE8312EC5D1600006E5A4 /* MentoryTests.xctest */,
 				7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */,
 				5888796C2ECD98EB00083137 /* MentoryWatch Watch App.app */,
+				CE2409C82F4AB864008E0977 /* libMentoryDomain.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,6 +353,28 @@
 			productReference = 7B1337652ECD63A2009931A4 /* MentoryWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		CE2409C72F4AB864008E0977 /* MentoryDomain */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE2409CF2F4AB864008E0977 /* Build configuration list for PBXNativeTarget "MentoryDomain" */;
+			buildPhases = (
+				CE2409C42F4AB864008E0977 /* Sources */,
+				CE2409C52F4AB864008E0977 /* Frameworks */,
+				CE2409C62F4AB864008E0977 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CE2409C92F4AB864008E0977 /* MentoryDomain */,
+			);
+			name = MentoryDomain;
+			packageProductDependencies = (
+			);
+			productName = MentoryDomain;
+			productReference = CE2409C82F4AB864008E0977 /* libMentoryDomain.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		CE39BFBB2EC313F20090DF78 /* Mentory */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CE39BFC72EC313F30090DF78 /* Build configuration list for PBXNativeTarget "Mentory" */;
@@ -336,6 +391,7 @@
 			dependencies = (
 				69765AE32ECEADFD00776A5F /* PBXTargetDependency */,
 				69765AE62ECEADFF00776A5F /* PBXTargetDependency */,
+				CE2409D22F4AB877008E0977 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				CE39BFBE2EC313F20090DF78 /* Mentory */,
@@ -384,7 +440,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2610;
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					5888796B2ECD98EB00083137 = {
@@ -392,6 +448,9 @@
 					};
 					7B1337642ECD63A2009931A4 = {
 						CreatedOnToolsVersion = 26.1;
+					};
+					CE2409C72F4AB864008E0977 = {
+						CreatedOnToolsVersion = 26.3;
 					};
 					CE39BFBB2EC313F20090DF78 = {
 						CreatedOnToolsVersion = 26.1;
@@ -430,6 +489,7 @@
 			projectRoot = "";
 			targets = (
 				CE39BFBB2EC313F20090DF78 /* Mentory */,
+				CE2409C72F4AB864008E0977 /* MentoryDomain */,
 				CE8EE8302EC5D1600006E5A4 /* MentoryTests */,
 				7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */,
 				5888796B2ECD98EB00083137 /* MentoryWatch Watch App */,
@@ -494,6 +554,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CE2409C42F4AB864008E0977 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE39BFB82EC313F20090DF78 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -520,6 +587,11 @@
 			isa = PBXTargetDependency;
 			target = 7B1337642ECD63A2009931A4 /* MentoryWidgetExtension */;
 			targetProxy = 69765AE52ECEADFF00776A5F /* PBXContainerItemProxy */;
+		};
+		CE2409D22F4AB877008E0977 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CE2409C72F4AB864008E0977 /* MentoryDomain */;
+			targetProxy = CE2409D12F4AB877008E0977 /* PBXContainerItemProxy */;
 		};
 		CE8EE8362EC5D1600006E5A4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -669,6 +741,38 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CE2409CC2F4AB864008E0977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3X262XJF5T;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CE2409CD2F4AB864008E0977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3X262XJF5T;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -973,6 +1077,15 @@
 			buildConfigurations = (
 				7B13377D2ECD63A4009931A4 /* Debug */,
 				7B13377E2ECD63A4009931A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE2409CF2F4AB864008E0977 /* Build configuration list for PBXNativeTarget "MentoryDomain" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE2409CC2F4AB864008E0977 /* Debug */,
+				CE2409CD2F4AB864008E0977 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
