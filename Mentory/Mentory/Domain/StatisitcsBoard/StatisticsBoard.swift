@@ -13,7 +13,6 @@ import MentoryDBAdapter
 // MARK: Object
 @Observable
 final class StatisticsBoard {
-
     struct State: Equatable {
         var isLoading: Bool = false
         var allRecords: [RecordData] = []
