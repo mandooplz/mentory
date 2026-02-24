@@ -32,7 +32,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         case .test:
             self.mentoryDB = MentoryDBFakeAdapter()
             self.firebaseLLM = FirebaseLLMFakeAdapter()
-            self.reminderCenter = ReminderNotificationAdapter() // 임시
+            self.reminderCenter = ReminderNotificationAdapter()
         }
         
         self.statisticsBoard = StatisticsBoard(mentoryDB: self.mentoryDB)
