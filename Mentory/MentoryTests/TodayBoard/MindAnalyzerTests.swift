@@ -25,7 +25,7 @@ struct MindAnalyzerTests {
         
         @Test func setIsAnalyzeFinishedTrue() async throws {
             // given
-            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            try await #require(mindAnalyzer.status.isAnalyzeFinished == false)
             
             await MainActor.run {
                 mindAnalyzer.character = .cool
@@ -35,7 +35,7 @@ struct MindAnalyzerTests {
             await mindAnalyzer.analyze()
             
             // then
-            await #expect(mindAnalyzer.isAnalyzeFinished == true)
+            await #expect(mindAnalyzer.status.isAnalyzeFinished == true)
         }
         @Test func setAnalyzedResult() async throws {
             // given
@@ -76,13 +76,13 @@ struct MindAnalyzerTests {
                 recordForm.textInput = ""
             }
             
-            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            try await #require(mindAnalyzer.status.isAnalyzeFinished == false)
             
             // when
             await mindAnalyzer.analyze()
             
             // then
-            await #expect(mindAnalyzer.isAnalyzeFinished == false)
+            await #expect(mindAnalyzer.status.isAnalyzeFinished == false)
         }
         @Test func whenCharacterIsNil() async throws {
             // given
@@ -90,17 +90,17 @@ struct MindAnalyzerTests {
                 mindAnalyzer.character = nil
             }
             
-            try await #require(mindAnalyzer.isAnalyzeFinished == false)
+            try await #require(mindAnalyzer.status.isAnalyzeFinished == false)
             
             // when
             await mindAnalyzer.analyze()
             
             // then
-            await #expect(mindAnalyzer.isAnalyzeFinished == false)
+            await #expect(mindAnalyzer.status.isAnalyzeFinished == false)
         }
     }
     
-    struct Cancel {
+    struct Finish {
         let mentoryiOS: MentoryiOS
         let mindAnalyzer: MindAnalyzer
         init() async throws {
@@ -115,7 +115,7 @@ struct MindAnalyzerTests {
             try await #require(recordForm.mindAnalyzer?.id == mindAnalyzer.id)
             
             // when
-            await mindAnalyzer.cancel()
+            await mindAnalyzer.finish()
             
             // then
             await #expect(recordForm.mindAnalyzer == nil)
