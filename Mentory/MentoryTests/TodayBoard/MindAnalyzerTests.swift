@@ -108,6 +108,7 @@ struct MindAnalyzerTests {
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
         }
         
+        // recordForm에서 MindAnalyzer를 제거
         @Test func RecordForm_removeMindAnalyzer() async throws {
             // given
             let recordForm = try #require(await mindAnalyzer.owner)
