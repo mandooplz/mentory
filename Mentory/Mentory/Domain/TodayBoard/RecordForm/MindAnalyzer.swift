@@ -130,6 +130,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
+        self.status = .finished
     }
     
     public func updateSuggestions() async {
@@ -188,6 +189,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         //mutate
         todayBoard.recordFormSelection = nil
+        recordForm.mindAnalyzer = nil
     }
     
     
