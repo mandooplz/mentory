@@ -13,6 +13,8 @@ import OSLog
 @MainActor
 final class Onboarding: Sendable, ObservableObject {
     // MARK: core
+    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
+    
     init(owner: MentoryiOS) {
         self.owner = owner
     }
@@ -21,7 +23,6 @@ final class Onboarding: Sendable, ObservableObject {
     // MARK: state
     nonisolated let id = UUID()
     weak var owner: MentoryiOS?
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     
     
     @Published var nameInput: String = ""
@@ -69,6 +70,7 @@ final class Onboarding: Sendable, ObservableObject {
         
         mentoryiOS.todayBoard = TodayBoard(owner: mentoryiOS)
         mentoryiOS.settingBoard = SettingBoard(owner: mentoryiOS)
+        mentoryiOS.statisticsBoard = StatisticsBoard(owner: mentoryiOS)
 
         self.isUsed = true
     }
