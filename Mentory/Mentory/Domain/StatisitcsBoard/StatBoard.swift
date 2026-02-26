@@ -8,12 +8,15 @@ import Foundation
 import Combine
 import Values
 import MentoryDBAdapter
+import OSLog
 
 
 // MARK: object
 @MainActor
 public final class StatBoard: ObservableObject {
     // MARK: core
+    private let logger = Logger()
+    
     init(owner: MentoryiOS) {
         self.owner = owner
     }
@@ -21,42 +24,25 @@ public final class StatBoard: ObservableObject {
     // MARK: state
     weak var owner: MentoryiOS?
     
-    @Published public var isLoading: Bool = false
-    
     @Published public var allRecords: [RecordData] = []
-    @Published public var selectedMonth: Date = Date() {
-        didSet {
-            // 이게 무슨 코드지?
-            if oldValue != selectedMonth {
-                selectedDate = nil
-            }
-        }
-    }
-
-    @Published public var selectedDate: Date? = nil
-    @Published public var errorMessage: String? = nil
     
     
     // MARK: action
-    public func initRecords() {
+    public func loadRecords() async {
         // capture
         let mentoryDB = self.owner!.mentoryDB
 
         
         // process
-        Task {
-            do {
-                let records = try await mentoryDB.getRecords()
-                
-                // mutate
-                self.allRecords = records
-                self.isLoading = false
-            } catch {
-                self.errorMessage = error.localizedDescription
-                self.isLoading = false
-            }
+        let records: [RecordData]
+        do {
+            records = try await mentoryDB.getRecords()
+        } catch {
+            records = []
+            logger.error("\(error)")
         }
         
         // mutate
+        self.allRecords = records
     }
 }
