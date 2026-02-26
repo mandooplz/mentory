@@ -70,7 +70,7 @@ final class Onboarding: Sendable, ObservableObject {
         
         mentoryiOS.todayBoard = TodayBoard(owner: mentoryiOS)
         mentoryiOS.settingBoard = SettingBoard(owner: mentoryiOS)
-        mentoryiOS.statisticsBoard = StatisticsBoard(owner: mentoryiOS)
+        mentoryiOS.statBoard = StatBoard(owner: mentoryiOS)
 
         self.isUsed = true
     }
