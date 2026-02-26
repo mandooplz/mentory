@@ -39,7 +39,6 @@ public final class StatisticsBoard: ObservableObject {
     
     
     // MARK: action
-    // MentoryDB에서 기록들을 load
     public func initRecords() {
         // capture
         let mentoryDB = self.owner!.mentoryDB
