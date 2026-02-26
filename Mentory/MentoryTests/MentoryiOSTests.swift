@@ -12,6 +12,19 @@ import MentoryDBAdapter
 // MARK: Tests
 @Suite("MentoryiOS", .timeLimit(.minutes(1)))
 struct MentoryiOSTests {
+    struct Init {
+        let mentoryiOS: MentoryiOS
+        init() async throws {
+            self.mentoryiOS = await MentoryiOS()
+        }
+        
+        @Test func isOnboardingBoardIsNil() async throws {
+            await #expect(mentoryiOS.onboarding == nil)
+        }
+        @Test func isStatBoardIsNil() async throws {
+            await #expect(mentoryiOS.statBoard == nil)
+        }
+    }
     struct SetUp {
         let mentoryiOS: MentoryiOS
         init() async throws {
@@ -30,13 +43,13 @@ struct MentoryiOSTests {
         }
         @Test func setStatisticsBoardNil() async throws {
             // given
-            try await #require(mentoryiOS.statisticsBoard == nil)
+            try await #require(mentoryiOS.statBoard == nil)
             
             // when
             await mentoryiOS.setUp()
             
             // then
-            await #expect(mentoryiOS.statisticsBoard == nil)
+            await #expect(mentoryiOS.statBoard == nil)
         }
         
         @Test func whenUserNameAlreadySet() async throws {
