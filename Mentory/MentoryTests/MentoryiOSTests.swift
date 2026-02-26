@@ -28,6 +28,16 @@ struct MentoryiOSTests {
             // then
             await #expect(mentoryiOS.onboarding != nil)
         }
+        @Test func setStatisticsBoardNil() async throws {
+            // given
+            try await #require(mentoryiOS.statisticsBoard == nil)
+            
+            // when
+            await mentoryiOS.setUp()
+            
+            // then
+            await #expect(mentoryiOS.statisticsBoard == nil)
+        }
         
         @Test func whenUserNameAlreadySet() async throws {
             // given
