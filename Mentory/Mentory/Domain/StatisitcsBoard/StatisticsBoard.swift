@@ -14,14 +14,14 @@ import MentoryDBAdapter
 @MainActor
 public final class StatisticsBoard: ObservableObject {
     // MARK: core
-    private let mentoryDB: any MentoryDBInterface
-    public init(mentoryDB: any MentoryDBInterface) {
-        self.mentoryDB = mentoryDB
+    init(owner: MentoryiOS) {
+        self.owner = owner
     }
-
     
     
     // MARK: state
+    weak var owner: MentoryiOS?
+    
     @Published public var isLoading: Bool = false
     
     @Published public var allRecords: [RecordData] = []
@@ -42,7 +42,9 @@ public final class StatisticsBoard: ObservableObject {
     // MentoryDB에서 기록들을 load
     public func initRecords() {
         // capture
+        let mentoryDB = self.owner!.mentoryDB
 
+        
         // process
         Task {
             do {
