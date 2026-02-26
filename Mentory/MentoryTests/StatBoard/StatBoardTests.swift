@@ -1,5 +1,5 @@
 //
-//  StatisticBoardTests.swift
+//  StatBoardTests.swift
 //  Mentory
 //
 //  Created by 김민우 on 2/25/26.
@@ -10,9 +10,12 @@ import Testing
 
 
 // MARK: Tests
-@Suite("StatisticsBoard")
-struct StatisticsBoardTests {
+@Suite("StatBoard")
+struct StatBoardTests {
     struct InitRecords {
         
     }
 }
+
+
+// MARK: Helpher

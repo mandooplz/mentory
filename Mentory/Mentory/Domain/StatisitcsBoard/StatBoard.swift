@@ -1,5 +1,5 @@
 //
-//  StatisticsBoard.swift
+//  StatBoard.swift
 //  Mentory
 //
 //  Created by 김민우 on 2/25/26.
@@ -12,12 +12,11 @@ import MentoryDBAdapter
 
 // MARK: object
 @MainActor
-public final class StatisticsBoard: ObservableObject {
+public final class StatBoard: ObservableObject {
     // MARK: core
     init(owner: MentoryiOS) {
         self.owner = owner
     }
-    
     
     // MARK: state
     weak var owner: MentoryiOS?

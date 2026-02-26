@@ -188,17 +188,17 @@ struct OnboardingTests {
             // then
             await #expect(mentoryiOS.settingBoard != nil)
         }
-        @Test func MentoryiOS_createStaticsBoard() async throws {
+        @Test func MentoryiOS_createStatBoard() async throws {
             // given
             await onboarding.setName("TEST_USER_NAME")
             
-            try await #require(mentoryiOS.statisticsBoard == nil)
+            try await #require(mentoryiOS.statBoard == nil)
             
             // when
             await onboarding.next()
             
             // then
-            try await #require(mentoryiOS.statisticsBoard != nil)
+            try await #require(mentoryiOS.statBoard != nil)
         }
     }
 }

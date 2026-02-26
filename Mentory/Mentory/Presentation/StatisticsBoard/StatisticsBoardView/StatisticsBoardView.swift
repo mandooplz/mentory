@@ -12,9 +12,9 @@ import Values
 
 //struct StatisticsBoardView: View {
 //    
-//    @State private var board: StatisticsBoard
+//    @State private var board: StatBoard
 //    
-//    init(board: StatisticsBoard) {
+//    init(board: StatBoard) {
 //        _board = State(initialValue: board)
 //    }
 //    
