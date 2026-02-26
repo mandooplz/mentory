@@ -34,8 +34,6 @@ final class MentoryiOS: Sendable, ObservableObject {
             self.firebaseLLM = FirebaseLLMFakeAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
         }
-        
-        self.statisticsBoard = StatisticsBoard(mentoryDB: self.mentoryDB)
     }
     
     

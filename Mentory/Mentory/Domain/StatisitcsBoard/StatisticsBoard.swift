@@ -2,91 +2,61 @@
 //  StatisticsBoard.swift
 //  Mentory
 //
-//  Created by SJS on 12/17/25.
+//  Created by 김민우 on 2/25/26.
 //
 import Foundation
-import Observation
+import Combine
 import Values
 import MentoryDBAdapter
 
 
-// MARK: Object
-@Observable
-final class StatisticsBoard {
+// MARK: object
+@MainActor
+public final class StatisticsBoard: ObservableObject {
     // MARK: core
+    private let mentoryDB: any MentoryDBInterface
+    public init(mentoryDB: any MentoryDBInterface) {
+        self.mentoryDB = mentoryDB
+    }
+
     
     
     // MARK: state
+    @Published public var isLoading: Bool = false
     
-    
-    // MARK: action
-    
-    
-    // MARK: value
-    struct State: Equatable {
-        var isLoading: Bool = false
-        var allRecords: [RecordData] = []
-
-        var selectedMonth: Date = Date()
-        var selectedDate: Date? = nil
-        var errorMessage: String? = nil
-    }
-
-    private(set) var state = State()
-    private let mentoryDB: any MentoryDBInterface
-    private let calendar = Calendar.current
-
-
-    init(mentoryDB: any MentoryDBInterface) {
-        self.mentoryDB = mentoryDB
-        self.state.selectedMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date())) ?? Date()
-    }
-
-    func load() {
-        state.isLoading = true
-        state.errorMessage = nil
-
-        Task {
-            do {
-                let records = try await mentoryDB.getRecords()
-                await MainActor.run {
-                    self.state.allRecords = records
-                    self.state.isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    self.state.allRecords = []
-                    self.state.isLoading = false
-                    self.state.errorMessage = "통계 데이터를 불러오지 못했습니다."
-                }
+    @Published public var allRecords: [RecordData] = []
+    @Published public var selectedMonth: Date = Date() {
+        didSet {
+            // 이게 무슨 코드지?
+            if oldValue != selectedMonth {
+                selectedDate = nil
             }
         }
     }
-    
-    func selectDate(_ date: Date?) {
-        state.selectedDate = date
-    }
-    
-    func moveMonth(_ delta: Int) {
-        guard let next = calendar.date(byAdding: .month, value: delta, to: state.selectedMonth) else { return }
-        state.selectedMonth = next
-        state.selectedDate = nil
-    }
-    
-    func record(for day: Date) -> RecordData? {
-        state.allRecords.first { record in
-            calendar.isDate(record.recordDate.rawValue, inSameDayAs: day)
-        }
-    }
-    
-    func setMonth(_ date: Date) {
-        let comps = calendar.dateComponents([.year, .month], from: date)
-        state.selectedMonth = calendar.date(from: comps) ?? date
-        state.selectedDate = nil
-    }
 
-    func goToday() {
-        setMonth(Date())
-        state.selectedDate = Date()
+    @Published public var selectedDate: Date? = nil
+    @Published public var errorMessage: String? = nil
+    
+    
+    // MARK: action
+    // MentoryDB에서 기록들을 load
+    public func initRecords() {
+        // capture
+
+        // process
+        Task {
+            do {
+                let records = try await mentoryDB.getRecords()
+                
+                // mutate
+                self.allRecords = records
+                self.isLoading = false
+            } catch {
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
+            }
+        }
+        
+        // mutate
     }
 }
