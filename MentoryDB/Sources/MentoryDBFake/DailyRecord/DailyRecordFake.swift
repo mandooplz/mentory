@@ -34,11 +34,11 @@ package final class DailyRecordFake: Sendable {
     
     nonisolated let ticketId: UUID
     
-    nonisolated let recordDate: MentoryDate
-    nonisolated let createAt: MentoryDate
+    nonisolated package let recordDate: MentoryDate
+    nonisolated package let createAt: MentoryDate
     
-    var analyzedContent: String
-    var emotion: Emotion
+    package var analyzedContent: String
+    package var emotion: Emotion
     
     var createSuggestionQueue: Deque<SuggestionData> = []
     package func insertTicket(_ suggestionDatas: [SuggestionData]) {
