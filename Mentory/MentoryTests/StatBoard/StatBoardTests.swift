@@ -6,6 +6,8 @@
 //
 import Foundation
 import Testing
+import Values
+import MentoryDBAdapter
 @testable import Mentory
 
 
@@ -28,14 +30,27 @@ struct StatBoardTests {
     struct LoadRecords {
         let mentoryiOS: MentoryiOS
         let statBoard: StatBoard
+        let mentoryDB: any MentoryDBInterface
         init() async throws {
             self.mentoryiOS = await MentoryiOS()
             self.statBoard = try await getStatBoardForTest(mentoryiOS)
+            self.mentoryDB = mentoryiOS.mentoryDB
         }
         
         @Test func updateAllRecords() async throws {
             // given
             try await #require(statBoard.allRecords.isEmpty == true)
+            
+            // 새로운 Record의 생성
+            let sampleRecordData = RecordData(
+                recordDate: .now,
+                analyzedResult: "SAMPLE_ANALYSIS",
+                emotion: .neutral)
+            
+            try await mentoryDB.submitAnalysis(
+                recordData: sampleRecordData,
+                suggestionData: []
+            )
             
             // when
             await statBoard.loadRecords()
