@@ -217,7 +217,7 @@ struct TodayBoardTests {
                 .first { recordForm in
                     recordForm.targetDate.relativeDay(from: .now) == .dayBefoeYesterday
                 }
-            let twoDaysAgoRecordForm = try #require(await optionalRecordForm)
+            let twoDaysAgoRecordForm = try #require(optionalRecordForm)
             
             // given
             let baseDate = try #require(await todayBoard.recentUpdatedate())

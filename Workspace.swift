@@ -9,5 +9,11 @@ let workspace = Workspace(
     additionalFiles: [
         "README.md",
         "docs/**",
+        "FirebaseLLM/Package.swift",
+        "FirebaseLLM/Sources/**",
+        "MentoryDB/Package.swift",
+        "MentoryDB/Sources/**",
+        "Values/Package.swift",
+        "Values/Sources/**",
     ]
 )
