@@ -25,6 +25,8 @@ let project = Project(
             infoPlist: .extendingDefault(
                 with: [
                     "ALAN_API_TOKEN": "$(TOKEN)",
+                    "UIApplicationSupportsIndirectInputEvents": true,
+                    "UILaunchScreen": [:],
                     "CFBundleURLTypes": [
                         [
                             "CFBundleTypeRole": "Editor",
