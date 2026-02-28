@@ -38,6 +38,7 @@
   - [설치 방법](#설치-방법)
   - [환경 설정](#환경-설정)
   - [실행 방법](#실행-방법)
+  - [Tuist 기반 최초 빌드 및 실행 절차](#tuist-기반-최초-빌드-및-실행-절차)
 - [소프트웨어 디자인](#소프트웨어-디자인)
 - [프로젝트 구조](#프로젝트-구조)
 - [개발 문서](#개발-문서)
@@ -222,6 +223,8 @@
   </tr>
 </table>
 
+> 권장 Tuist 버전: **4.39.1**
+
 ### 설치 방법
 
 1. **저장소 클론**
@@ -230,10 +233,21 @@
    cd Mentory
    ```
 
-2. **프로젝트 열기**
+2. **Tuist 설치** (이미 설치되어 있으면 생략)
    ```bash
-   cd Mentory
-   open Mentory.xcodeproj
+   brew install tuist
+   tuist version
+   ```
+
+3. **Tuist 의존성 설치 및 워크스페이스 생성**
+   ```bash
+   tuist install
+   tuist generate
+   ```
+
+4. **워크스페이스 열기**
+   ```bash
+   open mentory.xcworkspace
    ```
 
 ### 환경 설정
@@ -251,7 +265,7 @@
    ```
 
 3. Xcode에서 프로젝트 설정 확인
-   - [Mentory.xcodeproj](Mentory/Mentory.xcodeproj)를 선택
+   - [mentory.xcworkspace](mentory.xcworkspace)를 연 뒤 `Mentory` 타겟 선택
    - **Info** 탭에서 `ALAN_API_TOKEN` 값이 `$(TOKEN)`으로 설정되어 있는지 확인
 
 #### 2. Firebase 설정
@@ -290,6 +304,30 @@
 2. 홈 화면으로 이동
 3. 위젯 추가 화면에서 **Mentory** 위젯 선택
 4. 원하는 크기의 위젯을 홈 화면에 배치
+
+### Tuist 기반 최초 빌드 및 실행 절차
+
+처음 참여한 개발자는 아래 순서로 진행하면 바로 빌드/실행할 수 있습니다.
+
+1. 저장소 클론
+   ```bash
+   git clone https://github.com/EST-iOS4/Mentory.git
+   cd Mentory
+   ```
+2. `Mentory/Secrets.xcconfig` 생성 후 `TOKEN` 값 설정
+   ```bash
+   cp Mentory/Secrets.xcconfig.sample Mentory/Secrets.xcconfig
+   ```
+3. Firebase에서 받은 `GoogleService-Info.plist`를 `Mentory/Mentory/`에 추가
+4. Tuist 의존성 설치 및 워크스페이스 생성
+   ```bash
+   tuist install
+   tuist generate
+   open mentory.xcworkspace
+   ```
+5. Xcode에서 `Mentory` 스킴 선택 후 `Cmd + B`(빌드), `Cmd + R`(실행)
+
+> `tuist generate` 이후에는 기존 `.xcodeproj` 대신 **`mentory.xcworkspace`** 를 기준으로 작업하세요.
 
 ## 소프트웨어 디자인
 
