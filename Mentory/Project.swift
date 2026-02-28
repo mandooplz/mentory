@@ -22,8 +22,27 @@ let project = Project(
             product: .app,
             bundleId: "cloud.mandooplz.Mentory",
             deploymentTargets: .iOS("26.1"),
-            infoPlist: .file(path: "Mentory/Info.plist"),
-            sources: ["Mentory/**/*.swift"],
+            infoPlist: .extendingDefault(
+                with: [
+                    "ALAN_API_TOKEN": "$(TOKEN)",
+                    "CFBundleURLTypes": [
+                        [
+                            "CFBundleTypeRole": "Editor",
+                            "CFBundleURLName": "Mentory",
+                            "CFBundleURLSchemes": ["mentory"],
+                        ],
+                    ],
+                ]
+            ),
+            sources: [
+                .glob(
+                    "Mentory/**/*.swift",
+                    excluding: [
+                        "Mentory/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerLayout.swift",
+                        "Mentory/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerView.swift",
+                    ]
+                ),
+            ],
             resources: [
                 "Mentory/Assets.xcassets",
                 "Mentory/GoogleService-Info.plist",
@@ -49,6 +68,11 @@ let project = Project(
                     "CURRENT_PROJECT_VERSION": "2",
                     "MARKETING_VERSION": "25.12",
                     "SWIFT_VERSION": "6.0",
+                    "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
+                    "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
+                    "SWIFT_EMIT_LOC_STRINGS": "YES",
+                    "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
+                    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
                     "TARGETED_DEVICE_FAMILY": "1",
                     "SUPPORTED_PLATFORMS": "iphoneos iphonesimulator",
                     "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
@@ -98,7 +122,13 @@ let project = Project(
             product: .appExtension,
             bundleId: "cloud.mandooplz.Mentory.widget",
             deploymentTargets: .iOS("26.1"),
-            infoPlist: .file(path: "MentoryWidget/Info.plist"),
+            infoPlist: .extendingDefault(
+                with: [
+                    "NSExtension": [
+                        "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
+                    ],
+                ]
+            ),
             sources: ["MentoryWidget/**/*.swift"],
             resources: ["MentoryWidget/Assets.xcassets"],
             entitlements: .file(path: "MentoryWidgetExtension.entitlements"),
@@ -120,12 +150,14 @@ let project = Project(
         .target(
             name: "MentoryWatch Watch App",
             destinations: .watchOS,
-            product: .watch2App,
+            product: .app,
+            productName: "MentoryWatchWatchApp",
             bundleId: "cloud.mandooplz.Mentory.watch",
             deploymentTargets: .watchOS("26.2"),
             infoPlist: .extendingDefault(
                 with: [
                     "CFBundleDisplayName": "MentoryWatch",
+                    "WKApplication": true,
                     "WKCompanionAppBundleIdentifier": "cloud.mandooplz.Mentory",
                     "UISupportedInterfaceOrientations": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
                 ]
