@@ -51,7 +51,7 @@ let project = Project(
             dependencies: [
                 .target(name: "MentoryWatch Watch App"),
                 .target(name: "MentoryWidgetExtension"),
-                .project(target: "iOSManager", path: "../MentoryDevice"),
+                .project(target: "MentoryDevice", path: "../MentoryDevice"),
                 .package(product: "Collections"),
                 .package(product: "DequeModule"),
                 .package(product: "AsyncAlgorithms"),

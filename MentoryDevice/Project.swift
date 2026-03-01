@@ -4,17 +4,14 @@ let project = Project(
     name: "MentoryDevice",
     targets: [
         .target(
-            name: "iOSManager",
+            name: "MentoryDevice",
             destinations: .iOS,
             product: .framework,
-            bundleId: "cloud.mandooplz.iOSManager",
+            bundleId: "cloud.mandooplz.MentoryDevice",
             deploymentTargets: .iOS("26.1"),
             infoPlist: .default,
-            sources: ["iOSManager/**/*.swift"],
+            sources: ["MentoryDevice/**/*.swift"],
             resources: [],
-            headers: .headers(
-                public: ["iOSManager/iOSManager.h"]
-            ),
             dependencies: [
                 .project(target: "Values", path: "../MentoryShared"),
             ],
