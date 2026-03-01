@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="https://github.com/EST-iOS4/Mentory">
-    <img src="./mentory-icon.png" alt="Logo" width="110" height="110">
+    <img src="./assets/images/mentory-icon.png" alt="Logo" width="110" height="110">
   </a>
 
   <h3>Mentory</h3>
@@ -25,7 +25,7 @@
 </div>
 
 <p align="center">
-  <img src="./mentory-intro.png" alt="App Introduction" width="800">
+  <img src="./assets/images/mentory-intro.png" alt="App Introduction" width="800">
 </p>
 
 ## 목차
@@ -336,7 +336,7 @@
 </p>
 
 <p align="center">
-  <img src="mentory.png" alt="소프트웨어 디자인 다이어그램">
+  <img src="./assets/images/mentory.png" alt="소프트웨어 디자인 다이어그램">
 </p>
 
 ## 프로젝트 구조
