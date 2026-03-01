@@ -10,7 +10,7 @@ import OSLog
 import Values
 import FirebaseLLMAdapter
 import MentoryDBAdapter
-import MentoryDevice
+import iOSReminder
 
 
 // MARK: Object

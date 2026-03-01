@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  MentoryWatch Watch App
+//  MentoryWatchApp
 //
 //  Created by 구현모 on 11/19/25.
 //
