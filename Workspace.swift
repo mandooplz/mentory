@@ -11,6 +11,5 @@ let workspace = Workspace(
     ],
     additionalFiles: [
         "README.md",
-        "docs/**",
     ]
 )
