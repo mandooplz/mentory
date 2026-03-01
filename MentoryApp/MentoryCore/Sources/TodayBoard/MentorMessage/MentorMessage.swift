@@ -106,13 +106,12 @@ public final class MentorMessage: Sendable, ObservableObject {
         self.character = messageCharacter
         self.recentUpdate = .now
 
-        // Watch로 멘토 메시지 전송
-        let watchManager = WatchConnectivityManager.shared
-        
-        watchManager.message = messageContent
-        watchManager.character = messageCharacter.rawValue
-        
-        await watchManager.updateContext()
+        await mentoryiOS.watchConnectivity?.updateContext(
+            message: messageContent,
+            character: messageCharacter.rawValue,
+            todos: todayBoard.suggestions.map(\.content),
+            todoCompletions: todayBoard.suggestions.map(\.isDone)
+        )
         
         logger.debug("Watch로 멘토 메시지 전송: \(messageCharacter.rawValue)")
     }

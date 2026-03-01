@@ -23,6 +23,9 @@ struct MentoryApp: App {
         WindowGroup {
             MentoryiOSView(mentoryiOS)
                 .environment(watchConnectivity)
+                .task {
+                    mentoryiOS.watchConnectivity = watchConnectivity
+                }
         }
     }
 }

@@ -59,9 +59,7 @@ struct TodayBoardView: View {
         }
         .task {
             // WatchConnectivity 설정
-            let watchManager = WatchConnectivityManager.shared
-            
-            let handlers = WatchConnectivityManager.HandlerSet {
+            mentoryiOS.watchConnectivity?.configureTodoHandler {
                 todoText, isCompleted in
                 Task { @MainActor in
                     await todayBoard.handleWatchTodoCompletion(
@@ -71,9 +69,8 @@ struct TodayBoardView: View {
                     await todayBoard.fetchEarnedBadges()
                 }
             }
-            watchManager.handlers = handlers
             
-            await watchManager.setUp()
+            await mentoryiOS.watchConnectivity?.setUp()
         }
     }
 }

@@ -56,6 +56,8 @@ public final class MentoryiOS: Sendable, ObservableObject {
     @Published public var settingBoard: SettingBoard? = nil
     @Published public var statBoard: StatBoard? = nil
     
+//    public var watchConnectivity: (any WatchConnectivityInterface)? = nil
+    
     
     // MARK: action
     public func setUp() {
