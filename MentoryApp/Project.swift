@@ -27,6 +27,7 @@ let project = Project(
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
                 .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
                 .project(target: "iOSReminder", path: "../MentoryDevice"),
+                .project(target: "WathManager", path: "../MentoryDevice"),
             ]
         ),
         .target(
@@ -69,6 +70,7 @@ let project = Project(
                 .target(name: "MentoryWatchApp"),
                 .target(name: "MentoryWidgetExtension"),
                 .project(target: "iOSReminder", path: "../MentoryDevice"),
+                .project(target: "WathManager", path: "../MentoryDevice"),
                 .package(product: "Collections"),
                 .package(product: "AsyncAlgorithms"),
                 .project(target: "Values", path: "../MentoryShared"),

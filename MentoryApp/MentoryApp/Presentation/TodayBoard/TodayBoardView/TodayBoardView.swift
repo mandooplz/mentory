@@ -9,6 +9,7 @@ import WebKit
 import Combine
 import Values
 import MentoryCore
+import WathManager
 
 
 // MARK: View

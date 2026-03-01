@@ -11,6 +11,7 @@ import Values
 import FirebaseLLMAdapter
 import MentoryDBAdapter
 import iOSReminder
+import WathManager
 
 
 // MARK: Object
@@ -56,7 +57,7 @@ public final class MentoryiOS: Sendable, ObservableObject {
     @Published public var settingBoard: SettingBoard? = nil
     @Published public var statBoard: StatBoard? = nil
     
-//    public var watchConnectivity: (any WatchConnectivityInterface)? = nil
+    public var watchConnectivity: (any WatchConnectivityInterface)? = nil
     
     
     // MARK: action
