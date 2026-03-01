@@ -1,6 +1,6 @@
 //
 //  ReminderNotificationInterface.swift
-//  iOSManager
+//  MentoryDevice
 //
 //  Created by 김민우 on 12/23/25.
 //

@@ -8,7 +8,7 @@ import SwiftUI
 import WebKit
 import OSLog
 import Combine
-import iOSManager
+import MentoryDevice
 
 // MARK: Object
 class SettingBoardViewModel: ObservableObject {
