@@ -13,26 +13,26 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class TodayBoard: Sendable, ObservableObject {
+public final class TodayBoard: Sendable, ObservableObject {
     // MARK: core
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
-    init(owner: MentoryiOS) {
+    public init(owner: MentoryiOS) {
         self.owner = owner
     }
     
     
     // MARK: state
-    nonisolated let id = UUID()
-    weak var owner: MentoryiOS?
+    public nonisolated let id = UUID()
+    public weak var owner: MentoryiOS?
     
-    @Published var mentorMessage: MentorMessage? = nil
+    @Published public var mentorMessage: MentorMessage? = nil
 
-    @Published var recordForms: [RecordForm] = []
-    func areAllRecordFormsDisabled() -> Bool {
+    @Published public var recordForms: [RecordForm] = []
+    public func areAllRecordFormsDisabled() -> Bool {
         return self.recordForms.allSatisfy(\.isDisabled)
     }
-    @Published var recordFormSelection: RecordForm? = nil
-    func recentUpdatedate() -> MentoryDate? {
+    @Published public var recordFormSelection: RecordForm? = nil
+    public func recentUpdatedate() -> MentoryDate? {
         guard self.recordForms.isEmpty == false else {
             return nil
         }
@@ -43,8 +43,8 @@ final class TodayBoard: Sendable, ObservableObject {
     }
     
     
-    private(set) var currentDate: MentoryDate = .now
-    func setCurrentDate(_ newDate: MentoryDate) {
+    public private(set) var currentDate: MentoryDate = .now
+    public func setCurrentDate(_ newDate: MentoryDate) {
         guard newDate > currentDate else {
             logger.error("이전 날짜로 설정하려고 했습니다.")
             return
@@ -52,15 +52,15 @@ final class TodayBoard: Sendable, ObservableObject {
         
         self.currentDate = newDate
     }
-    func refreshCurrentDate() {
+    public func refreshCurrentDate() {
         self.currentDate = .now
     }
     
-    @Published var recordCount: Int? = nil
+    @Published public var recordCount: Int? = nil
     
-    @Published var suggestions: [Suggestion] = []
-    var recentSuggestionUpdate: MentoryDate? = nil
-    func getSuggestionIndicator() -> String {
+    @Published public var suggestions: [Suggestion] = []
+    public var recentSuggestionUpdate: MentoryDate? = nil
+    public func getSuggestionIndicator() -> String {
         let totalCount = self.suggestions
             .count
         
@@ -70,16 +70,16 @@ final class TodayBoard: Sendable, ObservableObject {
         
         return "\(doneCount)/\(totalCount)"
     }
-    var suggestionProgress: Double {
+    public var suggestionProgress: Double {
         guard suggestions.count > 0 else { return 0 }
         return Double(suggestions.filter { $0.isDone }.count) / Double(suggestions.count)
     }
-    @Published var completedSuggestionsCount: Int = 0
-    @Published var earnedBadges: [BadgeType] = []
+    @Published public var completedSuggestionsCount: Int = 0
+    @Published public var earnedBadges: [BadgeType] = []
     
     
     // MARK: action
-    func setUpMentorMessage() async {
+    public func setUpMentorMessage() async {
         // capture
         guard self.mentorMessage == nil else {
             logger.error("이미 MentorMessage 객체가 존재합니다.")
@@ -92,7 +92,7 @@ final class TodayBoard: Sendable, ObservableObject {
         logger.debug("mentorMessage 객체가 생성되었습니다.")
     }
     
-    func setUpRecordForms() async {
+    public func setUpRecordForms() async {
         // capture
         guard self.recordForms.isEmpty == true else {
             logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.\(self.recordForms.count)")
@@ -115,7 +115,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForms = recordForms
         logger.debug("recordForms 배열이 생성되었습니다.\(recordForms)")
     }
-    func updateRecordForms() async {
+    public func updateRecordForms() async {
         // capture
         let currentDate = self.currentDate
         let recordForms = self.recordForms
@@ -156,7 +156,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordForms = newRecordForms
     }
     
-    func loadSuggestions() async {        
+    public func loadSuggestions() async {
         // capture
         let currentDate = self.currentDate
         
@@ -199,7 +199,7 @@ final class TodayBoard: Sendable, ObservableObject {
         logger.debug("추천행동가져오기\(suggestionDatas)")
     }
     
-    func fetchUserRecordCoount() async {
+    public func fetchUserRecordCoount() async {
         // capture
         let mentoryiOS = self.owner!
         let mentoryDB = mentoryiOS.mentoryDB
@@ -218,7 +218,7 @@ final class TodayBoard: Sendable, ObservableObject {
         self.recordCount = recordCount
     }
 
-    func fetchEarnedBadges() async {
+    public func fetchEarnedBadges() async {
         // capture
         let mentoryiOS = self.owner!
         let mentoryDB = mentoryiOS.mentoryDB
@@ -241,7 +241,7 @@ final class TodayBoard: Sendable, ObservableObject {
 
 
     // MARK: - Watch Connectivity
-    func sendSuggestionsToWatch() async {
+    public func sendSuggestionsToWatch() async {
         let todos = suggestions.map { $0.content }
         let completionStatus = suggestions.map { $0.isDone }
 
@@ -255,7 +255,7 @@ final class TodayBoard: Sendable, ObservableObject {
         logger.debug("Suggestions를 Watch로 전송: \(todos.count)개")
     }
 
-    func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
+    public func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
         // todoText로 해당 Suggestion 찾기
         guard let suggestion = suggestions.first(where: { $0.content == todoText }) else {
             logger.error("Watch로부터 받은 투두를 찾을 수 없음: \(todoText)")

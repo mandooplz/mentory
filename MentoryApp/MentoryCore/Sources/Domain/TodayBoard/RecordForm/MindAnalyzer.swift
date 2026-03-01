@@ -24,13 +24,13 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     
     // MARK: state
     public nonisolated let id = UUID()
-    internal weak var owner: RecordForm?
+    public weak var owner: RecordForm?
     
-    @Published var status: Status = .ready
-    @Published var character: MentoryCharacter? = nil
+    @Published public var status: Status = .ready
+    @Published public var character: MentoryCharacter? = nil
     
-    @Published var analyzedResult: String? = nil
-    @Published var mindType: Emotion? = nil
+    @Published public var analyzedResult: String? = nil
+    @Published public var mindType: Emotion? = nil
     
     private(set) var currentDate: MentoryDate = .now
     public func refreshCurrentDate() {

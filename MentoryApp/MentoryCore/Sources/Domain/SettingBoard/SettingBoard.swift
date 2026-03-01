@@ -11,26 +11,26 @@ import OSLog
 
 // MARK: Object
 @MainActor
-final class SettingBoard: Sendable, ObservableObject {
+public final class SettingBoard: Sendable, ObservableObject {
     // MARK: core
-    init(owner: MentoryiOS) {
+    public init(owner: MentoryiOS) {
         self.owner = owner
     }
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.SettingBoard", category: "Domain")
     
     
     // MARK: state
-    weak var owner: MentoryiOS?
-    nonisolated let id = UUID()
+    public weak var owner: MentoryiOS?
+    public nonisolated let id = UUID()
     
     private static let reminderTimeKey = "mentory.settingBoard.reminderTime"
     private var isApplyingSavedReminderTime = false
     
-    @Published var editingName: EditingName? = nil
+    @Published public var editingName: EditingName? = nil
     
-    @Published var isReminderOn: Bool = true
-    @Published var reminderTime: Date = .now
-    func formattedReminderTime() -> String {
+    @Published public var isReminderOn: Bool = true
+    @Published public var reminderTime: Date = .now
+    public func formattedReminderTime() -> String {
         self.reminderTime
             .formatted(
                 .dateTime
@@ -41,7 +41,7 @@ final class SettingBoard: Sendable, ObservableObject {
     
     
     // MARK: action
-    func setUpEditingName() {
+    public func setUpEditingName() {
         // capture
         guard self.editingName == nil else {
             logger.error("이미 SettingBoard에 EditingName이 존재합니다.")
@@ -57,7 +57,7 @@ final class SettingBoard: Sendable, ObservableObject {
     }
 
 
-    func changeReminderTime(to newDate: Date) {
+    public func changeReminderTime(to newDate: Date) {
         logger.debug("SettingBoard.changeReminderTime 호출")
         
         // capture
@@ -71,7 +71,7 @@ final class SettingBoard: Sendable, ObservableObject {
 
     }
     
-    func loadSavedReminderTime() {
+    public func loadSavedReminderTime() {
         guard let savedTime = UserDefaults.standard.object(forKey: Self.reminderTimeKey) as? Date else {
             logger.info("저장된 알림 시간이 없습니다. 기본값: \(String(describing: self.reminderTime))")
             return
@@ -79,7 +79,7 @@ final class SettingBoard: Sendable, ObservableObject {
         reminderTime = savedTime
     }
     
-    func applyChangedReminderTime() {
+    public func applyChangedReminderTime() {
         guard isApplyingSavedReminderTime == false else { return }
         UserDefaults.standard.set(reminderTime, forKey: Self.reminderTimeKey)
         logger.info("알림 시간이 저장되었습니다: \(String(describing: self.reminderTime))")

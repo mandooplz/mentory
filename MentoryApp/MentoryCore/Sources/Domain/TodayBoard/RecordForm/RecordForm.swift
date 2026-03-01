@@ -13,10 +13,10 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class RecordForm: Sendable, ObservableObject, Identifiable {
+public final class RecordForm: Sendable, ObservableObject, Identifiable {
     // MARK: core
-    init(owner: TodayBoard,
-         targetDate: MentoryDate) {
+    public init(owner: TodayBoard,
+                targetDate: MentoryDate) {
         self.owner = owner
         self.targetDate = targetDate
     }
@@ -24,24 +24,24 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
 
 
     // MARK: state
-    nonisolated let id = UUID()
-    nonisolated let targetDate: MentoryDate
-    weak var owner: TodayBoard?
+    public nonisolated let id = UUID()
+    public nonisolated let targetDate: MentoryDate
+    public weak var owner: TodayBoard?
     
-    @Published var isDisabled: Bool = true
+    @Published public var isDisabled: Bool = true
     
-    @Published var mindAnalyzer: MindAnalyzer? = nil
+    @Published public var mindAnalyzer: MindAnalyzer? = nil
 
-    @Published var titleInput: String = ""
-    @Published var textInput: String = ""
-    @Published var imageInput: Data? = nil
-    @Published var voiceInput: URL? = nil
+    @Published public var titleInput: String = ""
+    @Published public var textInput: String = ""
+    @Published public var imageInput: Data? = nil
+    @Published public var voiceInput: URL? = nil
     
-    @Published var canProceed: Bool = false
+    @Published public var canProceed: Bool = false
     
     
     // MARK: action
-    func checkDisability() async {
+    public func checkDisability() async {
         // capture
         let recordDate = self.targetDate
         logger.debug("targetDate: \(recordDate.rawValue)")
@@ -74,7 +74,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         logger.debug("isDisabled: \(self.isDisabled)")
     }
     
-    func validateInput() {
+    public func validateInput() {
         // capture
         let title = self.titleInput
         let text = self.textInput
@@ -88,7 +88,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         // mutate
         self.canProceed = canUserProceed
     }
-    func submit() async {
+    public func submit() async {
         // capture
         guard self.mindAnalyzer == nil else {
             logger.error("이미 MindAnalyzer가 존재합니다.")
@@ -104,7 +104,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         self.mindAnalyzer = MindAnalyzer(owner: self)
     }
 
-    func removeForm() {
+    public func removeForm() {
         // capture
         let todayBoard = self.owner!
         
@@ -112,7 +112,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
         todayBoard.recordForms = []
     }
     
-    func finish() {
+    public func finish() {
         //capture
         let todayBoard = self.owner!
         
@@ -121,7 +121,7 @@ final class RecordForm: Sendable, ObservableObject, Identifiable {
     }
 
     // MARK: value
-    enum RecordCheckResult: Sendable, Hashable {
+    public enum RecordCheckResult: Sendable, Hashable {
         case recordAlreadyExist
         case recordNotExist
     }

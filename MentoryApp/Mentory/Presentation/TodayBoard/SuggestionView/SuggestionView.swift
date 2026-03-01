@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftUI
+import MentoryCore
 
 
 
@@ -93,5 +94,4 @@ fileprivate struct SuggestionPreview: View {
 #Preview {
     SuggestionPreview()
 }
-
 

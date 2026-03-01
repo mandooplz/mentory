@@ -14,12 +14,12 @@ import OSLog
 
 // MARK: Object
 @MainActor
-final class Suggestion: Sendable, ObservableObject, Identifiable {
+public final class Suggestion: Sendable, ObservableObject, Identifiable {
     // MARK: core
-    init(owner: TodayBoard,
-         target: SuggestionID,
-         content: String,
-         isDone: Bool) {
+    public init(owner: TodayBoard,
+                target: SuggestionID,
+                content: String,
+                isDone: Bool) {
         self.owner = owner
         self.target = target
         self.content = content
@@ -29,18 +29,18 @@ final class Suggestion: Sendable, ObservableObject, Identifiable {
     nonisolated private let logger = Logger(subsystem: "Suggestion", category: "Domain")
     
     // MARK: state
-    nonisolated let id: UUID = UUID()
+    public nonisolated let id: UUID = UUID()
     
-    weak var owner: TodayBoard?
+    public weak var owner: TodayBoard?
     
-    nonisolated let target: SuggestionID
-    nonisolated let content: String
+    public nonisolated let target: SuggestionID
+    public nonisolated let content: String
     
-    @Published var isDone: Bool
+    @Published public var isDone: Bool
     
     
     // MARK: action
-    func markDone() async {
+    public func markDone() async {
         // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!

@@ -7,6 +7,7 @@
 import SwiftUI
 import SwiftData
 import Values
+import MentoryCore
 
 
 // MARK: App

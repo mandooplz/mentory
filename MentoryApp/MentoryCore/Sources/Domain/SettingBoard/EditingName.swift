@@ -12,25 +12,25 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class EditingName: Sendable, ObservableObject{
+public final class EditingName: Sendable, ObservableObject{
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.RenameSheet", category: "Domain")
-    init(owner: SettingBoard, userName: String) {
+    public nonisolated let logger = Logger(subsystem: "MentoryiOS.RenameSheet", category: "Domain")
+    public init(owner: SettingBoard, userName: String) {
         self.owner = owner
         self.nameInput = userName
     }
     
     
     // MARK: state
-    nonisolated let id = UUID()
-    weak var owner: SettingBoard?
+    public nonisolated let id = UUID()
+    public weak var owner: SettingBoard?
     
-    @Published var nameInput: String
-    @Published var isSubmitDisabled: Bool = true
+    @Published public var nameInput: String
+    @Published public var isSubmitDisabled: Bool = true
     
     
     // MARK: action
-    func validate() {
+    public func validate() {
         // capture
         let newName = nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
         let currentName = owner?.owner!.userName ?? ""
@@ -47,7 +47,7 @@ final class EditingName: Sendable, ObservableObject{
         isSubmitDisabled = false
     }
 
-    func submit() async {
+    public func submit() async {
         // capture
         let newName = nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
         guard newName.isEmpty == false else {
@@ -71,7 +71,7 @@ final class EditingName: Sendable, ObservableObject{
         logger.info("사용자 이름이 \(newName, privacy: .public)로 변경되었습니다.")
     }
     
-    func cancel() async {
+    public func cancel() async {
         self.owner?.editingName = nil
     }
     
