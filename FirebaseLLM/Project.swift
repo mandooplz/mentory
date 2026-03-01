@@ -1,7 +1,7 @@
 import ProjectDescription
 
 let project = Project(
-    name: "FirebaseLLM",
+    name: "MentoryLLM",
     packages: [
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .branch("main")),
     ],

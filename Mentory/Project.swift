@@ -1,7 +1,7 @@
 import ProjectDescription
 
 let project = Project(
-    name: "Mentory",
+    name: "MentoryApp",
     packages: [
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.1.0")),
