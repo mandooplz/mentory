@@ -51,13 +51,13 @@ let project = Project(
             dependencies: [
                 .target(name: "MentoryWatch Watch App"),
                 .target(name: "MentoryWidgetExtension"),
-                .project(target: "iOSManager", path: "../iOSManager"),
+                .project(target: "iOSManager", path: "../MentoryDevice"),
                 .package(product: "Collections"),
                 .package(product: "DequeModule"),
                 .package(product: "AsyncAlgorithms"),
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
-                .project(target: "FirebaseLLMAdapter", path: "../FirebaseLLM"),
+                .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
             ],
             settings: .settings(
                 base: [
@@ -97,7 +97,7 @@ let project = Project(
             resources: [],
             dependencies: [
                 .target(name: "Mentory"),
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
             ],
             settings: .settings(

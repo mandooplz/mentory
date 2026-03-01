@@ -15,7 +15,7 @@ let project = Project(
             sources: ["Sources/MentoryDB/**"],
             resources: [],
             dependencies: [
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
             ]
         ),
         .target(
@@ -27,7 +27,7 @@ let project = Project(
             sources: ["Sources/MentoryDBFake/**"],
             resources: [],
             dependencies: [
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
                 .package(product: "Collections"),
             ]
         ),
@@ -40,7 +40,7 @@ let project = Project(
             sources: ["Sources/MentoryDBAdapter/**"],
             resources: [],
             dependencies: [
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
                 .target(name: "MentoryDB"),
                 .target(name: "MentoryDBFake"),
             ]
