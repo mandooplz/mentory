@@ -5,6 +5,11 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
     ],
+    settings: .settings(
+        base: [
+            "OTHER_SWIFT_FLAGS": "$(inherited) -package-name MentoryDB",
+        ]
+    ),
     targets: [
         .target(
             name: "MentoryDB",
@@ -43,6 +48,7 @@ let project = Project(
                 .project(target: "Values", path: "../MentoryShared"),
                 .target(name: "MentoryDB"),
                 .target(name: "MentoryDBFake"),
+                .package(product: "DequeModule"),
             ]
         ),
     ]
