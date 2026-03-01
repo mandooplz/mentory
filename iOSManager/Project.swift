@@ -1,7 +1,7 @@
 import ProjectDescription
 
 let project = Project(
-    name: "iOSManager",
+    name: "MentoryDevice",
     targets: [
         .target(
             name: "iOSManager",
