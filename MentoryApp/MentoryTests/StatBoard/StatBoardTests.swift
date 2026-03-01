@@ -8,7 +8,7 @@ import Foundation
 import Testing
 import Values
 import MentoryDBAdapter
-@testable import Mentory
+@testable import MentoryCore
 
 
 // MARK: Tests

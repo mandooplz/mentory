@@ -5,7 +5,7 @@
 //  Created by 구현모 on 11/15/25.
 //
 import Testing
-@testable import Mentory
+@testable import MentoryCore
 import Foundation
 import Values
 import MentoryDBAdapter

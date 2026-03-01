@@ -11,31 +11,31 @@ import OSLog
 
 // MARK: Object
 @MainActor
-final class Onboarding: Sendable, ObservableObject {
+public final class Onboarding: Sendable, ObservableObject {
     // MARK: core
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     
-    init(owner: MentoryiOS) {
+    public init(owner: MentoryiOS) {
         self.owner = owner
     }
     
     
     // MARK: state
-    nonisolated let id = UUID()
-    weak var owner: MentoryiOS?
+    public nonisolated let id = UUID()
+    public weak var owner: MentoryiOS?
     
     
-    @Published var nameInput: String = ""
-    func setName(_ newName: String) {
+    @Published public var nameInput: String = ""
+    public func setName(_ newName: String) {
         self.nameInput = newName
     }
     
-    @Published var validationResult: ValidationResult = .none
-    @Published private(set) var isUsed: Bool = false
+    @Published public var validationResult: ValidationResult = .none
+    @Published public private(set) var isUsed: Bool = false
     
     
     // MARK: action
-    func validateInput() {
+    public func validateInput() {
         // capture
         let currentInput = self.nameInput
         
@@ -48,7 +48,7 @@ final class Onboarding: Sendable, ObservableObject {
             return
         }
     }
-    func next() {
+    public func next() {
         // capture
         guard nameInput.isEmpty == false else {
             logger.error("Onboarding의 nameInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")
@@ -77,7 +77,7 @@ final class Onboarding: Sendable, ObservableObject {
     
     
     // MARK: value
-    nonisolated enum ValidationResult: String, Sendable, Hashable {
+    public nonisolated enum ValidationResult: String, Sendable, Hashable {
         case none
         case nameInputIsEmpty
     }

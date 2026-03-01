@@ -15,15 +15,15 @@ import iOSReminder
 
 // MARK: Object
 @MainActor
-final class MentoryiOS: Sendable, ObservableObject {
+public final class MentoryiOS: Sendable, ObservableObject {
     // MARK: core
-    nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
-    nonisolated let mentoryDB: any MentoryDBInterface
-    nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
+    public nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
+    public nonisolated let mentoryDB: any MentoryDBInterface
+    public nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
 
-    let reminderCenter: any ReminderNotificationInterface
+    public let reminderCenter: any ReminderNotificationInterface
 
-    init(_ mode: SystemMode = .test) {
+    public init(_ mode: SystemMode = .test) {
         switch mode {
         case .real:
             self.mentoryDB = MentoryDBAdapter()
@@ -40,8 +40,8 @@ final class MentoryiOS: Sendable, ObservableObject {
     // MARK: state
     public nonisolated let informationURL = URL(string: "https://nice-asp-f94.notion.site/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!
     
-    @Published var userName: String? = nil
-    func getGreetingText() -> String {
+    @Published public var userName: String? = nil
+    public func getGreetingText() -> String {
         guard let userName else {
             return "반가워요!"
         }
@@ -49,16 +49,16 @@ final class MentoryiOS: Sendable, ObservableObject {
         return "반가워요, \(userName)님!"
     }
     
-    @Published var onboardingFinished: Bool = false
+    @Published public var onboardingFinished: Bool = false
     
-    @Published var onboarding: Onboarding? = nil
-    @Published var todayBoard: TodayBoard? = nil
-    @Published var settingBoard: SettingBoard? = nil
-    @Published var statBoard: StatBoard? = nil
+    @Published public var onboarding: Onboarding? = nil
+    @Published public var todayBoard: TodayBoard? = nil
+    @Published public var settingBoard: SettingBoard? = nil
+    @Published public var statBoard: StatBoard? = nil
     
     
     // MARK: action
-    func setUp() {
+    public func setUp() {
         // capture
         guard onboardingFinished == false else {
             logger.error("Onboarding이 이미 완료되어 있어 종료됩니다.")
@@ -77,7 +77,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.onboarding = Onboarding(owner: self)
     }
     
-    func loadUserName() async {
+    public func loadUserName() async {
         // capture
         let mentoryDB = self.mentoryDB
         
@@ -103,7 +103,7 @@ final class MentoryiOS: Sendable, ObservableObject {
         self.todayBoard = TodayBoard(owner: self)
         self.settingBoard = SettingBoard(owner: self)
     }
-    func saveUserName() async {
+    public func saveUserName() async {
         // capture
         guard let userName else {
             logger.error("MentoryiOS에 userName이 존재하지 않습니다.")

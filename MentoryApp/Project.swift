@@ -14,6 +14,22 @@ let project = Project(
     ),
     targets: [
         .target(
+            name: "MentoryCore",
+            destinations: .iOS,
+            product: .staticFramework,
+            bundleId: "cloud.mandooplz.MentoryCore",
+            deploymentTargets: .iOS("26.1"),
+            infoPlist: .default,
+            sources: ["MentoryCore/Sources/**"],
+            resources: [],
+            dependencies: [
+                .project(target: "Values", path: "../MentoryShared"),
+                .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
+                .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
+                .project(target: "iOSReminder", path: "../MentoryDevice"),
+            ]
+        ),
+        .target(
             name: "Mentory",
             destinations: .iOS,
             product: .app,
@@ -49,15 +65,13 @@ let project = Project(
             ],
             entitlements: .file(path: "Mentory/Mentory.entitlements"),
             dependencies: [
+                .target(name: "MentoryCore"),
                 .target(name: "MentoryWatchApp"),
                 .target(name: "MentoryWidgetExtension"),
                 .project(target: "iOSReminder", path: "../MentoryDevice"),
                 .package(product: "Collections"),
-                .package(product: "DequeModule"),
                 .package(product: "AsyncAlgorithms"),
                 .project(target: "Values", path: "../MentoryShared"),
-                .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
-                .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
             ],
             settings: .settings(
                 base: [
@@ -97,6 +111,7 @@ let project = Project(
             resources: [],
             dependencies: [
                 .target(name: "Mentory"),
+                .target(name: "MentoryCore"),
                 .project(target: "Values", path: "../MentoryShared"),
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
             ],
@@ -147,6 +162,17 @@ let project = Project(
             )
         ),
         .target(
+            name: "MentoryWatchCore",
+            destinations: .watchOS,
+            product: .staticFramework,
+            bundleId: "cloud.mandooplz.MentoryWatchCore",
+            deploymentTargets: .watchOS("26.2"),
+            infoPlist: .default,
+            sources: ["MentoryWatchCore/Sources/**"],
+            resources: [],
+            dependencies: []
+        ),
+        .target(
             name: "MentoryWatchApp",
             destinations: .watchOS,
             product: .app,
@@ -164,6 +190,9 @@ let project = Project(
             sources: ["MentoryWatchApp/**/*.swift"],
             resources: ["MentoryWatchApp/Presentation/Assets.xcassets"],
             entitlements: .file(path: "MentoryWatchApp/MentoryWatchApp.entitlements"),
+            dependencies: [
+                .target(name: "MentoryWatchCore"),
+            ],
             settings: .settings(
                 base: [
                     "CODE_SIGN_STYLE": "Manual",

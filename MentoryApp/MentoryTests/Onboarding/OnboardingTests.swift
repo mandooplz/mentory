@@ -6,7 +6,7 @@
 //
 import Testing
 import Foundation
-@testable import Mentory
+@testable import MentoryCore
 
 
 // MARK: Tests

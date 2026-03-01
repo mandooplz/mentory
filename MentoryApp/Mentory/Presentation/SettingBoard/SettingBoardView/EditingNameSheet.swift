@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import MentoryCore
 
 // MARK: View
 struct EditingNameSheet: View {

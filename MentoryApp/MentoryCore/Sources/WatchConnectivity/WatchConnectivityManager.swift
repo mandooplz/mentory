@@ -8,35 +8,34 @@ import Foundation
 import Combine
 import OSLog
 import WatchConnectivity
-import Collections
 
 
 
 // MARK: Object
 @MainActor @Observable
-final class WatchConnectivityManager {
+public final class WatchConnectivityManager {
     // MARK: core
     private let logger = Logger()
-    static let shared = WatchConnectivityManager()
+    public static let shared = WatchConnectivityManager()
     private init() { }
 
     // MARK: state
-    var message: String? = nil
-    var character: String? = nil
-    var todos: [String] = []
-    var todoCompletions: [Bool] = []
+    public var message: String? = nil
+    public var character: String? = nil
+    public var todos: [String] = []
+    public var todoCompletions: [Bool] = []
     
     private(set) var isPaired: Bool = false
     private(set) var isWatchAppInstalled: Bool = false
     private(set) var isReachable: Bool = false
 
     private var session: WCSession = .default
-    var handlers: HandlerSet? = nil
+    public var handlers: HandlerSet? = nil
     
 
 
     // MARK: action
-    func setUp() async {
+    public func setUp() async {
         // capture
         guard let handlers else {
             logger.error("Handler가 설정되지 않았습니다.")
@@ -65,7 +64,7 @@ final class WatchConnectivityManager {
         logger.debug("WatchConnectivityManager 설정 완료")
     }
     
-    func updateContext() async {
+    public func updateContext() async {
         // capture
         let message = self.message ?? ""
         let character = self.character ?? ""
@@ -94,16 +93,16 @@ final class WatchConnectivityManager {
     
     
     // MARK: value
-    typealias StateHandler = @Sendable (ConnectionState) -> Void
-    typealias TodoHandler = @Sendable (String, Bool) -> Void
+    public typealias StateHandler = @Sendable (ConnectionState) -> Void
+    public typealias TodoHandler = @Sendable (String, Bool) -> Void
     
-    struct ConnectionState: Sendable, Hashable {
-        let isPaired: Bool
-        let isWatchAppInstalled: Bool
-        let isReachable: Bool
+    public struct ConnectionState: Sendable, Hashable {
+        public let isPaired: Bool
+        public let isWatchAppInstalled: Bool
+        public let isReachable: Bool
     }
     
-    final nonisolated class HandlerSet: NSObject, WCSessionDelegate {
+    public final nonisolated class HandlerSet: NSObject, WCSessionDelegate {
         // MARK: core
         private let logger = Logger()
         let activateHandler: StateHandler?
@@ -113,7 +112,7 @@ final class WatchConnectivityManager {
             self.activateHandler = activateHandler
             self.todoHandler = todoHandler
         }
-        convenience init(todoHandler: @escaping TodoHandler) {
+        public convenience init(todoHandler: @escaping TodoHandler) {
             self.init(activateHandler: nil, todoHandler: todoHandler)
         }
         
@@ -123,7 +122,7 @@ final class WatchConnectivityManager {
         }
         
         
-        func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+        public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
             let connectionState = ConnectionState(
                 isPaired: session.isPaired,
                 isWatchAppInstalled: session.isWatchAppInstalled,
@@ -133,16 +132,16 @@ final class WatchConnectivityManager {
             activateHandler?(connectionState)
         }
         
-        func sessionDidBecomeInactive(_ session: WCSession) {
+        public func sessionDidBecomeInactive(_ session: WCSession) {
             // Watch가 새로운 기기로 전환하는 중
         }
         
-        func sessionDidDeactivate(_ session: WCSession) {
+        public func sessionDidDeactivate(_ session: WCSession) {
             // Watch가 전환 완료
             session.activate()
         }
         
-        func sessionReachabilityDidChange(_ session: WCSession) {
+        public func sessionReachabilityDidChange(_ session: WCSession) {
             let connectionState = ConnectionState(
                 isPaired: session.isPaired,
                 isWatchAppInstalled: session.isWatchAppInstalled,
@@ -152,7 +151,7 @@ final class WatchConnectivityManager {
             activateHandler?(connectionState)
         }
         
-        func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+        public func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
             guard let action = message["action"] as? String,
                   action == "todoCompletion",
                   let todoText = message["todoText"] as? String,

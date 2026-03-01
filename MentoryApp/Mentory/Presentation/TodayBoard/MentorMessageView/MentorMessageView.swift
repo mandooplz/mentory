@@ -7,6 +7,7 @@
 import Foundation
 import SwiftUI
 import Values
+import MentoryCore
 
 
 
@@ -89,4 +90,3 @@ fileprivate struct MentorMessagePreview: View {
 #Preview {
     MentorMessagePreview()
 }
-

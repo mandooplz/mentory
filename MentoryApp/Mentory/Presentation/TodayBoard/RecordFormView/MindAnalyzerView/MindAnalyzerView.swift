@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import Values
+import MentoryCore
 
 // MARK: View
 struct MindAnalyzerView: View {

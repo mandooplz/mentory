@@ -14,30 +14,30 @@ import MentoryDBAdapter
 
 // MARK: Object
 @MainActor
-final class MentorMessage: Sendable, ObservableObject {
+public final class MentorMessage: Sendable, ObservableObject {
     // MARK: core
     nonisolated private let logger = Logger(subsystem: "MentorMessage", category: "Domain")
-    init(owner: TodayBoard) {
+    public init(owner: TodayBoard) {
         self.owner = owner
     }
     
     
     // MARK: state
-    nonisolated let id = UUID()
-    weak var owner: TodayBoard?
+    public nonisolated let id = UUID()
+    public weak var owner: TodayBoard?
     
-    var recentUpdate: MentoryDate? = nil
-    @Published var content: String? = nil
-    @Published var character: MentoryCharacter? = nil
+    public var recentUpdate: MentoryDate? = nil
+    @Published public var content: String? = nil
+    @Published public var character: MentoryCharacter? = nil
     
-    func resetContent() {
+    public func resetContent() {
         self.content = nil
     }
     
     
     // MARK: action
     
-    func updateContent() async {
+    public func updateContent() async {
         let todayBoard = self.owner!
         let currentDate = todayBoard.currentDate
         logger.debug("currentDate는요:\(currentDate.rawValue)")
