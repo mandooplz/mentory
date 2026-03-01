@@ -38,11 +38,9 @@
   - [설치 방법](#설치-방법)
   - [환경 설정](#환경-설정)
   - [실행 방법](#실행-방법)
-  - [Tuist 기반 최초 빌드 및 실행 절차](#tuist-기반-최초-빌드-및-실행-절차)
+- [Tuist 기반 최초 빌드 및 실행 절차](#tuist-기반-최초-빌드-및-실행-절차)
 - [소프트웨어 디자인](#소프트웨어-디자인)
 - [프로젝트 구조](#프로젝트-구조)
-- [개발 문서](#개발-문서)
-- [트러블슈팅 문서](#트러블슈팅-문서)
 - [팀원](#팀원)
 
 ## 관련 링크
@@ -415,35 +413,6 @@ Mentory/
 - **Values**: 도메인 간 공유되는 값 타입과 프로토콜
 
 각 계층은 의존성 역전 원칙(DIP)을 따르며, Mock 객체를 통해 테스트 가능하도록 설계되었습니다.
-
-## 개발 문서
-
-- [이슈(Issue) 작성하기](docs/write-issue/README.md)
-- [SwiftUI에서 Combine 기반 MVVM 사용하기](docs/swiftui-combine-mvvm/README.md)
-- [MVVM에 Swift Concurrency 도입하기](docs/mvvm-swift-concurrency/README.md)
-- [SwiftData 구현 가이드](docs/swiftdata/README.md)
-- [Alan API 사용법](docs/alan-api/README.md)
-- [WatchOS 기초](docs/watchos/README.md)
-- [WatchConnectivity 이해하기](docs/watchos/watchconnectivity.md)
-- [Widget Extension 개념 이해하기](docs/Widget-Extension/README.md)
-- [Firebase AI 사용하기](docs/firebase-ai/README.md)
-
-## 트러블슈팅 문서
-
-아래는 팀원별로 개발을 진행하며 겪은 문제에 대한 트러블슈팅 문서입니다. 새로운 문서를 추가하려면 `docs/troubleshooting/<이름-폴더>/YYYYMMDD-short-title.md` 형식으로 새 마크다운 파일을 만들고, 아래에 문서 참조를 추가하면 됩니다.
-
-1. 박재이
-   - [2025-11-19 MindAnalyze API 호출 시 결과 미반환](docs/troubleshooting/parkjay/mindanalyze-recordform-reset.md)
-2. 송지석
-   - [2025-11-18 설정 탭 화면이 표시되지 않는 문제](docs/troubleshooting/jiseok/2025-11-18-Tabbar-view.md)
-   - [2025-12-09 App Group & Signing — “Unknown Name (Team ID)” 문제](docs/troubleshooting/jiseok/2025-12-9-appgroup-signing.md)
-3. 구현모
-   - [2025-11-17 앱 아이콘 설정](docs/troubleshooting/hyeonmo/20251117-app-icon.md)
-   - [2025-12-02 WatchConnectivity MainActor 동시성 충돌](docs/troubleshooting/hyeonmo/20251202-watchconnectivity.md)
-   - [2025-12-03 WatchConnectivity Manager-Engine 분리 리팩토링](docs/troubleshooting/hyeonmo/20251203-watchconnectivity-refactoring.md)
-   - [2025-12-04 Firebase LLM 음성 파일 포맷 오류](docs/troubleshooting/hyeonmo/20251204-firebase-audio-format.md)
-4. 김민우
-   - 작성된 문서 없음
 
 ## 팀원
 
