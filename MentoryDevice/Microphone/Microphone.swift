@@ -8,13 +8,14 @@ import Foundation
 import OSLog
 import Speech
 import AVFoundation
+import Observation
 
 
 // MARK: Object
 @MainActor @Observable
-final class Microphone: Sendable {
+public final class Microphone: Sendable {
     // MARK: core
-    static let shared = Microphone()
+    public static let shared = Microphone()
     private init() { }
     
     private nonisolated let logger = Logger(subsystem: "MentoryiOS.Microphone", category: "Presentation")
@@ -22,18 +23,18 @@ final class Microphone: Sendable {
     
     
     // MARK: state
-    private(set) var isSetUp: Bool = false
+    public private(set) var isSetUp: Bool = false
     private var engine: AudioEngine? = nil
     
-    private(set) var audioURL: URL? = nil
-    private(set) var recordingTime: TimeInterval = 0
-    private(set) var recognizedText: String = ""
+    public private(set) var audioURL: URL? = nil
+    public private(set) var recordingTime: TimeInterval = 0
+    public private(set) var recognizedText: String = ""
     
-    private(set) var isListening: Bool = false
+    public private(set) var isListening: Bool = false
     
     
     // MARK: action
-    func setUp() async {
+    public func setUp() async {
         // capture
         guard isSetUp == false else {
             logger.error("이미 Microphone이 setUp되어 있습니다.")
@@ -60,7 +61,7 @@ final class Microphone: Sendable {
         self.engine = AudioEngine()
     }
     
-    func startListening() async {
+    public func startListening() async {
         // capture
         guard isListening == false else {
             logger.error("이미 음성 인식 중입니다.")
@@ -86,7 +87,7 @@ final class Microphone: Sendable {
         // mutate
         self.isListening = true
     }
-    func stopListening() async {
+    public func stopListening() async {
         // capture
         logger.debug("현재 Microphone.isListening: \(self.isListening)")
         
@@ -105,7 +106,7 @@ final class Microphone: Sendable {
         self.isListening = false
     }
     
-    func startTimer() {
+    public func startTimer() {
         // capture
         let currentTimer = self.timer
         
@@ -122,7 +123,7 @@ final class Microphone: Sendable {
         newTimer.fire()
         self.timer = newTimer
     }
-    func stopTimer() {
+    public func stopTimer() {
         // process
         timer?.invalidate()
         
