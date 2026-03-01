@@ -51,19 +51,19 @@ let project = Project(
             ),
             sources: [
                 .glob(
-                    "Mentory/**/*.swift",
+                    "MentoryApp/**/*.swift",
                     excluding: [
-                        "Mentory/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerLayout.swift",
-                        "Mentory/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerView.swift",
+                        "MentoryApp/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerLayout.swift",
+                        "MentoryApp/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerView.swift",
                     ]
                 ),
             ],
             resources: [
-                "Mentory/Assets.xcassets",
-                "Mentory/GoogleService-Info.plist",
+                "MentoryApp/Assets.xcassets",
+                "MentoryApp/GoogleService-Info.plist",
                 "Secrets.xcconfig.sample",
             ],
-            entitlements: .file(path: "Mentory/Mentory.entitlements"),
+            entitlements: .file(path: "MentoryApp/Mentory.entitlements"),
             dependencies: [
                 .target(name: "MentoryCore"),
                 .target(name: "MentoryWatchApp"),

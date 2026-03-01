@@ -272,8 +272,8 @@
 
 2. iOS 앱 추가 및 `GoogleService-Info.plist` 다운로드
 
-3. 다운로드한 파일을 프로젝트의 `MentoryApp/Mentory/` 디렉토리에 추가
-   - Xcode에서 [MentoryApp/Mentory](MentoryApp/Mentory) 폴더에 드래그 앤 드롭
+3. 다운로드한 파일을 프로젝트의 `MentoryApp/MentoryApp/` 디렉토리에 추가
+   - Xcode에서 [MentoryApp/MentoryApp](MentoryApp/MentoryApp) 폴더에 드래그 앤 드롭
    - **Copy items if needed** 체크
 
 4. Firebase AI 기능 활성화
@@ -316,7 +316,7 @@
    ```bash
    cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
    ```
-3. Firebase에서 받은 `GoogleService-Info.plist`를 `MentoryApp/Mentory/`에 추가
+3. Firebase에서 받은 `GoogleService-Info.plist`를 `MentoryApp/MentoryApp/`에 추가
 4. Tuist 의존성 설치 및 워크스페이스 생성
    ```bash
    tuist install

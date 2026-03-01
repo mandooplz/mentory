@@ -8,12 +8,13 @@ import Foundation
 import Combine
 import OSLog
 import WatchConnectivity
+import MentoryCore
 
 
 
 // MARK: Object
 @MainActor @Observable
-public final class WatchConnectivityManager {
+public final class WatchConnectivityManager: WatchConnectivityInterface {
     // MARK: core
     private let logger = Logger()
     public static let shared = WatchConnectivityManager()
@@ -35,6 +36,10 @@ public final class WatchConnectivityManager {
 
 
     // MARK: action
+    public func configureTodoHandler(_ handler: @escaping WatchTodoHandler) {
+        self.handlers = HandlerSet(todoHandler: handler)
+    }
+    
     public func setUp() async {
         // capture
         guard let handlers else {
@@ -64,7 +69,17 @@ public final class WatchConnectivityManager {
         logger.debug("WatchConnectivityManager 설정 완료")
     }
     
-    public func updateContext() async {
+    public func updateContext(
+        message: String?,
+        character: String?,
+        todos: [String],
+        todoCompletions: [Bool]
+    ) async {
+        self.message = message
+        self.character = character
+        self.todos = todos
+        self.todoCompletions = todoCompletions
+        
         // capture
         let message = self.message ?? ""
         let character = self.character ?? ""
