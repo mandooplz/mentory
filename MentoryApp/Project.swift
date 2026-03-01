@@ -27,13 +27,14 @@ let project = Project(
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
                 .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
                 .project(target: "iOSReminder", path: "../MentoryDevice"),
-                .project(target: "WathManager", path: "../MentoryDevice"),
+                .project(target: "WatchManager", path: "../MentoryDevice"),
             ]
         ),
         .target(
-            name: "Mentory",
+            name: "MentoryApp",
             destinations: .iOS,
             product: .app,
+            productName: "Mentory",
             bundleId: "cloud.mandooplz.Mentory",
             deploymentTargets: .iOS("26.1"),
             infoPlist: .extendingDefault(
@@ -70,7 +71,9 @@ let project = Project(
                 .target(name: "MentoryWatchApp"),
                 .target(name: "MentoryWidgetExtension"),
                 .project(target: "iOSReminder", path: "../MentoryDevice"),
-                .project(target: "WathManager", path: "../MentoryDevice"),
+                .project(target: "WatchManager", path: "../MentoryDevice"),
+                .project(target: "ImagePicker", path: "../MentoryDevice"),
+                .project(target: "Microphone", path: "../MentoryDevice"),
                 .package(product: "Collections"),
                 .package(product: "AsyncAlgorithms"),
                 .project(target: "Values", path: "../MentoryShared"),
@@ -112,7 +115,7 @@ let project = Project(
             sources: ["MentoryTests/**/*.swift"],
             resources: [],
             dependencies: [
-                .target(name: "Mentory"),
+                .target(name: "MentoryApp"),
                 .target(name: "MentoryCore"),
                 .project(target: "Values", path: "../MentoryShared"),
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),

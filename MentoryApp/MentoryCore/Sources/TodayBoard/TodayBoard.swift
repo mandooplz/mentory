@@ -9,7 +9,7 @@ import Combine
 import Values
 import OSLog
 import MentoryDBAdapter
-import WathManager
+import WatchManager
 
 
 // MARK: Object

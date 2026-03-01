@@ -11,7 +11,7 @@ import Values
 import FirebaseLLMAdapter
 import MentoryDBAdapter
 import iOSReminder
-import WathManager
+import WatchManager
 
 
 // MARK: Object

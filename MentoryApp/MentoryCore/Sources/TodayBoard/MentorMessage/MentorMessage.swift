@@ -10,7 +10,7 @@ import Values
 import OSLog
 import FirebaseLLMAdapter
 import MentoryDBAdapter
-import WathManager
+import WatchManager
 
 
 // MARK: Object
