@@ -2,9 +2,6 @@ import ProjectDescription
 
 let project = Project(
     name: "iOSManager",
-    packages: [
-        .package(path: "../Values"),
-    ],
     targets: [
         .target(
             name: "iOSManager",
@@ -19,7 +16,7 @@ let project = Project(
                 public: ["iOSManager/iOSManager.h"]
             ),
             dependencies: [
-                .package(product: "Values"),
+                .project(target: "Values", path: "../Values"),
             ],
             settings: .settings(
                 base: [
