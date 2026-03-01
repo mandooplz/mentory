@@ -8,6 +8,7 @@ import SwiftUI
 import SwiftData
 import Values
 import MentoryCore
+import WathManager
 
 
 // MARK: App

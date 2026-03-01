@@ -7,8 +7,8 @@
 import Foundation
 import Combine
 import OSLog
+import Observation
 import WatchConnectivity
-import MentoryCore
 
 
 
