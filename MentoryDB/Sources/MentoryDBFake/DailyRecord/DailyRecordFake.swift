@@ -11,7 +11,7 @@ import Collections
 
 // MARK: Fake
 @MainActor
-package final class DailyRecordFake: Sendable {
+public final class DailyRecordFake: Sendable {
     // MARK: core
     init(owner: MentoryDatabaseFake? = nil,
          ticketId: UUID,
@@ -34,18 +34,18 @@ package final class DailyRecordFake: Sendable {
     
     nonisolated let ticketId: UUID
     
-    nonisolated package let recordDate: MentoryDate
-    nonisolated package let createAt: MentoryDate
+    nonisolated public let recordDate: MentoryDate
+    nonisolated public let createAt: MentoryDate
     
-    package var analyzedContent: String
-    package var emotion: Emotion
+    public var analyzedContent: String
+    public var emotion: Emotion
     
     var createSuggestionQueue: Deque<SuggestionData> = []
-    package func insertTicket(_ suggestionDatas: [SuggestionData]) {
+    public func insertTicket(_ suggestionDatas: [SuggestionData]) {
         self.createSuggestionQueue.append(contentsOf: suggestionDatas)
     }
     var suggestions: [DailySuggestionFake] = []
-    package func getSuggestions() -> [SuggestionData] {
+    public func getSuggestions() -> [SuggestionData] {
         return self.suggestions
             .map { dailySuggestion in
                 SuggestionData(
@@ -58,7 +58,7 @@ package final class DailyRecordFake: Sendable {
 
 
     // MARK: action
-    package func createDailySuggestions() {
+    public func createDailySuggestions() {
         // mutate
         while createSuggestionQueue.isEmpty == false {
             let suggestionData = createSuggestionQueue.removeFirst()
