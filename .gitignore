@@ -28,3 +28,8 @@ mentory.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
 mentory.xcworkspace/xcshareddata/xcschemes/
 iOSManager/iOSManager.xcodeproj/project.xcworkspace/
 iOSManager/iOSManager.xcodeproj/xcshareddata/
+
+# Tuist-generated IDE containers (regenerate with `tuist generate`)
+Mentory/Mentory.xcodeproj/
+iOSManager/iOSManager.xcodeproj/
+mentory.xcworkspace/
