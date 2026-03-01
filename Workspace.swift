@@ -6,13 +6,12 @@ let workspace = Workspace(
         "Mentory",
         "iOSManager",
         "Values",
+        "MentoryDB",
     ],
     additionalFiles: [
         "README.md",
         "docs/**",
         "FirebaseLLM/Package.swift",
         "FirebaseLLM/Sources/**",
-        "MentoryDB/Package.swift",
-        "MentoryDB/Sources/**",
     ]
 )
