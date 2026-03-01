@@ -7,7 +7,6 @@ let project = Project(
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.1.0")),
         .package(path: "../FirebaseLLM"),
         .package(path: "../MentoryDB"),
-        .package(path: "../Values"),
     ],
     settings: .settings(
         configurations: [
@@ -60,7 +59,7 @@ let project = Project(
                 .package(product: "AsyncAlgorithms"),
                 .package(product: "FirebaseLLMAdapter"),
                 .package(product: "MentoryDBAdapter"),
-                .package(product: "Values"),
+                .project(target: "Values", path: "../Values"),
             ],
             settings: .settings(
                 base: [
@@ -100,7 +99,7 @@ let project = Project(
             resources: [],
             dependencies: [
                 .target(name: "Mentory"),
-                .package(product: "Values"),
+                .project(target: "Values", path: "../Values"),
                 .package(product: "MentoryDBAdapter"),
             ],
             settings: .settings(
