@@ -254,7 +254,7 @@
 
 1. `Secrets.xcconfig.sample` 파일을 복사하여 `Secrets.xcconfig` 파일 생성
    ```bash
-   cp Mentory/Secrets.xcconfig.sample Mentory/Secrets.xcconfig
+   cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
    ```
 
 2. `Secrets.xcconfig` 파일을 열어 ESTSOFT에서 제공받은 API 토큰 입력
@@ -272,8 +272,8 @@
 
 2. iOS 앱 추가 및 `GoogleService-Info.plist` 다운로드
 
-3. 다운로드한 파일을 프로젝트의 `Mentory/Mentory/` 디렉토리에 추가
-   - Xcode에서 [Mentory/Mentory](Mentory/Mentory) 폴더에 드래그 앤 드롭
+3. 다운로드한 파일을 프로젝트의 `MentoryApp/Mentory/` 디렉토리에 추가
+   - Xcode에서 [MentoryApp/Mentory](MentoryApp/Mentory) 폴더에 드래그 앤 드롭
    - **Copy items if needed** 체크
 
 4. Firebase AI 기능 활성화
@@ -312,11 +312,11 @@
    git clone https://github.com/EST-iOS4/Mentory.git
    cd Mentory
    ```
-2. `Mentory/Secrets.xcconfig` 생성 후 `TOKEN` 값 설정
+2. `MentoryApp/Secrets.xcconfig` 생성 후 `TOKEN` 값 설정
    ```bash
-   cp Mentory/Secrets.xcconfig.sample Mentory/Secrets.xcconfig
+   cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
    ```
-3. Firebase에서 받은 `GoogleService-Info.plist`를 `Mentory/Mentory/`에 추가
+3. Firebase에서 받은 `GoogleService-Info.plist`를 `MentoryApp/Mentory/`에 추가
 4. Tuist 의존성 설치 및 워크스페이스 생성
    ```bash
    tuist install
@@ -343,7 +343,7 @@
 
 ```
 Mentory/
-├── Mentory/                          # 메인 iOS 앱
+├── MentoryApp/                       # 메인 iOS 앱 프로젝트
 │   ├── MentoryApp.swift             # 앱 진입점
 │   ├── Domain/                      # 비즈니스 로직 계층
 │   │   ├── MentoryiOS.swift        # 메인 도메인 모델
@@ -388,7 +388,7 @@ Mentory/
 │   ├── MentoryWidgetBundle.swift   # 위젯 번들
 │   └── Presentation/               # 위젯 UI
 │
-├── Values/                          # 공유 값 타입 및 프로토콜
+├── MentoryShared/                   # 공유 값 타입 및 프로토콜 프로젝트 (Values 모듈)
 │   ├── MentoryiOS/                 # iOS 앱 관련 값 타입
 │   ├── MentoryDB/                  # DB 관련 값 타입
 │   ├── AlanLLM/                    # Alan LLM 관련 값 타입
@@ -410,7 +410,7 @@ Mentory/
 - **Presentation**: SwiftUI 뷰와 뷰모델을 포함하는 UI 계층
 - **Adapter**: 외부 서비스(LLM, DB, 알림 등)와의 통신을 담당하는 계층
 - **Service**: 공통 기능(마이크, 이미지 피커, Watch 연동)을 제공하는 계층
-- **Values**: 도메인 간 공유되는 값 타입과 프로토콜
+- **MentoryShared (Values 모듈)**: 도메인 간 공유되는 값 타입과 프로토콜
 
 각 계층은 의존성 역전 원칙(DIP)을 따르며, Mock 객체를 통해 테스트 가능하도록 설계되었습니다.
 

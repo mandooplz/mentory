@@ -2,8 +2,8 @@
 GoogleInfo-Info.plist
 **/GoogleService-Info.plist
 GoogleService-Info.plist
-Mentory/GoogleService-Info.plist
-Mentory/Mentory/GoogleService-Info.plist
+MentoryApp/GoogleService-Info.plist
+MentoryApp/Mentory/GoogleService-Info.plist
 
 # Secrets (ALAN API key)
 Config/Secrets.xcconfig
@@ -26,13 +26,13 @@ xcuserdata/
 # Generated workspace/project internals
 mentory.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
 mentory.xcworkspace/xcshareddata/xcschemes/
-iOSManager/*.xcodeproj/project.xcworkspace/
-iOSManager/*.xcodeproj/xcshareddata/
+MentoryDevice/*.xcodeproj/project.xcworkspace/
+MentoryDevice/*.xcodeproj/xcshareddata/
 
 # Tuist-generated IDE containers (regenerate with `tuist generate`)
-Mentory/*.xcodeproj/
-iOSManager/*.xcodeproj/
+MentoryApp/*.xcodeproj/
+MentoryDevice/*.xcodeproj/
 mentory.xcworkspace/
-Values/*.xcodeproj/
+MentoryShared/*.xcodeproj/
 MentoryDB/*.xcodeproj/
-FirebaseLLM/*.xcodeproj/
+MentoryLLM/*.xcodeproj/

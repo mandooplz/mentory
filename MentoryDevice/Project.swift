@@ -16,7 +16,7 @@ let project = Project(
                 public: ["iOSManager/iOSManager.h"]
             ),
             dependencies: [
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
             ],
             settings: .settings(
                 base: [

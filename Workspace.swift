@@ -3,11 +3,11 @@ import ProjectDescription
 let workspace = Workspace(
     name: "mentory",
     projects: [
-        "Mentory",
-        "iOSManager",
-        "Values",
+        "MentoryApp",
+        "MentoryDevice",
+        "MentoryShared",
         "MentoryDB",
-        "FirebaseLLM",
+        "MentoryLLM",
     ],
     additionalFiles: [
         "README.md",

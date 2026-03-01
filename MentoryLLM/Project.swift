@@ -15,7 +15,7 @@ let project = Project(
             sources: ["Sources/FirebaseLLMFake/**"],
             resources: [],
             dependencies: [
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
             ]
         ),
         .target(
@@ -28,7 +28,7 @@ let project = Project(
             resources: [],
             dependencies: [
                 .target(name: "FirebaseLLMFake"),
-                .project(target: "Values", path: "../Values"),
+                .project(target: "Values", path: "../MentoryShared"),
                 .package(product: "FirebaseAI"),
                 .package(product: "FirebaseAILogic"),
                 .package(product: "FirebaseCore"),
