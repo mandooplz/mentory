@@ -5,7 +5,6 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.1.0")),
-        .package(path: "../FirebaseLLM"),
     ],
     settings: .settings(
         configurations: [
@@ -56,9 +55,9 @@ let project = Project(
                 .package(product: "Collections"),
                 .package(product: "DequeModule"),
                 .package(product: "AsyncAlgorithms"),
-                .package(product: "FirebaseLLMAdapter"),
                 .project(target: "Values", path: "../Values"),
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
+                .project(target: "FirebaseLLMAdapter", path: "../FirebaseLLM"),
             ],
             settings: .settings(
                 base: [
