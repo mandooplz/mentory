@@ -1,6 +1,6 @@
 //
 //  ReminderNotificationAdapter.swift
-//  MentoryDevice
+//  iOSReminder
 //
 //  Created by 김민우 on 12/23/25.
 //

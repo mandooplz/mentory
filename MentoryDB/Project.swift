@@ -7,10 +7,10 @@ let project = Project(
     ],
     targets: [
         .target(
-            name: "MentoryDB",
+            name: "MentoryDBCore",
             destinations: .iOS,
             product: .staticLibrary,
-            bundleId: "cloud.mandooplz.MentoryDB",
+            bundleId: "cloud.mandooplz.MentoryDBCore",
             deploymentTargets: .iOS("26.1"),
             sources: ["Sources/MentoryDB/**"],
             resources: [],
@@ -41,7 +41,7 @@ let project = Project(
             resources: [],
             dependencies: [
                 .project(target: "Values", path: "../MentoryShared"),
-                .target(name: "MentoryDB"),
+                .target(name: "MentoryDBCore"),
                 .target(name: "MentoryDBFake"),
                 .package(product: "DequeModule"),
             ]

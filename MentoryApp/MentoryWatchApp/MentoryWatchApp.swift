@@ -1,6 +1,6 @@
 //
 //  MentoryWatchApp.swift
-//  MentoryWatch Watch App
+//  MentoryWatchApp
 //
 //  Created by 구현모 on 11/19/25.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct MentoryWatch_Watch_AppApp: App {
+struct MentoryWatchAppApp: App {
     // MARK: WatchConnectivity
     @State private var watchConnectivity = WatchConnectManager.shared
 

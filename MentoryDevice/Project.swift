@@ -4,13 +4,13 @@ let project = Project(
     name: "MentoryDevice",
     targets: [
         .target(
-            name: "MentoryDevice",
+            name: "iOSReminder",
             destinations: .iOS,
             product: .framework,
-            bundleId: "cloud.mandooplz.MentoryDevice",
+            bundleId: "cloud.mandooplz.iOSReminder",
             deploymentTargets: .iOS("26.1"),
             infoPlist: .default,
-            sources: ["MentoryDevice/**/*.swift"],
+            sources: ["iOSReminder/**/*.swift"],
             resources: [],
             dependencies: [
                 .project(target: "Values", path: "../MentoryShared"),

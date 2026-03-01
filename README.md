@@ -290,7 +290,7 @@
 
 #### watchOS 앱 실행
 
-1. Xcode에서 타겟을 **MentoryWatch Watch App**으로 선택
+1. Xcode에서 타겟을 **MentoryWatchApp**으로 선택
 2. Watch 시뮬레이터 선택
 3. `Cmd + R` 또는 실행 버튼 클릭
 
@@ -379,7 +379,7 @@ Mentory/
 │   └── Domain/                     # DB 도메인 모델
 │       └── DailyRecord/            # 일일 감정 기록 모델
 │
-├── MentoryWatch Watch App/          # watchOS 앱
+├── MentoryWatchApp/                 # watchOS 앱
 │   ├── Domain/                     # Watch 앱 비즈니스 로직
 │   ├── Service/                    # Watch 앱 서비스
 │   └── Presentation/.              # UI 계층

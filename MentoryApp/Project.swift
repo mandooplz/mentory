@@ -49,9 +49,9 @@ let project = Project(
             ],
             entitlements: .file(path: "Mentory/Mentory.entitlements"),
             dependencies: [
-                .target(name: "MentoryWatch Watch App"),
+                .target(name: "MentoryWatchApp"),
                 .target(name: "MentoryWidgetExtension"),
-                .project(target: "MentoryDevice", path: "../MentoryDevice"),
+                .project(target: "iOSReminder", path: "../MentoryDevice"),
                 .package(product: "Collections"),
                 .package(product: "DequeModule"),
                 .package(product: "AsyncAlgorithms"),
@@ -147,10 +147,10 @@ let project = Project(
             )
         ),
         .target(
-            name: "MentoryWatch Watch App",
+            name: "MentoryWatchApp",
             destinations: .watchOS,
             product: .app,
-            productName: "MentoryWatchWatchApp",
+            productName: "MentoryWatchApp",
             bundleId: "cloud.mandooplz.Mentory.watch",
             deploymentTargets: .watchOS("26.2"),
             infoPlist: .extendingDefault(
@@ -161,9 +161,9 @@ let project = Project(
                     "UISupportedInterfaceOrientations": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
                 ]
             ),
-            sources: ["MentoryWatch Watch App/**/*.swift"],
-            resources: ["MentoryWatch Watch App/Presentation/Assets.xcassets"],
-            entitlements: .file(path: "MentoryWatch Watch App/MentoryWatch Watch App.entitlements"),
+            sources: ["MentoryWatchApp/**/*.swift"],
+            resources: ["MentoryWatchApp/Presentation/Assets.xcassets"],
+            entitlements: .file(path: "MentoryWatchApp/MentoryWatchApp.entitlements"),
             settings: .settings(
                 base: [
                     "CODE_SIGN_STYLE": "Manual",
