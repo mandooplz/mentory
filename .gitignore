@@ -39,3 +39,4 @@ MentoryLLM/*.xcodeproj/
 
 # Temporary diagram/editor artifacts
 *.dtmp
+*.bkp
