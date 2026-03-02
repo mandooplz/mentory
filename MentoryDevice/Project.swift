@@ -2,6 +2,9 @@ import ProjectDescription
 
 let project = Project(
     name: "MentoryDevice",
+    options: .options(
+        automaticSchemesOptions: .disabled
+    ),
     targets: [
         .target(
             name: "WatchManager",
