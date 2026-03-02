@@ -2,6 +2,9 @@ import ProjectDescription
 
 let project = Project(
     name: "MentoryShared",
+    options: .options(
+        automaticSchemesOptions: .disabled
+    ),
     targets: [
         .target(
             name: "Values",

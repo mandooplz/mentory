@@ -2,6 +2,9 @@ import ProjectDescription
 
 let project = Project(
     name: "MentoryLLM",
+    options: .options(
+        automaticSchemesOptions: .disabled
+    ),
     packages: [
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .branch("main")),
     ],

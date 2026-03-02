@@ -2,6 +2,9 @@ import ProjectDescription
 
 let project = Project(
     name: "MentoryDB",
+    options: .options(
+        automaticSchemesOptions: .disabled
+    ),
     packages: [
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
     ],
