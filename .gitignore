@@ -36,3 +36,6 @@ mentory.xcworkspace/
 MentoryShared/*.xcodeproj/
 MentoryDB/*.xcodeproj/
 MentoryLLM/*.xcodeproj/
+
+# Temporary diagram/editor artifacts
+*.dtmp
