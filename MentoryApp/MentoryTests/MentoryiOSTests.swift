@@ -13,9 +13,9 @@ import MentoryDBAdapter
 @Suite("MentoryiOS", .timeLimit(.minutes(1)))
 struct MentoryiOSTests {
     struct Init {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
         }
         
         @Test func isOnboardingBoardIsNil() async throws {
@@ -26,9 +26,9 @@ struct MentoryiOSTests {
         }
     }
     struct SetUp {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
         }
         
         @Test func createOnboarding() async throws {
@@ -94,10 +94,10 @@ struct MentoryiOSTests {
     }
     
     struct SaveUserName {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let mentoryDB: any MentoryDBInterface
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.mentoryDB = mentoryiOS.mentoryDB
         }
         
@@ -118,10 +118,10 @@ struct MentoryiOSTests {
     }
     
     struct LoadUserName {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let mentoryDB: any MentoryDBInterface
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.mentoryDB = mentoryiOS.mentoryDB
         }
         

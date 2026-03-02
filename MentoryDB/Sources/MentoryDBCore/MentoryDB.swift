@@ -498,8 +498,7 @@ final class MentoryDBModel {
     @Relationship var records: [DailyRecordModel] = []
     
     
-    init(id: UUID,
-         userName: String? = nil) {
+    init(id: UUID, userName: String? = nil) {
         self.id = id
         self.userName = userName
     }

@@ -13,10 +13,10 @@ import Foundation
 @Suite("Onboarding", .timeLimit(.minutes(1)))
 struct OnboardingTests {
     struct ValidateInput {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let onboarding: Onboarding
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.onboarding = try await getOnboardingForTest(mentoryiOS)
         }
         
@@ -66,10 +66,10 @@ struct OnboardingTests {
     }
         
     struct Next {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let onboarding: Onboarding
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.onboarding = try await getOnboardingForTest(mentoryiOS)
         }
         
@@ -205,7 +205,7 @@ struct OnboardingTests {
 
 
 // MARK: Helphers
-private func getOnboardingForTest(_ mentoryiOS: MentoryiOS) async throws -> Onboarding {
+private func getOnboardingForTest(_ mentoryiOS: Mentory) async throws -> Onboarding {
     // create Onboarding
     try await #require(mentoryiOS.onboarding == nil)
     

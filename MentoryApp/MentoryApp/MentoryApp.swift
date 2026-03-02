@@ -15,7 +15,7 @@ import WatchManager
 @main
 struct MentoryApp: App {
     // MARK: model
-    @State var mentoryiOS = MentoryiOS(.test)
+    @State var mentoryiOS = Mentory(.test)
     @State private var watchConnectivity = WatchConnectivityManager.shared
     
 

@@ -436,7 +436,7 @@ fileprivate struct ConfirmButton: View {
 
 // MARK: Preview
 fileprivate struct MindAnalyzerPreview: View {
-    @StateObject private var mentoryiOS = MentoryiOS()
+    @StateObject private var mentoryiOS = Mentory()
     
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,

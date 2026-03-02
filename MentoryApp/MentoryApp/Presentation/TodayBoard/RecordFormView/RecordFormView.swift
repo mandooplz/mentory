@@ -95,7 +95,7 @@ struct RecordFormView: View {
 
 // MARK: Preview
 fileprivate struct RecordFormPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
+    @StateObject var mentoryiOS = Mentory()
     
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard,

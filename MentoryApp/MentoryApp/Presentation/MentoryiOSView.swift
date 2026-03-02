@@ -11,8 +11,8 @@ import MentoryCore
 // MARK: View
 struct MentoryiOSView: View {
     // MARK: model
-    @ObservedObject var mentoryiOS: MentoryiOS
-    init(_ mentoryiOS: MentoryiOS) {
+    @ObservedObject var mentoryiOS: Mentory
+    init(_ mentoryiOS: Mentory) {
         self.mentoryiOS = mentoryiOS
     }
     
@@ -131,7 +131,7 @@ struct MentoryiOSView: View {
 
 // MARK: Preview
 fileprivate struct MentoryiOSPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
+    @StateObject var mentoryiOS = Mentory()
     
     var body: some View {
         MentoryiOSView(mentoryiOS)

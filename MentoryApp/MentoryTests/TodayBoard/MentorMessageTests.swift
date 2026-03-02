@@ -15,11 +15,11 @@ import MentoryDBAdapter
 @Suite
 struct MentorMessageTests {
     struct UpdateContent {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let mentorMessage: MentorMessage
         let mentoryDB: any MentoryDBInterface
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.mentorMessage = try await getMentorMessage(mentoryiOS)
             self.mentoryDB = mentoryiOS.mentoryDB
         }
@@ -86,7 +86,7 @@ struct MentorMessageTests {
 
 
 // MARK: Helpher
-private func getMentorMessage(_ mentoryiOS: MentoryiOS) async throws -> MentorMessage {
+private func getMentorMessage(_ mentoryiOS: Mentory) async throws -> MentorMessage {
     await mentoryiOS.setUp()
     
     // create Onboarding

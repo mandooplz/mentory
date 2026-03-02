@@ -59,9 +59,9 @@ class SettingBoardViewModel: ObservableObject {
         switch settings.authorizationStatus {
         case .notDetermined:
             // 아직 권한 요청 안했으면 팝업을 띄움
-            if let reminderCenter = settingBoard.owner?.reminderCenter {
-                await reminderCenter.requestAuthorizationIfNeeded()
-            }
+//            if let reminderCenter = settingBoard.owner?.reminderCenter {
+//                await reminderCenter.requestAuthorizationIfNeeded()
+//            }
             await refreshNotificationStatus()
             
         case .denied, .authorized, .provisional, .ephemeral:
@@ -481,7 +481,7 @@ struct SettingSection<Content: View>: View {
 
 // MARK: Preview
 fileprivate struct SettingBoardPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
+    @StateObject var mentoryiOS = Mentory()
     
     var body: some View {
         if let settingBoard = mentoryiOS.settingBoard {
