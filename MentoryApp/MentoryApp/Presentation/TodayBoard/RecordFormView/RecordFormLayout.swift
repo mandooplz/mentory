@@ -18,7 +18,7 @@ struct RecordFormLayout<ToolBar: CustomizableToolbarContent, TodayDate: View, Ma
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground)
+                Color.mentoryBackground
                     .ignoresSafeArea()
                 VStack(spacing: 0) {
                     

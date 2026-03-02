@@ -45,6 +45,7 @@ struct OnboardingView: View {
             .padding(.top, 44)
             .padding(.bottom, 20)
         }
+        .withMentoryBackground()
     }
     
     
@@ -63,12 +64,12 @@ struct OnboardingView: View {
                 )
             
             Text("어떻게 불러드릴까요?")
-                .font(.system(size: 32, weight: .bold))
+                .mentoryTitle()
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
             
             Text("닉네임을 입력하면 오늘부터 맞춤 멘토링을 시작해요.")
-                .font(.system(size: 16, weight: .medium))
+                .mentorySubtitle()
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -136,27 +137,8 @@ struct OnboardingView: View {
             }
         }) {
             Text("계속")
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 58)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color.mentoryAccentPrimary,
-                                    Color.mentoryAccentPrimary.opacity(0.8)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                )
-                .shadow(color: Color.mentoryAccentPrimary.opacity(0.35), radius: 14, y: 8)
         }
-        .buttonStyle(.plain)
-        .opacity(isSubmitDisabled ? 0.45 : 1.0)
+        .buttonStyle(MentoryPrimaryButtonStyle(isEnabled: !isSubmitDisabled))
         .disabled(isSubmitDisabled)
     }
     

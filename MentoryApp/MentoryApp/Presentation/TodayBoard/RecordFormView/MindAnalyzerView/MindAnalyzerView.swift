@@ -34,11 +34,8 @@ struct MindAnalyzerView: View {
                 )
                 
                 AnalyzeButton(
-                    iconName: mindAnalyzer.status.isAnalyzing
-                    ? "hourglass" : "paperplane",
                     label: mindAnalyzer.status.isAnalyzing ? "면담 요청 중" : "면담 요청하기",
-                    isActive: !mindAnalyzer.status.isAnalyzing
-                    && mindAnalyzer.character != nil
+                    isDisabled: mindAnalyzer.character == nil || mindAnalyzer.status.isAnalyzing
                 ) {
                     showingSubmitAlert = true
                 }
@@ -304,30 +301,16 @@ fileprivate struct CharacterPicker: View {
 }
 
 fileprivate struct AnalyzeButton: View {
-    let iconName: String
     let label: String
-    let isActive: Bool
+    let isDisabled: Bool
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                Image(systemName: iconName)
-                Text(label)
-                    .fontWeight(.semibold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(
-                        isActive
-                        ? Color.mentoryAccentPrimary
-                        : Color.mentoryAccentPrimary.opacity(0.35)
-                    )
-            )
-            .foregroundColor(.white)
+            Text(label)
         }
+        .buttonStyle(MentoryPrimaryButtonStyle(isEnabled: !isDisabled))
+        .disabled(isDisabled)
     }
 }
 
@@ -420,16 +403,9 @@ fileprivate struct ConfirmButton: View {
                 HStack(spacing: 8) {
                     Image(systemName: self.icon)
                     Text(self.label)
-                        .fontWeight(.semibold)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.mentoryAccentPrimary)
-                )
-                .foregroundColor(.white)
             }
+            .buttonStyle(MentoryPrimaryButtonStyle())
         }
     }
 }

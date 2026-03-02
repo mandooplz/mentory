@@ -23,43 +23,47 @@ public struct StatBoardView: View {
     
     public var body: some View {
         NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("통계를 불러오는 중입니다.")
-                } else if board.allRecords.isEmpty {
-                    ContentUnavailableView("분석 결과가 없어요", systemImage: "chart.bar",
-                                           description: Text("기록을 작성하고 분석을 완료하면 통계가 표시됩니다."))
-                } else {
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            MonthHeader(
-                                month: selectedMonth,
-                                onPrev: { moveMonth(-1) },
-                                onNext: { moveMonth(1) },
-                                onPickMonth: { setMonth($0) },
-                                onToday: { goToday() }
-                            )
-                            
-                            CalendarGrid(
-                                month: selectedMonth,
-                                selectedDate: selectedDate,
-                                recordForDay: { record(for: $0) },
-                                onSelect: { selectDate($0) }
-                            )
-                            
-                            if let selected = selectedDate,
-                               let record = record(for: selected) {
-                                SelectedDayCard(day: selected, record: record)
-                            } else if let selected = selectedDate {
-                                Text("\(selected.formatted(date: .abbreviated, time: .omitted)) 기록이 없어요")
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
+            ZStack {
+                Group {
+                    if isLoading {
+                        ProgressView("통계를 불러오는 중입니다.")
+                    } else if board.allRecords.isEmpty {
+                        ContentUnavailableView("분석 결과가 없어요", systemImage: "chart.bar",
+                                               description: Text("기록을 작성하고 분석을 완료하면 통계가 표시됩니다."))
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: 24) {
+                                MonthHeader(
+                                    month: selectedMonth,
+                                    onPrev: { moveMonth(-1) },
+                                    onNext: { moveMonth(1) },
+                                    onPickMonth: { setMonth($0) },
+                                    onToday: { goToday() }
+                                )
+                                
+                                CalendarGrid(
+                                    month: selectedMonth,
+                                    selectedDate: selectedDate,
+                                    recordForDay: { record(for: $0) },
+                                    onSelect: { selectDate($0) }
+                                )
+                                
+                                if let selected = selectedDate,
+                                   let record = record(for: selected) {
+                                    SelectedDayCard(day: selected, record: record)
+                                } else if let selected = selectedDate {
+                                    Text("\(selected.formatted(date: .abbreviated, time: .omitted)) 기록이 없어요")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 24)
                         }
-                        .padding()
                     }
                 }
             }
+            .withMentoryBackground()
             .navigationTitle("통계")
         }
         .task {
@@ -345,17 +349,17 @@ private struct SelectedDayCard: View {
     let record: RecordData
     
     var body: some View {
-        VStack(alignment: .center, spacing: 10) {
-            Text(day.formatted(date: .long, time: .omitted))
-                .font(.headline)
-                .foregroundStyle(.secondary)
-            
-            Text(record.emotion.emoji)
-                .font(.system(size: 44))
+        LiquidGlassCard(cornerRadius: 18) {
+            VStack(alignment: .center, spacing: 10) {
+                Text(day.formatted(date: .long, time: .omitted))
+                    .mentoryHeadline()
+                    .foregroundStyle(.secondary)
+                
+                Text(record.emotion.emoji)
+                    .font(.system(size: 44))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
     }
 }
