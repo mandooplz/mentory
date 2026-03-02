@@ -14,7 +14,8 @@ import MentoryDBAdapter
 @MainActor
 public final class EditingName: Sendable, ObservableObject{
     // MARK: core
-    public nonisolated let logger = Logger(subsystem: "MentoryiOS.RenameSheet", category: "Domain")
+    public nonisolated let logger = Logger()
+    
     public init(owner: SettingBoard, userName: String) {
         self.owner = owner
         self.nameInput = userName

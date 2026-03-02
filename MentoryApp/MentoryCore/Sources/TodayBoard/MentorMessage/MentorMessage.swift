@@ -17,7 +17,8 @@ import WatchManager
 @MainActor
 public final class MentorMessage: Sendable, ObservableObject {
     // MARK: core
-    nonisolated private let logger = Logger(subsystem: "MentorMessage", category: "Domain")
+    nonisolated private let logger = Logger()
+    
     public init(owner: TodayBoard) {
         self.owner = owner
     }
@@ -28,28 +29,40 @@ public final class MentorMessage: Sendable, ObservableObject {
     public weak var owner: TodayBoard?
     
     public var recentUpdate: MentoryDate? = nil
-    @Published public var content: String? = nil
-    @Published public var character: MentoryCharacter? = nil
     
+    @Published public internal(set) var content: String? = nil
     public func resetContent() {
         self.content = nil
     }
     
+    @Published public internal(set) var character: MentoryCharacter? = nil
+    public func setCharacterOnce(to newCharacter: MentoryCharacter) {
+        if self.character != nil {
+            return
+        } else {
+            self.character = newCharacter
+        }
+    }
+    
     
     // MARK: action
-    
     public func updateContent() async {
+        // capture
         let todayBoard = self.owner!
+        
         let currentDate = todayBoard.currentDate
-        logger.debug("currentDate는요:\(currentDate.rawValue)")
+        logger.debug("currentDate is \(currentDate.rawValue)")
         
         if let recentUpdate,
-           recentUpdate.isSameDate(as: currentDate) == true {
+           recentUpdate.isSameDate(as: currentDate) {
             logger.error("\(Date.now) 날짜의 MentorMessage가 이미 존재합니다.")
             return
         }
         
-        let character: MentoryCharacter = .random
+        guard let character else {
+            logger.error("현재 MentorMessage의 Character가 설정되어 있지 않습니다. 먼저 Character를 설정해주세요.")
+            return
+        }
         
         let mentoryiOS = self.owner!.owner!
         let mentoryDB = mentoryiOS.mentoryDB
@@ -116,9 +129,4 @@ public final class MentorMessage: Sendable, ObservableObject {
         
         logger.debug("Watch로 멘토 메시지 전송: \(messageCharacter.rawValue)")
     }
-    
-    // MARK: value
-    
-    
-       
 }

@@ -16,7 +16,8 @@ import WatchManager
 @MainActor
 public final class TodayBoard: Sendable, ObservableObject {
     // MARK: core
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
+    nonisolated private let logger = Logger()
+    
     public init(owner: Mentory) {
         self.owner = owner
     }
