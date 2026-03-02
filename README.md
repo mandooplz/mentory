@@ -114,180 +114,94 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
     <td align="center" width="25%">
       <img src="./screenshots/todayboard.png" alt="todayboard" width="100%">
       <br>
-      <b>오늘의 감정 보드</b>
+      <b>TodayBoard</b>
       <br>
-      <sub>오늘 하루의 감정 기록</sub>
+      <sub>감정 기록/요약의 메인 진입점</sub>
     </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/suggestion.png" alt="suggestion" width="100%">
-      <br>
-      <b>활동 추천</b>
-      <br>
-      <sub>AI가 추천하는 맞춤형 활동</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/badge.png" alt="badge" width="100%">
-      <br>
-      <b>뱃지</b>
-      <br>
-      <sub>기록 달성에 따른 뱃지 획득</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/todayboard-record.png" alt="todayboard-record" width="100%">
-      <br>
-      <b>기록 히스토리</b>
-      <br>
-      <sub>이틀 전까지 기록 가능</sub>
-    </td>
-  </tr>
-  <tr>
     <td align="center" width="25%">
       <img src="./screenshots/recordform.png" alt="recordform" width="100%">
       <br>
-      <b>감정 기록 폼</b>
+      <b>RecordForm</b>
       <br>
-      <sub>텍스트, 음성, 사진 기록</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/recordform-pic.png" alt="recordform-pic" width="100%">
-      <br>
-      <b>사진으로 기록</b>
-      <br>
-      <sub>이미지를 통한 감정 표현</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/recordform-audio.png" alt="recordform-audio" width="100%">
-      <br>
-      <b>음성으로 기록</b>
-      <br>
-      <sub>음성 녹음을 통한 감정 기록</sub>
+      <sub>텍스트/음성/이미지 기반 감정 입력</sub>
     </td>
     <td align="center" width="25%">
       <img src="./screenshots/analyze.png" alt="analyze" width="100%">
       <br>
-      <b>AI 감정 분석</b>
+      <b>Mind Analysis</b>
       <br>
-      <sub>LLM 기반 감정 분석, 조언</sub>
+      <sub>LLM 분석 결과와 제안 생성</sub>
     </td>
-  </tr>
-  <tr>
     <td align="center" width="25%">
-      <img src="./screenshots/setting.png" alt="setting" width="100%">
+      <img src="./screenshots/suggestion.png" alt="suggestion" width="100%">
       <br>
-      <b>설정</b>
+      <b>Suggestion</b>
       <br>
-      <sub>알림 및 개인 설정 관리</sub>
+      <sub>행동 제안 반영 및 완료 상태 관리</sub>
     </td>
-    <td align="center" width="25%"></td>
-    <td align="center" width="25%"></td>
-    <td align="center" width="25%"></td>
   </tr>
 </table>
 
 ## Getting Started
 
 > [!NOTE]
-> 프로젝트를 빌드하기 위해서는 `Secrets.xcconfig` 와 `GoogleService-Info.plist` 파일이 필요합니다.
+> 프로젝트 빌드를 위해 `Secrets.xcconfig`와 `GoogleService-Info.plist`가 필요합니다.
 
-### 필요 조건
+### Prerequisites
 
 - Xcode 26.1+
-- iOS 26.0+
-- watchOS 26.0+
 - Swift 6.0
-- Tuist
+- Tuist 4.153.0+
+- iOS 26.0+ / watchOS 26.0+
 
-### 설치 방법
-
-1. 저장소 클론
-   ```bash
-   git clone https://github.com/EST-iOS4/Mentory.git
-   cd Mentory
-   ```
-2. Tuist 설치 및 의존성 동기화
-   ```bash
-   tuist install
-   tuist generate
-   ```
-3. 워크스페이스 열기
-   ```bash
-   open mentory.xcworkspace
-   ```
-
-### 환경 설정
-
-#### 1) Alan API 토큰 설정
+### Install
 
 ```bash
-cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
+git clone https://github.com/EST-iOS4/Mentory.git
+cd Mentory
+tuist install
+tuist generate
+open mentory.xcworkspace
 ```
 
-`MentoryApp/Secrets.xcconfig`
+### Environment Setup
 
-```bash
-TOKEN = 여기에-발급받은-토큰-입력
-```
+1. Alan API 토큰 설정
+   ```bash
+   cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
+   ```
+   `MentoryApp/Secrets.xcconfig`에 아래 값 설정:
+   ```bash
+   TOKEN = 여기에-발급받은-토큰-입력
+   ```
+2. Firebase 설정
+   - Firebase Console에서 프로젝트 생성 후 `GoogleService-Info.plist` 다운로드
+   - `MentoryApp/MentoryApp/`에 추가
+   - Firebase AI 기능(Gemini API) 활성화
 
-#### 2) Firebase 설정
+### Run
 
-- Firebase Console에서 프로젝트 생성 후 `GoogleService-Info.plist` 다운로드
-- `MentoryApp/MentoryApp/`에 파일 추가
-- Firebase AI(Gemini API) 활성화
-
-### 실행 방법
-
-- iOS 앱: `Mentory` 스킴 선택 후 Run
-- watchOS 앱: `MentoryWatchApp` 스킴 선택 후 Run
-- 위젯: 앱 실행 후 홈 화면에서 Mentory 위젯 추가
+- iOS: `Mentory` 스킴 실행
+- watchOS: `MentoryWatchApp` 스킴 실행
+- Widget: 앱 실행 후 홈 화면에서 Mentory 위젯 추가
 
 ## Module Structure
 
-```
-Mentory/
-├── MentoryApp/      # 메인 iOS 앱
-├── MentoryDB/       # SwiftData 기반 DB 모듈
-├── MentoryDevice/   # Watch/Device 연동 모듈
-├── MentoryLLM/      # LLM 연동 모듈
-├── MentoryShared/   # 공유 Values/Protocol 모듈
-└── assets/          # 문서/이미지 리소스
-```
-
-## 팀원
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/dearjaypark">
-        <img src="https://github.com/dearjaypark.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>박재이</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/ji-seok-Song">
-        <img src="https://github.com/ji-seok-Song.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>송지석</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/funrace2">
-        <img src="https://github.com/funrace2.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>구현모</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/mandooplz">
-        <img src="https://github.com/mandooplz.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>김민우</b>
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">iOS Developer</td>
-    <td align="center">iOS Developer</td>
-    <td align="center">iOS Developer</td>
-    <td align="center">iOS Developer</td>
-  </tr>
-</table>
+- `MentoryApp`
+  - SwiftUI 기반 iOS 앱 타깃
+  - Presentation/Domain 계층과 앱 엔트리포인트 포함
+- `MentoryDB`
+  - SwiftData 기반 영속성 모듈
+  - Domain이 의존하는 DB 인터페이스 구현
+- `MentoryDevice`
+  - WatchConnectivity 및 디바이스 연동 처리 모듈
+- `MentoryLLM`
+  - Alan/Firebase 등 LLM 연동 어댑터 모듈
+- `MentoryShared`
+  - 공유 Value 타입/프로토콜 정의 모듈
+  - 모듈 간 계약(Contract) 역할
+- `MentoryWatchApp` / `MentoryWidget`
+  - Watch 및 Widget 확장 타깃
 
 ## Links
 
