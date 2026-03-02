@@ -44,33 +44,68 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
 
 ## Portfolio Highlights
 
-- Domain/Presentation/Adapter/Service 계층 분리로 변경 영향 최소화
-- Adapter 인터페이스 기반 테스트 가능한 구조
-- Combine + async/await 혼합 사용으로 UI 반응성과 비동기 처리 분리
-- SwiftData를 통한 로컬 데이터 중심 기록/조회 파이프라인 구성
-- iOS 앱 중심의 Watch/Widget 연동 확장 구조 설계
+- `Domain`을 외부 프레임워크 의존에서 분리해 기능 추가 시 핵심 로직 변경 범위를 최소화
+- `Adapter Interface` 중심 설계로 LLM/DB 구현체 교체와 테스트 대역(Mock) 주입이 쉬운 구조
+- 기록 저장(SwiftData)과 분석 요청(LLM async)을 분리해 실패 지점을 독립적으로 복구 가능
+- Combine 스트림(`@Published`)과 async/await를 역할별로 분리해 UI 반응성과 비동기 안정성 확보
+- iOS 앱을 중심으로 WatchConnectivity/Widget 확장 포인트를 모듈 경계에서 일관되게 유지
+- Tuist 기반 모듈화로 앱/DB/공유 타입/디바이스 연동을 빌드 단위에서 분리
 
 ## Architecture
 
 ### Layered Structure & Dependency Direction
 
-- Layer: `Domain` / `Presentation` / `Adapter` / `Service`
-- 의존성 방향: Presentation → Domain, Domain → Protocol, Adapter → Protocol 구현
-- 상세 설계 의도와 트레이드오프는 아래 섹션에서 보강합니다.
+- Layer: `Presentation` / `Domain` / `Adapter` / `Service`
+- Dependency Direction:
+  - `Presentation` → `Domain` (유스케이스 소비)
+  - `Domain` → `Protocol` (구현이 아닌 추상화 의존)
+  - `Adapter`/`Service` → `Protocol 구현` (외부 API, DB, 디바이스 연동)
+- DIP(의존성 역전 원칙) 적용으로 Domain은 프레임워크 세부 구현에서 독립적으로 유지됩니다.
+
+왜 이렇게 나눴는가:
+
+- 비즈니스 로직을 View와 분리해 UI 변경(레이아웃/상태 표현)이 핵심 정책에 영향을 주지 않도록 하기 위해
+- LLM/DB 같은 외부 의존성 실패를 Adapter 경계에서 캡슐화해 장애 전파를 줄이기 위해
+- 같은 Domain 로직을 iOS UI, Watch 연동, Widget 업데이트에서 재사용하기 위해
+- 테스트에서 빠른 피드백을 위해 실제 인프라 없이 Domain 단위 검증이 가능해야 했기 때문에
 
 ## Data Flow
 
-- 감정 기록 생성 → 저장(SwiftData) → 분석 요청(LLM async) → 제안 생성 → UI 반영
-- 상세 데이터 흐름은 아래 섹션에서 보강합니다.
+1. 감정 기록 생성 시나리오
+   - 사용자가 `RecordForm`에서 텍스트/음성/이미지를 입력
+   - Domain이 입력 검증 후 `MentoryDBInterface`를 통해 SwiftData에 기록 저장
+   - 저장된 기록을 기반으로 LLM Adapter에 비동기 분석 요청 (`async/await`)
+   - 분석 결과를 `Suggestion`/`MentorMessage`로 변환하여 Domain 상태 갱신
+   - `@Published` 상태 변경이 Combine을 통해 SwiftUI View에 반영
+
+2. 재진입/조회 시나리오
+   - 앱 재실행 시 SwiftData에서 최근 기록/추천을 로드
+   - 로드된 Domain 상태를 Combine 스트림으로 UI에 즉시 반영
+   - 필요 시 추가 분석은 async task로 분리해 UI 블로킹 없이 후속 갱신
 
 ## Testing Strategy
 
-- Adapter 프로토콜 + Mock 구현체 기반으로 Domain 테스트 가능
-- 상세 테스트 범위는 아래 섹션에서 보강합니다.
+- 핵심 전략: `Adapter Interface + Mock 구현체`를 사용해 Domain 로직을 외부 인프라 없이 테스트
+- 실제 API/DB 호출 없이 상태 전이와 규칙 검증에 집중한 단위 테스트 구성
+
+대표 테스트 대상 및 범위:
+
+- `Onboarding`
+  - 입력 검증(공백/유효 입력), 온보딩 완료 상태 전이, 소유자(Domain) 반영 여부
+- `TodayBoard`
+  - 기록/추천 로드, 상태 업데이트, 재조회 시 중복/순서 안정성
+- `RecordForm`/`MindAnalyzer`
+  - 입력 유효성, 분석 트리거 조건, 분석 결과가 추천 생성으로 연결되는 흐름
+- `MentorMessage`
+  - 분석 결과 기반 메시지 업데이트 및 컨텍스트 동기화 포인트 검증
 
 ## My Role
 
-- 개인 포트폴리오 관점에서 아키텍처 설계, 데이터 흐름 정의, 모듈 경계 설정, 테스트 기반 설계에 집중했습니다.
+- Domain-First 아키텍처 방향 정의 및 계층 경계(`Presentation/Domain/Adapter/Service`) 구체화
+- 감정 기록 → 저장 → 분석 → 제안 반영으로 이어지는 핵심 데이터 플로우 설계/구현
+- 모듈 분리(Tuist) 기준 정리 및 공유 타입(`MentoryShared`) 중심 의존성 정돈
+- Adapter 인터페이스/Mock 전략 도입으로 테스트 가능한 구조 구축
+- Onboarding/TodayBoard 중심으로 상태 전이와 회귀 리스크를 확인하는 테스트 시나리오 작성
 
 ## Screenshots
 
