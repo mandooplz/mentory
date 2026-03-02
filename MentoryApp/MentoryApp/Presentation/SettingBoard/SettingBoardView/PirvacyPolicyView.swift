@@ -139,18 +139,20 @@ struct PrivacyPolicyView: View {
     """
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                header
-                warningBox
-                ForEach(sections) { section in
-                    PolicySectionView(section: section)
+        ZStack {
+            Color.mentoryBackground.ignoresSafeArea()
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    header
+                    warningBox
+                    ForEach(sections) { section in
+                        PolicySectionView(section: section)
+                    }
                 }
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(20)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("개인정보 처리방침")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -169,18 +171,18 @@ struct PrivacyPolicyView: View {
     }
 
     private var warningBox: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(.yellow)
-                .font(.title3)
-            Text(warningText)
-                .font(.callout)
-                .foregroundStyle(.primary)
+        LiquidGlassCard(cornerRadius: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.yellow)
+                    .font(.title3)
+                Text(warningText)
+                    .font(.callout)
+                    .foregroundStyle(.primary)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .tertiarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 
@@ -188,21 +190,21 @@ private struct PolicySectionView: View {
     let section: PolicySection
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(section.title)
-                .font(.headline)
-            VStack(alignment: .leading, spacing: 6) {
-                ForEach(section.lines, id: \.self) { line in
-                    Text(line)
-                        .font(line.hasPrefix("•") || line.hasPrefix("  -") ? .body : .subheadline)
-                        .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        LiquidGlassCard(cornerRadius: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(section.title)
+                    .font(.headline)
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(section.lines, id: \.self) { line in
+                        Text(line)
+                            .font(line.hasPrefix("•") || line.hasPrefix("  -") ? .body : .subheadline)
+                            .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
             }
+            .padding(16)
         }
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

@@ -13,19 +13,19 @@ struct MindAnalyzerLayout<Content: View>: View {
     @ViewBuilder let content: () -> Content
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                self.content()
+        ZStack {
+            Color.mentoryBackground.ignoresSafeArea()
+            ScrollView(showsIndicators: false) {
+                LiquidGlassCard(cornerRadius: 32) {
+                    VStack(alignment: .leading, spacing: 24) {
+                        self.content()
+                    }
+                    .padding(24)
+                }
+                .padding(.horizontal)
+                .padding(.top, 32)
+                .padding(.bottom, 40)
             }
-            .padding(24)
-            .background(
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 6)
-            )
-            .padding(.horizontal)
-            .padding(.top, 32)
-            .padding(.bottom, 40)
         }
     }
 }
