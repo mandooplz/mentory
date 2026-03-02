@@ -17,14 +17,14 @@ import WatchManager
 public final class TodayBoard: Sendable, ObservableObject {
     // MARK: core
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.TodayBoard", category: "Domain")
-    public init(owner: MentoryiOS) {
+    public init(owner: Mentory) {
         self.owner = owner
     }
     
     
     // MARK: state
     public nonisolated let id = UUID()
-    public weak var owner: MentoryiOS?
+    public weak var owner: Mentory?
     
     @Published public var mentorMessage: MentorMessage? = nil
 

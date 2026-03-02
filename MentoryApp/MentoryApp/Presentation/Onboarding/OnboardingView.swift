@@ -60,7 +60,7 @@ struct OnboardingView: View {
 
 // MARK: Preview
 fileprivate struct OnboardingPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
+    @StateObject var mentoryiOS = Mentory()
     
     var body: some View {
         if let onboarding = mentoryiOS.onboarding {

@@ -15,14 +15,14 @@ public final class Onboarding: Sendable, ObservableObject {
     // MARK: core
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
     
-    public init(owner: MentoryiOS) {
+    public init(owner: Mentory) {
         self.owner = owner
     }
     
     
     // MARK: state
     public nonisolated let id = UUID()
-    public weak var owner: MentoryiOS?
+    public weak var owner: Mentory?
     
     
     @Published public var nameInput: String = ""

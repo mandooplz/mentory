@@ -15,11 +15,11 @@ import MentoryDBAdapter
 @Suite("RecordForm", .timeLimit(.minutes(1)))
 struct RecordFormTests {
     struct CheckDisability {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let recordForm: RecordForm
         let mentoryDB: any MentoryDBInterface
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
             self.mentoryDB = mentoryiOS.mentoryDB
         }
@@ -65,10 +65,10 @@ struct RecordFormTests {
     }
     
     struct ValidateInput {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let recordForm: RecordForm
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
         }
 
@@ -156,12 +156,12 @@ struct RecordFormTests {
     }
 
     struct Submit {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let recordForm: RecordForm
         let todayBoard: TodayBoard
         
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
             self.todayBoard = try #require(await mentoryiOS.todayBoard)
         }
@@ -283,8 +283,8 @@ struct RecordFormTests {
 }
 
 // MARK: Helpers
-private func getRecordFormForTest(_ mentoryiOS: MentoryiOS) async throws -> RecordForm {
-    // MentoryiOS
+private func getRecordFormForTest(_ mentoryiOS: Mentory) async throws -> RecordForm {
+    // Mentory
     await mentoryiOS.setUp()
     
     // Onboarding

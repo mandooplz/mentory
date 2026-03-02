@@ -1,5 +1,5 @@
 //
-//  MentoryiOS.swift
+//  Mentory.swift
 //  Mentory
 //
 //  Created by 김민우 on 11/13/25.
@@ -16,13 +16,13 @@ import WatchManager
 
 // MARK: Object
 @MainActor
-public final class MentoryiOS: Sendable, ObservableObject {
+public final class Mentory: Sendable, ObservableObject {
     // MARK: core
-    public nonisolated let logger = Logger(subsystem: "MentoryiOS.MentoryiOS", category: "Domain")
-    public nonisolated let mentoryDB: any MentoryDBInterface
-    public nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
-
-    public let reminderCenter: any ReminderNotificationInterface
+    private nonisolated let logger = Logger()
+    
+    internal nonisolated let mentoryDB: any MentoryDBInterface
+    internal nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
+    internal nonisolated let reminderCenter: any ReminderNotificationInterface
 
     public init(_ mode: SystemMode = .test) {
         switch mode {
@@ -39,7 +39,7 @@ public final class MentoryiOS: Sendable, ObservableObject {
     
     
     // MARK: state
-    public nonisolated let informationURL = URL(string: "https://nice-asp-f94.notion.site/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!
+    public nonisolated let informationURL = URL.info
     
     @Published public var userName: String? = nil
     public func getGreetingText() -> String {
@@ -124,4 +124,14 @@ public final class MentoryiOS: Sendable, ObservableObject {
     
     
     // MARK: value
+    public struct URL: Sendable, Hashable {
+        // MARK: core
+        public let rawValue: Foundation.URL
+        
+        public static let info: Self = .init(rawValue: Foundation.URL(string: "https://nice-asp-f94.notion.site/Mentory-Information-2b11c49e815f80c5873befe3b6847f70?source=copy_link")!)
+        
+        private init(rawValue: Foundation.URL) {
+            self.rawValue = rawValue
+        }
+    }
 }

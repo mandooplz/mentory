@@ -15,10 +15,10 @@ import MentoryDBAdapter
 @Suite("StatBoard")
 struct StatBoardTests {
     struct Init {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let statBoard: StatBoard
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.statBoard = try await getStatBoardForTest(mentoryiOS)
         }
         
@@ -28,11 +28,11 @@ struct StatBoardTests {
     }
     
     struct LoadRecords {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let statBoard: StatBoard
         let mentoryDB: any MentoryDBInterface
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.statBoard = try await getStatBoardForTest(mentoryiOS)
             self.mentoryDB = mentoryiOS.mentoryDB
         }
@@ -63,7 +63,7 @@ struct StatBoardTests {
 
 
 // MARK: Helpher
-private func getStatBoardForTest(_ mentoryiOS: MentoryiOS) async throws -> StatBoard {
+private func getStatBoardForTest(_ mentoryiOS: Mentory) async throws -> StatBoard {
     // create Onboarding
     await mentoryiOS.setUp()
     

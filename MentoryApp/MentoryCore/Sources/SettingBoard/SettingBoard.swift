@@ -13,14 +13,14 @@ import OSLog
 @MainActor
 public final class SettingBoard: Sendable, ObservableObject {
     // MARK: core
-    public init(owner: MentoryiOS) {
+    public init(owner: Mentory) {
         self.owner = owner
     }
     nonisolated private let logger = Logger(subsystem: "MentoryiOS.SettingBoard", category: "Domain")
     
     
     // MARK: state
-    public weak var owner: MentoryiOS?
+    public weak var owner: Mentory?
     public nonisolated let id = UUID()
     
     private static let reminderTimeKey = "mentory.settingBoard.reminderTime"

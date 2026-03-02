@@ -16,7 +16,7 @@ import WatchManager
 struct TodayBoardView: View {
     // MARK: core
     @ObservedObject var todayBoard: TodayBoard
-    @ObservedObject var mentoryiOS: MentoryiOS
+    @ObservedObject var mentoryiOS: Mentory
     
     
     // MARK: body
@@ -80,7 +80,7 @@ struct TodayBoardView: View {
 
 // MARK: Preview
 fileprivate struct TodayBoardPreview: View {
-    @StateObject var mentoryiOS = MentoryiOS()
+    @StateObject var mentoryiOS = Mentory()
     
     var body: some View {
         if let todayBoard = mentoryiOS.todayBoard {

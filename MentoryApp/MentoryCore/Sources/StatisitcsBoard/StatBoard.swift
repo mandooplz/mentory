@@ -17,12 +17,12 @@ public final class StatBoard: ObservableObject {
     // MARK: core
     private let logger = Logger()
     
-    init(owner: MentoryiOS) {
+    init(owner: Mentory) {
         self.owner = owner
     }
     
     // MARK: state
-    weak var owner: MentoryiOS?
+    weak var owner: Mentory?
     
     @Published public var allRecords: [RecordData] = []
     

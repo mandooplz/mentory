@@ -14,11 +14,11 @@ import Values
 @Suite("MindAnalyzer")
 struct MindAnalyzerTests {
     struct Analyze {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let mindAnalyzer: MindAnalyzer
         let todayBoard: TodayBoard
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
             self.todayBoard = await mindAnalyzer.owner!.owner!
         }
@@ -101,10 +101,10 @@ struct MindAnalyzerTests {
     }
     
     struct Finish {
-        let mentoryiOS: MentoryiOS
+        let mentoryiOS: Mentory
         let mindAnalyzer: MindAnalyzer
         init() async throws {
-            self.mentoryiOS = await MentoryiOS()
+            self.mentoryiOS = await Mentory()
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
         }
         
@@ -126,8 +126,8 @@ struct MindAnalyzerTests {
 
 
 // MARK: Helpehr
-private func getMindAnalyzerForTest(_ mentoryiOS: MentoryiOS) async throws -> MindAnalyzer {
-    // MentoryiOS
+private func getMindAnalyzerForTest(_ mentoryiOS: Mentory) async throws -> MindAnalyzer {
+    // Mentory
     await mentoryiOS.setUp()
     
     // Onboarding

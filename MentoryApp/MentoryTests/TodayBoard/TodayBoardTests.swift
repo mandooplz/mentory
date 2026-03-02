@@ -15,10 +15,10 @@ import Values
 @Suite("TodayBoard")
 struct TodayBoardTests {
     struct SetUpMentorMessage {
-        let mentory: MentoryiOS
+        let mentory: Mentory
         let todayBoard: TodayBoard
         init() async throws {
-            self.mentory = await MentoryiOS()
+            self.mentory = await Mentory()
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
@@ -47,10 +47,10 @@ struct TodayBoardTests {
     }
     
     struct SetUpRecordForms {
-        let mentory: MentoryiOS
+        let mentory: Mentory
         let todayBoard: TodayBoard
         init() async throws {
-            self.mentory = await MentoryiOS()
+            self.mentory = await Mentory()
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
@@ -165,10 +165,10 @@ struct TodayBoardTests {
     }
     
     struct UpdateRecordForms {
-        let mentory: MentoryiOS
+        let mentory: Mentory
         let todayBoard: TodayBoard
         init() async throws {
-            self.mentory = await MentoryiOS()
+            self.mentory = await Mentory()
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
@@ -280,10 +280,10 @@ struct TodayBoardTests {
     }
     
     struct LoadSuggestions {
-        let mentory: MentoryiOS
+        let mentory: Mentory
         let todayBoard: TodayBoard
         init() async throws {
-            self.mentory = await MentoryiOS()
+            self.mentory = await Mentory()
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
@@ -304,7 +304,7 @@ struct TodayBoardTests {
 
 
 // MARK: Helphers
-private func getTodayBoardForTest(_ mentoryiOS: MentoryiOS) async throws -> TodayBoard {
+private func getTodayBoardForTest(_ mentoryiOS: Mentory) async throws -> TodayBoard {
     
     // create Onboarding
     await mentoryiOS.setUp()
