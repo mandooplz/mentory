@@ -25,6 +25,9 @@ public final class Onboarding: Sendable, ObservableObject {
     public weak var owner: Mentory?
     
     @Published public var nameInput: String = ""
+    public var trimmedName: String {
+        self.nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
     public func setName(_ newName: String) {
         self.nameInput = newName
     }
