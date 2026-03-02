@@ -287,17 +287,29 @@ struct TodayBoardTests {
             self.todayBoard = try await getTodayBoardForTest(mentory)
         }
         
-        @Test(.disabled()) func whenAlreadySetUp() async throws {
+        @Test func whenAlreadySetUp() async throws {
             // given
+            try await submitRecord(todayBoard)
+            
             await todayBoard.loadSuggestions()
             
-            try await #require(todayBoard.suggestions.count == 3)
+            let suggestions = await todayBoard.suggestions.map {
+                $0.target.rawValue
+            }
+            
+            #expect(suggestions.count == 3)
             
             // when
             await todayBoard.loadSuggestions()
             
             // then
-            Issue.record("테스트 작성 예정")
+            let newSuggestions = await todayBoard.suggestions.map {
+                $0.target.rawValue
+            }
+            
+            #expect(
+                newSuggestions.sorted() == suggestions.sorted()
+            )
         }
     }
 }
@@ -315,9 +327,39 @@ private func getTodayBoardForTest(_ mentoryiOS: Mentory) async throws -> TodayBo
     await onboarding.setName("테스트유저")
     await onboarding.validateInput()
     
-    await onboarding.next()
+    await onboarding.submitForm()
     
     let todayBoard = try #require(await mentoryiOS.todayBoard)
     
     return todayBoard
+}
+
+private func submitRecord(_ todayBoard: TodayBoard) async throws {
+    // create RecordForm
+    await todayBoard.setUpRecordForms()
+    
+    try await #require(todayBoard.recordForms.count == 3)
+    
+    let recordForm = try #require(await todayBoard.recordForms.first)
+    
+    // create MindAnalyzer
+    await MainActor.run {
+        recordForm.titleInput = "SAMPLE_TITLE"
+        recordForm.textInput = "SAMPLE_TEXT"
+    }
+    
+    await recordForm.checkDisability()
+    await recordForm.validateInput()
+    
+    await recordForm.submit()
+    
+    let mindAnalyzer = try #require(await recordForm.mindAnalyzer)
+    
+    // submit MindAnalyzer
+    await MainActor.run {
+        mindAnalyzer.character = .cool
+    }
+    
+    await mindAnalyzer.analyze()
+    await mindAnalyzer.updateSuggestions()
 }

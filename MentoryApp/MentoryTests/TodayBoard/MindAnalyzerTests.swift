@@ -134,7 +134,7 @@ private func getMindAnalyzerForTest(_ mentoryiOS: Mentory) async throws -> MindA
     let onboarding = try #require(await mentoryiOS.onboarding)
     await onboarding.setName("테스트유저")
     await onboarding.validateInput()
-    await onboarding.next()
+    await onboarding.submitForm()
     
     // TodayBoard
     let todayBoard = try #require(await mentoryiOS.todayBoard)

@@ -73,7 +73,7 @@ private func getStatBoardForTest(_ mentoryiOS: Mentory) async throws -> StatBoar
     await onboarding.setName("테스트유저")
     await onboarding.validateInput()
     
-    await onboarding.next()
+    await onboarding.submitForm()
     
     // return StatBoard
     let statBoard = try #require(await mentoryiOS.statBoard)

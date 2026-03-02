@@ -13,11 +13,11 @@ import Foundation
 @Suite("Onboarding", .timeLimit(.minutes(1)))
 struct OnboardingTests {
     struct ValidateInput {
-        let mentoryiOS: Mentory
+        let mentory: Mentory
         let onboarding: Onboarding
         init() async throws {
-            self.mentoryiOS = await Mentory()
-            self.onboarding = try await getOnboardingForTest(mentoryiOS)
+            self.mentory = await Mentory()
+            self.onboarding = try await getOnboardingForTest(mentory)
         }
         
         @Test func whenNameInputIsEmpty() async throws {
@@ -65,47 +65,47 @@ struct OnboardingTests {
         }
     }
         
-    struct Next {
-        let mentoryiOS: Mentory
+    struct SubmitForm {
+        let mentory: Mentory
         let onboarding: Onboarding
         init() async throws {
-            self.mentoryiOS = await Mentory()
-            self.onboarding = try await getOnboardingForTest(mentoryiOS)
+            self.mentory = await Mentory()
+            self.onboarding = try await getOnboardingForTest(mentory)
         }
         
         @Test func whenNameInputIsEmpty() async throws {
             // given
-            let onboardingFormMentory = try #require(await mentoryiOS.onboarding)
-            try await #require(mentoryiOS.onboarding != nil)
-            try await #require(mentoryiOS.onboardingFinished == false)
-            try await #require(mentoryiOS.todayBoard == nil)
-            try await #require(mentoryiOS.settingBoard == nil)
+            let onboardingFormMentory = try #require(await mentory.onboarding)
+            try await #require(mentory.onboarding != nil)
+            try await #require(mentory.onboardingFinished == false)
+            try await #require(mentory.todayBoard == nil)
+            try await #require(mentory.settingBoard == nil)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.onboarding?.id == onboardingFormMentory.id)
-            await #expect(mentoryiOS.onboardingFinished == false)
-            await #expect(mentoryiOS.todayBoard == nil)
-            await #expect(mentoryiOS.settingBoard == nil)
+            await #expect(mentory.onboarding?.id == onboardingFormMentory.id)
+            await #expect(mentory.onboardingFinished == false)
+            await #expect(mentory.todayBoard == nil)
+            await #expect(mentory.settingBoard == nil)
         }
         @Test func whenIsUsedIsTrue() async throws {
             // given
             await onboarding.setName("TEST_USER_NAME")
-            await onboarding.next()
+            await onboarding.submitForm()
             
             try await #require(onboarding.isUsed == true)
             
-            let oldTodayBoard = try #require(await mentoryiOS.todayBoard)
-            let oldSettingBoard = try #require(await mentoryiOS.settingBoard)
+            let oldTodayBoard = try #require(await mentory.todayBoard)
+            let oldSettingBoard = try #require(await mentory.settingBoard)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.todayBoard?.id == oldTodayBoard.id)
-            await #expect(mentoryiOS.settingBoard?.id == oldSettingBoard.id)
+            await #expect(mentory.todayBoard?.id == oldTodayBoard.id)
+            await #expect(mentory.settingBoard?.id == oldSettingBoard.id)
         }
         
         @Test func setIsUsedTrue() async throws {
@@ -116,15 +116,15 @@ struct OnboardingTests {
             try await #require(onboarding.isUsed == false)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
             await #expect(onboarding.isUsed == true)
         }
         
-        @Test func MentoryiOS_setUserName() async throws {
+        @Test func Mentory_setUserName() async throws {
             // given
-            try await #require(mentoryiOS.userName == nil)
+            try await #require(mentory.userName == nil)
             
             let testUserName = "TEST_USER_NAME"
             await onboarding.setName(testUserName)
@@ -132,86 +132,88 @@ struct OnboardingTests {
             
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.userName == testUserName)
+            await #expect(mentory.userName == testUserName)
         }
-        @Test func MentoryiOS_removeOnboarding() async throws {
+        
+        @Test func Mentory_removeOnboarding() async throws {
             // given
-            try await #require(mentoryiOS.onboarding != nil)
+            try await #require(mentory.onboarding != nil)
             
             await onboarding.setName("TEST_USER_NAME")
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.onboarding == nil)
+            await #expect(mentory.onboarding == nil)
         }
-        @Test func MentoryiOS_setOnBoardingFinished() async throws {
+        @Test func Mentory_setOnBoardingFinished() async throws {
             // given
-            try await #require(mentoryiOS.onboardingFinished == false)
+            try await #require(mentory.onboardingFinished == false)
             
             let testUserName = "TEST_USER_NAME"
             await onboarding.setName(testUserName)
             try await #require(onboarding.nameInput.isEmpty == false)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.onboardingFinished == true)
+            await #expect(mentory.onboardingFinished == true)
         }
-        @Test func MentoryiOS_createTodayBoard() async throws {
+        
+        @Test func Mentory_createTodayBoard() async throws {
             // given
             let testUserName = "TEST_USER_NAME"
             await onboarding.setName(testUserName)
             
-            try await #require(mentoryiOS.todayBoard == nil)
+            try await #require(mentory.todayBoard == nil)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.todayBoard != nil)
+            await #expect(mentory.todayBoard != nil)
         }
-        @Test func MentoryiOS_createSettingBoard() async throws {
+        @Test func Mentory_createSettingBoard() async throws {
             // given
             await onboarding.setName("TEST_USER_NAME")
             
-            try await #require(mentoryiOS.settingBoard == nil)
+            try await #require(mentory.settingBoard == nil)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            await #expect(mentoryiOS.settingBoard != nil)
+            await #expect(mentory.settingBoard != nil)
         }
-        @Test func MentoryiOS_createStatBoard() async throws {
+        @Test func Mentory_createStatBoard() async throws {
             // given
             await onboarding.setName("TEST_USER_NAME")
             
-            try await #require(mentoryiOS.statBoard == nil)
+            try await #require(mentory.statBoard == nil)
             
             // when
-            await onboarding.next()
+            await onboarding.submitForm()
             
             // then
-            try await #require(mentoryiOS.statBoard != nil)
+            try await #require(mentory.statBoard != nil)
         }
     }
 }
 
 
 // MARK: Helphers
-private func getOnboardingForTest(_ mentoryiOS: Mentory) async throws -> Onboarding {
+private func getOnboardingForTest(_ mentory: Mentory) async throws -> Onboarding {
     // create Onboarding
-    try await #require(mentoryiOS.onboarding == nil)
+    try await #require(mentory.onboarding == nil)
     
-    await mentoryiOS.setUp()
+    await mentory.setUp()
     
-    let onBoarding = try #require(await mentoryiOS.onboarding)
+    let onBoarding = try #require(await mentory.onboarding)
     return onBoarding
 }
 

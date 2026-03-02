@@ -98,7 +98,7 @@ private func getMentorMessage(_ mentoryiOS: Mentory) async throws -> MentorMessa
     await onboarding.setName("테스트유저")
     await onboarding.validateInput()
     
-    await onboarding.next()
+    await onboarding.submitForm()
     
     let todayBoard = try #require(await mentoryiOS.todayBoard)
     
