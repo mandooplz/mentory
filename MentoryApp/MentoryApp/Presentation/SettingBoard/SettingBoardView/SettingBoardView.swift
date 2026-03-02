@@ -150,7 +150,7 @@ struct SettingBoardView: View {
             }
         }
         .sheet(isPresented: $settingBoardViewModel.isShowingInformationView) {
-            WebView(url: settingBoard.owner!.informationURL)
+            WebView(url: settingBoard.owner!.informationURL.rawValue)
         }
     }
     

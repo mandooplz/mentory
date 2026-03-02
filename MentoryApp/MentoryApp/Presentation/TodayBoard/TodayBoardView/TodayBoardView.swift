@@ -22,7 +22,9 @@ struct TodayBoardView: View {
     // MARK: body
     var body: some View {
         TodayBoardLayout(
-            navDestination: { WebView(url: todayBoard.owner!.informationURL) }
+            navDestination: {
+                WebView(url: todayBoard.owner!.informationURL.rawValue)
+            }
         )
         {
             // 상단 타이틀
