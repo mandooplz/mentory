@@ -110,7 +110,7 @@ fileprivate struct RecordFormPreview: View {
                     
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김철수"
-                    onboarding.next()
+                    onboarding.submitForm()
                     
                     let todayBoard = mentoryiOS.todayBoard!
                     await todayBoard.setUpRecordForms()

@@ -29,8 +29,8 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
     @Published public var status: Status = .ready
     @Published public var character: MentoryCharacter? = nil
     
-    @Published public var analyzedResult: String? = nil
-    @Published public var mindType: Emotion? = nil
+    @Published public private(set) var analyzedResult: String? = nil
+    @Published public private(set) var mindType: Emotion? = nil
     
     private(set) var currentDate: MentoryDate = .now
     public func refreshCurrentDate() {

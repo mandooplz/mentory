@@ -62,8 +62,9 @@ struct TodayBoardView: View {
         }
         .task {
             // WatchConnectivity 설정
-            mentoryiOS.watchConnectivity?.configureTodoHandler {
+            mentoryiOS.watchConnectivity.configureTodoHandler {
                 todoText, isCompleted in
+                
                 Task { @MainActor in
                     await todayBoard.handleWatchTodoCompletion(
                         todoText: todoText,
@@ -73,7 +74,7 @@ struct TodayBoardView: View {
                 }
             }
             
-            await mentoryiOS.watchConnectivity?.setUp()
+            await mentoryiOS.watchConnectivity.setUp()
         }
     }
 }
@@ -97,7 +98,7 @@ fileprivate struct TodayBoardPreview: View {
                     
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김철수"
-                    onboarding.next()
+                    onboarding.submitForm()
                 }
         }
     }

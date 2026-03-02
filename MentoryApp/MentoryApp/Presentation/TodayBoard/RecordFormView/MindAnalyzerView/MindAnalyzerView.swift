@@ -451,7 +451,7 @@ fileprivate struct MindAnalyzerPreview: View {
                     
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김깝십"
-                    onboarding.next()
+                    onboarding.submitForm()
                     
                     let todayBoard = mentoryiOS.todayBoard!
                     

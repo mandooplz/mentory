@@ -33,7 +33,7 @@ struct OnboardingView: View {
             Button(action: {
                 Task {
                     onboarding.validateInput()
-                    onboarding.next()
+                    onboarding.submitForm()
                     if let mentoryiOS = onboarding.owner {
                         await mentoryiOS.saveUserName()
                     }

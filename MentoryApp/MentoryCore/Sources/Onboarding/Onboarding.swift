@@ -13,7 +13,7 @@ import OSLog
 @MainActor
 public final class Onboarding: Sendable, ObservableObject {
     // MARK: core
-    nonisolated private let logger = Logger(subsystem: "MentoryiOS.Onboarding", category: "Domain")
+    nonisolated private let logger = Logger()
     
     public init(owner: Mentory) {
         self.owner = owner
@@ -23,7 +23,6 @@ public final class Onboarding: Sendable, ObservableObject {
     // MARK: state
     public nonisolated let id = UUID()
     public weak var owner: Mentory?
-    
     
     @Published public var nameInput: String = ""
     public func setName(_ newName: String) {
@@ -48,7 +47,8 @@ public final class Onboarding: Sendable, ObservableObject {
             return
         }
     }
-    public func next() {
+    
+    public func submitForm() {
         // capture
         guard nameInput.isEmpty == false else {
             logger.error("Onboarding의 nameInput에는 값이 존재해야 합니다. 현재 값이 비어있습니다.")

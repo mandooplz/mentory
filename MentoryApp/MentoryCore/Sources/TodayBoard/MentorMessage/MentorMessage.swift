@@ -107,7 +107,7 @@ public final class MentorMessage: Sendable, ObservableObject {
         self.character = messageCharacter
         self.recentUpdate = .now
 
-        await mentoryiOS.watchConnectivity?.updateContext(
+        await mentoryiOS.watchConnectivity.updateContext(
             message: messageContent,
             character: messageCharacter.rawValue,
             todos: todayBoard.suggestions.map(\.content),

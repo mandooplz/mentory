@@ -15,18 +15,13 @@ import WatchManager
 @main
 struct MentoryApp: App {
     // MARK: model
-    @State var mentoryiOS = Mentory(.test)
-    @State private var watchConnectivity = WatchConnectivityManager.shared
+    @State var mentory = Mentory(.test)
     
 
     // MARK: body
     var body: some Scene {
         WindowGroup {
-            MentoryiOSView(mentoryiOS)
-                .environment(watchConnectivity)
-                .task {
-                    mentoryiOS.watchConnectivity = watchConnectivity
-                }
+            MentoryiOSView(mentory)
         }
     }
 }

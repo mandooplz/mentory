@@ -493,7 +493,7 @@ fileprivate struct SettingBoardPreview: View {
                     
                     let onboarding = mentoryiOS.onboarding!
                     onboarding.nameInput = "김철수"
-                    onboarding.next()
+                    onboarding.submitForm()
                 }
         }
     }

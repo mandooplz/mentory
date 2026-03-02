@@ -164,7 +164,7 @@ public final class TodayBoard: Sendable, ObservableObject {
         let mentoryiOS = self.owner!
         let mentoryDB = mentoryiOS.mentoryDB
         
-        // process - MentoryDB
+        // process - MentoryDB에서 DailyRecord 가져오기
         let recentRecord: (any DailyRecordInterface)?
         do {
             recentRecord = try await mentoryDB.getRecentRecord()
@@ -179,7 +179,7 @@ public final class TodayBoard: Sendable, ObservableObject {
             return
         }
         
-        // process - MentoryDB
+        // process - MentoryDB에서 Suggestion 가져오기
         let suggestionDatas: [SuggestionData]
         do {
             suggestionDatas = try await recentRecord.getSuggestions()
@@ -247,7 +247,7 @@ public final class TodayBoard: Sendable, ObservableObject {
         let completionStatus = suggestions.map { $0.isDone }
         let mentoryiOS = self.owner!
         
-        await mentoryiOS.watchConnectivity?.updateContext(
+        await mentoryiOS.watchConnectivity.updateContext(
             message: mentorMessage?.content,
             character: mentorMessage?.character?.rawValue,
             todos: todos,

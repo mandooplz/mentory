@@ -23,6 +23,7 @@ public final class Mentory: Sendable, ObservableObject {
     internal nonisolated let mentoryDB: any MentoryDBInterface
     internal nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
     internal nonisolated let reminderCenter: any ReminderNotificationInterface
+    public nonisolated let watchConnectivity: any WatchConnectivityInterface
 
     public init(_ mode: SystemMode = .test) {
         switch mode {
@@ -30,10 +31,12 @@ public final class Mentory: Sendable, ObservableObject {
             self.mentoryDB = MentoryDBAdapter()
             self.firebaseLLM = FirebaseLLMAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
+            self.watchConnectivity = WatchConnectivityManager.shared
         case .test:
             self.mentoryDB = MentoryDBFakeAdapter()
             self.firebaseLLM = FirebaseLLMFakeAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
+            self.watchConnectivity = WatchConnectivityManager.shared
         }
     }
     
@@ -50,14 +53,12 @@ public final class Mentory: Sendable, ObservableObject {
         return "반가워요, \(userName)님!"
     }
     
+    @Published public var onboarding: Onboarding? = nil
     @Published public var onboardingFinished: Bool = false
     
-    @Published public var onboarding: Onboarding? = nil
     @Published public var todayBoard: TodayBoard? = nil
     @Published public var settingBoard: SettingBoard? = nil
     @Published public var statBoard: StatBoard? = nil
-    
-    public var watchConnectivity: (any WatchConnectivityInterface)? = nil
     
     
     // MARK: action

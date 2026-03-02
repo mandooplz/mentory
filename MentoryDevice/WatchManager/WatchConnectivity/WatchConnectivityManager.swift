@@ -18,7 +18,7 @@ public final class WatchConnectivityManager: WatchConnectivityInterface {
     // MARK: core
     private let logger = Logger()
     public static let shared = WatchConnectivityManager()
-    private init() { }
+    public init() { }
 
     // MARK: state
     public var message: String? = nil
