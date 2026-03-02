@@ -15,7 +15,7 @@ let project = Project(
             product: .staticLibrary,
             bundleId: "cloud.mandooplz.MentoryDBCore",
             deploymentTargets: .iOS("26.1"),
-            sources: ["Sources/MentoryDB/**"],
+            sources: ["Sources/MentoryDBCore/**"],
             resources: [],
             dependencies: [
                 .project(target: "Values", path: "../MentoryShared"),
