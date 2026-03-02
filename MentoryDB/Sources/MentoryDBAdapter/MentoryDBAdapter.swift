@@ -13,7 +13,7 @@ import Values
 // MARK: Adapter
 public nonisolated struct MentoryDBAdapter: MentoryDBInterface {
     // MARK: core
-    private let mentoryDB = MentoryDBReal.shared
+    private let mentoryDB = MentoryDB.shared
     
     public init() { }
     

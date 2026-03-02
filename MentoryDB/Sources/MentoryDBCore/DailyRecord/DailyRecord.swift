@@ -10,7 +10,51 @@ import Foundation
 import OSLog
 
 
-// MARK: SwiftData Model
+// MARK: Object
+public actor DailyRecord: Sendable {
+    // MARK: core
+    init(id: UUID) {
+        self.id = id
+    }
+    nonisolated let id: UUID
+    nonisolated let logger = Logger(subsystem: "MentoryDB.DailyRecord", category: "Domain")
+    
+    
+    // MARK: state
+    
+    
+    // MARK: action
+    public func getSuggestions() async -> [SuggestionData] {
+        let context = ModelContext(MentoryDB.container)
+        let recordId = self.id
+
+        let descriptor = FetchDescriptor<DailyRecordModel>(
+            predicate: #Predicate { $0.id == recordId }
+        )
+
+        do {
+            guard let dailyRecord = try context.fetch(descriptor).first else {
+                logger.error("getSuggestions: DailyRecord 조회 실패 >> [] 반환")
+                return []
+            }
+
+            // DailySuggestionModel > SuggestionData 변환
+            let suggestions: [SuggestionData] = dailyRecord.suggestions
+                .map { $0.toData() }
+
+            return suggestions
+
+        } catch {
+            logger.error("getSuggestions 오류: \(error)")
+            return []
+        }
+    }
+
+}
+
+
+
+// MARK: Values
 @Model
 final class DailyRecordModel {
     // MARK: core
@@ -44,47 +88,4 @@ final class DailyRecordModel {
                      analyzedResult: self.analyzedResult,
                      emotion: self.emotion)
     }
-}
-
-
-// MARK: Object
-public actor DailyRecord: Sendable {
-    // MARK: core
-    init(id: UUID) {
-        self.id = id
-    }
-    nonisolated let id: UUID
-    nonisolated let logger = Logger(subsystem: "MentoryDB.DailyRecord", category: "Domain")
-    
-    
-    // MARK: state
-    
-    
-    // MARK: action
-    public func getSuggestions() async -> [SuggestionData] {
-        let context = ModelContext(MentoryDBReal.container)
-        let recordId = self.id
-
-        let descriptor = FetchDescriptor<DailyRecordModel>(
-            predicate: #Predicate { $0.id == recordId }
-        )
-
-        do {
-            guard let dailyRecord = try context.fetch(descriptor).first else {
-                logger.error("getSuggestions: DailyRecord 조회 실패 >> [] 반환")
-                return []
-            }
-
-            // DailySuggestionModel > SuggestionData 변환
-            let suggestions: [SuggestionData] = dailyRecord.suggestions
-                .map { $0.toData() }
-
-            return suggestions
-
-        } catch {
-            logger.error("getSuggestions 오류: \(error)")
-            return []
-        }
-    }
-
 }

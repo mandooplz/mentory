@@ -9,7 +9,7 @@ import Values
 import Collections
 
 
-// MARK: Fake
+// MARK: Object
 @MainActor
 public final class DailyRecordFake: Sendable {
     // MARK: core
