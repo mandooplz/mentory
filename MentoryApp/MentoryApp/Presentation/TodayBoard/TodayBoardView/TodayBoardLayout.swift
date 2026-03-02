@@ -20,11 +20,11 @@ struct TodayBoardLayout<Content: View, navDestination: View>: View {
         NavigationStack {
             ZStack {
                 MentoryBackground()
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
                         self.content()
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 40)
                 }
             }

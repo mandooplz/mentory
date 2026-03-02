@@ -126,17 +126,19 @@ struct TermsOfServiceView: View {
     ]
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                header
-                ForEach(sections) { section in
-                    TermsSectionView(section: section)
+        ZStack {
+            Color.mentoryBackground.ignoresSafeArea()
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    header
+                    ForEach(sections) { section in
+                        TermsSectionView(section: section)
+                    }
                 }
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(20)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("이용 약관")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -159,21 +161,21 @@ private struct TermsSectionView: View {
     let section: TermsSection
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(section.title)
-                .font(.headline)
-            VStack(alignment: .leading, spacing: 6) {
-                ForEach(section.lines, id: \.self) { line in
-                    Text(line)
-                        .font(line.hasPrefix("•") || line.hasPrefix("  -") ? .body : .subheadline)
-                        .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        LiquidGlassCard(cornerRadius: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(section.title)
+                    .font(.headline)
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(section.lines, id: \.self) { line in
+                        Text(line)
+                            .font(line.hasPrefix("•") || line.hasPrefix("  -") ? .body : .subheadline)
+                            .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
             }
+            .padding(16)
         }
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

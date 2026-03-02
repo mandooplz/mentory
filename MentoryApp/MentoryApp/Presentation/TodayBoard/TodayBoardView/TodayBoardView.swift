@@ -531,7 +531,7 @@ fileprivate struct DateButton: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color(.secondarySystemBackground))
+                    .fill(Color.mentorySubCard)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)

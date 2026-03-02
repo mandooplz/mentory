@@ -10,6 +10,7 @@ import Values
 import MentoryCore
 
 public struct StatBoardView: View {
+    // MARK: model
     @ObservedObject var board: StatBoard
     
     @State private var selectedMonth: Date = Date()

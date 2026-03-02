@@ -204,24 +204,26 @@ Apache License
 """
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                header
-                gratitudeCard
-                VStack(alignment: .leading, spacing: 16) {
-                    ForEach(libraries) { library in
-                        LibraryCardView(library: library)
+        ZStack {
+            Color.mentoryBackground.ignoresSafeArea()
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    header
+                    gratitudeCard
+                    VStack(alignment: .leading, spacing: 16) {
+                        ForEach(libraries) { library in
+                            LibraryCardView(library: library)
+                        }
                     }
+                    LicenseDocumentView(
+                        title: "🔹 Swift Collections – Apache License 2.0 전문",
+                        text: apacheLicenseText
+                    )
                 }
-                LicenseDocumentView(
-                    title: "🔹 Swift Collections – Apache License 2.0 전문",
-                    text: apacheLicenseText
-                )
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(20)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("라이센스 정보")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -237,18 +239,18 @@ Apache License
     }
 
     private var gratitudeCard: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "heart.text.square.fill")
-                .font(.title3)
-                .foregroundStyle(Color.pink)
-            Text("Mentory는 커뮤니티가 만든 오픈소스 생태계 덕분에 더 나은 기능을 제공할 수 있습니다. 소중한 기여에 진심으로 감사드립니다.")
-                .font(.callout)
-                .foregroundStyle(.primary)
+        LiquidGlassCard(cornerRadius: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "heart.text.square.fill")
+                    .font(.title3)
+                    .foregroundStyle(Color.pink)
+                Text("Mentory는 커뮤니티가 만든 오픈소스 생태계 덕분에 더 나은 기능을 제공할 수 있습니다. 소중한 기여에 진심으로 감사드립니다.")
+                    .font(.callout)
+                    .foregroundStyle(.primary)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(uiColor: .tertiarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 
@@ -256,32 +258,32 @@ private struct LibraryCardView: View {
     let library: OpenSourceLibrary
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(library.name)
-                        .font(.headline)
-                    Text(library.identifier)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+        LiquidGlassCard(cornerRadius: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(library.name)
+                            .font(.headline)
+                        Text(library.identifier)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Text(library.licenseType)
+                        .font(.footnote.weight(.semibold))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.accentColor.opacity(0.1))
+                        .clipShape(Capsule())
                 }
-                Spacer()
-                Text(library.licenseType)
-                    .font(.footnote.weight(.semibold))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.accentColor.opacity(0.1))
-                    .clipShape(Capsule())
+                VStack(alignment: .leading, spacing: 8) {
+                    LabelValueRow(label: "용도", value: library.purpose)
+                    LabelValueRow(label: "제공자", value: library.provider)
+                    LabelValueRow(label: "공식 저장소", value: library.repositoryURL)
+                }
             }
-            VStack(alignment: .leading, spacing: 8) {
-                LabelValueRow(label: "용도", value: library.purpose)
-                LabelValueRow(label: "제공자", value: library.provider)
-                LabelValueRow(label: "공식 저장소", value: library.repositoryURL)
-            }
+            .padding(16)
         }
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
@@ -306,20 +308,20 @@ private struct LicenseDocumentView: View {
     let text: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
-            ScrollView {
-                Text(text)
-                    .font(.footnote.monospaced())
-                    .frame(maxWidth: .infinity, alignment: .leading)
+        LiquidGlassCard(cornerRadius: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(title)
+                    .font(.headline)
+                ScrollView {
+                    Text(text)
+                        .font(.footnote.monospaced())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxHeight: 400)
+                .scrollIndicators(.visible)
             }
-            .frame(maxHeight: 400)
-            .scrollIndicators(.visible)
+            .padding(16)
         }
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
