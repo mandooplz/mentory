@@ -28,425 +28,181 @@
   <img src="./assets/images/mentory-intro.png" alt="App Introduction" width="800">
 </p>
 
-## 목차
+## Overview
 
-- [목차](#목차)
-- [관련 링크](#관련-링크)
-- [사용 기술](#사용-기술)
-- [시작하기](#시작하기)
-  - [필요 조건](#필요-조건)
-  - [설치 방법](#설치-방법)
-  - [환경 설정](#환경-설정)
-  - [실행 방법](#실행-방법)
-- [Tuist 기반 최초 빌드 및 실행 절차](#tuist-기반-최초-빌드-및-실행-절차)
-- [소프트웨어 디자인](#소프트웨어-디자인)
-- [프로젝트 구조](#프로젝트-구조)
-- [팀원](#팀원)
+Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 데이터"로 다뤄, 사용자 입력(텍스트/음성/이미지)을 SwiftData에 축적하고 LLM 분석 결과를 행동 제안으로 연결하는 iOS 앱입니다. 이 프로젝트는 기능 구현 자체보다도 SwiftUI + Combine + Swift Concurrency를 조합해 테스트 가능한 아키텍처로 설계하고, iOS/Watch/Widget까지 확장 가능한 구조를 구축하는 데 초점을 두었습니다.
 
-## 관련 링크
+## Tech Stack
 
-> [!NOTE]
-> 프로젝트를 빌드하기 위해서는 Secrets.xcconfig 와 GoogleService-Info.plist 파일이 필요합니다.
+- UI: SwiftUI
+- State & Reactive: Combine
+- Concurrency: Swift Concurrency (async/await)
+- Local Persistence: SwiftData
+- Build System: Tuist
+- AI/LLM: Alan API, Firebase AI Logic
+- Platform Extensions: WatchConnectivity, WidgetKit
 
-- [작업 진행 상황](https://www.figma.com/board/SiHyXGeXghxikBKJqoxnkh/%EC%A7%84%ED%96%89-%EC%83%81%ED%99%A9?node-id=0-1&t=87sDM1UrF9fC4KOp-1)
+## Portfolio Highlights
 
-## 스크린샷
+- `Domain`을 외부 프레임워크 의존에서 분리해 기능 추가 시 핵심 로직 변경 범위를 최소화
+- `Adapter Interface` 중심 설계로 LLM/DB 구현체 교체와 테스트 대역(Mock) 주입이 쉬운 구조
+- 기록 저장(SwiftData)과 분석 요청(LLM async)을 분리해 실패 지점을 독립적으로 복구 가능
+- Combine 스트림(`@Published`)과 async/await를 역할별로 분리해 UI 반응성과 비동기 안정성 확보
+- iOS 앱을 중심으로 WatchConnectivity/Widget 확장 포인트를 모듈 경계에서 일관되게 유지
+- Tuist 기반 모듈화로 앱/DB/공유 타입/디바이스 연동을 빌드 단위에서 분리
+
+## Architecture
+
+### Layered Structure & Dependency Direction
+
+- Layer: `Presentation` / `Domain` / `Adapter` / `Service`
+- Dependency Direction:
+  - `Presentation` → `Domain` (유스케이스 소비)
+  - `Domain` → `Protocol` (구현이 아닌 추상화 의존)
+  - `Adapter`/`Service` → `Protocol 구현` (외부 API, DB, 디바이스 연동)
+- DIP(의존성 역전 원칙) 적용으로 Domain은 프레임워크 세부 구현에서 독립적으로 유지됩니다.
+
+왜 이렇게 나눴는가:
+
+- 비즈니스 로직을 View와 분리해 UI 변경(레이아웃/상태 표현)이 핵심 정책에 영향을 주지 않도록 하기 위해
+- LLM/DB 같은 외부 의존성 실패를 Adapter 경계에서 캡슐화해 장애 전파를 줄이기 위해
+- 같은 Domain 로직을 iOS UI, Watch 연동, Widget 업데이트에서 재사용하기 위해
+- 테스트에서 빠른 피드백을 위해 실제 인프라 없이 Domain 단위 검증이 가능해야 했기 때문에
+
+## Data Flow
+
+1. 감정 기록 생성 시나리오
+   - 사용자가 `RecordForm`에서 텍스트/음성/이미지를 입력
+   - Domain이 입력 검증 후 `MentoryDBInterface`를 통해 SwiftData에 기록 저장
+   - 저장된 기록을 기반으로 LLM Adapter에 비동기 분석 요청 (`async/await`)
+   - 분석 결과를 `Suggestion`/`MentorMessage`로 변환하여 Domain 상태 갱신
+   - `@Published` 상태 변경이 Combine을 통해 SwiftUI View에 반영
+
+2. 재진입/조회 시나리오
+   - 앱 재실행 시 SwiftData에서 최근 기록/추천을 로드
+   - 로드된 Domain 상태를 Combine 스트림으로 UI에 즉시 반영
+   - 필요 시 추가 분석은 async task로 분리해 UI 블로킹 없이 후속 갱신
+
+## Testing Strategy
+
+- 핵심 전략: `Adapter Interface + Mock 구현체`를 사용해 Domain 로직을 외부 인프라 없이 테스트
+- 실제 API/DB 호출 없이 상태 전이와 규칙 검증에 집중한 단위 테스트 구성
+
+대표 테스트 대상 및 범위:
+
+- `Onboarding`
+  - 입력 검증(공백/유효 입력), 온보딩 완료 상태 전이, 소유자(Domain) 반영 여부
+- `TodayBoard`
+  - 기록/추천 로드, 상태 업데이트, 재조회 시 중복/순서 안정성
+- `RecordForm`/`MindAnalyzer`
+  - 입력 유효성, 분석 트리거 조건, 분석 결과가 추천 생성으로 연결되는 흐름
+- `MentorMessage`
+  - 분석 결과 기반 메시지 업데이트 및 컨텍스트 동기화 포인트 검증
+
+## My Role
+
+- Domain-First 아키텍처 방향 정의 및 계층 경계(`Presentation/Domain/Adapter/Service`) 구체화
+- 감정 기록 → 저장 → 분석 → 제안 반영으로 이어지는 핵심 데이터 플로우 설계/구현
+- 모듈 분리(Tuist) 기준 정리 및 공유 타입(`MentoryShared`) 중심 의존성 정돈
+- Adapter 인터페이스/Mock 전략 도입으로 테스트 가능한 구조 구축
+- Onboarding/TodayBoard 중심으로 상태 전이와 회귀 리스크를 확인하는 테스트 시나리오 작성
+
+## Screenshots
 
 <table>
   <tr>
     <td align="center" width="25%">
       <img src="./screenshots/todayboard.png" alt="todayboard" width="100%">
       <br>
-      <b>오늘의 감정 보드</b>
+      <b>TodayBoard</b>
       <br>
-      <sub>오늘 하루의 감정 기록</sub>
+      <sub>감정 기록/요약의 메인 진입점</sub>
     </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/suggestion.png" alt="suggestion" width="100%">
-      <br>
-      <b>활동 추천</b>
-      <br>
-      <sub>AI가 추천하는 맞춤형 활동</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/badge.png" alt="badge" width="100%">
-      <br>
-      <b>뱃지</b>
-      <br>
-      <sub>기록 달성에 따른 뱃지 획득</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/todayboard-record.png" alt="todayboard-record" width="100%">
-      <br>
-      <b>기록 히스토리</b>
-      <br>
-      <sub>이틀 전까지 기록 가능</sub>
-    </td>
-  </tr>
-  <tr>
     <td align="center" width="25%">
       <img src="./screenshots/recordform.png" alt="recordform" width="100%">
       <br>
-      <b>감정 기록 폼</b>
+      <b>RecordForm</b>
       <br>
-      <sub>텍스트, 음성, 사진 기록</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/recordform-pic.png" alt="recordform-pic" width="100%">
-      <br>
-      <b>사진으로 기록</b>
-      <br>
-      <sub>이미지를 통한 감정 표현</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="./screenshots/recordform-audio.png" alt="recordform-audio" width="100%">
-      <br>
-      <b>음성으로 기록</b>
-      <br>
-      <sub>음성 녹음을 통한 감정 기록</sub>
+      <sub>텍스트/음성/이미지 기반 감정 입력</sub>
     </td>
     <td align="center" width="25%">
       <img src="./screenshots/analyze.png" alt="analyze" width="100%">
       <br>
-      <b>AI 감정 분석</b>
+      <b>Mind Analysis</b>
       <br>
-      <sub>LLM 기반 감정 분석, 조언</sub>
+      <sub>LLM 분석 결과와 제안 생성</sub>
     </td>
-  </tr>
-  <tr>
     <td align="center" width="25%">
-      <img src="./screenshots/setting.png" alt="setting" width="100%">
+      <img src="./screenshots/suggestion.png" alt="suggestion" width="100%">
       <br>
-      <b>설정</b>
+      <b>Suggestion</b>
       <br>
-      <sub>알림 및 개인 설정 관리</sub>
-    </td>
-    <td align="center" width="25%">
-      <!-- 추가 스크린샷 -->
-    </td>
-    <td align="center" width="25%">
-      <!-- 추가 스크린샷 -->
-    </td>
-    <td align="center" width="25%">
-      <!-- 추가 스크린샷 -->
+      <sub>행동 제안 반영 및 완료 상태 관리</sub>
     </td>
   </tr>
 </table>
 
-## 사용 기술
+## Getting Started
 
-<table>
-  <thead>
-    <tr>
-      <th>카테고리</th>
-      <th>기술</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td >🏗️ 아키텍처</td>
-      <td>
-        <ul>
-          <li><strong>SwiftUI + MVVM</strong></li>
-          <li><strong>Combine</strong></li>
-          <li><strong>Swift Concurrency(Swift 6)</strong></li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>💾 데이터 관리</td>
-      <td>
-        <ul>
-          <li><strong>SwiftData</strong></li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>🎤 음성 처리</td>
-      <td>
-        <ul>
-          <li><strong>AVFoundation</strong></li>
-          <li><strong>Speech Framework</strong></li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>🤖 LLM</td>
-      <td>
-        <ul>
-          <li><strong>ESTSOFT Alan LLM API</strong></li>
-          <li><strong>Firebase AI Logic</strong></li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
+> [!NOTE]
+> 프로젝트 빌드를 위해 `Secrets.xcconfig`와 `GoogleService-Info.plist`가 필요합니다.
 
-## 시작하기
+### Prerequisites
 
-### 필요 조건
+- Xcode 26.1+
+- Swift 6.0
+- Tuist 4.153.0+
+- iOS 26.0+ / watchOS 26.0+
 
-<table>
-  <tr>
-    <td align="center" width="120">
-      <img src="https://img.shields.io/badge/-26.1+-147EFB?style=for-the-badge&logo=xcode&logoColor=white" alt="Xcode">
-    </td>
-    <td>
-      <b>Xcode 26.1 이상</b>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="">
-      <img src="https://img.shields.io/badge/-26.0+-000000?style=for-the-badge&logo=ios&logoColor=white" alt="iOS">
-    </td>
-    <td>
-      <b>iOS 26.0 이상</b> (시뮬레이터 또는 실제 디바이스)
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <img src="https://img.shields.io/badge/-26.0+-000000?style=for-the-badge&logo=apple&logoColor=white" alt="watchOS">
-    </td>
-    <td>
-      <b>watchOS 26.0 이상</b>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="120">
-      <img src="https://img.shields.io/badge/-6.0-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift">
-    </td>
-    <td>
-      <b>Swift 6.0</b>
-    </td>
-  </tr>
-</table>
+### Install
 
-> 권장 Tuist 버전: **4.39.1**
+```bash
+git clone https://github.com/EST-iOS4/Mentory.git
+cd Mentory
+tuist install
+tuist generate
+open mentory.xcworkspace
+```
 
-### 설치 방법
+### Environment Setup
 
-1. **저장소 클론**
-   ```bash
-   git clone https://github.com/EST-iOS4/Mentory.git
-   cd Mentory
-   ```
-
-2. **Tuist 설치** (이미 설치되어 있으면 생략)
-   ```bash
-   brew install tuist
-   tuist version
-   ```
-
-3. **Tuist 의존성 설치 및 워크스페이스 생성**
-   ```bash
-   tuist install
-   tuist generate
-   ```
-
-4. **워크스페이스 열기**
-   ```bash
-   open mentory.xcworkspace
-   ```
-
-### 환경 설정
-
-#### 1. ESTSOFT Alan LLM API 토큰 설정
-
-1. `Secrets.xcconfig.sample` 파일을 복사하여 `Secrets.xcconfig` 파일 생성
+1. Alan API 토큰 설정
    ```bash
    cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
    ```
-
-2. `Secrets.xcconfig` 파일을 열어 ESTSOFT에서 제공받은 API 토큰 입력
-   ```
+   `MentoryApp/Secrets.xcconfig`에 아래 값 설정:
+   ```bash
    TOKEN = 여기에-발급받은-토큰-입력
    ```
+2. Firebase 설정
+   - Firebase Console에서 프로젝트 생성 후 `GoogleService-Info.plist` 다운로드
+   - `MentoryApp/MentoryApp/`에 추가
+   - Firebase AI 기능(Gemini API) 활성화
 
-3. Xcode에서 프로젝트 설정 확인
-   - [mentory.xcworkspace](mentory.xcworkspace)를 연 뒤 `Mentory` 타겟 선택
-   - **Info** 탭에서 `ALAN_API_TOKEN` 값이 `$(TOKEN)`으로 설정되어 있는지 확인
+### Run
 
-#### 2. Firebase 설정
+- iOS: `Mentory` 스킴 실행
+- watchOS: `MentoryWatchApp` 스킴 실행
+- Widget: 앱 실행 후 홈 화면에서 Mentory 위젯 추가
 
-1. [Firebase Console](https://console.firebase.google.com/)에서 프로젝트 생성
+## Module Structure
 
-2. iOS 앱 추가 및 `GoogleService-Info.plist` 다운로드
+- `MentoryApp`
+  - SwiftUI 기반 iOS 앱 타깃
+  - Presentation/Domain 계층과 앱 엔트리포인트 포함
+- `MentoryDB`
+  - SwiftData 기반 영속성 모듈
+  - Domain이 의존하는 DB 인터페이스 구현
+- `MentoryDevice`
+  - WatchConnectivity 및 디바이스 연동 처리 모듈
+- `MentoryLLM`
+  - Alan/Firebase 등 LLM 연동 어댑터 모듈
+- `MentoryShared`
+  - 공유 Value 타입/프로토콜 정의 모듈
+  - 모듈 간 계약(Contract) 역할
+- `MentoryWatchApp` / `MentoryWidget`
+  - Watch 및 Widget 확장 타깃
 
-3. 다운로드한 파일을 프로젝트의 `MentoryApp/MentoryApp/` 디렉토리에 추가
-   - Xcode에서 [MentoryApp/MentoryApp](MentoryApp/MentoryApp) 폴더에 드래그 앤 드롭
-   - **Copy items if needed** 체크
+## Links
 
-4. Firebase AI 기능 활성화
-   - Firebase Console에서 **Build** > **AI** 메뉴로 이동
-   - Gemini API 활성화
-
-### 실행 방법
-
-#### iOS 앱 실행
-
-1. Xcode에서 타겟을 **Mentory**로 선택
-2. 시뮬레이터 또는 실제 디바이스 선택
-3. `Cmd + R` 또는 실행 버튼 클릭
-
-#### watchOS 앱 실행
-
-1. Xcode에서 타겟을 **MentoryWatchApp**으로 선택
-2. Watch 시뮬레이터 선택
-3. `Cmd + R` 또는 실행 버튼 클릭
-
-> **참고**: watchOS 앱을 실행하려면 먼저 iOS 앱이 실행되어 있어야 데이터 동기화가 정상적으로 작동합니다.
-
-#### 위젯 테스트
-
-1. iOS 앱을 먼저 실행
-2. 홈 화면으로 이동
-3. 위젯 추가 화면에서 **Mentory** 위젯 선택
-4. 원하는 크기의 위젯을 홈 화면에 배치
-
-### Tuist 기반 최초 빌드 및 실행 절차
-
-처음 참여한 개발자는 아래 순서로 진행하면 바로 빌드/실행할 수 있습니다.
-
-1. 저장소 클론
-   ```bash
-   git clone https://github.com/EST-iOS4/Mentory.git
-   cd Mentory
-   ```
-2. `MentoryApp/Secrets.xcconfig` 생성 후 `TOKEN` 값 설정
-   ```bash
-   cp MentoryApp/Secrets.xcconfig.sample MentoryApp/Secrets.xcconfig
-   ```
-3. Firebase에서 받은 `GoogleService-Info.plist`를 `MentoryApp/MentoryApp/`에 추가
-4. Tuist 의존성 설치 및 워크스페이스 생성
-   ```bash
-   tuist install
-   tuist generate
-   open mentory.xcworkspace
-   ```
-5. Xcode에서 `Mentory` 스킴 선택 후 `Cmd + B`(빌드), `Cmd + R`(실행)
-
-> `tuist generate` 이후에는 기존 `.xcodeproj` 대신 **`mentory.xcworkspace`** 를 기준으로 작업하세요.
-
-## 소프트웨어 디자인
-
-아래 사진을 통해 MentoryiOS, MentoryLLM, MentoryDB 도메인을 확인할 수 있습니다.
-
-<p align="center">
-  <img width="80%" height="auto" alt="image" src="https://github.com/user-attachments/assets/6c348677-a126-497d-8d30-dc8dd29528aa" />
-</p>
-
-<p align="center">
-  <img src="./assets/images/mentory.png" alt="소프트웨어 디자인 다이어그램">
-</p>
-
-## 프로젝트 구조
-
-```
-Mentory/
-├── MentoryApp/                       # 메인 iOS 앱 프로젝트
-│   ├── MentoryApp.swift             # 앱 진입점
-│   ├── Domain/                      # 비즈니스 로직 계층
-│   │   ├── MentoryiOS.swift        # 메인 도메인 모델
-│   │   ├── TodayBoard/             # 오늘의 감정 기록 관련 도메인
-│   │   │   ├── TodayBoard.swift
-│   │   │   ├── RecordForm/         # 감정 기록 폼
-│   │   │   ├── MentorMessage/      # 멘토 메시지
-│   │   │   └── Suggestion/         # 활동 추천
-│   │   ├── Onboarding/             # 온보딩 도메인
-│   │   └── SettingBoard/           # 설정 도메인
-│   ├── Presentation/                # UI 계층 (SwiftUI Views & ViewModels)
-│   │   ├── Components/             # 재사용 가능한 UI 컴포넌트
-│   │   ├── TodayBoard/             # 오늘의 감정 기록 화면
-│   │   ├── Onboarding/             # 온보딩 화면
-│   │   └── SettingBoard/           # 설정 화면
-│   ├── Adapter/                     # 외부 서비스 어댑터 계층
-│   │   ├── AlanLLM/                # ESTSOFT Alan LLM 어댑터
-│   │   ├── AlanLLMMock/            # Alan LLM 목 객체
-│   │   ├── FirebaseLLM/            # Firebase AI 어댑터
-│   │   ├── FirebaseLLMMock/        # Firebase LLM 목 객체
-│   │   ├── MentoryDB/              # 데이터베이스 어댑터
-│   │   ├── MentoryDBMock/          # DB 목 객체
-│   │   └── Notification/           # 알림 어댑터
-│   ├── Service/                     # 서비스 계층
-│   │   ├── Microphone/             # 음성 녹음 서비스
-│   │   ├── ImagePicker/            # 이미지 선택 서비스
-│   │   └── WatchConnectivity/      # Watch 연동 서비스
-│   ├── Assets.xcassets/            # 이미지, 컬러 리소스
-│   ├── GoogleService-Info.plist    # Firebase 설정 파일
-│   └── Info.plist                  # 앱 설정 파일
-│
-├── MentoryDB/                       # 데이터베이스 모듈
-│   └── Domain/                     # DB 도메인 모델
-│       └── DailyRecord/            # 일일 감정 기록 모델
-│
-├── MentoryWatchApp/                 # watchOS 앱
-│   ├── Domain/                     # Watch 앱 비즈니스 로직
-│   ├── Service/                    # Watch 앱 서비스
-│   └── Presentation/.              # UI 계층
-│
-├── MentoryWidget/                   # 위젯 확장
-│   ├── MentoryWidgetBundle.swift   # 위젯 번들
-│   └── Presentation/               # 위젯 UI
-│
-├── MentoryShared/                   # 공유 값 타입 및 프로토콜 프로젝트 (Values 모듈)
-│   ├── MentoryiOS/                 # iOS 앱 관련 값 타입
-│   ├── MentoryDB/                  # DB 관련 값 타입
-│   ├── AlanLLM/                    # Alan LLM 관련 값 타입
-│   └── FirebaseLLM/                # Firebase LLM 관련 값 타입
-│
-├── MentoryTests/                    # 단위 테스트
-│   ├── TodayBoard/                 # TodayBoard 도메인 테스트
-│   └── Onboarding/                 # Onboarding 도메인 테스트
-│
-├── Secrets.xcconfig                 # API 키 설정 파일 (git에서 제외됨)
-└── Secrets.xcconfig.sample          # API 키 설정 템플릿
-```
-
-### 아키텍처 설명
-
-이 프로젝트는 **MVVM 패턴**과 **클린 아키텍처** 원칙을 따라 설계되었습니다:
-
-- **Domain**: 비즈니스 로직과 규칙을 담당하는 핵심 계층
-- **Presentation**: SwiftUI 뷰와 뷰모델을 포함하는 UI 계층
-- **Adapter**: 외부 서비스(LLM, DB, 알림 등)와의 통신을 담당하는 계층
-- **Service**: 공통 기능(마이크, 이미지 피커, Watch 연동)을 제공하는 계층
-- **MentoryShared (Values 모듈)**: 도메인 간 공유되는 값 타입과 프로토콜
-
-각 계층은 의존성 역전 원칙(DIP)을 따르며, Mock 객체를 통해 테스트 가능하도록 설계되었습니다.
-
-## 팀원
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/dearjaypark">
-        <img src="https://github.com/dearjaypark.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>박재이</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/ji-seok-Song">
-        <img src="https://github.com/ji-seok-Song.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>송지석</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/funrace2">
-        <img src="https://github.com/funrace2.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>구현모</b>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/mandooplz">
-        <img src="https://github.com/mandooplz.png" width="100" height="100" style="border-radius: 50%;"><br>
-        <b>김민우</b>
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">iOS Developer</td>
-    <td align="center">iOS Developer</td>
-    <td align="center">iOS Developer</td>
-    <td align="center">iOS Developer</td>
-  </tr>
-</table>
+- [작업 진행 상황](https://www.figma.com/board/SiHyXGeXghxikBKJqoxnkh/%EC%A7%84%ED%96%89-%EC%83%81%ED%99%A9?node-id=0-1&t=87sDM1UrF9fC4KOp-1)
