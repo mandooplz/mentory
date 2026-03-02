@@ -45,7 +45,6 @@ struct OnboardingView: View {
             .padding(.top, 44)
             .padding(.bottom, 20)
         }
-        .onSubmit(handleSubmit)
     }
     
     
@@ -96,6 +95,10 @@ struct OnboardingView: View {
                         if onboarding.validationResult != .none {
                             onboarding.validateInput()
                         }
+                        
+                        if onboarding.nameInput != onboarding.trimmedName {
+                            onboarding.setName(onboarding.trimmedName)
+                        }
                     }
             }
             .padding(.horizontal, 16)
@@ -119,7 +122,19 @@ struct OnboardingView: View {
     
     @ViewBuilder
     private var submitButton: some View {
-        Button(action: handleSubmit) {
+        Button(action: {
+            guard isSubmitDisabled == false else {
+                return
+            }
+            
+            onboarding.submitForm()
+            
+            Task {
+                if let mentoryiOS = onboarding.owner {
+                    await mentoryiOS.saveUserName()
+                }
+            }
+        }) {
             Text("계속")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundStyle(.white)
@@ -147,43 +162,20 @@ struct OnboardingView: View {
     
     
     // MARK: value
-    private var trimmedName: String {
-        onboarding.nameInput.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
     private var isSubmitDisabled: Bool {
-        trimmedName.isEmpty || onboarding.isUsed
+        onboarding.trimmedName.isEmpty || onboarding.isUsed
     }
     
     private var inputBorderColor: Color {
         if onboarding.validationResult == .nameInputIsEmpty {
             return .red.opacity(0.7)
         }
+        
         if isNameFieldFocused {
             return Color.mentoryAccentPrimary.opacity(0.7)
         }
+        
         return .clear
-    }
-    
-    
-    // MARK: action
-    private func handleSubmit() {
-        if onboarding.nameInput != trimmedName {
-            onboarding.setName(trimmedName)
-        }
-        onboarding.validateInput()
-        
-        guard isSubmitDisabled == false else {
-            return
-        }
-        
-        onboarding.submitForm()
-        
-        Task {
-            if let mentoryiOS = onboarding.owner {
-                await mentoryiOS.saveUserName()
-            }
-        }
     }
 }
 
