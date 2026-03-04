@@ -28,6 +28,8 @@ let project = Project(
             dependencies: [
                 .project(target: "Values", path: "../MentoryShared"),
                 .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
+                .project(target: "NewMentoryDBCore", path: "../MentoryDB"),
+                .project(target: "NewMentoryDBFake", path: "../MentoryDB"),
                 .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
                 .project(target: "iOSReminder", path: "../MentoryDevice"),
                 .project(target: "WatchManager", path: "../MentoryDevice"),
