@@ -1,7 +1,7 @@
 import ProjectDescription
 
 extension Target {
-    static func mentoryTarget(
+    public static func mentoryTarget(
         name: String,
         destinations: Destinations,
         product: Product,
@@ -31,7 +31,7 @@ extension Target {
         )
     }
 
-    static func mentoryStaticLibrary(
+    public static func mentoryStaticLibrary(
         name: String,
         sources: SourceFilesList,
         resources: ResourceFileElements? = [],
@@ -54,7 +54,7 @@ extension Target {
         )
     }
 
-    static func mentoryFramework(
+    public static func mentoryFramework(
         name: String,
         sources: SourceFilesList,
         resources: ResourceFileElements? = [],
@@ -82,7 +82,7 @@ extension Target {
         )
     }
 
-    static func mentoryApp(
+    public static func mentoryApp(
         name: String,
         productName: String,
         bundleId: String,
@@ -110,7 +110,7 @@ extension Target {
         )
     }
 
-    static func mentoryUnitTests(
+    public static func mentoryUnitTests(
         name: String,
         sources: SourceFilesList,
         resources: ResourceFileElements? = [],
@@ -132,7 +132,7 @@ extension Target {
         )
     }
 
-    static func mentoryAppExtension(
+    public static func mentoryAppExtension(
         name: String,
         bundleId: String,
         sources: SourceFilesList,
@@ -158,7 +158,7 @@ extension Target {
         )
     }
 
-    static func mentoryWatchApp(
+    public static func mentoryWatchApp(
         name: String,
         productName: String,
         bundleId: String,

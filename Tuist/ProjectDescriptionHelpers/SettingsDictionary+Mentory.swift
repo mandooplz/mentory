@@ -24,7 +24,7 @@ private func arraySettings(
 }
 
 extension Settings {
-    static func mentoryProject(
+    public static func mentoryProject(
         configurations: [Configuration] = []
     ) -> Settings {
         .settings(
@@ -33,7 +33,7 @@ extension Settings {
         )
     }
 
-    static func mentoryTarget(
+    public static func mentoryTarget(
         base: SettingsDictionary
     ) -> Settings {
         .settings(
@@ -43,11 +43,11 @@ extension Settings {
 }
 
 extension SettingsDictionary {
-    static let mentoryProjectBase = stringSettings([
+    public static let mentoryProjectBase = stringSettings([
         "SWIFT_VERSION": Mentory.swiftVersion,
     ])
 
-    static func mentoryFrameworkModule(
+    public static func mentoryFrameworkModule(
         currentVersion: String = "1",
         marketingVersion: String = "1.0",
         targetedDeviceFamily: String = "1,2",
@@ -84,7 +84,7 @@ extension SettingsDictionary {
         )
     }
 
-    static func mentoryManualSigning(
+    public static func mentoryManualSigning(
         sdk: String,
         currentVersion: String,
         marketingVersion: String,

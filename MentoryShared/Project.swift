@@ -1,25 +1,12 @@
 import ProjectDescription
+import ProjectDescriptionHelpers
 
-let project = Project(
+let project = Project.mentory(
     name: "MentoryShared",
-    options: .options(
-        automaticSchemesOptions: .disabled
-    ),
-    settings: .settings(
-        base: [
-            "SWIFT_VERSION": "6.0",
-        ]
-    ),
     targets: [
-        .target(
+        .mentoryFramework(
             name: "Values",
-            destinations: .iOS,
-            product: .framework,
-            bundleId: "cloud.mandooplz.Values",
-            deploymentTargets: .iOS("26.1"),
-            sources: ["Sources/Values/**"],
-            resources: [],
-            dependencies: []
+            sources: ["Sources/Values/**"]
         ),
     ]
 )

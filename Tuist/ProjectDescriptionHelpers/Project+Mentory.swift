@@ -1,7 +1,7 @@
 import ProjectDescription
 
 extension Project {
-    static func mentory(
+    public static func mentory(
         name: String,
         packages: [Package] = [],
         configurations: [Configuration] = [],
@@ -13,7 +13,11 @@ extension Project {
             name: name,
             options: Mentory.projectOptions,
             packages: packages,
-            settings: .mentoryProject(configurations: configurations),
+            settings: .mentoryProject(
+                configurations: configurations.isEmpty
+                    ? Mentory.defaultConfigurations
+                    : configurations
+            ),
             targets: targets,
             schemes: schemes,
             additionalFiles: additionalFiles
