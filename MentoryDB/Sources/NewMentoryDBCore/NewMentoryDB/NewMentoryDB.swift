@@ -13,96 +13,92 @@ import Values
 // MARK: object
 public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     // MARK: core
-    nonisolated private let logger = Logger()
-    
-    
+    private nonisolated let logger = Logger()
+    public init(id: UUID) {
+        self.id = id
+    }
+
+
     // MARK: state
+    public nonisolated let id: UUID
+
     public var name: String? {
-        get {
-            do {
-                let context = try NewMentoryDBConfig.default.makeContext()
-                return try NewMentoryDBConfig.default.fetchDB(in: context).userName
-            } catch {
-                logger.error("getName 실패: \(error.localizedDescription, privacy: .public)")
-                return nil
-            }
-        }
-        set {
-            do {
-                let context = try NewMentoryDBConfig.default.makeContext()
-                try NewMentoryDBConfig.default.updateDB(in: context) { db in
-                    db.userName = newValue
-                }
-
-                logger.debug("이름 저장 완료")
-            } catch {
-                logger.error("setName 실패: \(error.localizedDescription, privacy: .public)")
-            }
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            return try NewMentoryDBConfig.default.fetchDB(in: context).userName
+        } catch {
+            logger.error("getName 실패: \(error.localizedDescription, privacy: .public)")
+            return nil
         }
     }
+    public func setName(_ newValue: String) async {
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            try NewMentoryDBConfig.default.updateDB(in: context) { db in
+                db.userName = newValue
+            }
+
+            logger.debug("이름 저장 완료")
+        } catch {
+            logger.error("setName 실패: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
     public var character: MentoryCharacter? {
-        get {
-            do {
-                let context = try NewMentoryDBConfig.default.makeContext()
-                return try NewMentoryDBConfig.default.fetchDB(in: context).userCharacter
-            } catch {
-                logger.error("getCharacter 실패: \(error.localizedDescription, privacy: .public)")
-                return nil
-            }
-        }
-        set {
-            do {
-                let context = try NewMentoryDBConfig.default.makeContext()
-                try NewMentoryDBConfig.default.updateDB(in: context) { db in
-                    db.userCharacter = newValue
-                }
-
-                logger.debug("캐릭터 저장 완료")
-            } catch {
-                logger.error("setCharacter 실패: \(error.localizedDescription, privacy: .public)")
-            }
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            return try NewMentoryDBConfig.default.fetchDB(in: context).userCharacter
+        } catch {
+            logger.error("getCharacter 실패: \(error.localizedDescription, privacy: .public)")
+            return nil
         }
     }
+    public func setCharacter(_ newValue: MentoryCharacter) async {
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            try NewMentoryDBConfig.default.updateDB(in: context) { db in
+                db.userCharacter = newValue
+            }
+
+            logger.debug("캐릭터 저장 완료")
+        } catch {
+            logger.error("setCharacter 실패: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
     public var mentorMessage: MessageData? {
-        get {
-            do {
-                let context = try NewMentoryDBConfig.default.makeContext()
-                let db = try NewMentoryDBConfig.default.fetchDB(in: context)
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-                guard let createdAt = db.messageCreatedAt,
-                      let content = db.messageContent,
-                      let character = db.messageCharacter else {
-                    return nil
-                }
-
-                return MessageData(
-                    createdAt: .init(createdAt),
-                    content: content,
-                    characterType: character
-                )
-            } catch {
-                logger.error("getMentorMessage 실패: \(error.localizedDescription, privacy: .public)")
+            guard let createdAt = db.messageCreatedAt,
+                  let content = db.messageContent,
+                  let character = db.messageCharacter else {
                 return nil
             }
-        }
-        set {
-            guard let newValue else {
-                logger.error("멘토 메시지가 nil이므로 저장할 수 없습니다.")
-                return
-            }
-            
-            do {
-                let context = try NewMentoryDBConfig.default.makeContext()
-                try NewMentoryDBConfig.default.updateDB(in: context) { db in
-                    db.messageCreatedAt = newValue.createdAt.rawValue
-                    db.messageContent = newValue.content
-                    db.messageCharacter = newValue.characterType
-                }
 
-                logger.debug("멘토 메시지 저장 완료")
-            } catch {
-                logger.error("setMentorMessage 실패: \(error.localizedDescription, privacy: .public)")
+            return MessageData(
+                createdAt: .init(createdAt),
+                content: content,
+                characterType: character
+            )
+        } catch {
+            logger.error("getMentorMessage 실패: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+    }
+    public func setMentorMessage(_ newValue: MessageData) async {
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            try NewMentoryDBConfig.default.updateDB(in: context) { db in
+                db.messageCreatedAt = newValue.createdAt.rawValue
+                db.messageContent = newValue.content
+                db.messageCharacter = newValue.characterType
             }
+
+            logger.debug("멘토 메시지 저장 완료")
+        } catch {
+            logger.error("setMentorMessage 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
     

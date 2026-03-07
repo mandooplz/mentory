@@ -13,24 +13,31 @@ import Values
 
 
 // MARK: Interface
-public protocol NewMentoryDBInterface: Actor, Sendable {
+public protocol NewMentoryDBInterface: Sendable {
     associatedtype DailyRecordObject: NewDailyRecordInterface
 
     // MARK: state
-    var name: String? { get set }
-    var character: MentoryCharacter? { get set }
-    var mentorMessage: MessageData? { get set }
+    var id: UUID { get }
 
-    var records: [RecordData] { get }
-    var recordCount: Int { get }
-    var recentRecord: DailyRecordObject? { get }
-    func getRecord(ticketId: UUID) -> DailyRecordObject?
-    func isSameDayRecordExist(for date: MentoryDate) -> Bool
+    var name: String? { get async }
+    func setName(_ : String) async
 
-    var completedSuggestionCount: Int { get }
-    func updateSuggestionStatus(targetId: UUID, isDone: Bool)
+    var character: MentoryCharacter? { get async }
+    func setCharacter(_: MentoryCharacter) async
 
-    func insertTicket(_ recordData: RecordData)
+    var mentorMessage: MessageData? { get async }
+    func setMentorMessage(_: MessageData) async
+
+    var records: [RecordData] { get async }
+    var recordCount: Int { get async }
+    var recentRecord: DailyRecordObject? { get async }
+    func getRecord(ticketId: UUID) async -> DailyRecordObject?
+    func isSameDayRecordExist(for date: MentoryDate) async -> Bool
+
+    var completedSuggestionCount: Int { get async }
+    func updateSuggestionStatus(targetId: UUID, isDone: Bool) async
+
+    func insertTicket(_ recordData: RecordData) async
     func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async
     
     

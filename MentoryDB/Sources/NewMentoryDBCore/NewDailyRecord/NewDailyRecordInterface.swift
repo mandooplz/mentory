@@ -13,8 +13,8 @@ import Values
 
 
 // MARK: interface
-public protocol NewDailyRecordInterface: Actor, Sendable {
+public protocol NewDailyRecordInterface: Sendable {
     // MARK: state
     var id: UUID { get }
-    var suggestions: [SuggestionData] { get }
+    var suggestions: [SuggestionData] { get async }
 }

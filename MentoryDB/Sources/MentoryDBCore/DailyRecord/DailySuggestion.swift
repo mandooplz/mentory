@@ -17,7 +17,7 @@ public actor DailySuggestion {
         self.id = id
     }
     nonisolated let id: UUID
-    nonisolated let logger = Logger(subsystem: "MentoryDB.DailySuggestion", category: "Domain")
+    nonisolated let logger = Logger()
     
     
     // MARK: state

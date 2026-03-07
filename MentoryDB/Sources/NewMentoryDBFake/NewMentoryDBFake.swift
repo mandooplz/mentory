@@ -10,14 +10,28 @@ import Foundation
 
 
 // MARK: fake
-public actor NewMentoryDBFake: NewMentoryDBInterface {
+@MainActor
+public final class NewMentoryDBFake: NewMentoryDBInterface {
     // MARK: core
 
 
     // MARK: state
+    public nonisolated let id: UUID = UUID()
+
     public var name: String? = nil
+    public func setName(_: String) {
+        fatalError()
+    }
+
     public var character: Values.MentoryCharacter? = nil
+    public func setCharacter(_: Values.MentoryCharacter) {
+        fatalError()
+    }
+
     public var mentorMessage: Values.MessageData?
+    public func setMentorMessage(_: Values.MessageData) {
+        fatalError()
+    }
 
     public var records: [Values.RecordData] = []
     public var recordCount: Int {

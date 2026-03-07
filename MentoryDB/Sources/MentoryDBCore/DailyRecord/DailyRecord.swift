@@ -10,7 +10,7 @@ import Foundation
 import OSLog
 
 
-// MARK: Object
+// MARK: object
 public actor DailyRecord: Sendable {
     // MARK: core
     init(id: UUID) {

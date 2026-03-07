@@ -60,6 +60,7 @@ let project = Project(
             sources: ["Sources/NewMentoryDBFake/**"],
             resources: [],
             dependencies: [
+                .target(name: "NewMentoryDBCore"),
                 .project(target: "Values", path: "../MentoryShared"),
             ]
         ),
