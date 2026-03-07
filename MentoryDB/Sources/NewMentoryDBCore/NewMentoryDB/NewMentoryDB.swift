@@ -14,9 +14,6 @@ import Values
 public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     // MARK: core
     nonisolated private let logger = Logger()
-    private func logError(_ action: String, error: Error) {
-        logger.error("\(action, privacy: .public) 실패: \(error.localizedDescription, privacy: .public)")
-    }
     
     
     // MARK: state
@@ -26,7 +23,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 let context = try NewMentoryDBConfig.default.makeContext()
                 return try NewMentoryDBConfig.default.fetchDB(in: context).userName
             } catch {
-                logError("getName", error: error)
+                logger.error("getName 실패: \(error.localizedDescription, privacy: .public)")
                 return nil
             }
         }
@@ -39,7 +36,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
                 logger.debug("이름 저장 완료")
             } catch {
-                logError("setName", error: error)
+                logger.error("setName 실패: \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -49,7 +46,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 let context = try NewMentoryDBConfig.default.makeContext()
                 return try NewMentoryDBConfig.default.fetchDB(in: context).userCharacter
             } catch {
-                logError("getCharacter", error: error)
+                logger.error("getCharacter 실패: \(error.localizedDescription, privacy: .public)")
                 return nil
             }
         }
@@ -62,7 +59,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
                 logger.debug("캐릭터 저장 완료")
             } catch {
-                logError("setCharacter", error: error)
+                logger.error("setCharacter 실패: \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -84,7 +81,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                     characterType: character
                 )
             } catch {
-                logError("getMentorMessage", error: error)
+                logger.error("getMentorMessage 실패: \(error.localizedDescription, privacy: .public)")
                 return nil
             }
         }
@@ -104,7 +101,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
                 logger.debug("멘토 메시지 저장 완료")
             } catch {
-                logError("setMentorMessage", error: error)
+                logger.error("setMentorMessage 실패: \(error.localizedDescription, privacy: .public)")
             }
         }
     }
@@ -118,7 +115,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 .sorted(by: { $0.recordDate > $1.recordDate })
                 .map { $0.toRecordData() }
         } catch {
-            logError("getRecords", error: error)
+            logger.error("getRecords 실패: \(error.localizedDescription, privacy: .public)")
             return []
         }
     }
@@ -127,7 +124,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             let context = try NewMentoryDBConfig.default.makeContext()
             return try NewMentoryDBConfig.default.fetchDB(in: context).records.count
         } catch {
-            logError("getRecordCount", error: error)
+            logger.error("getRecordCount 실패: \(error.localizedDescription, privacy: .public)")
             return 0
         }
     }
@@ -142,7 +139,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
             return NewDailyRecord(id: latest.id)
         } catch {
-            logError("getRecentRecord", error: error)
+            logger.error("getRecentRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }
@@ -157,7 +154,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
             return NewDailyRecord(id: target.id)
         } catch {
-            logError("getRecord", error: error)
+            logger.error("getRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }
@@ -170,7 +167,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 MentoryDate(record.recordDate).isSameDate(as: date)
             }
         } catch {
-            logError("isSameDayRecordExist", error: error)
+            logger.error("isSameDayRecordExist 실패: \(error.localizedDescription, privacy: .public)")
             return false
         }
     }
@@ -184,7 +181,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 total + record.suggestions.filter { $0.status }.count
             }
         } catch {
-            logError("getCompletedSuggestionsCount", error: error)
+            logger.error("getCompletedSuggestionsCount 실패: \(error.localizedDescription, privacy: .public)")
             return 0
         }
     }
@@ -204,7 +201,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
             logger.warning("대상 Suggestion 미존재: \(targetId.uuidString, privacy: .public)")
         } catch {
-            logError("updateSuggestionStatus", error: error)
+            logger.error("updateSuggestionStatus 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -228,7 +225,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             try context.save()
             logger.debug("insertTicket 완료")
         } catch {
-            logError("insertTicket", error: error)
+            logger.error("insertTicket 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
     public func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async {
@@ -264,7 +261,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 "insertSuggestions 완료 (inserted: \(insertedCount), skipped: \(suggestions.count - insertedCount))"
             )
         } catch {
-            logError("insertSuggestions", error: error)
+            logger.error("insertSuggestions 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -312,12 +309,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 "createDailyRecords 완료 (created: \(createdCount), skipped: \(skippedCount))"
             )
         } catch {
-            logError("createDailyRecords", error: error)
+            logger.error("createDailyRecords 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
-    
-    
-    
-    // MARK: value
-    
 }
