@@ -26,7 +26,7 @@ public actor NewDailyRecord: Sendable {
 
     // MARK: Helpers
     private func makeContext() throws -> ModelContext {
-        try NewMentoryDBModel.Config.default.makeContext()
+        try NewMentoryDBConfig.default.makeContext()
     }
 
     private func descriptor(for id: UUID) -> FetchDescriptor<NewDailyRecordModel> {

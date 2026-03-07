@@ -1,6 +1,6 @@
 //
 //  NewMentoryDBConfig.swift
-//
+//  MentoryDB
 //
 //  Created by 김민우 on 3/7/26.
 //
@@ -12,7 +12,7 @@ import Values
 import OSLog
 
 struct NewMentoryDBConfig {
-        static let `default` = Config()
+        static let `default` = NewMentoryDBConfig()
 
         let rootID = UUID(
             uuidString: "00000000-0000-0000-0000-000000000000"
