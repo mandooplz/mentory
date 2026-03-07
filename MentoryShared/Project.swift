@@ -5,6 +5,11 @@ let project = Project(
     options: .options(
         automaticSchemesOptions: .disabled
     ),
+    settings: .settings(
+        base: [
+            "SWIFT_VERSION": "6.0",
+        ]
+    ),
     targets: [
         .target(
             name: "Values",

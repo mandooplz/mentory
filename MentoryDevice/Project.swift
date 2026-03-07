@@ -5,6 +5,11 @@ let project = Project(
     options: .options(
         automaticSchemesOptions: .disabled
     ),
+    settings: .settings(
+        base: [
+            "SWIFT_VERSION": "6.0",
+        ]
+    ),
     targets: [
         .target(
             name: "WatchManager",
@@ -37,7 +42,6 @@ let project = Project(
                     "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
                     "SWIFT_INSTALL_OBJC_HEADER": "YES",
                     "SWIFT_INSTALL_MODULE": "YES",
-                    "SWIFT_VERSION": "5.0",
                     "TARGETED_DEVICE_FAMILY": "1,2",
                 ]
             )
@@ -73,7 +77,6 @@ let project = Project(
                     "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
                     "SWIFT_INSTALL_OBJC_HEADER": "YES",
                     "SWIFT_INSTALL_MODULE": "YES",
-                    "SWIFT_VERSION": "5.0",
                     "TARGETED_DEVICE_FAMILY": "1,2",
                 ]
             )
@@ -109,7 +112,6 @@ let project = Project(
                     "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
                     "SWIFT_INSTALL_OBJC_HEADER": "YES",
                     "SWIFT_INSTALL_MODULE": "YES",
-                    "SWIFT_VERSION": "5.0",
                     "TARGETED_DEVICE_FAMILY": "1,2",
                 ]
             )
@@ -147,7 +149,6 @@ let project = Project(
                     "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
                     "SWIFT_INSTALL_OBJC_HEADER": "YES",
                     "SWIFT_INSTALL_MODULE": "YES",
-                    "SWIFT_VERSION": "5.0",
                     "TARGETED_DEVICE_FAMILY": "1,2",
                 ]
             )

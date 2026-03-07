@@ -10,6 +10,9 @@ let project = Project(
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.1.0")),
     ],
     settings: .settings(
+        base: [
+            "SWIFT_VERSION": "6.0",
+        ],
         configurations: [
             .debug(name: "Debug", xcconfig: "Secrets.xcconfig"),
             .release(name: "Release", xcconfig: "Secrets.xcconfig"),

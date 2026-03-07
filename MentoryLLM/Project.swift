@@ -8,6 +8,11 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .branch("main")),
     ],
+    settings: .settings(
+        base: [
+            "SWIFT_VERSION": "6.0",
+        ]
+    ),
     targets: [
         .target(
             name: "FirebaseLLMFake",

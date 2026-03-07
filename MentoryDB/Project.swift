@@ -8,6 +8,11 @@ let project = Project(
     packages: [
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
     ],
+    settings: .settings(
+        base: [
+            "SWIFT_VERSION": "6.0",
+        ]
+    ),
     targets: [
         .target(
             name: "MentoryDBCore",
