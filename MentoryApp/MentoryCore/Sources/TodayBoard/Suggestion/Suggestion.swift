@@ -40,11 +40,12 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
     
     
     // MARK: action
+    // TODO: markDone
     public func markDone() async {
         // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
 
         let targetId = self.target.rawValue
         let isDone = self.isDone
@@ -52,12 +53,7 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
         logger.debug("markDone 호출: isDone=\(isDone)")
 
         // process - DB에 Suggestion 상태 업데이트
-        do {
-            try await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
-            logger.debug("Suggestion 상태 DB 저장 완료")
-        } catch {
-            logger.error("Suggestion 상태 업데이트 실패: \(error)")
-        }
+        await newMentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
 
         // Watch로 전송
         await todayBoard.sendSuggestionsToWatch()

@@ -30,17 +30,11 @@ public final class StatBoard: ObservableObject {
     // MARK: action
     public func loadRecords() async {
         // capture
-        let mentoryDB = self.owner!.mentoryDB
+        let newMentoryDB = self.owner!.newMentoryDB
 
         
         // process
-        let records: [RecordData]
-        do {
-            records = try await mentoryDB.getRecords()
-        } catch {
-            records = []
-            logger.error("\(error)")
-        }
+        let records = await newMentoryDB.records
         
         // mutate
         self.allRecords = records

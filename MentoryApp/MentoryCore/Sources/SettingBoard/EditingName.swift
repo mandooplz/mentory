@@ -58,14 +58,10 @@ public final class EditingName: Sendable, ObservableObject{
         
         let settingBoard = owner!
         let mentoryiOS = settingBoard.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         //process
-        do {
-            try await mentoryDB.setName(newName)
-        } catch {
-            logger.error("사용자 이름을 변경하는 데 실패했습니다. \(error)")
-        }
+        await newMentoryDB.setName(newName)
         
         // mutate
         mentoryiOS.userName = newName

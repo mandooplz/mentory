@@ -48,20 +48,16 @@ public final class RecordForm: Sendable, ObservableObject, Identifiable {
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
         
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         // process
         let isRecordAlreadyExist: RecordCheckResult
-        do {
-            switch try await mentoryDB.isSameDayRecordExist(for: recordDate) {
-            case true:
-                isRecordAlreadyExist = .recordAlreadyExist
-            case false:
-                isRecordAlreadyExist = .recordNotExist
-            }
-        } catch {
-            logger.error("\(#function) 실패: \(error)")
-            return
+
+        switch await newMentoryDB.isSameDayRecordExist(for: recordDate) {
+        case true:
+            isRecordAlreadyExist = .recordAlreadyExist
+        case false:
+            isRecordAlreadyExist = .recordNotExist
         }
         
         // mutate
