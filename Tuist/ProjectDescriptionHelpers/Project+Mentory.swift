@@ -1,0 +1,3 @@
+import ProjectDescription
+
+extension Project { }
