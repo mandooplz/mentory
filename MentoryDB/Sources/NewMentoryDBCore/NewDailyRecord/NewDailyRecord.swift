@@ -11,9 +11,10 @@ import Values
 
 
 // MARK: interface
-public protocol NewDailyRecordInterface: Sendable {
+public protocol NewDailyRecordInterface: Actor, Sendable {
     // MARK: state
     var id: UUID { get }
+    var suggestions: [SuggestionData] { get }
 }
 
 
@@ -23,38 +24,18 @@ public actor NewDailyRecord: NewDailyRecordInterface {
     init(id: UUID) {
         self.id = id
     }
-
     nonisolated public let id: UUID
+    nonisolated private let logger = Logger()
 
-    nonisolated private let logger = Logger(
-        subsystem: "MentoryDB.NewMentoryDBCore",
-        category: "DailyRecord"
-    )
 
-    // MARK: Helpers
-    private func makeContext() throws -> ModelContext {
-        try NewMentoryDBConfig.default.makeContext()
-    }
-
-    private func descriptor(for id: UUID) -> FetchDescriptor<NewDailyRecordModel> {
-        FetchDescriptor<NewDailyRecordModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-    }
-
-    private func fetchRecord(in context: ModelContext) throws -> NewDailyRecordModel {
-        guard let record = try context.fetch(descriptor(for: id)).first else {
-            throw NewMentoryDBError.recordNotFound
-        }
-
-        return record
-    }
-
-    // MARK: Query
-    public func getSuggestions() -> [SuggestionData] {
+    public var suggestions: [SuggestionData] {
         do {
-            let context = try makeContext()
-            let record = try fetchRecord(in: context)
+            let context = try NewMentoryDBConfig.default.makeContext()
+            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+
+            guard let record = try context.fetch(descriptor).first else {
+                throw NewMentoryDBError.recordNotFound
+            }
 
             return record.suggestions.map { $0.toData() }
         } catch {

@@ -11,5 +11,16 @@ import Foundation
 
 // MARK: fake
 public actor NewDailyRecordFake: NewDailyRecordInterface {
-    public nonisolated let id: UUID = UUID()
+    // MARK: core
+    public init(id: UUID) {
+        self.id = id
+    }
+
+
+    // MARK: state
+    public nonisolated let id: UUID
+
+    public var suggestions: [SuggestionData] {
+        fatalError()
+    }
 }

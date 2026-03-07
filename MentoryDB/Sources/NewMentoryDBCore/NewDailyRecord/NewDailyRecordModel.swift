@@ -42,4 +42,11 @@ final class NewDailyRecordModel {
             emotion: emotion
         )
     }
+    
+    // MARK: value
+    static func descriptor(for id: UUID) -> FetchDescriptor<NewDailyRecordModel> {
+        FetchDescriptor<NewDailyRecordModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+    }
 }
