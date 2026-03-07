@@ -62,15 +62,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         let mentoryiOS = todayBoard.owner!
         
         let firebaseLLM = mentoryiOS.firebaseLLM
-        let mentoryDB = mentoryiOS.mentoryDB
         let newMentoryDB = mentoryiOS.newMentoryDB
-        
-        do {
-            try await mentoryDB.setCharacter(character)
-            logger.debug("MindAnalyzer에서 선택한 캐릭터 \(character.rawValue)를 MentoryDB에 저장 요청했습니다.")
-        } catch {
-            logger.error("MindAnalyzer에서 setCharacter 실패: \(error)")
-        }
         
         let targetDate = recordForm.targetDate
         
@@ -85,8 +77,12 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         if voiceInput != nil {
             logger.debug("음성 첨부됨 - 감정 분석에 포함")
         }
-        
-        
+
+
+        // process - Character 설정
+        await newMentoryDB.setCharacter(character)
+
+
         // process - FirebaseLLM
         // 감정 분석 (텍스트 + 이미지 + 음성)
         let question = FirebaseQuestion(
@@ -117,10 +113,6 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             emotion: analysis.mindType
         )
         
-//            try await mentoryDB.submitAnalysis(
-//                recordData: recordData,
-//                suggestionData: suggestionDatas
-//            )
         await newMentoryDB.insertTicket(recordData)
         await newMentoryDB.createDailyRecords()
 
@@ -143,31 +135,16 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         let recordForm = self.owner!
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
-        // process - MentoryDB
-        let recentRecord: (any DailyRecordInterface)?
-        do {
-            recentRecord = try await mentoryDB.getRecentRecord()
-            logger.debug("최근일기가져오기")
-        } catch {
-            logger.error("\(#function) 실패: \(error)")
-            return
-        }
-        
-        guard let recentRecord else {
+        // process - 최근 Suggestions 데이터 조회
+        guard let recentRecord = await newMentoryDB.recentRecord else {
             logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
             return
         }
         
-        // process - MentoryDB
-        let suggestionDatas: [SuggestionData]
-        do {
-            suggestionDatas = try await recentRecord.getSuggestions()
-        } catch {
-            logger.error("\(#function) 실패 : \(error)")
-            return
-        }
+        let suggestionDatas = await recentRecord.suggestions
+
         
         // mutate
         todayBoard.suggestions = suggestionDatas
@@ -179,10 +156,6 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             }
         todayBoard.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")
-        
-        // 1. getRecentRecordData() -> recordAt: MentoryDate
-        // recordAt vs owner!.recordAt -> 더 최신이라면 업데이트한다
-        
     }
     
     public func finish() {

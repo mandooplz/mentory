@@ -190,20 +190,13 @@ public final class TodayBoard: Sendable, ObservableObject {
         logger.debug("추천행동가져오기\(suggestionDatas)")
     }
     
-    public func fetchUserRecordCoount() async {
+    public func fetchUserRecordCount() async {
         // capture
         let mentoryiOS = self.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         // process
-        let recordCount: Int
-        do {
-            async let count = try await mentoryDB.getRecordCount()
-            recordCount = try await count
-        } catch {
-            logger.error("\(error)")
-            return
-        }
+        let recordCount = await newMentoryDB.recordCount
         
         // mutate
         self.recordCount = recordCount
@@ -212,17 +205,10 @@ public final class TodayBoard: Sendable, ObservableObject {
     public func fetchEarnedBadges() async {
         // capture
         let mentoryiOS = self.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
 
         // process
-        let completedCount: Int
-        do {
-            async let count = try await mentoryDB.getCompletedSuggestionsCount()
-            completedCount = try await count
-        } catch {
-            logger.error("완료된 제안 개수 조회 실패: \(error)")
-            return
-        }
+        let completedCount = await newMentoryDB.completedSuggestionCount
 
         // mutate
         self.completedSuggestionsCount = completedCount
@@ -247,6 +233,8 @@ public final class TodayBoard: Sendable, ObservableObject {
         logger.debug("Suggestions를 Watch로 전송: \(todos.count)개")
     }
 
+
+    // Value -> Routine으로 리팩토링
     public func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
         // todoText로 해당 Suggestion 찾기
         guard let suggestion = suggestions.first(where: { $0.content == todoText }) else {
@@ -260,14 +248,10 @@ public final class TodayBoard: Sendable, ObservableObject {
 
         // MentoryDB에 저장
         let mentoryiOS = owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         let targetId = suggestion.target.rawValue
 
-        do {
-            try await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isCompleted)
-            logger.debug("Watch 투두 완료 상태 DB 저장 완료: \(todoText)")
-        } catch {
-            logger.error("Watch 투두 완료 상태 DB 저장 실패: \(error)")
-        }
+
+        await newMentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isCompleted)
     }
 }

@@ -181,6 +181,8 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             return 0
         }
     }
+
+    // MARK: TODO: DailySuggestion의 세터로 변환
     public func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
