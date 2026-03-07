@@ -6,7 +6,6 @@ let project = Project(
         automaticSchemesOptions: .disabled
     ),
     packages: [
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.1.0")),
     ],
     settings: .settings(
@@ -82,7 +81,6 @@ let project = Project(
                 .project(target: "WatchManager", path: "../MentoryDevice"),
                 .project(target: "ImagePicker", path: "../MentoryDevice"),
                 .project(target: "Microphone", path: "../MentoryDevice"),
-                .package(product: "Collections"),
                 .package(product: "AsyncAlgorithms"),
                 .project(target: "Values", path: "../MentoryShared"),
             ],

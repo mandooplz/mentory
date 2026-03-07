@@ -61,7 +61,6 @@ let project = Project(
             resources: [],
             dependencies: [
                 .project(target: "Values", path: "../MentoryShared"),
-                .package(product: "Collections"),
             ]
         ),
         .target(
@@ -76,7 +75,6 @@ let project = Project(
                 .project(target: "Values", path: "../MentoryShared"),
                 .target(name: "MentoryDBCore"),
                 .target(name: "MentoryDBFake"),
-                .package(product: "DequeModule"),
             ]
         ),
     ]
