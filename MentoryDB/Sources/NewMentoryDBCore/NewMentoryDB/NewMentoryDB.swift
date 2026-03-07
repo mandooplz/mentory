@@ -10,7 +10,7 @@ import SwiftData
 import Values
 
 
-// MARK: - Object
+// MARK: object
 public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     // MARK: core
     nonisolated private let logger = Logger()

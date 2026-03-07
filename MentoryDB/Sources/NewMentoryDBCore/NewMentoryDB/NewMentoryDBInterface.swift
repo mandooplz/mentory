@@ -14,6 +14,8 @@ import Values
 
 // MARK: Interface
 public protocol NewMentoryDBInterface: Actor, Sendable {
+    associatedtype DailyRecordObject: NewDailyRecordInterface
+
     // MARK: state
     var name: String? { get set }
     var character: MentoryCharacter? { get set }
@@ -21,8 +23,8 @@ public protocol NewMentoryDBInterface: Actor, Sendable {
 
     var records: [RecordData] { get }
     var recordCount: Int { get }
-    var recentRecord: NewDailyRecord? { get }
-    func getRecord(ticketId: UUID) -> NewDailyRecord?
+    var recentRecord: DailyRecordObject? { get }
+    func getRecord(ticketId: UUID) -> DailyRecordObject?
     func isSameDayRecordExist(for date: MentoryDate) -> Bool
 
     var completedSuggestionCount: Int { get }

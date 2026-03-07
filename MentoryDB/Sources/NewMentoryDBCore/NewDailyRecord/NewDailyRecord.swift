@@ -10,8 +10,15 @@ import SwiftData
 import Values
 
 
-// MARK: - Object
-public actor NewDailyRecord: Sendable {
+// MARK: interface
+public protocol NewDailyRecordInterface: Sendable {
+    // MARK: state
+    var id: UUID { get }
+}
+
+
+// MARK: object
+public actor NewDailyRecord: NewDailyRecordInterface {
     // MARK: Core
     init(id: UUID) {
         self.id = id
