@@ -15,17 +15,31 @@ import MentoryDBAdapter
 @Suite
 struct MentorMessageTests {
     struct UpdateContent {
-        let mentoryiOS: Mentory
+        let mentory: Mentory
         let mentorMessage: MentorMessage
         let mentoryDB: any MentoryDBInterface
         init() async throws {
-            self.mentoryiOS = await Mentory()
-            self.mentorMessage = try await getMentorMessage(mentoryiOS)
-            self.mentoryDB = mentoryiOS.mentoryDB
+            self.mentory = await Mentory()
+            self.mentorMessage = try await getMentorMessage(mentory)
+            self.mentoryDB = mentory.mentoryDB
+        }
+        
+        @Test func whenCharacterIsNil() async throws {
+            // given
+            try await #require(mentorMessage.character == nil)
+            try await #require(mentorMessage.content == nil)
+            
+            // when
+            await mentorMessage.updateContent()
+            
+            // then
+            await #expect(mentorMessage.content == nil)
         }
         
         @Test func setContent() async throws {
             // given
+            try await setRandomCharacter(mentorMessage)
+            
             try await #require(mentorMessage.content == nil)
             
             // when
@@ -36,6 +50,8 @@ struct MentorMessageTests {
         }
         @Test func setRecentUpdate() async throws {
             // given
+            try await setRandomCharacter(mentorMessage)
+            
             try await #require(mentorMessage.recentUpdate == nil)
             
             // when
@@ -47,6 +63,8 @@ struct MentorMessageTests {
         
         @Test func doNotUpdateContentIsSameDay() async throws {
             // given
+            try await setRandomCharacter(mentorMessage)
+            
             await mentorMessage.updateContent()
             
             await mentorMessage.resetContent()
@@ -63,6 +81,8 @@ struct MentorMessageTests {
         
         @Test func loadContentFromMentoryDB() async throws {
             // given
+            try await setRandomCharacter(mentorMessage)
+            
             await mentorMessage.updateContent()
             
             let recentUpdate = try #require(await mentorMessage.recentUpdate)
@@ -108,4 +128,12 @@ private func getMentorMessage(_ mentoryiOS: Mentory) async throws -> MentorMessa
     let mentorMessage = try #require(await todayBoard.mentorMessage)
     
     return mentorMessage
+}
+
+private func setRandomCharacter(_ mentorMessage: MentorMessage) async throws {
+    try await #require(mentorMessage.character == nil)
+    
+    await mentorMessage.setCharacterOnce(to: .random)
+    
+    try await #require(mentorMessage.character != nil)
 }

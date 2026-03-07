@@ -35,6 +35,31 @@ let project = Project(
             ]
         ),
         .target(
+            name: "NewMentoryDBCore",
+            destinations: .iOS,
+            product: .staticLibrary,
+            bundleId: "cloud.mandooplz.NewMentoryDBCore",
+            deploymentTargets: .iOS("26.1"),
+            sources: ["Sources/NewMentoryDBCore/**"],
+            resources: [],
+            dependencies: [
+                .project(target: "Values", path: "../MentoryShared"),
+            ]
+        ),
+        .target(
+            name: "NewMentoryDBFake",
+            destinations: .iOS,
+            product: .staticLibrary,
+            bundleId: "cloud.mandooplz.NewMentoryDBFake",
+            deploymentTargets: .iOS("26.1"),
+            sources: ["Sources/NewMentoryDBFake/**"],
+            resources: [],
+            dependencies: [
+                .project(target: "Values", path: "../MentoryShared"),
+                .package(product: "Collections"),
+            ]
+        ),
+        .target(
             name: "MentoryDBAdapter",
             destinations: .iOS,
             product: .framework,
