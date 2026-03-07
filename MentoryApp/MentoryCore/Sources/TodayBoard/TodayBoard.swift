@@ -9,6 +9,7 @@ import Combine
 import Values
 import OSLog
 import MentoryDBAdapter
+import NewMentoryDBCore
 import WatchManager
 
 
@@ -163,32 +164,19 @@ public final class TodayBoard: Sendable, ObservableObject {
         let currentDate = self.currentDate
         
         let mentoryiOS = self.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         // process - MentoryDB에서 DailyRecord 가져오기
-        let recentRecord: (any DailyRecordInterface)?
-        do {
-            recentRecord = try await mentoryDB.getRecentRecord()
-            logger.debug("최근일기가져오기")
-        } catch {
-            logger.error("\(#function) 실패: \(error)")
-            return
-        }
-        
-        guard let recentRecord else {
+        guard let recentRecord = await newMentoryDB.recentRecord else {
             logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
             return
         }
+        logger.debug("NewMentoryDB에서 최근 DailyRecord를 가져왔습니다.")
         
         // process - MentoryDB에서 Suggestion 가져오기
-        let suggestionDatas: [SuggestionData]
-        do {
-            suggestionDatas = try await recentRecord.getSuggestions()
-        } catch {
-            logger.error("\(#function) 실패 : \(error)")
-            return
-        }
-        
+        let suggestionDatas = await recentRecord.suggestions
+
+
         // mutate
         self.suggestions = suggestionDatas
             .map { Suggestion(
@@ -197,6 +185,7 @@ public final class TodayBoard: Sendable, ObservableObject {
                 content: $0.content,
                 isDone: $0.isDone)
             }
+
         self.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")
     }
