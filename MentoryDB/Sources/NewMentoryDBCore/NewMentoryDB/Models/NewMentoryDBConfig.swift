@@ -11,10 +11,10 @@ import SwiftData
 import Values
 import OSLog
 
-struct NewMentoryDBConfig {
-        static let `default` = NewMentoryDBConfig()
+public struct NewMentoryDBConfig: Sendable {
+        static public let `default` = NewMentoryDBConfig()
 
-        let rootID = UUID(
+        public let rootID = UUID(
             uuidString: "00000000-0000-0000-0000-000000000000"
         )!
 
@@ -45,7 +45,7 @@ struct NewMentoryDBConfig {
             return ModelContext(container)
         }
 
-        func createOnce() throws {
+        public func createOnce() throws {
             let context = try makeContext()
 
             if try context.fetch(descriptor(for: rootID)).first == nil {

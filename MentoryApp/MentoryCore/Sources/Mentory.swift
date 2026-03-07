@@ -10,6 +10,7 @@ import OSLog
 import Values
 import FirebaseLLMAdapter
 import MentoryDBAdapter
+import NewMentoryDBCore
 import iOSReminder
 import WatchManager
 
@@ -21,6 +22,8 @@ public final class Mentory: Sendable, ObservableObject {
     private nonisolated let logger = Logger()
     
     internal nonisolated let mentoryDB: any MentoryDBInterface
+    internal nonisolated let newMentoryDB: any NewMentoryDBInterface
+
     internal nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
     internal nonisolated let reminderCenter: any ReminderNotificationInterface
     public nonisolated let watchConnectivity: any WatchConnectivityInterface
@@ -38,6 +41,14 @@ public final class Mentory: Sendable, ObservableObject {
             self.reminderCenter = ReminderNotificationAdapter()
             self.watchConnectivity = WatchConnectivityManager.shared
         }
+
+        do {
+            try NewMentoryDBConfig.default.createOnce()
+        } catch {
+            logger.error("\(error)")
+        }
+
+        self.newMentoryDB = NewMentoryDB(id: NewMentoryDBConfig.default.rootID)
     }
     
     

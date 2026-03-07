@@ -63,6 +63,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         let firebaseLLM = mentoryiOS.firebaseLLM
         let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         do {
             try await mentoryDB.setCharacter(character)
@@ -100,33 +101,35 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         }
         logger.debug("멀티모달 감정 분석 완료")
         
+        
         // process - MentoryDB
         // DailyRecord & DailySuggestion 생성
         let suggestionDatas = analysis.actionKeywords
             .map { actionText in
                 SuggestionData(content: actionText)
             }
-        do {
-            let recordData = RecordData(
-                id: .init(),
-                recordDate: targetDate,
-                createdAt: .now,
-                analyzedResult: analysis.empathyMessage,
-                emotion: analysis.mindType
-            )
-            
-            try await mentoryDB.submitAnalysis(
-                recordData: recordData,
-                suggestionData: suggestionDatas
-            )
-            
-            logger.debug("MentoryDB에 RecordData와 SuggestionData를 저장했습니다.")
-        } catch {
-            logger.error("\(error)")
-            return
-        }
+
+        let recordData = RecordData(
+            id: .init(),
+            recordDate: targetDate,
+            createdAt: .now,
+            analyzedResult: analysis.empathyMessage,
+            emotion: analysis.mindType
+        )
         
-        
+//            try await mentoryDB.submitAnalysis(
+//                recordData: recordData,
+//                suggestionData: suggestionDatas
+//            )
+        await newMentoryDB.insertTicket(recordData)
+        await newMentoryDB.createDailyRecords()
+
+        await newMentoryDB.insertSuggestions(ticketId: recordData.id, suggestions: suggestionDatas)
+
+
+        logger.debug("MentoryDB에 RecordData와 SuggestionData를 저장했습니다.")
+
+
         // mutate
         self.mindType = analysis.mindType
         self.analyzedResult = analysis.empathyMessage
