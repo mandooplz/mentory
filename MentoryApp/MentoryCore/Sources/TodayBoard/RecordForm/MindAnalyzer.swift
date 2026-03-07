@@ -46,7 +46,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             logger.error("Owner?.textInput이 nil입니다.")
             return
         }
-        
+
         guard textInput.isEmpty == false else {
             logger.error("textInput이 비어 있습니다.")
             return
