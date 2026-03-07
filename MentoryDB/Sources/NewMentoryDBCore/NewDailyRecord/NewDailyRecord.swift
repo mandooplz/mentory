@@ -10,14 +10,6 @@ import SwiftData
 import Values
 
 
-// MARK: interface
-public protocol NewDailyRecordInterface: Actor, Sendable {
-    // MARK: state
-    var id: UUID { get }
-    var suggestions: [SuggestionData] { get }
-}
-
-
 // MARK: object
 public actor NewDailyRecord: NewDailyRecordInterface {
     // MARK: Core
