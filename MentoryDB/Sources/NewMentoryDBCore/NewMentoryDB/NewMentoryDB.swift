@@ -14,9 +14,6 @@ import Values
 public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     // MARK: core
     nonisolated public let id: UUID
-    private static let rootID = UUID(
-            uuidString: "00000000-0000-0000-0000-000000000000"
-        )!
 
     nonisolated private let logger = Logger()
     private func logError(_ action: String, error: Error) {
@@ -27,7 +24,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     /// - DB가 없으면 새로 생성합니다.
     /// - DB가 있으면 기존 것을 그대로 사용합니다.
     public static func createOnce() async -> NewMentoryDB {
-        let db = NewMentoryDB(id: Self.rootID)
+        let db = NewMentoryDB(id: NewMentoryDBModel.rootID)
         await db.setUpIfNeeded()
         return db
     }
@@ -52,21 +49,10 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         }
     }
 
-    private func descriptor(for id: UUID) -> FetchDescriptor<NewMentoryDBModel> {
-        FetchDescriptor<NewMentoryDBModel>(
-            predicate: #Predicate { $0.id == id }
-        )
-    }
-
-    private func fetchDB(in context: ModelContext) throws -> NewMentoryDBModel {
-        guard let db = try context.fetch(descriptor(for: id)).first else {
-            throw NewMentoryDBError.databaseNotFound
-        }
-        return db
-    }
-    
     private func fetchOrCreateDB(in context: ModelContext ) throws -> (db: NewMentoryDBModel, created: Bool) {
-        if let db = try context.fetch(descriptor(for: id)).first {
+        let descriptor = NewMentoryDBModel.descriptor(for: id)
+
+        if let db = try context.fetch(descriptor).first {
             return (db, false)
     }
     
@@ -91,7 +77,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         get {
             do {
                 let context = try NewMentoryDBModel.makeContextForSharedContainer()
-                return try fetchDB(in: context).userName
+                return try NewMentoryDBModel.fetchDB(in: context).userName
             } catch {
                 logError("getName", error: error)
                 return nil
@@ -113,7 +99,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         get {
             do {
                 let context = try NewMentoryDBModel.makeContextForSharedContainer()
-                return try fetchDB(in: context).userCharacter
+                return try NewMentoryDBModel.fetchDB(in: context).userCharacter
             } catch {
                 logError("getCharacter", error: error)
                 return nil
@@ -135,7 +121,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         get {
             do {
                 let context = try NewMentoryDBModel.makeContextForSharedContainer()
-                let db = try fetchDB(in: context)
+                let db = try NewMentoryDBModel.fetchDB(in: context)
 
                 guard let createdAt = db.messageCreatedAt,
                       let content = db.messageContent,
@@ -176,7 +162,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public var records: [RecordData] {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             return db.records
                 .sorted(by: { $0.recordDate > $1.recordDate })
@@ -189,7 +175,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public var recordCount: Int {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            return try fetchDB(in: context).records.count
+            return try NewMentoryDBModel.fetchDB(in: context).records.count
         } catch {
             logError("getRecordCount", error: error)
             return 0
@@ -198,7 +184,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public var recentRecord: NewDailyRecord? {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             guard let latest = db.records.max(by: { $0.recordDate < $1.recordDate }) else {
                 return nil
@@ -213,7 +199,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public func getRecord(ticketId: UUID) -> NewDailyRecord? {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             guard let target = db.records.first(where: { $0.ticketId == ticketId }) else {
                 return nil
@@ -228,7 +214,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public func isSameDayRecordExist(for date: MentoryDate) -> Bool {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             return db.records.contains { record in
                 MentoryDate(record.recordDate).isSameDate(as: date)
@@ -242,7 +228,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public var completedSuggestionCount: Int {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             return db.records.reduce(0) { total, record in
                 total + record.suggestions.filter { $0.status }.count
@@ -255,7 +241,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             for record in db.records {
                 if let suggestion = record.suggestions.first(where: { $0.target == targetId }) {
@@ -302,7 +288,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             guard let record = db.records.first(where: { $0.ticketId == ticketId }) else {
                 throw NewMentoryDBError.recordNotFound
@@ -337,7 +323,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
     public func createDailyRecords() async {
         do {
             let context = try NewMentoryDBModel.makeContextForSharedContainer()
-            let db = try fetchDB(in: context)
+            let db = try NewMentoryDBModel.fetchDB(in: context)
 
             guard db.recordCreationQueue.isEmpty == false else {
                 logger.debug("createDailyRecords 스킵: queue empty")

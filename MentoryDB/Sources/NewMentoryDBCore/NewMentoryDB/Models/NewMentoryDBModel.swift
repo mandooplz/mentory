@@ -56,4 +56,25 @@ final class NewMentoryDBModel {
 
         return ModelContext(container)
     }
+
+    // SwiftData에서 특정 id를 가진 NewMentoryDBModel을 조회하기 위한 FetchDescriptor를 생성하는 함수
+    static func descriptor(for id: UUID) -> FetchDescriptor<NewMentoryDBModel> {
+        FetchDescriptor<NewMentoryDBModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+    }
+
+    // SwiftData ModelContext에서 특정 NewMentoryDBModel을 조회하는 함수
+    static func fetchDB(in context: ModelContext) throws -> NewMentoryDBModel {
+
+        guard let db = try context.fetch(Self.descriptor(for: rootID)).first else {
+            throw NewMentoryDBError.databaseNotFound
+        }
+        return db
+    }
+
+
+    static let rootID = UUID(
+            uuidString: "00000000-0000-0000-0000-000000000000"
+        )!
 }
