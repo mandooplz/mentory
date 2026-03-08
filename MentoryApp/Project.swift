@@ -150,8 +150,6 @@ let project = Project.mentory(
                 .target(name: "MentoryWidgetExtension"),
                 .mentoryDevice("iOSReminder"),
                 .mentoryDevice("WatchManager"),
-                .mentoryDevice("ImagePicker"),
-                .mentoryDevice("Microphone"),
                 .package(product: "AsyncAlgorithms"),
                 .mentoryShared("Values"),
             ],

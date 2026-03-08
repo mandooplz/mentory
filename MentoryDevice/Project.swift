@@ -14,16 +14,6 @@ let project = Project.mentory(
             settings: frameworkSettings
         ),
         .mentoryFramework(
-            name: "ImagePicker",
-            sources: ["ImagePicker/**/*.swift"],
-            settings: frameworkSettings
-        ),
-        .mentoryFramework(
-            name: "Microphone",
-            sources: ["Microphone/**/*.swift"],
-            settings: frameworkSettings
-        ),
-        .mentoryFramework(
             name: "iOSReminder",
             sources: ["iOSReminder/**/*.swift"],
             dependencies: [
