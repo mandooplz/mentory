@@ -255,13 +255,6 @@ public final class TodayBoard: Sendable, ObservableObject {
         suggestion.isDone = isCompleted
         logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
 
-        // NewMentoryDB의 DailySuggestion
-        let mentoryiOS = owner!
-        let newMentoryDB = mentoryiOS.newMentoryDB
-        let targetId = suggestion.target.rawValue
-//
-//
-//        await newMentoryDB.updateSuggestionStatus(
-//            sugestionID: targetId, isDone: isCompleted)
+        // DB 동기화는 NewMentoryDB suggestion update API 정리 후 재연결한다.
     }
 }
