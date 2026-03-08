@@ -26,12 +26,5 @@ let project = Project.mentory(
                 .package(product: "Collections"),
             ]
         ),
-        .mentoryFramework(
-            name: "MentoryDBAdapter",
-            sources: ["Sources/MentoryDBAdapter/**"],
-            dependencies: [
-                .mentoryShared("Values"),
-            ]
-        ),
     ]
 )

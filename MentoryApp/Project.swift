@@ -170,7 +170,7 @@ let project = Project.mentory(
                 .target(name: "MentoryApp"),
                 .target(name: "MentoryCore"),
                 .mentoryShared("Values"),
-                .mentoryDB("MentoryDBAdapter"),
+                .mentoryDB("NewMentoryDBCore"),
             ],
             settings: testSettings
         ),
