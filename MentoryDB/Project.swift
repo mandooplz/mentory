@@ -38,6 +38,7 @@ let project = Project.mentory(
             dependencies: [
                 .target(name: "NewMentoryDBCore"),
                 .mentoryShared("Values"),
+                .package(product: "Collections"),
             ]
         ),
         .mentoryFramework(

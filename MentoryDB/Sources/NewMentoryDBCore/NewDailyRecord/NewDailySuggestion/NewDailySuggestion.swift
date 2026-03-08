@@ -10,11 +10,6 @@ import Values
 import OSLog
 
 
-public protocol NewDailySuggestionInterface: Sendable {
-    // MARK: state
-    var id: UUID { get }
-}
-
 
 // MARK: Object
 public actor NewDailySuggestion: NewDailySuggestionInterface {
@@ -28,4 +23,18 @@ public actor NewDailySuggestion: NewDailySuggestionInterface {
 
     // MARK: state
     public nonisolated let id: UUID
+
+    public var target: SuggestionID {
+        fatalError()
+    }
+    public var content: String {
+        fatalError()
+    }
+
+    public var isDone: Bool {
+        fatalError()
+    }
+    public func markAsDone() async {
+        fatalError()
+    }
 }

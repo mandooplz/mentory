@@ -142,7 +142,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             return
         }
         
-        let suggestionDatas = await recentRecord.suggestions
+        let suggestionDatas = await recentRecord.suggestionDatas
 
         
         // mutate
@@ -151,7 +151,8 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
                 owner: todayBoard,
                 target: $0.target,
                 content: $0.content,
-                isDone: $0.isDone)
+                isDone: $0.isDone
+            )
             }
         todayBoard.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")

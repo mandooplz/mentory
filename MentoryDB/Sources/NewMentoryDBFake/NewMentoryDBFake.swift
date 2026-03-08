@@ -19,29 +19,42 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     public nonisolated let id: UUID = UUID()
 
     public var name: String? = nil
-    public func setName(_: String) {
-        fatalError()
+    public func setName(_ newValue: String) {
+        self.name = newValue
     }
 
     public var character: Values.MentoryCharacter? = nil
-    public func setCharacter(_: Values.MentoryCharacter) {
-        fatalError()
+    public func setCharacter(_ newValue: MentoryCharacter) {
+        self.character = newValue
     }
 
-    public var mentorMessage: Values.MessageData?
-    public func setMentorMessage(_: Values.MessageData) {
-        fatalError()
+    public var mentorMessage: MessageData?
+    public func setMentorMessage(_ newValue: MessageData) {
+        self.mentorMessage = newValue
     }
 
-    public var records: [Values.RecordData] = []
+    private var _records: [NewDailyRecordFake] = []
+    public var records: [RecordData] {
+        self._records
+            .map {
+                RecordData(
+                    id: $0.id,
+                    recordDate: $0.recordDate,
+                    analyzedResult: $0.analyzedContent,
+                    emotion: $0.emotion
+                )
+            }
+    }
     public var recordCount: Int {
-        self.records.count
+        self._records.count
     }
     public var recentRecord: NewDailyRecordFake? {
-        fatalError()
+        return self._records
+            .max(by: { $0.recordDate < $1.recordDate })
     }
 
     public func getRecord(ticketId: UUID) -> NewDailyRecordFake? {
+
         fatalError()
     }
     public func isSameDayRecordExist(for date: Values.MentoryDate) -> Bool {

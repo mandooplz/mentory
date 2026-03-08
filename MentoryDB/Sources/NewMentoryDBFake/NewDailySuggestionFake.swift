@@ -12,11 +12,25 @@ import Foundation
 
 // MARK: fake
 @MainActor
-public final class NewDailySuggestionFake: NewDailyRecordInterface {
+public final class NewDailySuggestionFake: Sendable, NewDailySuggestionInterface {
+    public var target: SuggestionID {
+        fatalError()
+    }
+
+    public var content: String {
+        fatalError()
+    }
+
+    public var isDone: Bool {
+        fatalError()
+    }
+
+    public func markAsDone() async {
+        fatalError()
+    }
+
     // MARK: state
     public nonisolated let id: UUID = UUID()
-
-    public var suggestions: [Values.SuggestionData] = []
 
 
 }

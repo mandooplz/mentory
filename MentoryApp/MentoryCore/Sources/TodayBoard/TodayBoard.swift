@@ -173,7 +173,7 @@ public final class TodayBoard: Sendable, ObservableObject {
         logger.debug("NewMentoryDB에서 최근 DailyRecord를 가져왔습니다.")
         
         // process - MentoryDB에서 Suggestion 가져오기
-        let suggestionDatas = await recentRecord.suggestions
+        let suggestionDatas = await recentRecord.suggestionDatas
 
 
         // mutate

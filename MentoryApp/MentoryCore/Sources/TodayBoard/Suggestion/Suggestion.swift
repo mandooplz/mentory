@@ -4,14 +4,14 @@
 //
 //  Created by 김민우 on 12/2/25.
 //
+
 import Foundation
 import Combine
 import Values
 import OSLog
 
 
-
-// MARK: Object
+// MARK: object
 @MainActor
 public final class Suggestion: Sendable, ObservableObject, Identifiable {
     // MARK: core

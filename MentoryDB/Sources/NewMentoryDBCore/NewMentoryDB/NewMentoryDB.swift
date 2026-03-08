@@ -109,7 +109,13 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
             return db.records
                 .sorted(by: { $0.recordDate > $1.recordDate })
-                .map { $0.toRecordData() }
+                .map { .init(
+                    id: $0.id,
+                    recordDate: MentoryDate($0.recordDate),
+                    createdAt: MentoryDate($0.createdAt),
+                    analyzedResult: $0.analyzedResult,
+                    emotion: $0.emotion)
+                }
         } catch {
             logger.error("getRecords 실패: \(error.localizedDescription, privacy: .public)")
             return []

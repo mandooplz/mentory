@@ -10,11 +10,27 @@ import Foundation
 import OSLog
 import SwiftData
 import Values
+import Collections
 
 
 // MARK: interface
 public protocol NewDailyRecordInterface: Sendable {
     // MARK: state
     var id: UUID { get }
-    var suggestions: [SuggestionData] { get async }
+    var ticketID: UUID { get async }
+
+    var recordDate: MentoryDate { get async }
+    var createAt: MentoryDate { get async }
+
+    var analyzedContent: String { get async }
+    var emotion: Emotion { get async }
+
+//    var suggestions: [DailySuggestionObject] { get async }
+    var suggestionDatas: [SuggestionData] { get async }
+    var createSuggestionQueue: [SuggestionData] { get async }
+    func insertTicket(_: [SuggestionData]) async
+
+
+    // MARK: action
+    func createDailySuggestions() async
 }
