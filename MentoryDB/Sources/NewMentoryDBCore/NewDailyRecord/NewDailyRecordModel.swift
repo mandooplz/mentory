@@ -13,7 +13,7 @@ import Values
 @Model
 final class NewDailyRecordModel {
     @Attribute(.unique) var id: UUID = UUID()
-
+    @Attribute(.unique) var recordID: UUID
     @Attribute(.unique) var ticketId: UUID
 
     var recordDate: Date
@@ -24,8 +24,10 @@ final class NewDailyRecordModel {
 
     @Relationship var suggestions: [NewDailySuggestionModel] = []
 
-    init(data: RecordData, suggestions: [NewDailySuggestionModel] = []) {
-        self.ticketId = data.id
+    init(data: RecordSnapshot,
+         suggestions: [NewDailySuggestionModel] = []) {
+        self.ticketId = data.objectID
+        self.recordID = data.recordID
         self.recordDate = data.recordDate.rawValue
         self.createdAt = data.createdAt.rawValue
         self.analyzedResult = data.analyzedResult
@@ -33,9 +35,9 @@ final class NewDailyRecordModel {
         self.suggestions = suggestions
     }
 
-    func toRecordData() -> RecordData {
+    func toRecordData() -> RecordSnapshot {
         .init(
-            id: ticketId,
+            objectID: ticketId,
             recordDate: .init(recordDate),
             createdAt: .init(createdAt),
             analyzedResult: analyzedResult,

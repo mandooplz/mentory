@@ -112,7 +112,10 @@ public final class TodayBoard: Sendable, ObservableObject {
         
         // mutate
         let recordForms = dates.map { date in
-            RecordForm(owner: self, targetDate: date)
+            RecordForm(
+                owner: self,
+                targetDate: date
+            )
         }
         self.recordForms = recordForms
         logger.debug("recordForms 배열이 생성되었습니다.\(recordForms)")
@@ -173,6 +176,7 @@ public final class TodayBoard: Sendable, ObservableObject {
         logger.debug("NewMentoryDB에서 최근 DailyRecord를 가져왔습니다.")
         
         // process - MentoryDB에서 Suggestion 가져오기
+        let recordID = await recentRecord.recordID
         let suggestionDatas = await recentRecord.suggestionDatas
 
 
@@ -180,6 +184,7 @@ public final class TodayBoard: Sendable, ObservableObject {
         self.suggestions = suggestionDatas
             .map { Suggestion(
                 owner: self,
+                parentRecord: recordID,
                 target: $0.target,
                 content: $0.content,
                 isDone: $0.isDone)
@@ -235,22 +240,22 @@ public final class TodayBoard: Sendable, ObservableObject {
 
     // Value -> Routine으로 리팩토링
     public func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
-        // todoText로 해당 Suggestion 찾기
+        // Mentotry의 Suggesion.isDone 업데이트
         guard let suggestion = suggestions.first(where: { $0.content == todoText }) else {
             logger.error("Watch로부터 받은 투두를 찾을 수 없음: \(todoText)")
             return
         }
 
-        // UI 상태 업데이트
         suggestion.isDone = isCompleted
         logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
 
-        // MentoryDB에 저장
+        // NewMentoryDB의 DailySuggestion
         let mentoryiOS = owner!
         let newMentoryDB = mentoryiOS.newMentoryDB
         let targetId = suggestion.target.rawValue
-
-
-        await newMentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isCompleted)
+//
+//
+//        await newMentoryDB.updateSuggestionStatus(
+//            sugestionID: targetId, isDone: isCompleted)
     }
 }

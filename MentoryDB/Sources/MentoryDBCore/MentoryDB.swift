@@ -256,7 +256,7 @@ public actor MentoryDB: Sendable {
                 return nil
             }
 
-            // DailyRecordModel → RecordData 변환
+            // DailyRecordModel → RecordSnapshot 변환
             return DailyRecord(id: latest.id)
 
         } catch {
@@ -265,7 +265,7 @@ public actor MentoryDB: Sendable {
         }
     }
     
-    public func getRecords() -> [RecordData] {
+    public func getRecords() -> [RecordSnapshot] {
         let context = ModelContext(MentoryDB.container)
         let id = self.id
 
@@ -350,7 +350,7 @@ public actor MentoryDB: Sendable {
     public func getRecord(ticketId: UUID) -> DailyRecord? {
         fatalError("구현 예정입니다.")
     }
-    public func insertTicket(_ recordData: RecordData) {
+    public func insertTicket(_ recordData: RecordSnapshot) {
         let context = ModelContext(Self.container)
         let id = self.id
         
@@ -404,7 +404,7 @@ public actor MentoryDB: Sendable {
             // 3) SuggestionData -> DailySuggestionModel 매핑해서 record에 붙이기
             for item in suggestions {
                 let model = DailySuggestionModel(
-                    id: item.id,
+                    id: item.objectID,
                     target: item.target.rawValue,  // SuggestionID의 원시값(UUID)
                     content: item.content,
                     status: item.isDone
@@ -514,17 +514,17 @@ final class RecordTicket {
     var analyzedResult: String
     var emotion: Emotion
     
-    init(data: RecordData) {
-        self.id = data.id
+    init(data: RecordSnapshot) {
+        self.id = data.objectID
         self.recordDate = data.recordDate.rawValue
         self.createdAt = data.createdAt.rawValue
         self.analyzedResult = data.analyzedResult
         self.emotion = data.emotion
     }
     
-    func toRecordData() -> RecordData {
+    func toRecordData() -> RecordSnapshot {
         .init(
-            id: id,
+            objectID: id,
             recordDate: .init(recordDate),
             createdAt: .init(createdAt),
             analyzedResult: analyzedResult,

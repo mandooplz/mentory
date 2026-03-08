@@ -34,7 +34,7 @@ public actor NewDailySuggestion: NewDailySuggestionInterface {
     public var isDone: Bool {
         fatalError()
     }
-    public func markAsDone() async {
+    public func setDone(_ newValue: Bool) async {
         fatalError()
     }
 }

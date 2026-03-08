@@ -25,10 +25,10 @@ public protocol MentoryDBInterface: Sendable {
     func getRecordCount() async throws -> Int
     func isSameDayRecordExist(for: MentoryDate) async throws -> Bool
     func getRecentRecord() async throws -> DailyRecord?
-    func getRecords() async throws -> [RecordData]
+    func getRecords() async throws -> [RecordSnapshot]
 
     func getCompletedSuggestionsCount() async throws -> Int
     func updateSuggestionStatus(targetId: UUID, isDone: Bool) async throws
 
-    func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws
+    func submitAnalysis(recordData: RecordSnapshot, suggestionData: [SuggestionData]) async throws
 }

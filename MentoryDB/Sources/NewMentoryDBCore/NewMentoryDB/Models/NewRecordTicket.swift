@@ -20,17 +20,17 @@ final class NewRecordTicket {
     var analyzedResult: String
     var emotion: Emotion
 
-    init(data: RecordData) {
-        self.id = data.id
+    init(data: RecordSnapshot) {
+        self.id = data.objectID
         self.recordDate = data.recordDate.rawValue
         self.createdAt = data.createdAt.rawValue
         self.analyzedResult = data.analyzedResult
         self.emotion = data.emotion
     }
 
-    func toRecordData() -> RecordData {
+    func toRecordData() -> RecordSnapshot {
         .init(
-            id: id,
+            objectID: id,
             recordDate: .init(recordDate),
             createdAt: .init(createdAt),
             analyzedResult: analyzedResult,

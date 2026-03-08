@@ -102,7 +102,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         }
     }
     
-    public var records: [RecordData] {
+    public var records: [RecordSnapshot] {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
@@ -110,7 +110,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             return db.records
                 .sorted(by: { $0.recordDate > $1.recordDate })
                 .map { .init(
-                    id: $0.id,
+                    objectID: $0.id,
                     recordDate: MentoryDate($0.recordDate),
                     createdAt: MentoryDate($0.createdAt),
                     analyzedResult: $0.analyzedResult,
@@ -173,7 +173,22 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             return false
         }
     }
-    
+    public func getRecord(recordID: UUID) -> NewDailyRecord? {
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
+
+            guard let dailyRecord = db.records.first(where: { $0.recordID == recordID }) else {
+                return nil
+            }
+
+            return NewDailyRecord(id: dailyRecord.id)
+        } catch {
+            logger.error("getRecord 실패: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+    }
+
     public var completedSuggestionCount: Int {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
@@ -188,33 +203,13 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         }
     }
 
-    // MARK: TODO: DailySuggestion의 세터로 변환
-    public func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
+
+    public func insertTicket(_ recordData: RecordSnapshot) {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            for record in db.records {
-                if let suggestion = record.suggestions.first(where: { $0.target == targetId }) {
-                    suggestion.status = isDone
-                    try context.save()
-                    logger.debug("Suggestion 상태 업데이트 완료")
-                    return
-                }
-            }
-
-            logger.warning("대상 Suggestion 미존재: \(targetId.uuidString, privacy: .public)")
-        } catch {
-            logger.error("updateSuggestionStatus 실패: \(error.localizedDescription, privacy: .public)")
-        }
-    }
-
-    public func insertTicket(_ recordData: RecordData) {
-        do {
-            let context = try NewMentoryDBConfig.default.makeContext()
-            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
-
-            let ticketId = recordData.id
+            let ticketId = recordData.objectID
             guard db.records.contains(where: { $0.ticketId == ticketId }) == false else {
                 logger.debug("insertTicket 중복 스킵(records): \(ticketId.uuidString, privacy: .public)")
                 return
@@ -249,7 +244,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             var insertedCount = 0
 
             for suggestion in suggestions {
-                guard existingIDs.insert(suggestion.id).inserted else {
+                guard existingIDs.insert(suggestion.objectID).inserted else {
                     continue
                 }
 

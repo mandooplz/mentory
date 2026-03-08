@@ -16,10 +16,12 @@ import OSLog
 public final class Suggestion: Sendable, ObservableObject, Identifiable {
     // MARK: core
     public init(owner: TodayBoard,
+                parentRecord: UUID,
                 target: SuggestionID,
                 content: String,
                 isDone: Bool) {
         self.owner = owner
+        self.parentRecord = parentRecord
         self.target = target
         self.content = content
         self.isDone = isDone
@@ -32,6 +34,7 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
     
     public weak var owner: TodayBoard?
     
+    public nonisolated let parentRecord: UUID
     public nonisolated let target: SuggestionID
     public nonisolated let content: String
     
@@ -39,20 +42,29 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
     
     
     // MARK: action
-    // TODO: markDone
     public func markDone() async {
         // capture
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
         let newMentoryDB = mentoryiOS.newMentoryDB
 
-        let targetId = self.target.rawValue
+        let suggestionID = self.target.rawValue
         let isDone = self.isDone
 
         logger.debug("markDone 호출: isDone=\(isDone)")
 
-        // process - DB에 Suggestion 상태 업데이트
-        await newMentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
+        // process
+        guard let newDailyRecord = await newMentoryDB.getRecord(recordID: parentRecord) else {
+            logger.error("NewMentoryDB에서 DailyRecord가 검색되지 않았습니다.")
+            return
+        }
+        guard let newDailySuggestion = await newDailyRecord.getSuggestion(suggestionID: suggestionID) else {
+            logger.error("NewDailyRecord에서 일치하는 Suggestion 객체를 찾을 수 없습니다.")
+            return
+        }
+
+        await newDailySuggestion.setDone(isDone)
+
 
         // Watch로 전송
         await todayBoard.sendSuggestionsToWatch()

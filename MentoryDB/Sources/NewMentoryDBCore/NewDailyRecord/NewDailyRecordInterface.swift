@@ -15,9 +15,12 @@ import Collections
 
 // MARK: interface
 public protocol NewDailyRecordInterface: Sendable {
+    associatedtype SuggestionObject: NewDailySuggestionInterface
+
     // MARK: state
     var id: UUID { get }
     var ticketID: UUID { get async }
+    var recordID: UUID { get async }
 
     var recordDate: MentoryDate { get async }
     var createAt: MentoryDate { get async }
@@ -25,8 +28,9 @@ public protocol NewDailyRecordInterface: Sendable {
     var analyzedContent: String { get async }
     var emotion: Emotion { get async }
 
-//    var suggestions: [DailySuggestionObject] { get async }
     var suggestionDatas: [SuggestionData] { get async }
+    func getSuggestion(suggestionID: UUID) async -> SuggestionObject?
+
     var createSuggestionQueue: [SuggestionData] { get async }
     func insertTicket(_: [SuggestionData]) async
 

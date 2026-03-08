@@ -28,16 +28,18 @@ public protocol NewMentoryDBInterface: Sendable {
     var mentorMessage: MessageData? { get async }
     func setMentorMessage(_: MessageData) async
 
-    var records: [RecordData] { get async }
+    var records: [RecordSnapshot] { get async }
     var recordCount: Int { get async }
     var recentRecord: DailyRecordObject? { get async }
     func getRecord(ticketId: UUID) async -> DailyRecordObject?
     func isSameDayRecordExist(for date: MentoryDate) async -> Bool
+    func getRecord(recordID: UUID) async -> DailyRecordObject?
 
     var completedSuggestionCount: Int { get async }
-    func updateSuggestionStatus(targetId: UUID, isDone: Bool) async
 
-    func insertTicket(_ recordData: RecordData) async
+
+
+    func insertTicket(_ recordData: RecordSnapshot) async
     func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async
     
     

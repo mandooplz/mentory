@@ -99,23 +99,26 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         // process - MentoryDB
         // DailyRecord & DailySuggestion 생성
-        let suggestionDatas = analysis.actionKeywords
-            .map { actionText in
-                SuggestionData(content: actionText)
-            }
-
-        let recordData = RecordData(
-            id: .init(),
+        let recordData = RecordSnapshot(
+            objectID: .init(),
             recordDate: targetDate,
             createdAt: .now,
             analyzedResult: analysis.empathyMessage,
             emotion: analysis.mindType
         )
         
+        let suggestionDatas = analysis.actionKeywords
+            .map { actionText in
+                SuggestionData(
+                    parentRecord: recordData.recordID,
+                    content: actionText
+                )
+            }
+
         await newMentoryDB.insertTicket(recordData)
         await newMentoryDB.createDailyRecords()
 
-        await newMentoryDB.insertSuggestions(ticketId: recordData.id, suggestions: suggestionDatas)
+        await newMentoryDB.insertSuggestions(ticketId: recordData.objectID, suggestions: suggestionDatas)
 
 
         logger.debug("MentoryDB에 RecordData와 SuggestionData를 저장했습니다.")
@@ -149,6 +152,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         todayBoard.suggestions = suggestionDatas
             .map { Suggestion(
                 owner: todayBoard,
+                parentRecord: $0.parentRecord,
                 target: $0.target,
                 content: $0.content,
                 isDone: $0.isDone

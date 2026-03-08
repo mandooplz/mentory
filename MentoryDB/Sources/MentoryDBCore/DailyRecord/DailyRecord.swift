@@ -81,8 +81,8 @@ final class DailyRecordModel {
     
     
     // MARK: operator
-    func toData() -> RecordData {
-        return .init(id: self.id,
+    func toData() -> RecordSnapshot {
+        return .init(objectID: self.id,
                      recordDate: .init(recordDate),
                      createdAt: .init(createdAt),
                      analyzedResult: self.analyzedResult,

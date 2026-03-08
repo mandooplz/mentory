@@ -65,7 +65,7 @@ public final class DailyRecordFake: Sendable {
             
             let newSuggestion = DailySuggestionFake(
                 owner: self,
-                ticketId: suggestionData.id,
+                ticketId: suggestionData.objectID,
                 target: suggestionData.target,
                 content: suggestionData.content,
                 isDone: suggestionData.isDone

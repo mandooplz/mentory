@@ -23,7 +23,7 @@ public final class StatBoard: ObservableObject {
     // MARK: state
     weak var owner: Mentory?
     
-    @Published public var allRecords: [RecordData] = []
+    @Published public var allRecords: [RecordSnapshot] = []
     
     
     // MARK: action

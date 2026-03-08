@@ -21,7 +21,7 @@ struct RecordFormTests {
         init() async throws {
             self.mentoryiOS = await Mentory()
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
-            self.mentoryDB = mentoryiOS.mentoryDB
+            self.mentoryDB = mentoryiOS.newMentoryDB
         }
         
         @Test func setIsDiabledToFalse() async throws {
@@ -41,8 +41,8 @@ struct RecordFormTests {
             let targetDate = recordForm.targetDate
             
             let randomDateAtSameDay = targetDate.randomTimeInSameDay()
-            let recordData = RecordData(
-                id: .init(),
+            let recordData = RecordSnapshot(
+                objectID: .init(),
                 recordDate: randomDateAtSameDay,
                 createdAt: .now,
                 analyzedResult: "SAMPLE_RESULT",

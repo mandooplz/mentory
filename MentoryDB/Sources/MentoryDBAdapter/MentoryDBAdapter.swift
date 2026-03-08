@@ -55,7 +55,7 @@ public nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         
         return DailyRecordAdapter(dailyRecord)
     }
-    public func getRecords() async throws -> [RecordData] {
+    public func getRecords() async throws -> [RecordSnapshot] {
         return await mentoryDB.getRecords()
     }
 
@@ -67,11 +67,11 @@ public nonisolated struct MentoryDBAdapter: MentoryDBInterface {
         await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isDone)
     }
 
-    public func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
+    public func submitAnalysis(recordData: RecordSnapshot, suggestionData: [SuggestionData]) async throws {
         await mentoryDB.insertTicket(recordData)
         await mentoryDB.createDailyRecords()
         
         
-        await mentoryDB.insertSuggestions(ticketId: recordData.id, suggestions: suggestionData)
+        await mentoryDB.insertSuggestions(ticketId: recordData.objectID, suggestions: suggestionData)
     }
 }

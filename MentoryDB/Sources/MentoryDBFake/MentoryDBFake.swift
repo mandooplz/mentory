@@ -20,8 +20,8 @@ public final class MentoryDatabaseFake: Sendable {
     public var userCharacter: MentoryCharacter? = nil
     public var message: MessageData? = nil
     
-    private var createRecordQueue: Deque<RecordData> = []
-    public func insertTicket(_ recordData: RecordData) {
+    private var createRecordQueue: Deque<RecordSnapshot> = []
+    public func insertTicket(_ recordData: RecordSnapshot) {
         self.createRecordQueue.append(recordData)
     }
     
@@ -67,7 +67,7 @@ public final class MentoryDatabaseFake: Sendable {
             
             let newRecord = DailyRecordFake(
                 owner: self,
-                ticketId: recordData.id,
+                ticketId: recordData.objectID,
                 recordDate: recordData.recordDate,
                 createAt: recordData.createdAt,
                 analyzedContent: recordData.analyzedResult,

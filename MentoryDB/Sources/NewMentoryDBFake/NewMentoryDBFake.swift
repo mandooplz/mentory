@@ -34,11 +34,11 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     }
 
     private var _records: [NewDailyRecordFake] = []
-    public var records: [RecordData] {
+    public var records: [RecordSnapshot] {
         self._records
             .map {
-                RecordData(
-                    id: $0.id,
+                RecordSnapshot(
+                    objectID: $0.id,
                     recordDate: $0.recordDate,
                     analyzedResult: $0.analyzedContent,
                     emotion: $0.emotion
@@ -54,20 +54,19 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     }
 
     public func getRecord(ticketId: UUID) -> NewDailyRecordFake? {
-
         fatalError()
     }
+    public func getRecord(recordID: UUID) async -> NewDailyRecordFake? {
+        fatalError()
+    }
+
     public func isSameDayRecordExist(for date: Values.MentoryDate) -> Bool {
         fatalError()
     }
 
     public var completedSuggestionCount: Int = 0
 
-    public func updateSuggestionStatus(targetId: UUID, isDone: Bool) {
-        fatalError()
-    }
-
-    public func insertTicket(_ recordData: Values.RecordData) {
+    public func insertTicket(_ recordData: Values.RecordSnapshot) {
         fatalError()
     }
 

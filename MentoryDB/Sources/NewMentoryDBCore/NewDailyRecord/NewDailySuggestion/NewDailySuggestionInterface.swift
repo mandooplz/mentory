@@ -18,5 +18,5 @@ public protocol NewDailySuggestionInterface: Sendable {
     var content: String { get async }
     
     var isDone: Bool { get async }
-    func markAsDone() async
+    func setDone(_: Bool) async
 }

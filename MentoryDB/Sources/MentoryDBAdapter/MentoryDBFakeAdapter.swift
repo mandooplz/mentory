@@ -32,11 +32,11 @@ public nonisolated struct MentoryDBFakeAdapter: MentoryDBInterface {
             object.userName = newName
         }
     }
-    public func getRecords() async throws -> [RecordData] {
+    public func getRecords() async throws -> [RecordSnapshot] {
         await MainActor.run {
             object.records
                 .map { dailyRecord in
-                    RecordData(
+                    RecordSnapshot(
                         recordDate: dailyRecord.recordDate,
                         analyzedResult: dailyRecord.analyzedContent,
                         emotion: dailyRecord.emotion
@@ -104,14 +104,14 @@ public nonisolated struct MentoryDBFakeAdapter: MentoryDBInterface {
     }
 
 
-    public func submitAnalysis(recordData: RecordData, suggestionData: [SuggestionData]) async throws {
+    public func submitAnalysis(recordData: RecordSnapshot, suggestionData: [SuggestionData]) async throws {
         
         // create DailyRecord
         await object.insertTicket(recordData)
         await object.createDailyRecords()
         
-        guard let dailyRecord = await object.getDailyRecord(ticketId: recordData.id) else {
-            logger.error("\(recordData.id.uuidString.prefix(6))에 해당하는 DailyRecord가 없습니다.")
+        guard let dailyRecord = await object.getDailyRecord(ticketId: recordData.objectID) else {
+            logger.error("\(recordData.objectID.uuidString.prefix(6))에 해당하는 DailyRecord가 없습니다.")
             return
         }
         

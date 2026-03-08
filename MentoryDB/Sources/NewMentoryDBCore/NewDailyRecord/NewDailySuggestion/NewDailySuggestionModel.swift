@@ -28,16 +28,17 @@ final class NewDailySuggestionModel {
 
     convenience init(data: SuggestionData) {
         self.init(
-            id: data.id,
+            id: data.objectID,
             target: data.target.rawValue,
             content: data.content,
             status: data.isDone
         )
     }
 
-    func toData() -> SuggestionData {
+    func toData(parentRecord: UUID) -> SuggestionData {
         SuggestionData(
             id: id,
+            parentRecord: parentRecord,
             target: SuggestionID(target),
             content: content,
             isDone: status

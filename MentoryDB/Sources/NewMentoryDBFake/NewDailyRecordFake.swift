@@ -12,9 +12,12 @@ import Foundation
 // MARK: fake
 @MainActor
 public final class NewDailyRecordFake: NewDailyRecordInterface {
+
+
     // MARK: core
     internal init(id: UUID,
                   owner: NewMentoryDBFake,
+                  recordID: UUID,
                   ticketID: UUID,
                   recordDate: MentoryDate,
                   createAt: MentoryDate,
@@ -22,6 +25,7 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
                   emotion: Emotion) {
         self.id = id
         self.owner = owner
+        self.recordID = recordID
         self.ticketID = ticketID
         self.recordDate = recordDate
         self.createAt = createAt
@@ -32,6 +36,7 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
 
     // MARK: state
     public nonisolated let id: UUID
+    public var recordID: UUID
     internal weak var owner: NewMentoryDBFake?
 
     public nonisolated let ticketID: UUID
@@ -42,10 +47,12 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
     public var analyzedContent: String
     public var emotion: Emotion
 
-//    public var suggestions: [NewDailySuggestionFake] = []
     public var suggestionDatas: [SuggestionData] = []
-    public var createSuggestionQueue: [SuggestionData] = []
+    public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestionFake? {
+        fatalError()
+    }
 
+    public var createSuggestionQueue: [SuggestionData] = []
     public func insertTicket(_: [SuggestionData]) async {
         fatalError()
     }
