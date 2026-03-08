@@ -14,8 +14,8 @@ import WatchConnectivity
 final class WatchConnectManager: Sendable {
     // MARK: core
     static let shared = WatchConnectManager()
-    
-    
+
+
     // MARK: state
     private let logger = Logger()
     private let session: WCSession = .default
@@ -114,6 +114,7 @@ final class WatchConnectManager: Sendable {
         }
     }
     
+
     // MARK: value
     typealias StateHandler = @Sendable (String) -> Void
     typealias UpdateHandler = @Sendable (WatchData) -> Void
