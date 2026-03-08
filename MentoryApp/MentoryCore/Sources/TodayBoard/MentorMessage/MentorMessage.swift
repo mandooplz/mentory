@@ -9,6 +9,7 @@ import Combine
 import Values
 import OSLog
 import FirebaseLLMAdapter
+import MentoryWatch
 import WatchManager
 
 
@@ -110,11 +111,19 @@ public final class MentorMessage: Sendable, ObservableObject {
         self.character = messageCharacter
         self.recentUpdate = .now
 
-        await mentoryiOS.watchConnectivity.updateContext(
+        let payload = MentoryWatchPayloadFactory.make(
             message: messageContent,
-            character: messageCharacter.rawValue,
-            todos: todayBoard.suggestions.map(\.content),
-            todoCompletions: todayBoard.suggestions.map(\.isDone)
+            character: messageCharacter,
+            todos: todayBoard.suggestions.map {
+                (content: $0.content, isDone: $0.isDone)
+            }
+        )
+
+        await mentoryiOS.watchConnectivity.updateContext(
+            message: payload.message,
+            character: payload.characterName,
+            todos: payload.todoTexts,
+            todoCompletions: payload.todoCompletions
         )
         
         logger.debug("Watch로 멘토 메시지 전송: \(messageCharacter.rawValue)")

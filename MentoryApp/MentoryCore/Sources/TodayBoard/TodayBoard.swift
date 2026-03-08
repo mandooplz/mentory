@@ -9,6 +9,7 @@ import Combine
 import Values
 import OSLog
 import NewMentoryDBCore
+import MentoryWatch
 import WatchManager
 
 
@@ -223,18 +224,23 @@ public final class TodayBoard: Sendable, ObservableObject {
 
     // MARK: - Watch Connectivity
     public func sendSuggestionsToWatch() async {
-        let todos = suggestions.map { $0.content }
-        let completionStatus = suggestions.map { $0.isDone }
+        let payload = MentoryWatchPayloadFactory.make(
+            message: mentorMessage?.content,
+            character: mentorMessage?.character,
+            todos: suggestions.map {
+                (content: $0.content, isDone: $0.isDone)
+            }
+        )
         let mentoryiOS = self.owner!
         
         await mentoryiOS.watchConnectivity.updateContext(
-            message: mentorMessage?.content,
-            character: mentorMessage?.character?.rawValue,
-            todos: todos,
-            todoCompletions: completionStatus
+            message: payload.message,
+            character: payload.characterName,
+            todos: payload.todoTexts,
+            todoCompletions: payload.todoCompletions
         )
         
-        logger.debug("Suggestions를 Watch로 전송: \(todos.count)개")
+        logger.debug("Suggestions를 Watch로 전송: \(payload.todos.count)개")
     }
 
 

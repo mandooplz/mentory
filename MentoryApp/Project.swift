@@ -105,9 +105,18 @@ let project = Project.mentory(
     configurations: appConfigurations,
     targets: [
         .mentoryFramework(
+            name: "MentoryWatch",
+            sources: ["MentoryWatch/Sources/**"],
+            dependencies: [
+                .mentoryShared("Values"),
+            ],
+            product: .staticFramework
+        ),
+        .mentoryFramework(
             name: "MentoryCore",
             sources: ["MentoryCore/Sources/**"],
             dependencies: [
+                .target(name: "MentoryWatch"),
                 .mentoryShared("Values"),
                 .mentoryDB("NewMentoryDBCore"),
                 .mentoryDB("NewMentoryDBFake"),
