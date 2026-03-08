@@ -11,14 +11,6 @@ let project = Project.mentory(
     ],
     targets: [
         .mentoryStaticLibrary(
-            name: "MentoryDBFake",
-            sources: ["Sources/MentoryDBFake/**"],
-            dependencies: [
-                .mentoryShared("Values"),
-                .package(product: "Collections"),
-            ]
-        ),
-        .mentoryStaticLibrary(
             name: "NewMentoryDBCore",
             sources: ["Sources/NewMentoryDBCore/**"],
             dependencies: [
@@ -39,7 +31,6 @@ let project = Project.mentory(
             sources: ["Sources/MentoryDBAdapter/**"],
             dependencies: [
                 .mentoryShared("Values"),
-                .target(name: "MentoryDBFake"),
             ]
         ),
     ]
