@@ -92,7 +92,7 @@ public struct StatBoardView: View {
         selectedDate = date
     }
 
-    private func record(for date: Date) -> RecordData? {
+    private func record(for date: Date) -> RecordSnapshot? {
         board.allRecords.first { 
             Calendar.current.isDate($0.recordDate.rawValue, inSameDayAs: date) 
         }
@@ -253,7 +253,7 @@ private struct MonthPickerSheet: View {
 private struct CalendarGrid: View {
     let month: Date
     let selectedDate: Date?
-    let recordForDay: (Date) -> RecordData?
+    let recordForDay: (Date) -> RecordSnapshot?
     let onSelect: (Date) -> Void
     
     private let calendar = Calendar.current
@@ -314,7 +314,7 @@ private struct DayCell: View {
     let day: Date
     let isCurrentMonth: Bool
     let isSelected: Bool
-    let record: RecordData?
+    let record: RecordSnapshot?
     let onTap: () -> Void
     
     private let calendar = Calendar.current
@@ -346,7 +346,7 @@ private struct DayCell: View {
 
 private struct SelectedDayCard: View {
     let day: Date
-    let record: RecordData
+    let record: RecordSnapshot
     
     var body: some View {
         LiquidGlassCard(cornerRadius: 18) {

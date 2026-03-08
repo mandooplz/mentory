@@ -9,7 +9,7 @@ import Combine
 import OSLog
 import Values
 import FirebaseLLMAdapter
-import MentoryDBAdapter
+import NewMentoryDBCore
 import iOSReminder
 import WatchManager
 
@@ -19,8 +19,8 @@ import WatchManager
 public final class Mentory: Sendable, ObservableObject {
     // MARK: core
     private nonisolated let logger = Logger()
-    
-    internal nonisolated let mentoryDB: any MentoryDBInterface
+    internal nonisolated let newMentoryDB: any NewMentoryDBInterface
+
     internal nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
     internal nonisolated let reminderCenter: any ReminderNotificationInterface
     public nonisolated let watchConnectivity: any WatchConnectivityInterface
@@ -28,16 +28,22 @@ public final class Mentory: Sendable, ObservableObject {
     public init(_ mode: SystemMode = .test) {
         switch mode {
         case .real:
-            self.mentoryDB = MentoryDBAdapter()
             self.firebaseLLM = FirebaseLLMAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
             self.watchConnectivity = WatchConnectivityManager.shared
         case .test:
-            self.mentoryDB = MentoryDBFakeAdapter()
             self.firebaseLLM = FirebaseLLMFakeAdapter()
             self.reminderCenter = ReminderNotificationAdapter()
             self.watchConnectivity = WatchConnectivityManager.shared
         }
+
+        do {
+            try NewMentoryDBConfig.default.createOnce()
+        } catch {
+            logger.error("\(error)")
+        }
+
+        self.newMentoryDB = NewMentoryDB(id: NewMentoryDBConfig.default.rootID)
     }
     
     
@@ -83,20 +89,11 @@ public final class Mentory: Sendable, ObservableObject {
     
     public func loadUserName() async {
         // capture
-        let mentoryDB = self.mentoryDB
+        let newMentoryDB = self.newMentoryDB
         
         // process
-        let userNameFromDB: String
-        
-        do {
-            guard let name = try await mentoryDB.getName() else {
-                logger.error("현재 MentoryDB에 저장된 이름이 존재하지 않습니다.")
-                return
-            }
-            
-            userNameFromDB = name
-        } catch {
-            logger.error("\(error)")
+        guard let userNameFromDB = await newMentoryDB.name else {
+            logger.error("현재 NewMentoryDB에 저장된 이름이 존재하지 않습니다.")
             return
         }
         
@@ -113,14 +110,11 @@ public final class Mentory: Sendable, ObservableObject {
             logger.error("MentoryiOS에 userName이 존재하지 않습니다.")
             return
         }
-        
+
+        let newMentoryDB = self.newMentoryDB
+
         // process
-        do {
-            try await self.mentoryDB.setName(userName)
-        } catch {
-            logger.error("\(error)")
-            return
-        }
+        await newMentoryDB.setName(userName)
     }
     
     

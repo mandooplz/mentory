@@ -6,7 +6,7 @@
 //
 import Testing
 @testable import MentoryCore
-import MentoryDBAdapter
+import NewMentoryDBCore
 
 
 // MARK: Tests
@@ -95,15 +95,15 @@ struct MentoryTests {
     
     struct SaveUserName {
         let mentory: Mentory
-        let mentoryDB: any MentoryDBInterface
+        let mentoryDB: any NewMentoryDBInterface
         init() async throws {
             self.mentory = await Mentory()
-            self.mentoryDB = mentory.mentoryDB
+            self.mentoryDB = mentory.newMentoryDB
         }
         
         @Test func setUserName() async throws {
             // given
-            try await #require(mentoryDB.getName() == nil)
+            await #expect(mentoryDB.name == nil)
             
             await MainActor.run {
                 mentory.userName = "TEST_USER_NAME"
@@ -113,16 +113,16 @@ struct MentoryTests {
             await mentory.saveUserName()
             
             // then
-            try await #expect(mentoryDB.getName() == "TEST_USER_NAME")
+            await #expect(mentoryDB.name == "TEST_USER_NAME")
         }
     }
     
     struct LoadUserName {
         let mentory: Mentory
-        let mentoryDB: any MentoryDBInterface
+        let mentoryDB: any NewMentoryDBInterface
         init() async throws {
             self.mentory = await Mentory()
-            self.mentoryDB = mentory.mentoryDB
+            self.mentoryDB = mentory.newMentoryDB
         }
         
         @Test func setOnboardingNil() async throws {

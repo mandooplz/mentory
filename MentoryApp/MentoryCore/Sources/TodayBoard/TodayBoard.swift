@@ -8,7 +8,8 @@ import Foundation
 import Combine
 import Values
 import OSLog
-import MentoryDBAdapter
+import NewMentoryDBCore
+import MentoryToWatch
 import WatchManager
 
 
@@ -112,7 +113,10 @@ public final class TodayBoard: Sendable, ObservableObject {
         
         // mutate
         let recordForms = dates.map { date in
-            RecordForm(owner: self, targetDate: date)
+            RecordForm(
+                owner: self,
+                targetDate: date
+            )
         }
         self.recordForms = recordForms
         logger.debug("recordForms 배열이 생성되었습니다.\(recordForms)")
@@ -163,58 +167,41 @@ public final class TodayBoard: Sendable, ObservableObject {
         let currentDate = self.currentDate
         
         let mentoryiOS = self.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         // process - MentoryDB에서 DailyRecord 가져오기
-        let recentRecord: (any DailyRecordInterface)?
-        do {
-            recentRecord = try await mentoryDB.getRecentRecord()
-            logger.debug("최근일기가져오기")
-        } catch {
-            logger.error("\(#function) 실패: \(error)")
-            return
-        }
-        
-        guard let recentRecord else {
+        guard let recentRecord = await newMentoryDB.recentRecord else {
             logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
             return
         }
+        logger.debug("NewMentoryDB에서 최근 DailyRecord를 가져왔습니다.")
         
         // process - MentoryDB에서 Suggestion 가져오기
-        let suggestionDatas: [SuggestionData]
-        do {
-            suggestionDatas = try await recentRecord.getSuggestions()
-        } catch {
-            logger.error("\(#function) 실패 : \(error)")
-            return
-        }
-        
+        let recordID = await recentRecord.recordID
+        let suggestionDatas = await recentRecord.suggestionDatas
+
+
         // mutate
         self.suggestions = suggestionDatas
             .map { Suggestion(
                 owner: self,
+                parentRecord: recordID,
                 target: $0.target,
                 content: $0.content,
                 isDone: $0.isDone)
             }
+
         self.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")
     }
     
-    public func fetchUserRecordCoount() async {
+    public func fetchUserRecordCount() async {
         // capture
         let mentoryiOS = self.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         
         // process
-        let recordCount: Int
-        do {
-            async let count = try await mentoryDB.getRecordCount()
-            recordCount = try await count
-        } catch {
-            logger.error("\(error)")
-            return
-        }
+        let recordCount = await newMentoryDB.recordCount
         
         // mutate
         self.recordCount = recordCount
@@ -223,17 +210,10 @@ public final class TodayBoard: Sendable, ObservableObject {
     public func fetchEarnedBadges() async {
         // capture
         let mentoryiOS = self.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
 
         // process
-        let completedCount: Int
-        do {
-            async let count = try await mentoryDB.getCompletedSuggestionsCount()
-            completedCount = try await count
-        } catch {
-            logger.error("완료된 제안 개수 조회 실패: \(error)")
-            return
-        }
+        let completedCount = await newMentoryDB.completedSuggestionCount
 
         // mutate
         self.completedSuggestionsCount = completedCount
@@ -244,41 +224,44 @@ public final class TodayBoard: Sendable, ObservableObject {
 
     // MARK: - Watch Connectivity
     public func sendSuggestionsToWatch() async {
-        let todos = suggestions.map { $0.content }
-        let completionStatus = suggestions.map { $0.isDone }
+        let payload = MentoryWatchPayloadFactory.make(
+            message: mentorMessage?.content,
+            character: mentorMessage?.character,
+            todos: suggestions.map {
+                (content: $0.content, isDone: $0.isDone)
+            }
+        )
         let mentoryiOS = self.owner!
         
         await mentoryiOS.watchConnectivity.updateContext(
-            message: mentorMessage?.content,
-            character: mentorMessage?.character?.rawValue,
-            todos: todos,
-            todoCompletions: completionStatus
+            message: payload.message,
+            character: payload.characterName,
+            todos: payload.todoTexts,
+            todoCompletions: payload.todoCompletions
         )
         
-        logger.debug("Suggestions를 Watch로 전송: \(todos.count)개")
+        logger.debug("Suggestions를 Watch로 전송: \(payload.todos.count)개")
     }
 
+
+    // Value -> Routine으로 리팩토링
     public func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
-        // todoText로 해당 Suggestion 찾기
+        // Mentotry의 Suggesion.isDone 업데이트
         guard let suggestion = suggestions.first(where: { $0.content == todoText }) else {
             logger.error("Watch로부터 받은 투두를 찾을 수 없음: \(todoText)")
             return
         }
 
-        // UI 상태 업데이트
         suggestion.isDone = isCompleted
         logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
 
-        // MentoryDB에 저장
+        // NewMentoryDB의 DailySuggestion
         let mentoryiOS = owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         let targetId = suggestion.target.rawValue
-
-        do {
-            try await mentoryDB.updateSuggestionStatus(targetId: targetId, isDone: isCompleted)
-            logger.debug("Watch 투두 완료 상태 DB 저장 완료: \(todoText)")
-        } catch {
-            logger.error("Watch 투두 완료 상태 DB 저장 실패: \(error)")
-        }
+//
+//
+//        await newMentoryDB.updateSuggestionStatus(
+//            sugestionID: targetId, isDone: isCompleted)
     }
 }

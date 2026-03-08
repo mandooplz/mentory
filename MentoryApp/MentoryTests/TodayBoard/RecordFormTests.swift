@@ -8,7 +8,7 @@ import Testing
 @testable import MentoryCore
 import Foundation
 import Values
-import MentoryDBAdapter
+import NewMentoryDBCore
 
 
 // MARK: Tests
@@ -17,11 +17,11 @@ struct RecordFormTests {
     struct CheckDisability {
         let mentoryiOS: Mentory
         let recordForm: RecordForm
-        let mentoryDB: any MentoryDBInterface
+        let mentoryDB: any NewMentoryDBInterface
         init() async throws {
             self.mentoryiOS = await Mentory()
             self.recordForm = try await getRecordFormForTest(mentoryiOS)
-            self.mentoryDB = mentoryiOS.mentoryDB
+            self.mentoryDB = mentoryiOS.newMentoryDB
         }
         
         @Test func setIsDiabledToFalse() async throws {
@@ -36,22 +36,22 @@ struct RecordFormTests {
         }
         @Test func notSetFalseWhenRecordAlreadExistAtTargetDate() async throws {
             // given
-            try await #require(mentoryDB.getRecordCount() == 0)
+            await #expect(mentoryDB.recordCount == 0)
             
             let targetDate = recordForm.targetDate
             
             let randomDateAtSameDay = targetDate.randomTimeInSameDay()
-            let recordData = RecordData(
-                id: .init(),
+            let recordData = RecordSnapshot(
+                objectID: .init(),
                 recordDate: randomDateAtSameDay,
                 createdAt: .now,
                 analyzedResult: "SAMPLE_RESULT",
                 emotion: .neutral
             )
             
-            try await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
+            await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
             
-            try await #require(mentoryDB.getRecordCount() == 1)
+            await #expect(mentoryDB.recordCount == 1)
             
             // given
             try await #require(recordForm.isDisabled == true)

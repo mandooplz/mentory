@@ -177,7 +177,7 @@ fileprivate struct GreetingHeader: View {
             .spring(response: 0.6, dampingFraction: 0.8),
             value: todayBoard.mentorMessage?.content != nil)
         .task {
-            await todayBoard.fetchUserRecordCoount()
+            await todayBoard.fetchUserRecordCount()
         }
     }
 }

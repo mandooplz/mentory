@@ -8,9 +8,10 @@
 import SwiftUI
 
 @main
-struct MentoryWatchAppApp: App {
-    // MARK: WatchConnectivity
+struct MentoryWatchApp: App {
+    // MARK: core
     @State private var watchConnectivity = WatchConnectManager.shared
+
 
     var body: some Scene {
         WindowGroup {

@@ -1,14 +1,14 @@
+////
+////  DailyRecordInterface.swift
+////  MentoryDB
+////
+////  Created by 김민우 on 11/22/25.
+////
+//import Values
+//import Foundation
 //
-//  DailyRecordInterface.swift
-//  MentoryDB
 //
-//  Created by 김민우 on 11/22/25.
-//
-import Values
-import Foundation
-
-
-// MARK: Interface
-public protocol DailyRecordInterface: Sendable {
-    func getSuggestions() async throws -> [SuggestionData]
-}
+//// MARK: Interface
+//public protocol DailyRecordInterface: Sendable {
+//    func getSuggestions() async throws -> [SuggestionData]
+//}

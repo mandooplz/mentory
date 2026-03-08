@@ -8,7 +8,7 @@ import Foundation
 import Testing
 import Values
 @testable import MentoryCore
-import MentoryDBAdapter
+import NewMentoryDBCore
 
 
 // MARK: Tests
@@ -17,11 +17,11 @@ struct MentorMessageTests {
     struct UpdateContent {
         let mentory: Mentory
         let mentorMessage: MentorMessage
-        let mentoryDB: any MentoryDBInterface
+        let mentoryDB: any NewMentoryDBInterface
         init() async throws {
             self.mentory = await Mentory()
             self.mentorMessage = try await getMentorMessage(mentory)
-            self.mentoryDB = mentory.mentoryDB
+            self.mentoryDB = mentory.newMentoryDB
         }
         
         @Test func whenCharacterIsNil() async throws {

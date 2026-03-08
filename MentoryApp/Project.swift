@@ -1,61 +1,135 @@
 import ProjectDescription
+import ProjectDescriptionHelpers
 
-let project = Project(
-    name: "MentoryApp",
-    options: .options(
-        automaticSchemesOptions: .disabled
-    ),
-    packages: [
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.3.0")),
-        .package(url: "https://github.com/apple/swift-async-algorithms.git", .upToNextMajor(from: "1.1.0")),
-    ],
-    settings: .settings(
-        configurations: [
-            .debug(name: "Debug", xcconfig: "Secrets.xcconfig"),
-            .release(name: "Release", xcconfig: "Secrets.xcconfig"),
-        ]
-    ),
-    targets: [
-        .target(
-            name: "MentoryCore",
-            destinations: .iOS,
-            product: .staticFramework,
-            bundleId: "cloud.mandooplz.MentoryCore",
-            deploymentTargets: .iOS("26.1"),
-            infoPlist: .default,
-            sources: ["MentoryCore/Sources/**"],
-            resources: [],
-            dependencies: [
-                .project(target: "Values", path: "../MentoryShared"),
-                .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
-                .project(target: "NewMentoryDBCore", path: "../MentoryDB"),
-                .project(target: "NewMentoryDBFake", path: "../MentoryDB"),
-                .project(target: "FirebaseLLMAdapter", path: "../MentoryLLM"),
-                .project(target: "iOSReminder", path: "../MentoryDevice"),
-                .project(target: "WatchManager", path: "../MentoryDevice"),
-            ]
-        ),
-        .target(
-            name: "MentoryApp",
-            destinations: .iOS,
-            product: .app,
-            productName: "Mentory",
-            bundleId: "cloud.mandooplz.Mentory",
-            deploymentTargets: .iOS("26.1"),
-            infoPlist: .extendingDefault(
-                with: [
-                    "ALAN_API_TOKEN": "$(TOKEN)",
-                    "UIApplicationSupportsIndirectInputEvents": true,
-                    "UILaunchScreen": [:],
-                    "CFBundleURLTypes": [
-                        [
-                            "CFBundleTypeRole": "Editor",
-                            "CFBundleURLName": "Mentory",
-                            "CFBundleURLSchemes": ["mentory"],
-                        ],
-                    ],
-                ]
+let appConfigurations: [Configuration] = [
+    .debug(name: "Debug", xcconfig: "Secrets.xcconfig"),
+    .release(name: "Release", xcconfig: "Secrets.xcconfig"),
+]
+
+let appSettings = Settings.mentoryTarget(
+    base: .mentoryManualSigning(
+        sdk: "iphoneos*",
+        currentVersion: "2",
+        marketingVersion: "25.12",
+        targetedDeviceFamily: "1",
+        provisioningProfile: "Mentory-Dev-Profile",
+        supportedPlatforms: "iphoneos iphonesimulator",
+        extra: [
+            "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": .string(
+                "YES"
             ),
+            "INFOPLIST_KEY_NSCameraUsageDescription": .string(
+                "사진 촬영을 위해 카메라 접근 권한이 필요합니다."
+            ),
+            "INFOPLIST_KEY_NSMicrophoneUsageDescription": .string(
+                "음성 입력을 위해 마이크 접근 권한이 필요합니다."
+            ),
+            "INFOPLIST_KEY_NSSpeechRecognitionUsageDescription": .string(
+                "음성 인식을 위해 권한이 필요합니다."
+            ),
+            "INFOPLIST_KEY_UIApplicationSceneManifest_Generation": .string("YES"),
+            "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": .string(
+                "YES"
+            ),
+            "INFOPLIST_KEY_UILaunchScreen_Generation": .string("YES"),
+            "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": .string(
+                "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+            ),
+            "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": .string(
+                "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+            ),
+            "STRING_CATALOG_GENERATE_SYMBOLS": .string("YES"),
+            "SWIFT_APPROACHABLE_CONCURRENCY": .string("YES"),
+            "SWIFT_DEFAULT_ACTOR_ISOLATION": .string("MainActor"),
+            "SWIFT_EMIT_LOC_STRINGS": .string("YES"),
+            "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": .string("YES"),
+        ]
+    )
+)
+
+let testSettings = Settings.mentoryTarget(
+    base: .mentoryManualSigning(
+        sdk: "iphoneos*",
+        currentVersion: "1",
+        marketingVersion: "1.0",
+        targetedDeviceFamily: "1",
+        supportedPlatforms: "iphoneos iphonesimulator",
+        extra: [
+            "BUNDLE_LOADER": .string("$(TEST_HOST)"),
+            "STRING_CATALOG_GENERATE_SYMBOLS": .string("NO"),
+            "TEST_HOST": .string(
+                "$(BUILT_PRODUCTS_DIR)/Mentory.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mentory"
+            ),
+        ]
+    )
+)
+
+let widgetSettings = Settings.mentoryTarget(
+    base: .mentoryManualSigning(
+        sdk: "iphoneos*",
+        currentVersion: "2",
+        marketingVersion: "25.11",
+        targetedDeviceFamily: "1,2",
+        provisioningProfile: "Mentory-Dev-Widget-Profile",
+        extra: [
+            "ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME": .string(
+                "WidgetBackground"
+            ),
+            "INFOPLIST_KEY_CFBundleDisplayName": .string("MentoryWidget"),
+            "STRING_CATALOG_GENERATE_SYMBOLS": .string("YES"),
+        ]
+    )
+)
+
+let watchAppSettings = Settings.mentoryTarget(
+    base: .mentoryManualSigning(
+        sdk: "watchos*",
+        currentVersion: "1",
+        marketingVersion: "1.0",
+        targetedDeviceFamily: "4",
+        provisioningProfile: "Mentory-Dev-Watch-Profile",
+        extra: [
+            "STRING_CATALOG_GENERATE_SYMBOLS": .string("YES"),
+        ]
+    )
+)
+
+let project = Project.mentory(
+    name: "MentoryApp",
+    packages: [
+        .package(
+            url: "https://github.com/apple/swift-async-algorithms.git",
+            .upToNextMajor(from: "1.1.0")
+        ),
+    ],
+    configurations: appConfigurations,
+    targets: [
+        .mentoryFramework(
+            name: "MentoryToWatch",
+            sources: ["MentoryWatch/Sources/**"],
+            dependencies: [
+                .mentoryShared("Values"),
+            ],
+            product: .staticFramework
+        ),
+        .mentoryFramework(
+            name: "MentoryCore",
+            sources: ["MentoryCore/Sources/**"],
+            dependencies: [
+                .target(name: "MentoryToWatch"),
+                .mentoryShared("Values"),
+                .mentoryDB("NewMentoryDBCore"),
+                .mentoryDB("NewMentoryDBFake"),
+                .mentoryLLM("FirebaseLLMAdapter"),
+                .mentoryDevice("iOSReminder"),
+                .mentoryDevice("WatchManager"),
+            ],
+            product: .staticFramework
+        ),
+        .mentoryApp(
+            name: "MentoryApp",
+            productName: "Mentory",
+            bundleId: "Mentory",
             sources: [
                 .glob(
                     "MentoryApp/**/*.swift",
@@ -70,82 +144,50 @@ let project = Project(
                 "MentoryApp/GoogleService-Info.plist",
                 "Secrets.xcconfig.sample",
             ],
-            entitlements: .file(path: "MentoryApp/Mentory.entitlements"),
             dependencies: [
                 .target(name: "MentoryCore"),
                 .target(name: "MentoryWatchApp"),
                 .target(name: "MentoryWidgetExtension"),
-                .project(target: "iOSReminder", path: "../MentoryDevice"),
-                .project(target: "WatchManager", path: "../MentoryDevice"),
-                .project(target: "ImagePicker", path: "../MentoryDevice"),
-                .project(target: "Microphone", path: "../MentoryDevice"),
-                .package(product: "Collections"),
+                .mentoryDevice("iOSReminder"),
+                .mentoryDevice("WatchManager"),
+                .mentoryDevice("ImagePicker"),
+                .mentoryDevice("Microphone"),
                 .package(product: "AsyncAlgorithms"),
-                .project(target: "Values", path: "../MentoryShared"),
+                .mentoryShared("Values"),
             ],
-            settings: .settings(
-                base: [
-                    "CODE_SIGN_STYLE": "Manual",
-                    "DEVELOPMENT_TEAM[sdk=iphoneos*]": "3X262XJF5T",
-                    "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]": "Mentory-Dev-Profile",
-                    "CURRENT_PROJECT_VERSION": "2",
-                    "MARKETING_VERSION": "25.12",
-                    "SWIFT_VERSION": "6.0",
-                    "SWIFT_APPROACHABLE_CONCURRENCY": "YES",
-                    "SWIFT_DEFAULT_ACTOR_ISOLATION": "MainActor",
-                    "SWIFT_EMIT_LOC_STRINGS": "YES",
-                    "SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY": "YES",
-                    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
-                    "TARGETED_DEVICE_FAMILY": "1",
-                    "SUPPORTED_PLATFORMS": "iphoneos iphonesimulator",
-                    "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
-                    "INFOPLIST_KEY_NSCameraUsageDescription": "사진 촬영을 위해 카메라 접근 권한이 필요합니다.",
-                    "INFOPLIST_KEY_NSMicrophoneUsageDescription": "음성 입력을 위해 마이크 접근 권한이 필요합니다.",
-                    "INFOPLIST_KEY_NSSpeechRecognitionUsageDescription": "음성 인식을 위해 권한이 필요합니다.",
-                    "INFOPLIST_KEY_UIApplicationSceneManifest_Generation": "YES",
-                    "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": "YES",
-                    "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
-                    "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
-                    "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
+            infoPlist: .extendingDefault(
+                with: [
+                    "ALAN_API_TOKEN": "$(TOKEN)",
+                    "UIApplicationSupportsIndirectInputEvents": true,
+                    "UILaunchScreen": [:],
+                    "CFBundleURLTypes": [
+                        [
+                            "CFBundleTypeRole": "Editor",
+                            "CFBundleURLName": "Mentory",
+                            "CFBundleURLSchemes": ["mentory"],
+                        ],
+                    ],
                 ]
-            )
+            ),
+            entitlements: .file(path: "MentoryApp/Mentory.entitlements"),
+            settings: appSettings
         ),
-        .target(
+        .mentoryUnitTests(
             name: "MentoryTests",
-            destinations: .iOS,
-            product: .unitTests,
-            bundleId: "cloud.mandooplz.MentoryTests",
-            deploymentTargets: .iOS("26.1"),
-            infoPlist: .default,
             sources: ["MentoryTests/**/*.swift"],
-            resources: [],
             dependencies: [
                 .target(name: "MentoryApp"),
                 .target(name: "MentoryCore"),
-                .project(target: "Values", path: "../MentoryShared"),
-                .project(target: "MentoryDBAdapter", path: "../MentoryDB"),
+                .mentoryShared("Values"),
+                .mentoryDB("NewMentoryDBCore"),
             ],
-            settings: .settings(
-                base: [
-                    "CODE_SIGN_STYLE": "Manual",
-                    "DEVELOPMENT_TEAM[sdk=iphoneos*]": "3X262XJF5T",
-                    "CURRENT_PROJECT_VERSION": "1",
-                    "MARKETING_VERSION": "1.0",
-                    "SWIFT_VERSION": "6.0",
-                    "TARGETED_DEVICE_FAMILY": "1",
-                    "SUPPORTED_PLATFORMS": "iphoneos iphonesimulator",
-                    "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
-                    "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/Mentory.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Mentory",
-                    "BUNDLE_LOADER": "$(TEST_HOST)",
-                ]
-            )
+            settings: testSettings
         ),
-        .target(
+        .mentoryAppExtension(
             name: "MentoryWidgetExtension",
-            destinations: .iOS,
-            product: .appExtension,
-            bundleId: "cloud.mandooplz.Mentory.widget",
-            deploymentTargets: .iOS("26.1"),
+            bundleId: "Mentory.widget",
+            sources: ["MentoryWidget/**/*.swift"],
+            resources: ["MentoryWidget/Assets.xcassets"],
             infoPlist: .extendingDefault(
                 with: [
                     "NSExtension": [
@@ -153,42 +195,25 @@ let project = Project(
                     ],
                 ]
             ),
-            sources: ["MentoryWidget/**/*.swift"],
-            resources: ["MentoryWidget/Assets.xcassets"],
             entitlements: .file(path: "MentoryWidgetExtension.entitlements"),
-            settings: .settings(
-                base: [
-                    "CODE_SIGN_STYLE": "Manual",
-                    "DEVELOPMENT_TEAM[sdk=iphoneos*]": "3X262XJF5T",
-                    "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]": "Mentory-Dev-Widget-Profile",
-                    "CURRENT_PROJECT_VERSION": "2",
-                    "MARKETING_VERSION": "25.11",
-                    "SWIFT_VERSION": "6.0",
-                    "TARGETED_DEVICE_FAMILY": "1,2",
-                    "ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME": "WidgetBackground",
-                    "INFOPLIST_KEY_CFBundleDisplayName": "MentoryWidget",
-                    "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
-                ]
-            )
+            settings: widgetSettings
         ),
-        .target(
+        .mentoryFramework(
             name: "MentoryWatchCore",
-            destinations: .watchOS,
-            product: .staticFramework,
-            bundleId: "cloud.mandooplz.MentoryWatchCore",
-            deploymentTargets: .watchOS("26.2"),
-            infoPlist: .default,
             sources: ["MentoryWatchCore/Sources/**"],
-            resources: [],
-            dependencies: []
-        ),
-        .target(
-            name: "MentoryWatchApp",
             destinations: .watchOS,
-            product: .app,
+            deploymentTargets: Mentory.watchOSDeploymentTargets,
+            product: .staticFramework
+        ),
+        .mentoryWatchApp(
+            name: "MentoryWatchApp",
             productName: "MentoryWatchApp",
-            bundleId: "cloud.mandooplz.Mentory.watch",
-            deploymentTargets: .watchOS("26.2"),
+            bundleId: "Mentory.watch",
+            sources: ["MentoryWatchApp/**/*.swift"],
+            resources: ["MentoryWatchApp/Presentation/Assets.xcassets"],
+            dependencies: [
+                .target(name: "MentoryWatchCore"),
+            ],
             infoPlist: .extendingDefault(
                 with: [
                     "CFBundleDisplayName": "MentoryWatch",
@@ -197,24 +222,8 @@ let project = Project(
                     "UISupportedInterfaceOrientations": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
                 ]
             ),
-            sources: ["MentoryWatchApp/**/*.swift"],
-            resources: ["MentoryWatchApp/Presentation/Assets.xcassets"],
             entitlements: .file(path: "MentoryWatchApp/MentoryWatchApp.entitlements"),
-            dependencies: [
-                .target(name: "MentoryWatchCore"),
-            ],
-            settings: .settings(
-                base: [
-                    "CODE_SIGN_STYLE": "Manual",
-                    "DEVELOPMENT_TEAM[sdk=watchos*]": "3X262XJF5T",
-                    "PROVISIONING_PROFILE_SPECIFIER[sdk=watchos*]": "Mentory-Dev-Watch-Profile",
-                    "CURRENT_PROJECT_VERSION": "1",
-                    "MARKETING_VERSION": "1.0",
-                    "SWIFT_VERSION": "6.0",
-                    "TARGETED_DEVICE_FAMILY": "4",
-                    "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
-                ]
-            )
+            settings: watchAppSettings
         ),
     ],
     additionalFiles: [

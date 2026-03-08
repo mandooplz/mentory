@@ -9,7 +9,7 @@ import Combine
 import Values
 import OSLog
 import FirebaseLLMAdapter
-import MentoryDBAdapter
+import MentoryToWatch
 import WatchManager
 
 
@@ -65,66 +65,65 @@ public final class MentorMessage: Sendable, ObservableObject {
         }
         
         let mentoryiOS = self.owner!.owner!
-        let mentoryDB = mentoryiOS.mentoryDB
+        let newMentoryDB = mentoryiOS.newMentoryDB
         let firebaseLLM = mentoryiOS.firebaseLLM
         
         // process
-        let messageFromDB: MessageData?
-        do {
-            messageFromDB = try await mentoryDB.getMentorMessage()
-        } catch {
-            logger.error("MentoryDB에서 MentorMessage 가져오기 실패: \(error)")
-            return
-        }
+        let messageFromDB = await newMentoryDB.mentorMessage
         
         let messageContent: String
         let messageCharacter: MentoryCharacter
-        do {
-            let isMessageValid = messageFromDB?.createdAt
-                .isSameDate(as: currentDate)
-                
-            if isMessageValid == true {
-                // Message가 유효한 경우
-                messageContent = messageFromDB!.content
-                messageCharacter = messageFromDB!.characterType
-            } else {
-                // AlanLLM - 새로운 메시지 가져오기
-                let question = FirebaseQuestion(character.question)
-                
-                guard let answer = await firebaseLLM.question(question) else {
-                    logger.error("FirebaseLLM의 응답이 nil입니다.")
-                    return
-                }
-                
-                let newMessageContent = answer.content
-                
-                messageContent = newMessageContent
-                messageCharacter = character
-                
-                
-                // MentoryDB - 새로운 메시지 저장
-                let newMessage = MessageData(
-                    createdAt: .now,
-                    content: messageContent,
-                    characterType: character)
-                
-                try await mentoryDB.setMentorMessage(newMessage)
+
+        let isMessageValid = messageFromDB?.createdAt
+            .isSameDate(as: currentDate)
+
+        if isMessageValid == true {
+            // Message가 유효한 경우
+            messageContent = messageFromDB!.content
+            messageCharacter = messageFromDB!.characterType
+        } else {
+            // AlanLLM - 새로운 메시지 가져오기
+            let question = FirebaseQuestion(character.question)
+
+            guard let answer = await firebaseLLM.question(question) else {
+                logger.error("FirebaseLLM의 응답이 nil입니다.")
+                return
             }
-        } catch {
-            logger.error("setUpMentorMessage 에러 발생 : \(error)")
-            return
+
+            let newMessageContent = answer.content
+
+            messageContent = newMessageContent
+            messageCharacter = character
+
+
+            // MentoryDB - 새로운 메시지 저장
+            let newMessage = MessageData(
+                createdAt: .now,
+                content: messageContent,
+                characterType: character)
+
+            await newMentoryDB.setMentorMessage(newMessage)
         }
-        
+
+
         // mutate
         self.content = messageContent
         self.character = messageCharacter
         self.recentUpdate = .now
 
-        await mentoryiOS.watchConnectivity.updateContext(
+        let payload = MentoryWatchPayloadFactory.make(
             message: messageContent,
-            character: messageCharacter.rawValue,
-            todos: todayBoard.suggestions.map(\.content),
-            todoCompletions: todayBoard.suggestions.map(\.isDone)
+            character: messageCharacter,
+            todos: todayBoard.suggestions.map {
+                (content: $0.content, isDone: $0.isDone)
+            }
+        )
+
+        await mentoryiOS.watchConnectivity.updateContext(
+            message: payload.message,
+            character: payload.characterName,
+            todos: payload.todoTexts,
+            todoCompletions: payload.todoCompletions
         )
         
         logger.debug("Watch로 멘토 메시지 전송: \(messageCharacter.rawValue)")

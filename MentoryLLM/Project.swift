@@ -1,37 +1,28 @@
 import ProjectDescription
+import ProjectDescriptionHelpers
 
-let project = Project(
+let project = Project.mentory(
     name: "MentoryLLM",
-    options: .options(
-        automaticSchemesOptions: .disabled
-    ),
     packages: [
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .branch("main")),
+        .package(
+            url: "https://github.com/firebase/firebase-ios-sdk.git",
+            .branch("main")
+        ),
     ],
     targets: [
-        .target(
+        .mentoryStaticLibrary(
             name: "FirebaseLLMFake",
-            destinations: .iOS,
-            product: .staticLibrary,
-            bundleId: "cloud.mandooplz.FirebaseLLMFake",
-            deploymentTargets: .iOS("26.1"),
             sources: ["Sources/FirebaseLLMFake/**"],
-            resources: [],
             dependencies: [
-                .project(target: "Values", path: "../MentoryShared"),
+                .mentoryShared("Values"),
             ]
         ),
-        .target(
+        .mentoryFramework(
             name: "FirebaseLLMAdapter",
-            destinations: .iOS,
-            product: .framework,
-            bundleId: "cloud.mandooplz.FirebaseLLMAdapter",
-            deploymentTargets: .iOS("26.1"),
             sources: ["Sources/FirebaseLLMAdapter/**"],
-            resources: [],
             dependencies: [
                 .target(name: "FirebaseLLMFake"),
-                .project(target: "Values", path: "../MentoryShared"),
+                .mentoryShared("Values"),
                 .package(product: "FirebaseAI"),
                 .package(product: "FirebaseAILogic"),
                 .package(product: "FirebaseCore"),
