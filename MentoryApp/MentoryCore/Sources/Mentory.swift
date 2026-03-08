@@ -9,7 +9,6 @@ import Combine
 import OSLog
 import Values
 import FirebaseLLMAdapter
-import MentoryDBAdapter
 import NewMentoryDBCore
 import iOSReminder
 import WatchManager

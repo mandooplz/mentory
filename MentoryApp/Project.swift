@@ -109,7 +109,6 @@ let project = Project.mentory(
             sources: ["MentoryCore/Sources/**"],
             dependencies: [
                 .mentoryShared("Values"),
-                .mentoryDB("MentoryDBAdapter"),
                 .mentoryDB("NewMentoryDBCore"),
                 .mentoryDB("NewMentoryDBFake"),
                 .mentoryLLM("FirebaseLLMAdapter"),

@@ -8,7 +8,6 @@ import Foundation
 import Combine
 import Values
 import OSLog
-import MentoryDBAdapter
 import NewMentoryDBCore
 import WatchManager
 

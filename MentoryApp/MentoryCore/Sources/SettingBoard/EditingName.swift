@@ -7,7 +7,6 @@
 import Foundation
 import Combine
 import OSLog
-import MentoryDBAdapter
 
 
 // MARK: Object
