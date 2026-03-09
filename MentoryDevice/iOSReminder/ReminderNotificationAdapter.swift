@@ -19,7 +19,6 @@ public final class ReminderNotificationAdapter: ReminderNotificationInterface {
     public init() { }
 
     // MARK: - 알림 권한 요청
-
     public func requestAuthorizationIfNeeded() async {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
@@ -51,7 +50,6 @@ public final class ReminderNotificationAdapter: ReminderNotificationInterface {
     }
 
     // MARK: - 7일 뒤 알림 스케줄링
-
     public func scheduleWeeklyReminder(
         baseDate: Date,
         reminderTime: Date
