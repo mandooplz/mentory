@@ -25,6 +25,7 @@ struct MentoryTests {
             await #expect(mentory.statBoard == nil)
         }
     }
+
     struct SetUp {
         let mentory: Mentory
         init() async throws {

@@ -14,13 +14,13 @@ import MentoryCore
 @main
 struct MentoryApp: App {
     // MARK: model
-    @State var mentory = Mentory(.test)
+    @State var mentory = Mentory(.real)
     
 
     // MARK: body
     var body: some Scene {
         WindowGroup {
-            MentoryiOSView(mentory)
+            MentoryiOSView(mentory: mentory)
         }
     }
 }

@@ -11,10 +11,7 @@ import MentoryCore
 // MARK: View
 struct MentoryiOSView: View {
     // MARK: model
-    @ObservedObject var mentoryiOS: Mentory
-    init(_ mentoryiOS: Mentory) {
-        self.mentoryiOS = mentoryiOS
-    }
+    @ObservedObject var mentory: Mentory
     
     
     // MARK: viewModel
@@ -26,7 +23,7 @@ struct MentoryiOSView: View {
         ZStack {
             MentoryBackdrop()
 
-            if mentoryiOS.onboardingFinished {
+            if mentory.onboardingFinished {
                 TabView(selection: $selectedTab) {
                     TodayBoardTab
                         .tabItem {
@@ -61,8 +58,8 @@ struct MentoryiOSView: View {
             }
         }
         .task {
-            await mentoryiOS.loadUserName()
-            mentoryiOS.setUp()
+            await mentory.loadUserName()
+            mentory.setUp()
         }
     }
     
@@ -78,10 +75,10 @@ struct MentoryiOSView: View {
     // MARK: component
     @ViewBuilder
     private var TodayBoardTab: some View {
-        if let todayBoard = mentoryiOS.todayBoard {
+        if let todayBoard = mentory.todayBoard {
             TodayBoardView(
                 todayBoard: todayBoard,
-                mentoryiOS: mentoryiOS
+                mentoryiOS: mentory
             )
         } else {
             MentoryStatusCard(
@@ -94,7 +91,7 @@ struct MentoryiOSView: View {
     
     @ViewBuilder
     private var StaticTab: some View {
-        if let statBoard = mentoryiOS.statBoard {
+        if let statBoard = mentory.statBoard {
             StatBoardView(board: statBoard)
         } else {
             MentoryStatusCard(
@@ -107,7 +104,7 @@ struct MentoryiOSView: View {
     
     @ViewBuilder
     private var SettingTab: some View {
-        if let settingBoard = mentoryiOS.settingBoard {
+        if let settingBoard = mentory.settingBoard {
             SettingBoardView(settingBoard: settingBoard, settingBoardViewModel: SettingBoardViewModel())
         } else {
             MentoryStatusCard(
@@ -120,7 +117,7 @@ struct MentoryiOSView: View {
     
     @ViewBuilder
     private var OnboardingTab: some View {
-        if let onBoarding = mentoryiOS.onboarding {
+        if let onBoarding = mentory.onboarding {
             OnboardingView(onBoarding)
         } else {
             MentoryStatusCard(
@@ -139,7 +136,7 @@ fileprivate struct MentoryiOSPreview: View {
     @StateObject var mentoryiOS = Mentory()
     
     var body: some View {
-        MentoryiOSView(mentoryiOS)
+        MentoryiOSView(mentory: mentoryiOS)
     }
 }
 
