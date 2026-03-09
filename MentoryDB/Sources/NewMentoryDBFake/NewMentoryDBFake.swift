@@ -66,6 +66,10 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
 
     public var completedSuggestionCount: Int = 0
 
+    func seedRecords(_ records: [NewDailyRecordFake]) {
+        self._records = records
+    }
+
     public func insertTicket(_ recordData: Values.RecordSnapshot) {
         fatalError()
     }
