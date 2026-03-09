@@ -157,32 +157,4 @@ extension Target {
             settings: settings
         )
     }
-
-    public static func mentoryWatchApp(
-        name: String,
-        productName: String,
-        bundleId: String,
-        sources: SourceFilesList,
-        resources: ResourceFileElements? = [],
-        dependencies: [TargetDependency] = [],
-        infoPlist: InfoPlist,
-        entitlements: Entitlements? = nil,
-        deploymentTargets: DeploymentTargets = Mentory.watchOSDeploymentTargets,
-        settings: Settings? = nil
-    ) -> Target {
-        .mentoryTarget(
-            name: name,
-            destinations: .watchOS,
-            product: .app,
-            productName: productName,
-            bundleId: Mentory.bundleId(bundleId),
-            deploymentTargets: deploymentTargets,
-            infoPlist: infoPlist,
-            sources: sources,
-            resources: resources,
-            entitlements: entitlements,
-            dependencies: dependencies,
-            settings: settings
-        )
-    }
 }

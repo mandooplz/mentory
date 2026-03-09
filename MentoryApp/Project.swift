@@ -81,19 +81,6 @@ let widgetSettings = Settings.mentoryTarget(
     )
 )
 
-let watchAppSettings = Settings.mentoryTarget(
-    base: .mentoryManualSigning(
-        sdk: "watchos*",
-        currentVersion: "1",
-        marketingVersion: "1.0",
-        targetedDeviceFamily: "4",
-        provisioningProfile: "Mentory-Dev-Watch-Profile",
-        extra: [
-            "STRING_CATALOG_GENERATE_SYMBOLS": .string("YES"),
-        ]
-    )
-)
-
 let project = Project.mentory(
     name: "MentoryApp",
     packages: [
@@ -105,24 +92,14 @@ let project = Project.mentory(
     configurations: appConfigurations,
     targets: [
         .mentoryFramework(
-            name: "MentoryToWatch",
-            sources: ["MentoryWatch/Sources/**"],
-            dependencies: [
-                .mentoryShared("Values"),
-            ],
-            product: .staticFramework
-        ),
-        .mentoryFramework(
             name: "MentoryCore",
             sources: ["MentoryCore/Sources/**"],
             dependencies: [
-                .target(name: "MentoryToWatch"),
                 .mentoryShared("Values"),
                 .mentoryDB("NewMentoryDBCore"),
                 .mentoryDB("NewMentoryDBFake"),
                 .mentoryLLM("FirebaseLLMAdapter"),
                 .mentoryDevice("iOSReminder"),
-                .mentoryDevice("WatchManager"),
             ],
             product: .staticFramework
         ),
@@ -146,10 +123,8 @@ let project = Project.mentory(
             ],
             dependencies: [
                 .target(name: "MentoryCore"),
-                .target(name: "MentoryWatchApp"),
                 .target(name: "MentoryWidgetExtension"),
                 .mentoryDevice("iOSReminder"),
-                .mentoryDevice("WatchManager"),
                 .package(product: "AsyncAlgorithms"),
                 .mentoryShared("Values"),
             ],
@@ -195,33 +170,6 @@ let project = Project.mentory(
             ),
             entitlements: .file(path: "MentoryWidgetExtension.entitlements"),
             settings: widgetSettings
-        ),
-        .mentoryFramework(
-            name: "MentoryWatchCore",
-            sources: ["MentoryWatchCore/Sources/**"],
-            destinations: .watchOS,
-            deploymentTargets: Mentory.watchOSDeploymentTargets,
-            product: .staticFramework
-        ),
-        .mentoryWatchApp(
-            name: "MentoryWatchApp",
-            productName: "MentoryWatchApp",
-            bundleId: "Mentory.watch",
-            sources: ["MentoryWatchApp/**/*.swift"],
-            resources: ["MentoryWatchApp/Presentation/Assets.xcassets"],
-            dependencies: [
-                .target(name: "MentoryWatchCore"),
-            ],
-            infoPlist: .extendingDefault(
-                with: [
-                    "CFBundleDisplayName": "MentoryWatch",
-                    "WKApplication": true,
-                    "WKCompanionAppBundleIdentifier": "cloud.mandooplz.Mentory",
-                    "UISupportedInterfaceOrientations": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
-                ]
-            ),
-            entitlements: .file(path: "MentoryWatchApp/MentoryWatchApp.entitlements"),
-            settings: watchAppSettings
         ),
     ],
     additionalFiles: [

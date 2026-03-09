@@ -10,7 +10,6 @@ public enum Mentory {
     public static let developmentTeam = "3X262XJF5T"
 
     public static let iOSDeploymentTargets: DeploymentTargets = .iOS("26.1")
-    public static let watchOSDeploymentTargets: DeploymentTargets = .watchOS("26.2")
     public static let defaultConfigurations: [Configuration] = [
         .debug(name: "Debug"),
         .release(name: "Release"),

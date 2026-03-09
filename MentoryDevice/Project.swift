@@ -9,11 +9,6 @@ let project = Project.mentory(
     name: "MentoryDevice",
     targets: [
         .mentoryFramework(
-            name: "WatchManager",
-            sources: ["WatchManager/**/*.swift"],
-            settings: frameworkSettings
-        ),
-        .mentoryFramework(
             name: "iOSReminder",
             sources: ["iOSReminder/**/*.swift"],
             dependencies: [
