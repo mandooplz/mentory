@@ -11,10 +11,7 @@ import OSLog
 @MainActor
 public final class ReminderNotificationAdapter: ReminderNotificationInterface {
     // MARK: core
-    nonisolated private let logger = Logger(
-        subsystem: "MentoryiOS.ReminderNotificationAdapter",
-        category: "Notification"
-    )
+    nonisolated private let logger = Logger()
     
     public init() { }
 
@@ -40,7 +37,6 @@ public final class ReminderNotificationAdapter: ReminderNotificationInterface {
         case .denied:
             logger.error("알림 권한이 시스템 설정에서 거부된 상태입니다.")
             // 여기서는 단순히 로그만 남기고 설정 이동 안내는 나중에 UI에서 처리하기.
-
         case .authorized, .provisional, .ephemeral:
             logger.debug("알림 권한이 이미 허용된 상태입니다.")
 
