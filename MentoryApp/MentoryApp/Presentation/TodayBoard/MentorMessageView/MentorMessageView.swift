@@ -46,33 +46,38 @@ struct PopupCard: View {
     }
     
     var body: some View {
-        LiquidGlassCard {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
+        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack(alignment: .top, spacing: 14) {
                     Image(image ?? defaultImage)
                         .resizable()
                         .scaledToFill()
                         .scaleEffect(1.8, anchor: .top)
                         .offset(y: 2)
-                        .frame(width: 28, height: 28)
+                        .frame(width: 48, height: 48)
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)
+                                .stroke(Color.white.opacity(0.4), lineWidth: 1)
                         )
-                    Text(title ?? defaultTitle)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.primary)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        MentoryInfoChip(text: "오늘의 멘토 메모", systemImage: "sparkles")
+
+                        Text(title ?? defaultTitle)
+                            .font(.system(size: 19, weight: .bold, design: .rounded))
+                            .foregroundStyle(.primary)
+                    }
+
+                    Spacer(minLength: 0)
                 }
-                
-                
+
                 Text(forMarkdown(content ?? defaultContent))
-                    .font(.system(size: 16))
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary)
-                    .lineSpacing(4)
+                    .lineSpacing(6)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.vertical, 24)
-            .padding(.horizontal, 20)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .transition(.scale(scale: 0.95).combined(with: .opacity))

@@ -12,74 +12,81 @@ import MentoryCore
 
 // MARK: View
 struct SuggestionView: View {
-    
     // MARK: model
     @ObservedObject var suggestion: Suggestion
-    // MARK: body
+
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            ZStack {
-                // 바깥 원
-                Circle()
-                    .stroke(Color.mentoryBorder, lineWidth: 2)
-                    .frame(width: 20, height: 20)
-                
-                // 완료 상태 표시 원
-                if suggestion.isDone {
-                    Circle()
-                        .fill(Color.mentoryAccentPrimary)
-                        .frame(width: 20, height: 20)
-                        .overlay(
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(.white)
-                        )
-                        .transition(.scale.combined(with: .opacity))
-                        .animation(
-                            .spring(response: 0.25, dampingFraction: 0.7),
-                            value: suggestion.isDone
-                        )
-                }
-                
-            }
-            .frame(width: 20, height: 20)
-            
-            Text(suggestion.content.isEmpty ? " " : suggestion.content)
-                .font(.system(size: 16))
-                .foregroundColor(suggestion.isDone ? .secondary : .primary)
-                .strikethrough(suggestion.isDone, color: .secondary)
-            
-            Spacer()
-        }
-        .padding(.vertical, 14)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.20),
-                            Color.white.opacity(0.10)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.35), lineWidth: 1.2)
-        )
-        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 3)
-        .onTapGesture {
-            withAnimation {
+        Button {
+            withAnimation(.spring(response: 0.28, dampingFraction: 0.76)) {
                 suggestion.isDone = true
-                print("TapTapTap")
             }
+
             Task {
                 await suggestion.markDone()
             }
+        } label: {
+            HStack(alignment: .center, spacing: 14) {
+                completionIndicator
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(suggestion.content.isEmpty ? " " : suggestion.content)
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundStyle(suggestion.isDone ? .secondary : .primary)
+                        .multilineTextAlignment(.leading)
+                        .strikethrough(suggestion.isDone, color: .secondary)
+
+                    Text(suggestion.isDone ? "완료된 루틴" : "탭해서 완료로 표시")
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+            .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .background(backgroundShape)
+            .overlay(backgroundOverlay)
         }
+        .buttonStyle(.plain)
+        .disabled(suggestion.isDone)
+        .accessibilityHint(suggestion.isDone ? "이미 완료된 행동입니다" : "추천 행동을 완료로 표시합니다")
+    }
+
+    private var completionIndicator: some View {
+        ZStack {
+            Circle()
+                .fill(suggestion.isDone ? Color.mentoryAccentPrimary : Color.clear)
+                .frame(width: 28, height: 28)
+                .overlay(
+                    Circle()
+                        .stroke(
+                            suggestion.isDone
+                                ? Color.mentoryAccentPrimary
+                                : Color.mentoryBorder.opacity(0.9),
+                            lineWidth: suggestion.isDone ? 0 : 1.8
+                        )
+                )
+
+            Image(systemName: suggestion.isDone ? "checkmark" : "circle.fill")
+                .font(.system(size: suggestion.isDone ? 12 : 7, weight: .bold))
+                .foregroundStyle(suggestion.isDone ? .white : Color.mentoryBorder.opacity(0.55))
+        }
+        .animation(.spring(response: 0.25, dampingFraction: 0.72), value: suggestion.isDone)
+    }
+
+    private var backgroundShape: some View {
+        RoundedRectangle(cornerRadius: 22, style: .continuous)
+            .fill(suggestion.isDone ? Color.mentoryAccentPrimary.opacity(0.1) : Color.mentorySubCard.opacity(0.82))
+    }
+
+    private var backgroundOverlay: some View {
+        RoundedRectangle(cornerRadius: 22, style: .continuous)
+            .stroke(
+                suggestion.isDone
+                    ? Color.mentoryAccentPrimary.opacity(0.22)
+                    : Color.white.opacity(0.28),
+                lineWidth: 1
+            )
     }
 }
 
@@ -94,4 +101,3 @@ fileprivate struct SuggestionPreview: View {
 #Preview {
     SuggestionPreview()
 }
-
