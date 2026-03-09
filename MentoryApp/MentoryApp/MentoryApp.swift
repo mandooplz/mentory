@@ -8,7 +8,6 @@ import SwiftUI
 import SwiftData
 import Values
 import MentoryCore
-import WatchManager
 
 
 // MARK: App
