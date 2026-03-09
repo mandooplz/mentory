@@ -131,30 +131,4 @@ extension Target {
             settings: settings
         )
     }
-
-    public static func mentoryAppExtension(
-        name: String,
-        bundleId: String,
-        sources: SourceFilesList,
-        resources: ResourceFileElements? = [],
-        dependencies: [TargetDependency] = [],
-        infoPlist: InfoPlist,
-        entitlements: Entitlements? = nil,
-        deploymentTargets: DeploymentTargets = Mentory.iOSDeploymentTargets,
-        settings: Settings? = nil
-    ) -> Target {
-        .mentoryTarget(
-            name: name,
-            destinations: .iOS,
-            product: .appExtension,
-            bundleId: Mentory.bundleId(bundleId),
-            deploymentTargets: deploymentTargets,
-            infoPlist: infoPlist,
-            sources: sources,
-            resources: resources,
-            entitlements: entitlements,
-            dependencies: dependencies,
-            settings: settings
-        )
-    }
 }

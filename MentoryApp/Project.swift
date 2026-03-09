@@ -64,23 +64,6 @@ let testSettings = Settings.mentoryTarget(
     )
 )
 
-let widgetSettings = Settings.mentoryTarget(
-    base: .mentoryManualSigning(
-        sdk: "iphoneos*",
-        currentVersion: "2",
-        marketingVersion: "25.11",
-        targetedDeviceFamily: "1,2",
-        provisioningProfile: "Mentory-Dev-Widget-Profile",
-        extra: [
-            "ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME": .string(
-                "WidgetBackground"
-            ),
-            "INFOPLIST_KEY_CFBundleDisplayName": .string("MentoryWidget"),
-            "STRING_CATALOG_GENERATE_SYMBOLS": .string("YES"),
-        ]
-    )
-)
-
 let project = Project.mentory(
     name: "MentoryApp",
     packages: [
@@ -123,7 +106,6 @@ let project = Project.mentory(
             ],
             dependencies: [
                 .target(name: "MentoryCore"),
-                .target(name: "MentoryWidgetExtension"),
                 .mentoryDevice("iOSReminder"),
                 .package(product: "AsyncAlgorithms"),
                 .mentoryShared("Values"),
@@ -156,27 +138,11 @@ let project = Project.mentory(
             ],
             settings: testSettings
         ),
-        .mentoryAppExtension(
-            name: "MentoryWidgetExtension",
-            bundleId: "Mentory.widget",
-            sources: ["MentoryWidget/**/*.swift"],
-            resources: ["MentoryWidget/Assets.xcassets"],
-            infoPlist: .extendingDefault(
-                with: [
-                    "NSExtension": [
-                        "NSExtensionPointIdentifier": "com.apple.widgetkit-extension",
-                    ],
-                ]
-            ),
-            entitlements: .file(path: "MentoryWidgetExtension.entitlements"),
-            settings: widgetSettings
-        ),
     ],
     additionalFiles: [
         "Mentory.xctestplan",
         "Secrets.xcconfig",
         "Secrets.xcconfig.sample",
         "GoogleService-Info.plist",
-        "MentoryWidgetExtension.entitlements",
     ]
 )
