@@ -13,8 +13,6 @@ import Foundation
 
 
 
-
-
 // MARK: object
 public actor NewFirebaseLLM: NewFirebaseLLMInterface {
     // MARK: core
