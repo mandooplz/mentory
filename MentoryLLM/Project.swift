@@ -11,17 +11,17 @@ let project = Project.mentory(
     ],
     targets: [
         .mentoryStaticLibrary(
-            name: "FirebaseLLMFake",
-            sources: ["Sources/FirebaseLLMFake/**"],
+            name: "NewFirebaseLLMFake",
+            sources: ["Sources/NewFirebaseLLMFake/**"],
             dependencies: [
                 .mentoryShared("Values"),
+                .target(name: "NewFirebaseLLM")
             ]
         ),
         .mentoryFramework(
-            name: "FirebaseLLMAdapter",
-            sources: ["Sources/FirebaseLLMAdapter/**"],
+            name: "NewFirebaseLLM",
+            sources: ["Sources/NewFirebaseLLM/**"],
             dependencies: [
-                .target(name: "FirebaseLLMFake"),
                 .mentoryShared("Values"),
                 .package(product: "FirebaseAI"),
                 .package(product: "FirebaseAILogic"),

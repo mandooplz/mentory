@@ -81,7 +81,8 @@ let project = Project.mentory(
                 .mentoryShared("Values"),
                 .mentoryDB("NewMentoryDBCore"),
                 .mentoryDB("NewMentoryDBFake"),
-                .mentoryLLM("FirebaseLLMAdapter"),
+                .mentoryLLM("NewFirebaseLLM"),
+                .mentoryLLM("NewFirebaseLLMFake"),
                 .mentoryDevice("iOSReminder"),
             ],
             product: .staticFramework
@@ -90,15 +91,7 @@ let project = Project.mentory(
             name: "MentoryApp",
             productName: "Mentory",
             bundleId: "Mentory",
-            sources: [
-                .glob(
-                    "MentoryApp/**/*.swift",
-                    excluding: [
-                        "MentoryApp/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerLayout.swift",
-                        "MentoryApp/Presentation/TodayBoard/MindAnalyzerView/MindAnalyzerView.swift",
-                    ]
-                ),
-            ],
+            sources: ["MentoryApp/**/*.swift"],
             resources: [
                 "MentoryApp/Assets.xcassets",
                 "MentoryApp/GoogleService-Info.plist",

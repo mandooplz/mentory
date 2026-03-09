@@ -90,7 +90,12 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             voiceURL: voiceInput
         )
         
-        guard let analysis = await firebaseLLM.getEmotionAnalysis(question, character: character) else {
+        await firebaseLLM.setQuestion(question)
+        await firebaseLLM.setCharacter(character)
+        
+        await firebaseLLM.getAnalysis()
+        
+        guard let analysis = await firebaseLLM.analysis else {
             logger.error("FirebaseLLM 감정 분석 과정에서 오류가 발생했습니다.")
             return
         }
