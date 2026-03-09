@@ -204,51 +204,49 @@ Apache License
 """
 
     var body: some View {
-        ZStack {
-            Color.mentoryBackground.ignoresSafeArea()
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    header
-                    gratitudeCard
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(libraries) { library in
-                            LibraryCardView(library: library)
-                        }
-                    }
-                    LicenseDocumentView(
-                        title: "🔹 Swift Collections – Apache License 2.0 전문",
-                        text: apacheLicenseText
-                    )
+        MentoryScrollScreen {
+            header
+            gratitudeCard
+            VStack(alignment: .leading, spacing: 16) {
+                ForEach(libraries) { library in
+                    LibraryCardView(library: library)
                 }
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            LicenseDocumentView(
+                title: "Swift Collections – Apache License 2.0 전문",
+                text: apacheLicenseText
+            )
         }
         .navigationTitle("라이센스 정보")
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Mentory – 오픈소스 라이선스 안내")
-                .font(.title2.bold())
-            Text(introSubtitle)
-                .font(.body)
-                .foregroundStyle(.secondary)
+        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
+            VStack(alignment: .leading, spacing: 12) {
+                MentorySectionHeader(
+                    eyebrow: "OPEN SOURCE",
+                    title: "Mentory 오픈소스 라이선스",
+                    subtitle: "앱에 사용된 오픈소스 프로젝트와 라이선스 정보를 제품 문서 형태로 정리했습니다."
+                )
+
+                Text(introSubtitle)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
     private var gratitudeCard: some View {
-        LiquidGlassCard(cornerRadius: 14) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 16) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "heart.text.square.fill")
                     .font(.title3)
                     .foregroundStyle(Color.pink)
                 Text("Mentory는 커뮤니티가 만든 오픈소스 생태계 덕분에 더 나은 기능을 제공할 수 있습니다. 소중한 기여에 진심으로 감사드립니다.")
-                    .font(.callout)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(.primary)
             }
-            .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -258,22 +256,22 @@ private struct LibraryCardView: View {
     let library: OpenSourceLibrary
 
     var body: some View {
-        LiquidGlassCard(cornerRadius: 18) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .center) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(library.name)
-                            .font(.headline)
+                            .font(.system(size: 17, weight: .bold, design: .rounded))
                         Text(library.identifier)
-                            .font(.subheadline)
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
                     Text(library.licenseType)
-                        .font(.footnote.weight(.semibold))
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.accentColor.opacity(0.1))
+                        .background(Color.mentoryAccentPrimary.opacity(0.1))
                         .clipShape(Capsule())
                 }
                 VStack(alignment: .leading, spacing: 8) {
@@ -282,7 +280,6 @@ private struct LibraryCardView: View {
                     LabelValueRow(label: "공식 저장소", value: library.repositoryURL)
                 }
             }
-            .padding(16)
         }
     }
 }
@@ -294,10 +291,10 @@ private struct LabelValueRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(label)
-                .font(.caption)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.body)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -308,10 +305,10 @@ private struct LicenseDocumentView: View {
     let text: String
 
     var body: some View {
-        LiquidGlassCard(cornerRadius: 18) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title)
-                    .font(.headline)
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
                 ScrollView {
                     Text(text)
                         .font(.footnote.monospaced())
@@ -320,7 +317,6 @@ private struct LicenseDocumentView: View {
                 .frame(maxHeight: 400)
                 .scrollIndicators(.visible)
             }
-            .padding(16)
         }
     }
 }

@@ -126,17 +126,10 @@ struct TermsOfServiceView: View {
     ]
 
     var body: some View {
-        ZStack {
-            Color.mentoryBackground.ignoresSafeArea()
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    header
-                    ForEach(sections) { section in
-                        TermsSectionView(section: section)
-                    }
-                }
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        MentoryScrollScreen {
+            header
+            ForEach(sections) { section in
+                TermsSectionView(section: section)
             }
         }
         .navigationTitle("이용 약관")
@@ -144,15 +137,18 @@ struct TermsOfServiceView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Mentory – 이용약관")
-                .font(.title2.bold())
-            Text("최종 업데이트: 2025. 11. 18")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("본 약관은 Mentory 팀(이하 \"팀\")이 제공하는 Mentory 앱(이하 \"서비스\")의 이용과 관련하여 팀과 이용자 간의 권리, 의무 및 책임사항을 규정하는 것을 목적으로 합니다.")
-                .font(.body)
-                .foregroundStyle(.secondary)
+        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
+            VStack(alignment: .leading, spacing: 12) {
+                MentorySectionHeader(
+                    eyebrow: "TERMS",
+                    title: "Mentory 이용약관",
+                    subtitle: "서비스 이용과 관련된 권리, 의무, 책임 범위를 보기 쉬운 카드 구조로 정리했습니다."
+                )
+
+                Text("최종 업데이트: 2025. 11. 18")
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
@@ -161,20 +157,25 @@ private struct TermsSectionView: View {
     let section: TermsSection
 
     var body: some View {
-        LiquidGlassCard(cornerRadius: 18) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(section.title)
-                    .font(.headline)
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(section.lines, id: \.self) { line in
                         Text(line)
-                            .font(line.hasPrefix("•") || line.hasPrefix("  -") ? .body : .subheadline)
+                            .font(
+                                .system(
+                                    size: line.hasPrefix("•") || line.hasPrefix("  -") ? 14 : 13,
+                                    weight: .medium,
+                                    design: .rounded
+                                )
+                            )
                             .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }
-            .padding(16)
         }
     }
 }

@@ -139,18 +139,11 @@ struct PrivacyPolicyView: View {
     """
 
     var body: some View {
-        ZStack {
-            Color.mentoryBackground.ignoresSafeArea()
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    header
-                    warningBox
-                    ForEach(sections) { section in
-                        PolicySectionView(section: section)
-                    }
-                }
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        MentoryScrollScreen {
+            header
+            warningBox
+            ForEach(sections) { section in
+                PolicySectionView(section: section)
             }
         }
         .navigationTitle("개인정보 처리방침")
@@ -158,29 +151,31 @@ struct PrivacyPolicyView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Mentory – 개인정보 처리방침")
-                .font(.title2.bold())
-            Text("최종 업데이트: 2025. 11. 18")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text("Mentory 팀(이하 “팀”)은 사용자의 개인정보를 소중히 여기며, 「개인정보보호법」 및 관련 법령을 준수합니다. 본 개인정보 처리방침은 팀이 제공하는 Mentory 앱(이하 “서비스”)에서 사용자의 개인정보가 어떻게 수집·이용·보관·파기되는지 설명합니다.")
-                .font(.body)
-                .foregroundStyle(.secondary)
+        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
+            VStack(alignment: .leading, spacing: 12) {
+                MentorySectionHeader(
+                    eyebrow: "PRIVACY",
+                    title: "Mentory 개인정보 처리방침",
+                    subtitle: "서비스에서 개인정보가 어떻게 수집, 이용, 보관, 파기되는지 한눈에 확인할 수 있도록 정리했습니다."
+                )
+
+                Text("최종 업데이트: 2025. 11. 18")
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
     private var warningBox: some View {
-        LiquidGlassCard(cornerRadius: 14) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 16) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.yellow)
                     .font(.title3)
                 Text(warningText)
-                    .font(.callout)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(.primary)
             }
-            .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -190,20 +185,25 @@ private struct PolicySectionView: View {
     let section: PolicySection
 
     var body: some View {
-        LiquidGlassCard(cornerRadius: 18) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(section.title)
-                    .font(.headline)
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(section.lines, id: \.self) { line in
                         Text(line)
-                            .font(line.hasPrefix("•") || line.hasPrefix("  -") ? .body : .subheadline)
+                            .font(
+                                .system(
+                                    size: line.hasPrefix("•") || line.hasPrefix("  -") ? 14 : 13,
+                                    weight: .medium,
+                                    design: .rounded
+                                )
+                            )
                             .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }
-            .padding(16)
         }
     }
 }
