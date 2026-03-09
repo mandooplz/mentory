@@ -36,7 +36,6 @@ public actor RemindManager: RemindManagerInterface {
         // mutate
         self.authStatus = authStatus
     }
-    
     public func requestAuthorization() async {
         // capture
         let notificationCenter = self.notificationCenter
@@ -76,5 +75,61 @@ public actor RemindManager: RemindManagerInterface {
         
         // mutate
         self.authStatus = updatedAuthStatus
+    }
+    
+    public func loadPendingNotifications() async {
+        // capture
+        let center = UNUserNotificationCenter.current()
+        let requests = await center.pendingNotificationRequests() // 예약된 알림
+
+        for request in requests {
+            print("identifier:", request.identifier)
+            print("title:", request.content.title)
+            print("body:", request.content.body)
+
+            if let trigger = request.trigger as? UNCalendarNotificationTrigger {
+                print("calendar trigger:", trigger.dateComponents)
+                print("repeats:", trigger.repeats)
+            } else if let trigger = request.trigger as? UNTimeIntervalNotificationTrigger {
+                print("time interval:", trigger.timeInterval)
+                print("repeats:", trigger.repeats)
+            }
+
+            print("------")
+        }
+    }
+    
+    
+    // MARK: value
+    public struct PendingNotificationInfo: Sendable, Hashable {
+        // MARK: core
+        public let identifier: String
+        public let title: String
+        public let body: String
+        public let trigger: Trigger
+        
+        public init(
+            identifier: String,
+            title: String,
+            body: String,
+            trigger: Trigger
+        ) {
+            self.identifier = identifier
+            self.title = title
+            self.body = body
+            self.trigger = trigger
+        }
+    }
+    
+    public enum Trigger: Sendable, Hashable {
+        case calendar(
+            dateComponents: DateComponents,
+            repeats: Bool
+        )
+        case timeInterval(
+            timeInterval: TimeInterval,
+            repeats: Bool
+        )
+        case unknown
     }
 }
