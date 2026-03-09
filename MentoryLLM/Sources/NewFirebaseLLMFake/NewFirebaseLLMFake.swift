@@ -7,6 +7,7 @@
 
 import Values
 import OSLog
+import NewFirebaseLLM
 
 
 // MARK: object
