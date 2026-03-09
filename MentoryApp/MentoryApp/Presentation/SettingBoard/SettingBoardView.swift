@@ -133,7 +133,7 @@ struct SettingBoardView: View {
             VStack(alignment: .leading, spacing: 18) {
                 MentoryInfoChip(text: "설정", systemImage: "gearshape")
 
-                Text(settingBoard.owner?.getGreetingText() ?? "설정을 준비하고 있어요")
+                Text(settingBoard.owner?.greetingText ?? "설정을 준비하고 있어요")
                     .mentoryTitle()
                     .foregroundStyle(.primary)
 
