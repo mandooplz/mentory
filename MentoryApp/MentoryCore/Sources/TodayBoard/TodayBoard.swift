@@ -1,3 +1,4 @@
+import Combine
 //
 //  TodayBoard.swift
 //  Mentory
@@ -5,256 +6,213 @@
 //  Created by SJS, 구현모 on 11/14/25.
 //
 import Foundation
-import Combine
-import Values
-import OSLog
 import NewMentoryDBCore
-import MentoryToWatch
-import WatchManager
-
+import OSLog
+import Values
 
 // MARK: Object
 @MainActor
 public final class TodayBoard: Sendable, ObservableObject {
-    // MARK: core
-    nonisolated private let logger = Logger()
-    
-    public init(owner: Mentory) {
-        self.owner = owner
-    }
-    
-    
-    // MARK: state
-    public nonisolated let id = UUID()
-    public weak var owner: Mentory?
-    
-    @Published public var mentorMessage: MentorMessage? = nil
+  // MARK: core
+  nonisolated private let logger = Logger()
 
-    @Published public var recordForms: [RecordForm] = []
-    public func areAllRecordFormsDisabled() -> Bool {
-        return self.recordForms.allSatisfy(\.isDisabled)
-    }
-    @Published public var recordFormSelection: RecordForm? = nil
-    public func recentUpdatedate() -> MentoryDate? {
-        guard self.recordForms.isEmpty == false else {
-            return nil
-        }
-        
-        return self.recordForms
-            .map { $0.targetDate }
-            .max()!
-    }
-    
-    
-    public private(set) var currentDate: MentoryDate = .now
-    public func setCurrentDate(_ newDate: MentoryDate) {
-        guard newDate > currentDate else {
-            logger.error("이전 날짜로 설정하려고 했습니다.")
-            return
-        }
-        
-        self.currentDate = newDate
-    }
-    public func refreshCurrentDate() {
-        self.currentDate = .now
-    }
-    
-    @Published public var recordCount: Int? = nil
-    
-    @Published public var suggestions: [Suggestion] = []
-    public var recentSuggestionUpdate: MentoryDate? = nil
-    public func getSuggestionIndicator() -> String {
-        let totalCount = self.suggestions
-            .count
-        
-        let doneCount = self.suggestions
-            .filter { $0.isDone == true }
-            .count
-        
-        return "\(doneCount)/\(totalCount)"
-    }
-    public var suggestionProgress: Double {
-        guard suggestions.count > 0 else { return 0 }
-        return Double(suggestions.filter { $0.isDone }.count) / Double(suggestions.count)
-    }
-    @Published public var completedSuggestionsCount: Int = 0
-    @Published public var earnedBadges: [BadgeType] = []
-    
-    
-    // MARK: action
-    public func setUpMentorMessage() async {
-        // capture
-        guard self.mentorMessage == nil else {
-            logger.error("이미 MentorMessage 객체가 존재합니다.")
-            return
-        }
-        
-        // mutate
-        let mentorMessage = MentorMessage(owner: self)
-        self.mentorMessage = mentorMessage
-        logger.debug("mentorMessage 객체가 생성되었습니다.")
-    }
-    
-    public func setUpRecordForms() async {
-        // capture
-        guard self.recordForms.isEmpty == true else {
-            logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.\(self.recordForms.count)")
-            return
-        }
-        let now = MentoryDate.now
+  public init(owner: Mentory) {
+    self.owner = owner
+  }
 
-        // process
-        let today = now
-        let yesterday = today.dayBefore()
-        let twoDaysAgo = today.twoDaysBefore()
-        
-        let dates = [today, yesterday, twoDaysAgo]
+  // MARK: state
+  public nonisolated let id = UUID()
+  public weak var owner: Mentory?
 
-        
-        // mutate
-        let recordForms = dates.map { date in
-            RecordForm(
-                owner: self,
-                targetDate: date
-            )
-        }
-        self.recordForms = recordForms
-        logger.debug("recordForms 배열이 생성되었습니다.\(recordForms)")
-    }
-    public func updateRecordForms() async {
-        // capture
-        let currentDate = self.currentDate
-        let recordForms = self.recordForms
-        guard recordForms.isEmpty == false else {
-            logger.error("recordForms가 비어 있어 updateRecordForms을 취소합니다.")
-            return
-        }
-        guard let recentUpdatedate = self.recentUpdatedate() else {
-            logger.error("recentUpdateDate가 nil이어서 updateRecordForms을 취소합니다.")
-            return
-        }
-        
-        // process
-        let isSameDay = recentUpdatedate.isSameDate(as: currentDate)
-        guard isSameDay == false else {
-            logger.error("현재 날짜와 가장 최근 업데이트된 날짜가 같습니다. 아무것도 하지 않습니다.")
-            return
-        }
-        
-        let targetDates: [MentoryDate] = [
-            currentDate,
-            currentDate.dayBefore(),
-            currentDate.twoDaysBefore()
-        ]
-        
-        var newRecordForms: [RecordForm] = []
-        for targetDate in targetDates {
-            if let existing = recordForms.first(where: { $0.targetDate.isSameDate(as: targetDate) }) {
-                    newRecordForms.append(existing)
-            } else {
-                let newForm = RecordForm(owner: self, targetDate: targetDate)
-                newRecordForms.append(newForm)
-            }
-        }
-        newRecordForms.sort { $0.targetDate < $1.targetDate }
-            
-        // mutate
-        self.recordForms = newRecordForms
-    }
-    
-    public func loadSuggestions() async {
-        // capture
-        let currentDate = self.currentDate
-        
-        let mentoryiOS = self.owner!
-        let newMentoryDB = mentoryiOS.newMentoryDB
-        
-        // process - MentoryDB에서 DailyRecord 가져오기
-        guard let recentRecord = await newMentoryDB.recentRecord else {
-            logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
-            return
-        }
-        logger.debug("NewMentoryDB에서 최근 DailyRecord를 가져왔습니다.")
-        
-        // process - MentoryDB에서 Suggestion 가져오기
-        let recordID = await recentRecord.recordID
-        let suggestionDatas = await recentRecord.suggestionDatas
+  @Published public var mentorMessage: MentorMessage? = nil
 
-
-        // mutate
-        self.suggestions = suggestionDatas
-            .map { Suggestion(
-                owner: self,
-                parentRecord: recordID,
-                target: $0.target,
-                content: $0.content,
-                isDone: $0.isDone)
-            }
-
-        self.recentSuggestionUpdate = currentDate
-        logger.debug("추천행동가져오기\(suggestionDatas)")
-    }
-    
-    public func fetchUserRecordCount() async {
-        // capture
-        let mentoryiOS = self.owner!
-        let newMentoryDB = mentoryiOS.newMentoryDB
-        
-        // process
-        let recordCount = await newMentoryDB.recordCount
-        
-        // mutate
-        self.recordCount = recordCount
+  @Published public var recordForms: [RecordForm] = []
+  public func areAllRecordFormsDisabled() -> Bool {
+    return self.recordForms.allSatisfy(\.isDisabled)
+  }
+  @Published public var recordFormSelection: RecordForm? = nil
+  public func recentUpdatedate() -> MentoryDate? {
+    guard self.recordForms.isEmpty == false else {
+      return nil
     }
 
-    public func fetchEarnedBadges() async {
-        // capture
-        let mentoryiOS = self.owner!
-        let newMentoryDB = mentoryiOS.newMentoryDB
+    return self.recordForms
+      .map { $0.targetDate }
+      .max()!
+  }
 
-        // process
-        let completedCount = await newMentoryDB.completedSuggestionCount
-
-        // mutate
-        self.completedSuggestionsCount = completedCount
-        self.earnedBadges = BadgeType.earnedBadges(completedCount: completedCount)
-        logger.debug("완료된 제안: \(completedCount)개, 획득한 뱃지: \(self.earnedBadges.count)개")
+  public private(set) var currentDate: MentoryDate = .now
+  public func setCurrentDate(_ newDate: MentoryDate) {
+    guard newDate > currentDate else {
+      logger.error("이전 날짜로 설정하려고 했습니다.")
+      return
     }
 
+    self.currentDate = newDate
+  }
+  public func refreshCurrentDate() {
+    self.currentDate = .now
+  }
 
-    // MARK: - Watch Connectivity
-    public func sendSuggestionsToWatch() async {
-        let payload = MentoryWatchPayloadFactory.make(
-            message: mentorMessage?.content,
-            character: mentorMessage?.character,
-            todos: suggestions.map {
-                (content: $0.content, isDone: $0.isDone)
-            }
-        )
-        let mentoryiOS = self.owner!
-        
-        await mentoryiOS.watchConnectivity.updateContext(
-            message: payload.message,
-            character: payload.characterName,
-            todos: payload.todoTexts,
-            todoCompletions: payload.todoCompletions
-        )
-        
-        logger.debug("Suggestions를 Watch로 전송: \(payload.todos.count)개")
+  @Published public var recordCount: Int? = nil
+
+  @Published public var suggestions: [Suggestion] = []
+  public var recentSuggestionUpdate: MentoryDate? = nil
+  public func getSuggestionIndicator() -> String {
+    let totalCount = self.suggestions
+      .count
+
+    let doneCount = self.suggestions
+      .filter { $0.isDone == true }
+      .count
+
+    return "\(doneCount)/\(totalCount)"
+  }
+  public var suggestionProgress: Double {
+    guard suggestions.count > 0 else { return 0 }
+    return Double(suggestions.filter { $0.isDone }.count) / Double(suggestions.count)
+  }
+  @Published public var completedSuggestionsCount: Int = 0
+  @Published public var earnedBadges: [BadgeType] = []
+
+  // MARK: action
+  public func setUpMentorMessage() async {
+    // capture
+    guard self.mentorMessage == nil else {
+      logger.error("이미 MentorMessage 객체가 존재합니다.")
+      return
     }
 
+    // mutate
+    let mentorMessage = MentorMessage(owner: self)
+    self.mentorMessage = mentorMessage
+    logger.debug("mentorMessage 객체가 생성되었습니다.")
+  }
 
-    // Value -> Routine으로 리팩토링
-    public func handleWatchTodoCompletion(todoText: String, isCompleted: Bool) async {
-        // Mentotry의 Suggesion.isDone 업데이트
-        guard let suggestion = suggestions.first(where: { $0.content == todoText }) else {
-            logger.error("Watch로부터 받은 투두를 찾을 수 없음: \(todoText)")
-            return
-        }
-
-        suggestion.isDone = isCompleted
-        logger.debug("Watch로부터 투두 완료 상태 업데이트: \(todoText) = \(isCompleted)")
-
-        // DB 동기화는 NewMentoryDB suggestion update API 정리 후 재연결한다.
+  public func setUpRecordForms() async {
+    // capture
+    guard self.recordForms.isEmpty == true else {
+      logger.error("이미 recordForms 배열 안에 객체들이 존재합니다.\(self.recordForms.count)")
+      return
     }
+    let now = MentoryDate.now
+
+    // process
+    let today = now
+    let yesterday = today.dayBefore()
+    let twoDaysAgo = today.twoDaysBefore()
+
+    let dates = [today, yesterday, twoDaysAgo]
+
+    // mutate
+    let recordForms = dates.map { date in
+      RecordForm(
+        owner: self,
+        targetDate: date
+      )
+    }
+    self.recordForms = recordForms
+    logger.debug("recordForms 배열이 생성되었습니다.\(recordForms)")
+  }
+  public func updateRecordForms() async {
+    // capture
+    let currentDate = self.currentDate
+    let recordForms = self.recordForms
+    guard recordForms.isEmpty == false else {
+      logger.error("recordForms가 비어 있어 updateRecordForms을 취소합니다.")
+      return
+    }
+    guard let recentUpdatedate = self.recentUpdatedate() else {
+      logger.error("recentUpdateDate가 nil이어서 updateRecordForms을 취소합니다.")
+      return
+    }
+
+    // process
+    let isSameDay = recentUpdatedate.isSameDate(as: currentDate)
+    guard isSameDay == false else {
+      logger.error("현재 날짜와 가장 최근 업데이트된 날짜가 같습니다. 아무것도 하지 않습니다.")
+      return
+    }
+
+    let targetDates: [MentoryDate] = [
+      currentDate,
+      currentDate.dayBefore(),
+      currentDate.twoDaysBefore(),
+    ]
+
+    var newRecordForms: [RecordForm] = []
+    for targetDate in targetDates {
+      if let existing = recordForms.first(where: { $0.targetDate.isSameDate(as: targetDate) }) {
+        newRecordForms.append(existing)
+      } else {
+        let newForm = RecordForm(owner: self, targetDate: targetDate)
+        newRecordForms.append(newForm)
+      }
+    }
+    newRecordForms.sort { $0.targetDate < $1.targetDate }
+
+    // mutate
+    self.recordForms = newRecordForms
+  }
+
+  public func loadSuggestions() async {
+    // capture
+    let currentDate = self.currentDate
+
+    let mentoryiOS = self.owner!
+    let newMentoryDB = mentoryiOS.newMentoryDB
+
+    // process - MentoryDB에서 DailyRecord 가져오기
+    guard let recentRecord = await newMentoryDB.recentRecord else {
+      logger.error("MentoryDB 안에 최근 Record가 존재하지 않습니다.")
+      return
+    }
+    logger.debug("NewMentoryDB에서 최근 DailyRecord를 가져왔습니다.")
+
+    // process - MentoryDB에서 Suggestion 가져오기
+    let recordID = await recentRecord.recordID
+    let suggestionDatas = await recentRecord.suggestionDatas
+
+    // mutate
+    self.suggestions =
+      suggestionDatas
+      .map {
+        Suggestion(
+          owner: self,
+          parentRecord: recordID,
+          target: $0.target,
+          content: $0.content,
+          isDone: $0.isDone)
+      }
+
+    self.recentSuggestionUpdate = currentDate
+    logger.debug("추천행동가져오기\(suggestionDatas)")
+  }
+
+  public func fetchUserRecordCount() async {
+    // capture
+    let mentoryiOS = self.owner!
+    let newMentoryDB = mentoryiOS.newMentoryDB
+
+    // process
+    let recordCount = await newMentoryDB.recordCount
+
+    // mutate
+    self.recordCount = recordCount
+  }
+
+  public func fetchEarnedBadges() async {
+    // capture
+    let mentoryiOS = self.owner!
+    let newMentoryDB = mentoryiOS.newMentoryDB
+
+    // process
+    let completedCount = await newMentoryDB.completedSuggestionCount
+
+    // mutate
+    self.completedSuggestionsCount = completedCount
+    self.earnedBadges = BadgeType.earnedBadges(completedCount: completedCount)
+    logger.debug("완료된 제안: \(completedCount)개, 획득한 뱃지: \(self.earnedBadges.count)개")
+  }
+
 }

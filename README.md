@@ -13,8 +13,6 @@
 
   <p>
     <img src="https://img.shields.io/badge/iOS-1A1A1A?style=for-the-badge&logo=apple&logoColor=white" />
-    <img src="https://img.shields.io/badge/watchOS-000000?style=for-the-badge&logo=apple&logoColor=white" />
-    <img src="https://img.shields.io/badge/Widget-FF7F2A?style=for-the-badge&logo=swift&logoColor=white" />
   </p>
 
   <p>
@@ -30,7 +28,7 @@
 
 ## Overview
 
-Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 데이터"로 다뤄, 사용자 입력(텍스트/음성/이미지)을 SwiftData에 축적하고 LLM 분석 결과를 행동 제안으로 연결하는 iOS 앱입니다. 이 프로젝트는 기능 구현 자체보다도 SwiftUI + Combine + Swift Concurrency를 조합해 테스트 가능한 아키텍처로 설계하고, iOS/Watch/Widget까지 확장 가능한 구조를 구축하는 데 초점을 두었습니다.
+Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 데이터"로 다뤄, 사용자 입력(텍스트/음성/이미지)을 SwiftData에 축적하고 LLM 분석 결과를 행동 제안으로 연결하는 iOS 앱입니다. 이 프로젝트는 기능 구현 자체보다도 SwiftUI + Combine + Swift Concurrency를 조합해 테스트 가능한 아키텍처로 설계하고, iOS 중심 구조를 구축하는 데 초점을 두었습니다.
 
 ## Tech Stack
 
@@ -40,7 +38,6 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
 - Local Persistence: SwiftData
 - Build System: Tuist
 - AI/LLM: Alan API, Firebase AI Logic
-- Platform Extensions: WatchConnectivity, WidgetKit
 
 ## Portfolio Highlights
 
@@ -48,7 +45,6 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
 - `Adapter Interface` 중심 설계로 LLM/DB 구현체 교체와 테스트 대역(Mock) 주입이 쉬운 구조
 - 기록 저장(SwiftData)과 분석 요청(LLM async)을 분리해 실패 지점을 독립적으로 복구 가능
 - Combine 스트림(`@Published`)과 async/await를 역할별로 분리해 UI 반응성과 비동기 안정성 확보
-- iOS 앱을 중심으로 WatchConnectivity/Widget 확장 포인트를 모듈 경계에서 일관되게 유지
 - Tuist 기반 모듈화로 앱/DB/공유 타입/디바이스 연동을 빌드 단위에서 분리
 
 ## Architecture
@@ -66,7 +62,6 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
 
 - 비즈니스 로직을 View와 분리해 UI 변경(레이아웃/상태 표현)이 핵심 정책에 영향을 주지 않도록 하기 위해
 - LLM/DB 같은 외부 의존성 실패를 Adapter 경계에서 캡슐화해 장애 전파를 줄이기 위해
-- 같은 Domain 로직을 iOS UI, Watch 연동, Widget 업데이트에서 재사용하기 위해
 - 테스트에서 빠른 피드백을 위해 실제 인프라 없이 Domain 단위 검증이 가능해야 했기 때문에
 
 ## Data Flow
@@ -97,7 +92,7 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
 - `RecordForm`/`MindAnalyzer`
   - 입력 유효성, 분석 트리거 조건, 분석 결과가 추천 생성으로 연결되는 흐름
 - `MentorMessage`
-  - 분석 결과 기반 메시지 업데이트 및 컨텍스트 동기화 포인트 검증
+  - 분석 결과 기반 메시지 업데이트 검증
 
 ## My Role
 
@@ -152,7 +147,7 @@ Mentory는 감정 기록을 일회성 다이어리가 아닌 "분석 가능한 �
 - Xcode 26.1+
 - Swift 6.0
 - Tuist 4.153.0+
-- iOS 26.0+ / watchOS 26.0+
+- iOS 26.0+
 
 ### Install
 
@@ -182,8 +177,6 @@ open mentory.xcworkspace
 ### Run
 
 - iOS: `Mentory` 스킴 실행
-- watchOS: `MentoryWatchApp` 스킴 실행
-- Widget: 앱 실행 후 홈 화면에서 Mentory 위젯 추가
 
 ## Module Structure
 
@@ -194,14 +187,12 @@ open mentory.xcworkspace
   - SwiftData 기반 영속성 모듈
   - Domain이 의존하는 DB 인터페이스 구현
 - `MentoryDevice`
-  - WatchConnectivity 및 디바이스 연동 처리 모듈
+  - iOS 알림 등 디바이스 연동 처리 모듈
 - `MentoryLLM`
   - Alan/Firebase 등 LLM 연동 어댑터 모듈
 - `MentoryShared`
   - 공유 Value 타입/프로토콜 정의 모듈
   - 모듈 간 계약(Contract) 역할
-- `MentoryWatchApp` / `MentoryWidget`
-  - Watch 및 Widget 확장 타깃
 
 ## Links
 
