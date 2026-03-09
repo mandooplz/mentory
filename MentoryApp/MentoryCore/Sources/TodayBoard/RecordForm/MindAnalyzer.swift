@@ -125,6 +125,13 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
 
         await newMentoryDB.insertSuggestions(ticketId: recordData.objectID, suggestions: suggestionDatas)
 
+        if mentoryiOS.statBoard == nil {
+            mentoryiOS.statBoard = StatBoard(owner: mentoryiOS)
+        }
+
+        if let statBoard = mentoryiOS.statBoard {
+            await statBoard.loadRecords()
+        }
 
         logger.debug("MentoryDB에 RecordData와 SuggestionData를 저장했습니다.")
 
