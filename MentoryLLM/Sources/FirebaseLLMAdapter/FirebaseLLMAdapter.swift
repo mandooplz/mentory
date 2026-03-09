@@ -9,7 +9,7 @@ import Foundation
 // MARK: Adapter
 public nonisolated struct FirebaseLLMAdapter: FirebaseLLMAdapterInterface {
     // MARK: core
-    private let logger = Logger(subsystem: "MentoryiOS.FirebaseLLM", category: "Domain")
+    private let logger = Logger()
     private let ai: FirebaseAI
     private let model: GenerativeModel
     
@@ -50,7 +50,9 @@ public nonisolated struct FirebaseLLMAdapter: FirebaseLLMAdapterInterface {
         }
     }
     
-    public func getEmotionAnalysis(_ question: FirebaseQuestion, character: MentoryCharacter) async -> FirebaseAnalysis? {
+    public func getEmotionAnalysis(
+        _ question: FirebaseQuestion,
+        character: MentoryCharacter) async -> FirebaseAnalysis? {
         logger.debug("Firebase LLM 요청 시작")
         
         let jsonSchema = Schema.object(
