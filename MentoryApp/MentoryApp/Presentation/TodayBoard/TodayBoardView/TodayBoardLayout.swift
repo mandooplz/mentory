@@ -18,40 +18,22 @@ struct TodayBoardLayout<Content: View, navDestination: View>: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                MentoryBackground()
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 24) {
-                        self.content()
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 40)
-                }
+            MentoryScrollScreen(spacing: 24, topPadding: 18, bottomPadding: 40) {
+                self.content()
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        // action을 인자로 받도록
+                    MentoryToolbarIconButton(
+                        systemName: "info.circle",
+                        accessibilityLabel: "정보 열기"
+                    ) {
                         isShowingInformationView = true
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .font(.system(size: 18, weight: .semibold))
                     }
                 }
             }
             .sheet(isPresented: $isShowingInformationView) {
-                // 웹 뷰 전체를 인자로 받도록
                 self.navDestination()
             }
         }
-    }
-}
-
-
-// MARK: Component
-fileprivate struct MentoryBackground: View {
-    var body: some View {
-        Color.mentoryBackground
-            .ignoresSafeArea()
     }
 }

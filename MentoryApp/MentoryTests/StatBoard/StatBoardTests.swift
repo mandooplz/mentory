@@ -47,7 +47,7 @@ struct StatBoardTests {
                 analyzedResult: "SAMPLE_ANALYSIS",
                 emotion: .neutral)
             
-            try await mentoryDB.submitAnalysis(
+            await mentoryDB.submitAnalysis(
                 recordData: sampleRecordData,
                 suggestionData: []
             )

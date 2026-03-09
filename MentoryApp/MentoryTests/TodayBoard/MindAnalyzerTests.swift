@@ -17,10 +17,12 @@ struct MindAnalyzerTests {
         let mentoryiOS: Mentory
         let mindAnalyzer: MindAnalyzer
         let todayBoard: TodayBoard
+        let statBoard: StatBoard
         init() async throws {
             self.mentoryiOS = await Mentory()
             self.mindAnalyzer = try await getMindAnalyzerForTest(mentoryiOS)
             self.todayBoard = await mindAnalyzer.owner!.owner!
+            self.statBoard = try #require(await mentoryiOS.statBoard)
         }
         
         @Test func setIsAnalyzeFinishedTrue() async throws {
@@ -97,6 +99,21 @@ struct MindAnalyzerTests {
             
             // then
             await #expect(mindAnalyzer.status.isAnalyzeFinished == false)
+        }
+
+        @Test func refreshStatBoardRecords() async throws {
+            // given
+            try await #require(statBoard.allRecords.isEmpty)
+
+            await MainActor.run {
+                mindAnalyzer.character = .cool
+            }
+
+            // when
+            await mindAnalyzer.analyze()
+
+            // then
+            await #expect(statBoard.allRecords.isEmpty == false)
         }
     }
     

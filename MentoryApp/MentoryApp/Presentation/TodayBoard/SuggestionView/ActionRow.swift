@@ -26,7 +26,7 @@ struct ActionRow: View {
                         .frame(width: 20, height: 20)
                         .overlay(
                             Image(systemName: "checkmark")
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(.white)
                         )
                         .transition(.scale.combined(with: .opacity))
@@ -36,7 +36,7 @@ struct ActionRow: View {
             .frame(width: 20, height: 20)
             
             Text(text.isEmpty ? " " : text)
-                .font(.system(size: 16))
+                .font(.system(size: 15, weight: .regular, design: .rounded))
                 .foregroundColor(checked ? .secondary : .primary)
                 .strikethrough(checked, color: .secondary)
             
@@ -82,5 +82,4 @@ struct ActionRow: View {
     
     ActionRow(checked: $row2, text: "체크되지 않은 ActionRow입니다.")
 }
-
 

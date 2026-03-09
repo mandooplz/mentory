@@ -26,5 +26,14 @@ let project = Project.mentory(
                 .package(product: "Collections"),
             ]
         ),
+        .mentoryUnitTests(
+            name: "NewMentoryDBFakeTests",
+            sources: ["Tests/NewMentoryDBFakeTests/**"],
+            dependencies: [
+                .target(name: "NewMentoryDBFake"),
+                .target(name: "NewMentoryDBCore"),
+                .mentoryShared("Values"),
+            ]
+        ),
     ]
 )

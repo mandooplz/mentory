@@ -24,42 +24,38 @@ struct MentoryiOSView: View {
     // MARK: body
     var body: some View {
         ZStack {
+            MentoryBackdrop()
+
             if mentoryiOS.onboardingFinished {
                 TabView(selection: $selectedTab) {
-                    // 기록 탭
                     TodayBoardTab
                         .tabItem {
-                            Image(systemName: "square.and.pencil")
-                            Text("기록")
+                            Label("기록", systemImage: "square.and.pencil")
                         }
                         .tag(Tab.record)
-                    
-                    // 통계 탭
+
                     StaticTab
                         .tabItem {
-                            Image(systemName: "chart.xyaxis.line")
-                            Text("통계")
+                            Label("통계", systemImage: "chart.xyaxis.line")
                         }
                         .tag(Tab.statistics)
-                    
-                    // 설정 탭
+
                     SettingTab
                         .tabItem {
-                            Image(systemName: "gearshape")
-                            Text("설정")
+                            Label("설정", systemImage: "gearshape")
                         }
                         .tag(Tab.setting)
                 }
+                .tint(.mentoryAccentPrimary)
+                .toolbarBackground(Color.mentoryCard.opacity(0.96), for: .tabBar)
+                .toolbarBackground(.visible, for: .tabBar)
                 .onOpenURL { url in
-                    print("딥링크 수신:", url)
-                    
                     guard url.scheme == "mentory" else { return }
-                    
+
                     if url.host == "record" {
                         selectedTab = .record
                     }
                 }
-                
             } else {
                 OnboardingTab
             }
@@ -88,7 +84,11 @@ struct MentoryiOSView: View {
                 mentoryiOS: mentoryiOS
             )
         } else {
-            Text("기록 화면을 준비 중입니다.")
+            MentoryStatusCard(
+                systemImage: "square.and.pencil",
+                title: "기록 화면을 준비 중입니다",
+                message: "오늘의 감정 기록 화면을 불러오는 중이에요."
+            )
         }
     }
     
@@ -97,7 +97,11 @@ struct MentoryiOSView: View {
         if let statBoard = mentoryiOS.statBoard {
             StatBoardView(board: statBoard)
         } else {
-            Text("통계 보드가 준비되지 않았습니다.")
+            MentoryStatusCard(
+                systemImage: "chart.xyaxis.line",
+                title: "통계 화면을 준비 중입니다",
+                message: "기록 데이터를 불러오면 월별 흐름을 확인할 수 있어요."
+            )
         }
     }
     
@@ -105,16 +109,12 @@ struct MentoryiOSView: View {
     private var SettingTab: some View {
         if let settingBoard = mentoryiOS.settingBoard {
             SettingBoardView(settingBoard: settingBoard, settingBoardViewModel: SettingBoardViewModel())
-                .tabItem {
-                    Image(systemName: "gearshape")
-                    Text("설정")
-                }
         } else {
-            Text("설정 화면을 준비 중입니다.")
-                .tabItem {
-                    Image(systemName: "gearshape")
-                    Text("설정")
-                }
+            MentoryStatusCard(
+                systemImage: "gearshape",
+                title: "설정 화면을 준비 중입니다",
+                message: "앱 설정과 안내 정보를 가져오고 있어요."
+            )
         }
     }
     
@@ -123,7 +123,12 @@ struct MentoryiOSView: View {
         if let onBoarding = mentoryiOS.onboarding {
             OnboardingView(onBoarding)
         } else {
-            ProgressView()
+            MentoryStatusCard(
+                systemImage: "sparkles",
+                title: "시작 화면을 준비 중입니다",
+                message: "Mentory를 시작하기 위한 초기 데이터를 불러오고 있어요."
+            )
+            .padding(.horizontal, 20)
         }
     }
 }

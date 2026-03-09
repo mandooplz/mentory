@@ -23,6 +23,10 @@ let workspace = Workspace(
                         target: .project(path: "MentoryApp", target: "MentoryTests"),
                         parallelization: .disabled
                     ),
+                    .testableTarget(
+                        target: .project(path: "MentoryDB", target: "NewMentoryDBFakeTests"),
+                        parallelization: .disabled
+                    ),
                 ],
                 expandVariableFromTarget: .project(path: "MentoryApp", target: "MentoryApp")
             ),

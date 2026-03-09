@@ -23,9 +23,9 @@ struct MentorMessageView: View {
             image: mentorMessage.character?.imageName,
             defaultImage: "greeting",
             title: mentorMessage.character?.title,
-            defaultTitle: "오늘의 멘토리 조언을 준비하고 있어요",
+            defaultTitle: "멘토 메시지를 준비하고 있어요",
             content: mentorMessage.content,
-            defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+            defaultContent: "잠시 후 오늘 기록에 맞는 멘토 메시지가 표시됩니다.\n조금만 기다려 주세요."
         )
         .task {
             await mentorMessage.updateContent()
@@ -46,33 +46,38 @@ struct PopupCard: View {
     }
     
     var body: some View {
-        LiquidGlassCard {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
+        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack(alignment: .top, spacing: 14) {
                     Image(image ?? defaultImage)
                         .resizable()
                         .scaledToFill()
                         .scaleEffect(1.8, anchor: .top)
                         .offset(y: 2)
-                        .frame(width: 28, height: 28)
+                        .frame(width: 48, height: 48)
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color.primary.opacity(0.25), lineWidth: 0.5)
+                                .stroke(Color.white.opacity(0.4), lineWidth: 1)
                         )
-                    Text(title ?? defaultTitle)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.primary)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        MentoryInfoChip(text: "멘토 메시지", systemImage: "sparkles")
+
+                        Text(title ?? defaultTitle)
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.primary)
+                    }
+
+                    Spacer(minLength: 0)
                 }
-                
-                
+
                 Text(forMarkdown(content ?? defaultContent))
-                    .font(.system(size: 16))
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
-                    .lineSpacing(4)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.vertical, 24)
-            .padding(.horizontal, 20)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .transition(.scale(scale: 0.95).combined(with: .opacity))

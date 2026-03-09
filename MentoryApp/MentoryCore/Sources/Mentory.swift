@@ -98,6 +98,7 @@ public final class Mentory: Sendable, ObservableObject {
 
     self.todayBoard = TodayBoard(owner: self)
     self.settingBoard = SettingBoard(owner: self)
+    self.statBoard = StatBoard(owner: self)
   }
   public func saveUserName() async {
     // capture
