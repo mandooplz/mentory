@@ -28,15 +28,20 @@ struct LiquidGlassCard<Content: View>: View {
     var body: some View {
         content
             .background(
-                .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                ZStack {
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(Color.mentoryCard.opacity(0.84))
+
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                }
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(0.4))
+                    .stroke(Color.white.opacity(0.28))
             )
             .shadow(color: Color.black.opacity(0.08),
-                    radius: shadowRadius, x: 0, y: 10)
+                    radius: shadowRadius, x: 0, y: 12)
     }
 }
 

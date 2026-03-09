@@ -18,20 +18,21 @@ struct RecordFormLayout<ToolBar: CustomizableToolbarContent, TodayDate: View, Ma
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.mentoryBackground
-                    .ignoresSafeArea()
-                VStack(spacing: 0) {
-                    
-                    self.todayDate()
-                        .offset(y: -40)
+                MentoryBackdrop()
 
-                    ScrollView {
+                VStack(spacing: 0) {
+                    self.todayDate()
+                        .padding(.horizontal, MentorySpacing.screenHorizontal)
+                        .padding(.top, 10)
+                        .padding(.bottom, 4)
+
+                    ScrollView(showsIndicators: false) {
                         VStack(spacing: 16) {
                             self.main()
                         }
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, MentorySpacing.screenHorizontal)
                         .padding(.top, 16)
-                        .padding(.bottom, 80)
+                        .padding(.bottom, 88)
                     }
                     .scrollDismissesKeyboard(.interactively)
                     .onTapGesture {
@@ -42,16 +43,17 @@ struct RecordFormLayout<ToolBar: CustomizableToolbarContent, TodayDate: View, Ma
                             for: nil
                         )
                     }
-                    Spacer()
                 }
             }
             .toolbar {
                 self.topBar()
-                
+
                 ToolbarItemGroup(placement: .bottomBar) {
                     self.bottomBar()
                 }
             }
+            .toolbarBackground(Color.mentoryCard.opacity(0.96), for: .bottomBar)
+            .toolbarBackground(.visible, for: .bottomBar)
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }

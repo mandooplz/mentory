@@ -13,18 +13,11 @@ struct MindAnalyzerLayout<Content: View>: View {
     @ViewBuilder let content: () -> Content
     
     var body: some View {
-        ZStack {
-            Color.mentoryBackground.ignoresSafeArea()
-            ScrollView(showsIndicators: false) {
-                LiquidGlassCard(cornerRadius: 32) {
-                    VStack(alignment: .leading, spacing: 24) {
-                        self.content()
-                    }
-                    .padding(24)
+        MentoryScrollScreen(spacing: 0, topPadding: 28, bottomPadding: 40) {
+            MentorySectionCard(cornerRadius: 32, contentPadding: 24) {
+                VStack(alignment: .leading, spacing: 24) {
+                    self.content()
                 }
-                .padding(.horizontal)
-                .padding(.top, 32)
-                .padding(.bottom, 40)
             }
         }
     }
