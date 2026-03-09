@@ -15,6 +15,8 @@ public actor RemindManager: RemindManagerInterface {
     // MARK: core
     private let logger = Logger()
     
+    public init() { }
+    
     
     // MARK: state
     private let notificationCenter: UNUserNotificationCenter = .current()

@@ -20,16 +20,16 @@ public final class Mentory: Sendable, ObservableObject {
     private nonisolated let logger = Logger()
     internal nonisolated let newMentoryDB: any NewMentoryDBInterface
     internal nonisolated let firebaseLLM: any NewFirebaseLLMInterface
-    internal nonisolated let reminderCenter: any ReminderNotificationInterface
+    internal nonisolated let reminderCenter: any RemindManagerInterface
 
     public init(_ mode: SystemMode = .test) {
         switch mode {
         case .real:
             self.firebaseLLM = NewFirebaseLLM()
-            self.reminderCenter = ReminderNotificationAdapter()
+            self.reminderCenter = RemindManager()
         case .test:
             self.firebaseLLM = NewFirebaseLLMFake()
-            self.reminderCenter = ReminderNotificationAdapter()
+            self.reminderCenter = RemindManagerFake()
         }
 
         do {

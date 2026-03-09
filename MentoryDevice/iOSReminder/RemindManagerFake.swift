@@ -13,6 +13,8 @@ import OSLog
 public actor RemindManagerFake: RemindManagerInterface {
     // MARK: core
     private let logger = Logger()
+    
+    public init() { }
 
 
     // MARK: state
