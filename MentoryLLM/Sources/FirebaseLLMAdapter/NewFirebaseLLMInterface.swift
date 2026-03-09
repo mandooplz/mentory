@@ -20,5 +20,10 @@ public protocol NewFirebaseLLMInterface: Sendable {
     func setCharacter(_: MentoryCharacter) async
     
     var answer: FirebaseAnswer? { get async }
-    var analysis: FirebaseAnalysis? { get async}
+    var analysis: FirebaseAnalysis? { get async }
+    
+    
+    // MARK: action
+    func getAnswer() async
+    func getAnalysis() async
 }

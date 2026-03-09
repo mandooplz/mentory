@@ -1,5 +1,4 @@
-import Combine
-import FirebaseLLMAdapter
+
 //
 //  Mentory.swift
 //  Mentory
@@ -11,24 +10,27 @@ import NewMentoryDBCore
 import OSLog
 import Values
 import iOSReminder
+import Combine
+import FirebaseLLMAdapter
 
-// MARK: Object
+
+// MARK: object
 @MainActor
 public final class Mentory: Sendable, ObservableObject {
   // MARK: core
   private nonisolated let logger = Logger()
   internal nonisolated let newMentoryDB: any NewMentoryDBInterface
 
-  internal nonisolated let firebaseLLM: any FirebaseLLMAdapterInterface
+  internal nonisolated let firebaseLLM: any NewFirebaseLLMInterface
   internal nonisolated let reminderCenter: any ReminderNotificationInterface
 
   public init(_ mode: SystemMode = .test) {
     switch mode {
     case .real:
-      self.firebaseLLM = FirebaseLLMAdapter()
+      self.firebaseLLM = NewFirebaseLLM()
       self.reminderCenter = ReminderNotificationAdapter()
     case .test:
-      self.firebaseLLM = FirebaseLLMFakeAdapter()
+      self.firebaseLLM = NewFirebaseLLMFake()
       self.reminderCenter = ReminderNotificationAdapter()
     }
 
