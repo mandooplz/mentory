@@ -10,19 +10,19 @@ import SwiftUI
 // MARK: - Typography
 public extension View {
     func mentoryDisplayTitle() -> some View {
-        self.font(.system(size: 30, weight: .bold, design: .rounded))
+        self.font(.system(size: 24, weight: .semibold, design: .rounded))
     }
 
     func mentoryTitle() -> some View {
-        self.font(.system(size: 32, weight: .bold, design: .rounded))
+        self.font(.system(size: 27, weight: .semibold, design: .rounded))
     }
     
     func mentorySubtitle() -> some View {
-        self.font(.system(size: 17, weight: .semibold, design: .rounded))
+        self.font(.system(size: 16, weight: .medium, design: .rounded))
     }
     
     func mentoryHeadline() -> some View {
-        self.font(.system(size: 19, weight: .semibold, design: .rounded))
+        self.font(.system(size: 18, weight: .semibold, design: .rounded))
     }
     
     func mentoryBody() -> some View {
@@ -30,7 +30,7 @@ public extension View {
     }
 
     func mentorySupportText() -> some View {
-        self.font(.system(size: 14, weight: .medium, design: .rounded))
+        self.font(.system(size: 14, weight: .regular, design: .rounded))
     }
 }
 
@@ -44,7 +44,7 @@ public struct MentoryPrimaryButtonStyle: ButtonStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 17, weight: .bold, design: .rounded))
+            .font(.system(size: 16, weight: .semibold, design: .rounded))
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 56)
@@ -82,7 +82,7 @@ public struct MentorySecondaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 16, weight: .semibold, design: .rounded))
+            .font(.system(size: 15, weight: .medium, design: .rounded))
             .foregroundStyle(.primary)
             .frame(maxWidth: .infinity)
             .frame(minHeight: 52)

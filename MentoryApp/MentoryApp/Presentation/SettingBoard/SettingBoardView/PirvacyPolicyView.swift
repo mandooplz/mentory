@@ -154,13 +154,13 @@ struct PrivacyPolicyView: View {
         MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
             VStack(alignment: .leading, spacing: 12) {
                 MentorySectionHeader(
-                    eyebrow: "PRIVACY",
-                    title: "Mentory 개인정보 처리방침",
-                    subtitle: "서비스에서 개인정보가 어떻게 수집, 이용, 보관, 파기되는지 한눈에 확인할 수 있도록 정리했습니다."
+                    eyebrow: "개인정보",
+                    title: "개인정보 처리방침",
+                    subtitle: "서비스에서 개인정보를 어떻게 수집하고 이용하는지 확인할 수 있습니다."
                 )
 
                 Text("최종 업데이트: 2025. 11. 18")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
             }
         }
@@ -173,8 +173,9 @@ struct PrivacyPolicyView: View {
                     .foregroundStyle(.yellow)
                     .font(.title3)
                 Text(warningText)
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(.primary)
+                    .lineSpacing(3)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -188,14 +189,14 @@ private struct PolicySectionView: View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(section.title)
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(section.lines, id: \.self) { line in
                         Text(line)
                             .font(
                                 .system(
                                     size: line.hasPrefix("•") || line.hasPrefix("  -") ? 14 : 13,
-                                    weight: .medium,
+                                    weight: line.hasPrefix("•") || line.hasPrefix("  -") ? .regular : .medium,
                                     design: .rounded
                                 )
                             )

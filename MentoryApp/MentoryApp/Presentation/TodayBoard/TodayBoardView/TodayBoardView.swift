@@ -28,9 +28,9 @@ struct TodayBoardView: View {
 
             VStack(alignment: .leading, spacing: 12) {
                 MentorySectionHeader(
-                    eyebrow: "TODAY MESSAGE",
+                    eyebrow: "멘토 메시지",
                     title: "오늘의 멘토 한마디",
-                    subtitle: "작성 흐름에 들어가기 전에 오늘의 조언으로 감정 상태를 정리해보세요."
+                    subtitle: "기록을 시작하기 전에 짧게 확인해보세요."
                 )
 
                 MessageView(mentorMessage: todayBoard.mentorMessage)
@@ -91,9 +91,9 @@ private struct DashboardHeroHeader: View {
     var body: some View {
         MentorySectionCard(cornerRadius: 34, contentPadding: 24) {
             VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "MENTORY DAILY", systemImage: "heart.text.square")
+                MentoryInfoChip(text: "오늘 기록", systemImage: "heart.text.square")
 
-                Text("\(userName)님의 감정 흐름을 정리할 시간이에요")
+                Text("\(userName)님의 오늘 기록")
                     .mentoryTitle()
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -126,14 +126,14 @@ private struct DashboardHeroHeader: View {
 
     private var greetingCopy: String {
         guard let recordCount = todayBoard.recordCount else {
-            return "오늘의 기록과 추천 행동을 준비하고 있어요. 잠시 후 개인화된 흐름이 채워집니다."
+            return "기록과 추천 행동을 불러오고 있습니다."
         }
 
         if recordCount == 0 {
-            return "첫 기록을 시작하면 감정 흐름과 행동 제안이 함께 쌓이기 시작합니다."
+            return "첫 기록을 남기면 감정 리포트와 행동 제안이 함께 정리됩니다."
         }
 
-        return "\(recordCount)번의 기록이 누적되었어요. 오늘의 흐름도 차분하게 이어가볼까요?"
+        return "지금까지 \(recordCount)개의 기록이 저장되어 있어요. 오늘 기록도 이어서 정리해보세요."
     }
 
     private var recordCountLabel: String {
@@ -173,7 +173,7 @@ struct MentorMessageDefaultView: View {
             title: nil,
             defaultTitle: "오늘의 멘토 메시지를 준비하고 있어요",
             content: nil,
-            defaultContent: "잠시 후 당신을 위한 멘토 한마디가 도착해요.\n오늘은 어떤 시선으로 하루를 정리하면 좋을지 함께 살펴볼게요."
+            defaultContent: "잠시 후 오늘 기록에 맞는 멘토 메시지가 표시됩니다.\n기록을 시작하기 전에 가볍게 확인해보세요."
         )
     }
 }
@@ -197,9 +197,9 @@ private struct RecordComposerSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             MentorySectionHeader(
-                eyebrow: "RECORD FLOW",
-                title: "오늘의 기록 시작하기",
-                subtitle: "최근 3일 중 작성 가능한 날짜를 선택해 텍스트, 사진, 음성까지 함께 기록할 수 있어요."
+                eyebrow: "기록",
+                title: "기록 작성",
+                subtitle: "최근 3일 중 작성 가능한 날짜를 선택할 수 있습니다."
             )
 
             MentorySectionCard(cornerRadius: 32, contentPadding: 22) {
@@ -207,7 +207,7 @@ private struct RecordComposerSection<Content: View>: View {
                     HStack(alignment: .center, spacing: 16) {
                         VStack(alignment: .leading, spacing: 10) {
                             Text(recordCardTitle)
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .font(.system(size: 20, weight: .semibold, design: .rounded))
                                 .foregroundStyle(.primary)
 
                             Text(recordCardDescription)
@@ -273,22 +273,22 @@ private struct RecordComposerSection<Content: View>: View {
     private var recordCardTitle: String {
         switch availableRecordCount {
         case 0:
-            return "최근 기록이 모두 정리됐어요"
+            return "최근 기록을 모두 작성했어요"
         case 1:
-            return "오늘 기록이 하나 남아 있어요"
+            return "작성 가능한 기록이 1개 남아 있어요"
         default:
-            return "\(availableRecordCount)개의 기록 기회가 남아 있어요"
+            return "작성 가능한 기록이 \(availableRecordCount)개 남아 있어요"
         }
     }
 
     private var recordCardDescription: String {
         switch availableRecordCount {
         case 0:
-            return "오늘, 어제, 그제의 기록을 모두 작성했어요. 날짜를 열어 작성 상태를 확인할 수 있습니다."
+            return "오늘, 어제, 그제의 작성 상태를 다시 확인할 수 있습니다."
         case 1:
-            return "지금 남은 한 번의 기록으로 오늘의 감정 흐름을 완성해보세요."
+            return "남은 기록을 작성하면 오늘의 흐름을 정리할 수 있습니다."
         default:
-            return "텍스트에 사진과 음성을 더하면 감정 맥락을 더 입체적으로 남길 수 있어요."
+            return "필요하면 사진과 음성을 함께 남겨 기록 맥락을 보완해보세요."
         }
     }
 }
@@ -299,7 +299,7 @@ private struct RecordAvailabilityPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(relativeLabel)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(.primary)
 
             Text(recordForm.isDisabled ? "작성 완료" : "작성 가능")
@@ -390,11 +390,11 @@ private struct SuggestionFrontCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 12) {
                 MentorySectionHeader(
-                    eyebrow: "ACTION PLAN",
-                    title: "오늘의 추천 루틴",
+                    eyebrow: "추천 행동",
+                    title: "오늘의 행동 제안",
                     subtitle: todayBoard.suggestions.isEmpty
-                        ? "기록을 제출하면 감정 흐름에 맞는 행동 제안이 여기에 채워집니다."
-                        : "추천 행동을 하나씩 완료하면서 오늘의 회복 루틴을 만들어보세요."
+                        ? "기록을 마치면 오늘 해볼 행동이 여기에 표시됩니다."
+                        : "하나씩 완료하면서 오늘의 흐름을 정리해보세요."
                 )
 
                 Button(action: onOpenBadge) {
@@ -423,7 +423,7 @@ private struct SuggestionFrontCard: View {
                                 .font(.system(size: 13, weight: .medium, design: .rounded))
                                 .foregroundStyle(.secondary)
                             Text(progressSummary)
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
                                 .foregroundStyle(.primary)
                         }
 
@@ -452,7 +452,7 @@ private struct SuggestionFrontCard: View {
 
     private var progressSummary: String {
         if todayBoard.suggestions.isEmpty {
-            return "기록 제출 후 행동 제안 3개가 생성돼요"
+            return "기록을 제출하면 행동 제안이 생성됩니다."
         }
 
         return "\(Int(todayBoard.suggestionProgress * 100))% 완료"
@@ -499,17 +499,17 @@ private struct SuggestionEmptyState: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("아직 추천 행동이 없어요")
-                .font(.system(size: 17, weight: .bold, design: .rounded))
+                .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(.primary)
 
-            Text("감정 기록을 마치면 분석 결과를 바탕으로 지금 해볼 만한 행동 제안이 자동으로 정리됩니다.")
+            Text("감정 기록을 마치면 분석 결과를 바탕으로 행동 제안이 정리됩니다.")
                 .mentorySupportText()
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 8) {
-                SuggestionHintRow(text: "감정 상태에 맞는 행동 3가지를 제안")
-                SuggestionHintRow(text: "완료 여부를 체크하며 루틴처럼 사용")
-                SuggestionHintRow(text: "완료 횟수에 따라 뱃지가 누적")
+                SuggestionHintRow(text: "감정 상태에 맞는 행동을 제안합니다.")
+                SuggestionHintRow(text: "완료 여부를 바로 표시할 수 있습니다.")
+                SuggestionHintRow(text: "완료 횟수에 따라 뱃지가 쌓입니다.")
             }
             .padding(.top, 4)
         }
@@ -544,9 +544,9 @@ private struct BadgeBackCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 12) {
                 MentorySectionHeader(
-                    eyebrow: "BADGE COLLECTION",
+                    eyebrow: "뱃지",
                     title: "획득한 뱃지",
-                    subtitle: "추천 행동을 완료할수록 감정 케어 루틴이 누적되고 새로운 뱃지가 열립니다."
+                    subtitle: "추천 행동 완료 수에 따라 뱃지가 쌓입니다."
                 )
 
                 Button(action: onClose) {
@@ -577,16 +577,16 @@ private struct DateSelectionSheet: View {
         NavigationStack {
             MentoryScrollScreen(spacing: 18, topPadding: 20, bottomPadding: 24) {
                 MentorySectionHeader(
-                    eyebrow: "DATE PICKER",
-                    title: "어느 날의 기록을 남길까요?",
-                    subtitle: "오늘, 어제, 그제 중 아직 작성하지 않은 날짜를 선택해 기록을 이어갈 수 있어요."
+                    eyebrow: "날짜 선택",
+                    title: "작성할 날짜를 선택하세요",
+                    subtitle: "최근 3일 중 아직 작성하지 않은 날짜를 선택할 수 있습니다."
                 )
 
                 if todayBoard.recordForms.isEmpty {
                     MentoryStatusCard(
                         systemImage: "checkmark.circle.fill",
                         title: "모든 기록이 완료되었어요",
-                        message: "최근 3일의 기록을 모두 남겼습니다. 내일 새로운 흐름이 열리면 다시 이어서 작성해보세요.",
+                        message: "최근 3일의 기록을 모두 작성했습니다. 다음 기록은 새로운 날짜가 열리면 이어서 남길 수 있어요.",
                         tint: .green
                     )
                 } else {
@@ -635,22 +635,22 @@ private struct DateButton: View {
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(date.relativeDay(from: .now).rawValue.isEmpty ? date.formatted() : date.relativeDay(from: .now).rawValue)
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
                         .foregroundStyle(.primary)
 
                     Text(recordForm.isDisabled ? "이미 작성한 날짜예요" : date.formatted())
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
                 Text(recordForm.isDisabled ? "완료" : "작성")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(recordForm.isDisabled ? .secondary : Color.mentoryAccentPrimary)
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 18)

@@ -18,7 +18,7 @@ struct MindAnalyzerView: View {
     var body: some View {
         MindAnalyzerLayout {
             MentorySectionHeader(
-                eyebrow: "ANALYSIS FLOW",
+                eyebrow: "분석",
                 title: headerTitle,
                 subtitle: headerSubtitle
             )
@@ -32,7 +32,7 @@ struct MindAnalyzerView: View {
                 )
 
                 AnalyzeButton(
-                    label: mindAnalyzer.status.isAnalyzing ? "분석 중" : "리포트 생성하기",
+                    label: mindAnalyzer.status.isAnalyzing ? "분석 중" : "분석 시작",
                     isDisabled: mindAnalyzer.character == nil || mindAnalyzer.status.isAnalyzing
                 ) {
                     showingSubmitAlert = true
@@ -51,12 +51,12 @@ struct MindAnalyzerView: View {
                         }
                     }
                 } message: {
-                    Text("분석을 시작하면 오늘 기록을 기준으로 감정 리포트와 행동 제안을 생성합니다.")
+                    Text("오늘 기록을 기준으로 감정 리포트와 행동 제안을 정리합니다.")
                 }
 
                 ResultPanel(
-                    readyPrompt: "멘토를 선택하면 감정 해석, 공감 메시지, 행동 제안을 한 번에 정리한 리포트가 생성됩니다.",
-                    progressPrompt: "선택한 멘토가 기록을 읽고 감정 흐름을 분석하고 있어요.",
+                    readyPrompt: "멘토를 선택하면 감정 해석과 행동 제안을 함께 확인할 수 있습니다.",
+                    progressPrompt: "선택한 멘토가 기록을 읽고 감정을 정리하고 있습니다.",
                     isProgress: false,
                     result: mindAnalyzer.analyzedResult,
                     mindType: mindAnalyzer.mindType
@@ -70,8 +70,8 @@ struct MindAnalyzerView: View {
                 )
 
                 ResultPanel(
-                    readyPrompt: "멘토를 선택하면 감정 해석, 공감 메시지, 행동 제안을 한 번에 정리한 리포트가 생성됩니다.",
-                    progressPrompt: "선택한 멘토가 기록을 읽고 감정 흐름을 분석하고 있어요.",
+                    readyPrompt: "멘토를 선택하면 감정 해석과 행동 제안을 함께 확인할 수 있습니다.",
+                    progressPrompt: "선택한 멘토가 기록을 읽고 감정을 정리하고 있습니다.",
                     isProgress: true,
                     result: mindAnalyzer.analyzedResult,
                     mindType: mindAnalyzer.mindType
@@ -84,8 +84,8 @@ struct MindAnalyzerView: View {
                 )
 
                 ResultPanel(
-                    readyPrompt: "멘토를 선택하면 감정 해석, 공감 메시지, 행동 제안을 한 번에 정리한 리포트가 생성됩니다.",
-                    progressPrompt: "선택한 멘토가 기록을 읽고 감정 흐름을 분석하고 있어요.",
+                    readyPrompt: "멘토를 선택하면 감정 해석과 행동 제안을 함께 확인할 수 있습니다.",
+                    progressPrompt: "선택한 멘토가 기록을 읽고 감정을 정리하고 있습니다.",
                     isProgress: false,
                     result: mindAnalyzer.analyzedResult,
                     mindType: mindAnalyzer.mindType
@@ -93,7 +93,7 @@ struct MindAnalyzerView: View {
 
                 ConfirmButton(
                     icon: "checkmark.circle.fill",
-                    label: "오늘 기록 마무리하기",
+                    label: "확인",
                     isPresented: mindAnalyzer.status.isAnalyzeFinished
                 ) {
                     let recordForm = mindAnalyzer.owner!
@@ -108,22 +108,22 @@ struct MindAnalyzerView: View {
     private var headerTitle: String {
         switch mindAnalyzer.status {
         case .ready:
-            return "어떤 멘토의 시선으로 정리할까요?"
+            return "멘토를 선택하세요"
         case .analyzing:
-            return "리포트를 정리하고 있어요"
+            return "분석 중입니다"
         case .finished:
-            return "오늘의 감정 리포트가 완성됐어요"
+            return "분석 결과"
         }
     }
 
     private var headerSubtitle: String {
         switch mindAnalyzer.status {
         case .ready:
-            return "멘토를 선택하면 같은 기록도 다른 톤과 시선으로 정리됩니다. 오늘의 마음에 더 잘 맞는 쪽을 골라보세요."
+            return "멘토를 선택하면 기록을 어떤 톤으로 정리할지 미리 확인할 수 있습니다."
         case .analyzing:
-            return "기록, 감정, 첨부 자료를 함께 읽으며 오늘의 핵심 정서를 정리하고 있습니다."
+            return "기록과 첨부 자료를 바탕으로 감정을 정리하고 있습니다."
         case .finished:
-            return "분석 결과를 확인하고 오늘의 행동 제안까지 이어서 점검해보세요."
+            return "결과를 확인한 뒤 오늘의 행동 제안으로 이어가세요."
         }
     }
 }
@@ -232,7 +232,7 @@ private struct CharacterPicker: View {
             let base = VStack(alignment: .leading, spacing: 14) {
                 HStack {
                     MentoryInfoChip(
-                        text: isSelected ? "선택됨" : "멘토 선택",
+                        text: isSelected ? "선택됨" : "멘토",
                         systemImage: isSelected ? "checkmark.circle.fill" : "person.crop.circle"
                     )
                     Spacer()
@@ -246,7 +246,7 @@ private struct CharacterPicker: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(character.displayName)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
                         .foregroundStyle(.primary)
 
                     Text(character.description)
@@ -351,9 +351,9 @@ private struct ResultPanel: View {
                             .tint(Color.mentoryAccentPrimary)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("분석 중")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundStyle(.primary)
+                    Text("분석 중")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.primary)
 
                             Text(progressPrompt)
                                 .mentorySupportText()
@@ -367,24 +367,24 @@ private struct ResultPanel: View {
         } else if let result, result.isEmpty == false {
             MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
                 VStack(alignment: .leading, spacing: 16) {
-                    MentoryInfoChip(text: "ANALYSIS REPORT", systemImage: "waveform.path.ecg")
+                    MentoryInfoChip(text: "분석 결과", systemImage: "waveform.path.ecg")
 
                     if let mindType {
                         MindTypeResultView(mindType: mindType)
                     }
 
                     Text(result)
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .font(.system(size: 15, weight: .regular, design: .rounded))
                         .foregroundStyle(.primary)
-                        .lineSpacing(6)
+                        .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
         } else {
             MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("리포트 미리보기")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                    Text("결과 미리보기")
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundStyle(.primary)
 
                     Text(readyPrompt)
@@ -400,8 +400,8 @@ private struct ResultPanel: View {
     private var analysisHighlights: some View {
         VStack(alignment: .leading, spacing: 10) {
             AnalysisHighlightRow(title: "감정 해석", description: "오늘의 정서를 한 문장으로 요약")
-            AnalysisHighlightRow(title: "공감 메시지", description: "선택한 멘토의 톤으로 정리")
-            AnalysisHighlightRow(title: "행동 제안", description: "지금 바로 해볼 수 있는 3가지 추천")
+            AnalysisHighlightRow(title: "메시지", description: "선택한 멘토의 톤으로 정리")
+            AnalysisHighlightRow(title: "행동 제안", description: "바로 해볼 수 있는 추천 정리")
         }
     }
 
@@ -415,11 +415,11 @@ private struct ResultPanel: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(mindType.title)
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
                         .foregroundStyle(.primary)
 
                     Text(mindType.description)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -447,11 +447,11 @@ private struct AnalysisHighlightRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(.primary)
 
                 Text(description)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
             }
         }

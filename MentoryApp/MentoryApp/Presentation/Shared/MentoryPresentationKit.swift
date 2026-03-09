@@ -97,7 +97,7 @@ struct MentorySectionHeader: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             if let eyebrow, eyebrow.isEmpty == false {
                 MentoryInfoChip(text: eyebrow, systemImage: "sparkles")
             }
@@ -125,18 +125,18 @@ struct MentoryInfoChip: View {
         HStack(spacing: 6) {
             if let systemImage {
                 Image(systemName: systemImage)
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
             }
 
             Text(text)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.system(size: 11, weight: .medium, design: .rounded))
         }
         .foregroundStyle(Color.mentoryAccentPrimary)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 9)
+        .padding(.vertical, 5)
         .background(
             Capsule(style: .continuous)
-                .fill(Color.mentoryAccentPrimary.opacity(0.12))
+                .fill(Color.mentoryAccentPrimary.opacity(0.08))
         )
     }
 }
@@ -152,7 +152,7 @@ struct MentoryMetricPill: View {
                 .foregroundStyle(.secondary)
 
             Text(value)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -179,17 +179,18 @@ struct MentoryStatusCard: View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 24) {
             VStack(spacing: 14) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 28, weight: .semibold))
+                    .font(.system(size: 24, weight: .medium))
                     .foregroundStyle(tint)
 
                 Text(title)
-                    .font(.system(size: 19, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundStyle(.primary)
 
                 Text(message)
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(2)
             }
             .frame(maxWidth: .infinity)
         }

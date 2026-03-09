@@ -24,7 +24,7 @@ class SettingBoardViewModel: ObservableObject {
     @Published var isShowingTermsOfServiceView = false
 
     @Published var isShowingDataDeletionAlert = false
-    @Published var notificationStatusText: String = "요청 전"
+    @Published var notificationStatusText: String = "미설정"
 
     func onAppear(settingBoard: SettingBoard) async {
         settingBoard.loadSavedReminderTime()
@@ -37,11 +37,11 @@ class SettingBoardViewModel: ObservableObject {
 
         switch settings.authorizationStatus {
         case .authorized, .provisional, .ephemeral:
-            notificationStatusText = "ON"
+            notificationStatusText = "허용됨"
         case .denied:
-            notificationStatusText = "OFF"
+            notificationStatusText = "꺼짐"
         case .notDetermined:
-            notificationStatusText = "요청 전"
+            notificationStatusText = "미설정"
         @unknown default:
             notificationStatusText = "-"
         }
@@ -83,7 +83,7 @@ struct SettingBoardView: View {
 
                 SettingSection(
                     title: "프로필 및 알림",
-                    subtitle: "닉네임과 알림 흐름을 관리해 사용 경험을 내 생활 리듬에 맞출 수 있어요."
+                    subtitle: "닉네임과 알림 설정을 관리할 수 있습니다."
                 ) {
                     EditingNameRow
                     AppSettingsRow
@@ -93,7 +93,7 @@ struct SettingBoardView: View {
 
                 SettingSection(
                     title: "정책 및 안내",
-                    subtitle: "서비스 이용에 필요한 약관, 개인정보 처리방침, 라이선스 정보를 확인할 수 있어요."
+                    subtitle: "서비스 이용에 필요한 문서를 확인할 수 있습니다."
                 ) {
                     PrivacyPolicyRow
                     LicenseInfoRow
@@ -102,7 +102,7 @@ struct SettingBoardView: View {
 
                 SettingSection(
                     title: "데이터 관리",
-                    subtitle: "앱 데이터를 초기화하는 작업은 되돌릴 수 없으니 신중하게 진행해 주세요."
+                    subtitle: "앱 데이터를 초기화하는 작업은 되돌릴 수 없습니다."
                 ) {
                     DataDeletionRow
                 }
@@ -131,13 +131,13 @@ struct SettingBoardView: View {
     private var HeaderSection: some View {
         MentorySectionCard(cornerRadius: 34, contentPadding: 24) {
             VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "SETTINGS", systemImage: "gearshape")
+                MentoryInfoChip(text: "설정", systemImage: "gearshape")
 
                 Text(settingBoard.owner?.getGreetingText() ?? "설정을 준비하고 있어요")
                     .mentoryTitle()
                     .foregroundStyle(.primary)
 
-                Text("Mentory의 이름, 알림, 안내 문서를 한 곳에서 관리할 수 있습니다. 포트폴리오 데모에서도 제품 화면처럼 읽히도록 구조를 정리했어요.")
+                Text("이름, 알림, 안내 문서를 한 곳에서 관리할 수 있습니다.")
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -156,7 +156,7 @@ struct SettingBoardView: View {
             iconName: "person.text.rectangle",
             iconBackground: .orange,
             title: "이름 변경",
-            subtitle: "멘토 메시지와 안내 문구에 반영되는 이름을 수정합니다."
+            subtitle: "멘토 메시지와 안내 문구에 표시되는 이름을 수정합니다."
         ) {
             Task {
                 settingBoard.setUpEditingName()
@@ -206,7 +206,7 @@ struct SettingBoardView: View {
             iconName: "clock.fill",
             iconBackground: .purple,
             title: "알림 시간",
-            subtitle: "매일 감정 기록을 떠올리기 좋은 시간으로 조정합니다.",
+            subtitle: "감정 기록을 떠올리기 좋은 시간으로 조정합니다.",
             value: settingBoard.formattedReminderTime()
         ) {
             settingBoardViewModel.isShowingReminderPickerSheet = true
@@ -222,7 +222,7 @@ struct SettingBoardView: View {
             iconName: "lock.fill",
             iconBackground: .gray,
             title: "개인정보 처리방침",
-            subtitle: "수집 항목, 이용 목적, 보관 및 파기 기준을 확인합니다."
+            subtitle: "수집 항목과 이용 목적, 보관 기준을 확인합니다."
         ) {
             settingBoardViewModel.isShowingPrivacyPolicyView = true
         }
@@ -252,7 +252,7 @@ struct SettingBoardView: View {
             iconName: "book.fill",
             iconBackground: .blue.opacity(0.85),
             title: "이용 약관",
-            subtitle: "서비스 제공 범위와 이용 조건, 책임 범위를 안내합니다."
+            subtitle: "서비스 이용 조건과 책임 범위를 안내합니다."
         ) {
             settingBoardViewModel.isShowingTermsOfServiceView = true
         }
@@ -296,9 +296,9 @@ struct SettingBoardView: View {
 
                 VStack(spacing: 20) {
                     MentorySectionHeader(
-                        eyebrow: "REMINDER TIME",
+                        eyebrow: "알림 시간",
                         title: "알림 시간을 조정하세요",
-                        subtitle: "일상을 방해하지 않으면서 감정 기록을 떠올릴 수 있는 시간으로 맞춰보세요."
+                        subtitle: "기록을 떠올리기 좋은 시간으로 설정할 수 있습니다."
                     )
 
                     MentorySectionCard(cornerRadius: 28, contentPadding: 16) {
@@ -351,11 +351,11 @@ struct SettingSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
                 .foregroundStyle(.primary)
 
             Text(subtitle)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .foregroundStyle(.secondary)
 
             MentorySectionCard(cornerRadius: 28, contentPadding: 8) {
@@ -382,12 +382,12 @@ struct SettingRow: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(titleColor)
 
                     if let subtitle {
                         Text(subtitle)
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .font(.system(size: 12, weight: .regular, design: .rounded))
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -397,7 +397,7 @@ struct SettingRow: View {
 
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.secondary)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 12, weight: .medium))
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 12)
@@ -422,12 +422,12 @@ struct SettingValueRow: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(.primary)
 
                     if let subtitle {
                         Text(subtitle)
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .font(.system(size: 12, weight: .regular, design: .rounded))
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -436,17 +436,18 @@ struct SettingValueRow: View {
                 Spacer()
 
                 Text(value)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(Color.mentoryAccentPrimary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(
                         Capsule()
-                            .fill(Color.mentoryAccentPrimary.opacity(0.12))
+                            .fill(Color.mentoryAccentPrimary.opacity(0.08))
                     )
 
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.secondary)
+                    .font(.system(size: 12, weight: .medium))
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 12)

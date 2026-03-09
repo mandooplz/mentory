@@ -140,13 +140,13 @@ struct TermsOfServiceView: View {
         MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
             VStack(alignment: .leading, spacing: 12) {
                 MentorySectionHeader(
-                    eyebrow: "TERMS",
-                    title: "Mentory 이용약관",
-                    subtitle: "서비스 이용과 관련된 권리, 의무, 책임 범위를 보기 쉬운 카드 구조로 정리했습니다."
+                    eyebrow: "이용 약관",
+                    title: "이용 약관",
+                    subtitle: "서비스 이용과 관련된 주요 조건과 책임 범위를 확인할 수 있습니다."
                 )
 
                 Text("최종 업데이트: 2025. 11. 18")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
             }
         }
@@ -160,14 +160,14 @@ private struct TermsSectionView: View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(section.title)
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(section.lines, id: \.self) { line in
                         Text(line)
                             .font(
                                 .system(
                                     size: line.hasPrefix("•") || line.hasPrefix("  -") ? 14 : 13,
-                                    weight: .medium,
+                                    weight: line.hasPrefix("•") || line.hasPrefix("  -") ? .regular : .medium,
                                     design: .rounded
                                 )
                             )

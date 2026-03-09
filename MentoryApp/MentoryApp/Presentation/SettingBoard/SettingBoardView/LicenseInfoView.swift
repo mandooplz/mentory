@@ -217,7 +217,7 @@ Apache License
                 text: apacheLicenseText
             )
         }
-        .navigationTitle("라이센스 정보")
+        .navigationTitle("라이선스 정보")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -225,13 +225,13 @@ Apache License
         MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
             VStack(alignment: .leading, spacing: 12) {
                 MentorySectionHeader(
-                    eyebrow: "OPEN SOURCE",
-                    title: "Mentory 오픈소스 라이선스",
-                    subtitle: "앱에 사용된 오픈소스 프로젝트와 라이선스 정보를 제품 문서 형태로 정리했습니다."
+                    eyebrow: "오픈소스",
+                    title: "오픈소스 라이선스",
+                    subtitle: "앱에 사용된 오픈소스 프로젝트와 라이선스 정보를 확인할 수 있습니다."
                 )
 
                 Text(introSubtitle)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
             }
         }
@@ -243,8 +243,8 @@ Apache License
                 Image(systemName: "heart.text.square.fill")
                     .font(.title3)
                     .foregroundStyle(Color.pink)
-                Text("Mentory는 커뮤니티가 만든 오픈소스 생태계 덕분에 더 나은 기능을 제공할 수 있습니다. 소중한 기여에 진심으로 감사드립니다.")
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                Text("Mentory는 다양한 오픈소스 프로젝트의 도움을 받아 만들어졌습니다. 각 프로젝트의 기여에 감사드립니다.")
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
                     .foregroundStyle(.primary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -261,14 +261,14 @@ private struct LibraryCardView: View {
                 HStack(alignment: .center) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(library.name)
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
                         Text(library.identifier)
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .font(.system(size: 13, weight: .regular, design: .rounded))
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
                     Text(library.licenseType)
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(Color.mentoryAccentPrimary.opacity(0.1))
@@ -294,7 +294,7 @@ private struct LabelValueRow: View {
                 .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(.system(size: 14, weight: .regular, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -308,7 +308,7 @@ private struct LicenseDocumentView: View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(title)
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
                 ScrollView {
                     Text(text)
                         .font(.footnote.monospaced())

@@ -22,7 +22,7 @@ struct BadgeGridView: View {
                         .foregroundStyle(.secondary)
 
                     Text("\(completedCount)개")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
                         .foregroundStyle(.primary)
                 }
 
@@ -93,7 +93,7 @@ fileprivate struct BadgeItemView: View {
             }
 
             Text(badgeType.rawValue)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(isEarned ? .primary : .secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)

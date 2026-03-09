@@ -27,7 +27,7 @@ struct OnboardingView: View {
                     submitButton
 
                     Text("이름은 언제든지 설정에서 변경할 수 있어요.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -45,14 +45,14 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: 18) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 12) {
-                        MentoryInfoChip(text: "WELCOME TO MENTORY", systemImage: "sparkles")
+                        MentoryInfoChip(text: "시작", systemImage: "sparkles")
 
-                        Text("감정 기록을\n멘토링 흐름으로 바꿔볼까요?")
+                        Text("어떻게 불러드릴까요?")
                             .mentoryTitle()
                             .foregroundStyle(.primary)
                             .fixedSize(horizontal: false, vertical: true)
 
-                        Text("이름을 설정하면 오늘부터 기록, 감정 리포트, 행동 제안을 하나의 흐름으로 이어서 경험할 수 있어요.")
+                        Text("이름을 설정하면 기록과 분석 결과를 더 자연스럽게 이어서 볼 수 있어요.")
                             .mentorySupportText()
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -79,16 +79,16 @@ struct OnboardingView: View {
         MentorySectionCard(cornerRadius: 30, contentPadding: 20) {
             VStack(alignment: .leading, spacing: 14) {
                 Text("이름 또는 닉네임")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(.primary)
 
                 HStack(spacing: 12) {
                     Image(systemName: "person.crop.circle.fill")
-                        .font(.system(size: 20))
+                        .font(.system(size: 18))
                         .foregroundStyle(Color.mentoryAccentPrimary)
 
                     TextField("어떻게 불러드리면 좋을까요?", text: $onboarding.nameInput)
-                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                        .font(.system(size: 17, weight: .medium, design: .rounded))
                         .focused($isNameFieldFocused)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -119,11 +119,11 @@ struct OnboardingView: View {
 
                 if onboarding.validationResult == .nameInputIsEmpty {
                     Text("이름을 입력하면 시작할 수 있어요.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(.red.opacity(0.85))
                 } else {
                     Text("설정된 이름은 메시지와 멘토링 문구에 자연스럽게 반영됩니다.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -133,7 +133,7 @@ struct OnboardingView: View {
     @ViewBuilder
     private var submitButton: some View {
         Button(action: submitIfPossible) {
-            Text("Mentory 시작하기")
+            Text("시작하기")
         }
         .buttonStyle(MentoryPrimaryButtonStyle(isEnabled: !isSubmitDisabled))
         .disabled(isSubmitDisabled)

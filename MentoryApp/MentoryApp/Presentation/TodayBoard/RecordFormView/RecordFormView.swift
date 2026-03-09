@@ -32,7 +32,7 @@ struct RecordFormView: View {
                             await recordForm.submit()
                         }
                     }
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(recordForm.canProceed ? Color.mentoryAccentPrimary : .secondary)
                     .disabled(!recordForm.canProceed)
                     .navigationDestination(item: $recordForm.mindAnalyzer) { mindAnalyzer in
@@ -102,13 +102,13 @@ fileprivate struct RecordFormHeader: View {
     var body: some View {
         MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
             VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "RECORD ENTRY", systemImage: "square.and.pencil")
+                MentoryInfoChip(text: "기록", systemImage: "square.and.pencil")
 
                 Text(dateTitle)
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .semibold, design: .rounded))
                     .foregroundStyle(.primary)
 
-                Text("텍스트를 먼저 정리하고, 필요하면 사진이나 음성을 더해 오늘의 맥락을 풍부하게 남겨보세요.")
+                Text("먼저 텍스트로 정리하고, 필요하면 사진이나 음성을 함께 남길 수 있어요.")
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -161,7 +161,7 @@ fileprivate struct LiquidGlassIconButtonLabel: View {
                 )
 
             Text(label)
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .font(.system(size: 11, weight: .medium, design: .rounded))
                 .foregroundStyle(isEnabled ? .primary : .secondary)
         }
         .frame(minWidth: 64)
@@ -181,7 +181,7 @@ fileprivate struct TitleField: View {
                 fieldHeader(title: "제목", helper: "오늘 기록을 한 줄로 요약해보세요.")
 
                 TextField(prompt, text: $text)
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 18, weight: .medium, design: .rounded))
                     .foregroundStyle(.primary)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -214,7 +214,7 @@ fileprivate struct BodyField: View {
 
                     TextEditor(text: $text)
                         .scrollContentBackground(.hidden)
-                        .font(.system(size: 17, weight: .medium, design: .rounded))
+                        .font(.system(size: 16, weight: .regular, design: .rounded))
                         .frame(minHeight: 260)
                 }
             }
@@ -228,11 +228,11 @@ fileprivate struct BodyField: View {
 fileprivate func fieldHeader(title: String, helper: String) -> some View {
     VStack(alignment: .leading, spacing: 4) {
         Text(title)
-            .font(.system(size: 15, weight: .semibold, design: .rounded))
+            .font(.system(size: 14, weight: .medium, design: .rounded))
             .foregroundStyle(.primary)
 
         Text(helper)
-            .font(.system(size: 13, weight: .medium, design: .rounded))
+            .font(.system(size: 13, weight: .regular, design: .rounded))
             .foregroundStyle(.secondary)
     }
 }
@@ -243,16 +243,16 @@ fileprivate struct AttachmentSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             MentorySectionHeader(
-                eyebrow: "ATTACHMENTS",
+                eyebrow: "첨부",
                 title: "첨부 자료",
-                subtitle: "사진이나 음성을 더하면 오늘의 맥락을 더 풍부하게 이해할 수 있어요."
+                subtitle: "필요한 경우 사진이나 음성을 함께 남길 수 있습니다."
             )
 
             if model.imageInput == nil, model.voiceInput == nil {
                 MentorySectionCard(cornerRadius: 28, contentPadding: 18) {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("아직 첨부된 자료가 없어요")
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .font(.system(size: 15, weight: .medium, design: .rounded))
                             .foregroundStyle(.primary)
 
                         Text("하단 버튼으로 사진, 카메라, 음성 기록을 추가할 수 있습니다.")
@@ -351,7 +351,7 @@ fileprivate struct ImagePreviewCard: View {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Label("첨부된 이미지", systemImage: "photo")
-                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
                                 .foregroundStyle(.secondary)
 
                             Spacer()
@@ -394,7 +394,7 @@ fileprivate struct VoicePreviewCard: View {
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text("음성 메모 첨부됨")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .font(.system(size: 14, weight: .medium, design: .rounded))
                                 .foregroundStyle(.primary)
 
                             Text(voiceInput.lastPathComponent)

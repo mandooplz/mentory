@@ -30,12 +30,12 @@ struct SuggestionView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(suggestion.content.isEmpty ? " " : suggestion.content)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(suggestion.isDone ? .secondary : .primary)
                         .multilineTextAlignment(.leading)
                         .strikethrough(suggestion.isDone, color: .secondary)
 
-                    Text(suggestion.isDone ? "완료된 루틴" : "탭해서 완료로 표시")
+                    Text(suggestion.isDone ? "완료됨" : "완료로 표시")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
@@ -68,7 +68,7 @@ struct SuggestionView: View {
                 )
 
             Image(systemName: suggestion.isDone ? "checkmark" : "circle.fill")
-                .font(.system(size: suggestion.isDone ? 12 : 7, weight: .bold))
+                .font(.system(size: suggestion.isDone ? 12 : 7, weight: .semibold))
                 .foregroundStyle(suggestion.isDone ? .white : Color.mentoryBorder.opacity(0.55))
         }
         .animation(.spring(response: 0.25, dampingFraction: 0.72), value: suggestion.isDone)

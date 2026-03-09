@@ -57,7 +57,7 @@ public struct StatBoardView: View {
                         MentorySectionCard(cornerRadius: 30, contentPadding: 18) {
                             VStack(alignment: .leading, spacing: 14) {
                                 Text("감정 캘린더")
-                                    .font(.system(size: 19, weight: .bold, design: .rounded))
+                                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                                     .foregroundStyle(.primary)
 
                                 CalendarGrid(
@@ -76,10 +76,10 @@ public struct StatBoardView: View {
                             MentorySectionCard(cornerRadius: 28, contentPadding: 20) {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text(selected.formatted(date: .long, time: .omitted))
-                                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                                        .font(.system(size: 17, weight: .semibold, design: .rounded))
                                         .foregroundStyle(.primary)
 
-                                    Text("이 날짜에는 아직 분석 결과가 없어요.")
+                                    Text("이 날짜에는 아직 분석 결과가 없습니다.")
                                         .mentorySupportText()
                                         .foregroundStyle(.secondary)
                                 }
@@ -132,14 +132,14 @@ private struct StatisticsHero: View {
     var body: some View {
         MentorySectionCard(cornerRadius: 34, contentPadding: 24) {
             VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "EMOTION DASHBOARD", systemImage: "chart.xyaxis.line")
+                MentoryInfoChip(text: "통계", systemImage: "chart.xyaxis.line")
 
-                Text("기록이 쌓일수록 감정 패턴이 더 선명해집니다")
+                Text("월별 기록 흐름을 확인하세요")
                     .mentoryTitle()
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("월별 캘린더에서 감정 이모지와 리포트를 함께 확인하면서 어떤 흐름이 반복되는지 살펴보세요.")
+                Text("기록한 날짜와 감정 리포트를 함께 보면서 어떤 흐름이 이어졌는지 차분하게 확인할 수 있습니다.")
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -201,16 +201,16 @@ private struct MonthHeader: View {
                 } label: {
                     HStack(spacing: 8) {
                         Text(monthFormatter.string(from: month))
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
                         Image(systemName: "chevron.down")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.system(size: 12, weight: .medium))
                     }
                 }
                 .buttonStyle(MentorySecondaryButtonStyle())
 
                 Spacer()
 
-                Button("오늘로 이동") {
+                Button("오늘") {
                     onToday()
                 }
                 .buttonStyle(MentorySecondaryButtonStyle(isEnabled: !isCurrentMonth))
@@ -396,7 +396,7 @@ private struct DayCell: View {
         Button(action: onTap) {
             VStack(spacing: 4) {
                 Text("\(calendar.component(.day, from: day))")
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(isCurrentMonth ? Color.primary : Color.secondary.opacity(0.5))
 
                 if let record {
@@ -446,11 +446,11 @@ private struct SelectedDayCard: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(day.formatted(date: .long, time: .omitted))
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundStyle(.primary)
 
-                        Text("선택한 날짜의 감정 리포트")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                        Text("해당 날짜의 감정 리포트")
+                            .font(.system(size: 13, weight: .regular, design: .rounded))
                             .foregroundStyle(.secondary)
                     }
 
@@ -461,9 +461,9 @@ private struct SelectedDayCard: View {
                 }
 
                 Text(record.analyzedResult)
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
-                    .lineSpacing(5)
+                    .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

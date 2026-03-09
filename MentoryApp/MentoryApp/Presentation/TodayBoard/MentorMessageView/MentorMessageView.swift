@@ -23,9 +23,9 @@ struct MentorMessageView: View {
             image: mentorMessage.character?.imageName,
             defaultImage: "greeting",
             title: mentorMessage.character?.title,
-            defaultTitle: "오늘의 멘토리 조언을 준비하고 있어요",
+            defaultTitle: "멘토 메시지를 준비하고 있어요",
             content: mentorMessage.content,
-            defaultContent: "잠시 후 당신을 위한 멘토리 메시지가 도착해요\n오늘은 냉철이일까요, 구름이일까요?\n조금만 기다려 주세요"
+            defaultContent: "잠시 후 오늘 기록에 맞는 멘토 메시지가 표시됩니다.\n조금만 기다려 주세요."
         )
         .task {
             await mentorMessage.updateContent()
@@ -62,10 +62,10 @@ struct PopupCard: View {
                         )
 
                     VStack(alignment: .leading, spacing: 6) {
-                        MentoryInfoChip(text: "오늘의 멘토 메모", systemImage: "sparkles")
+                        MentoryInfoChip(text: "멘토 메시지", systemImage: "sparkles")
 
                         Text(title ?? defaultTitle)
-                            .font(.system(size: 19, weight: .bold, design: .rounded))
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundStyle(.primary)
                     }
 
@@ -73,9 +73,9 @@ struct PopupCard: View {
                 }
 
                 Text(forMarkdown(content ?? defaultContent))
-                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .font(.system(size: 15, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
-                    .lineSpacing(6)
+                    .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
