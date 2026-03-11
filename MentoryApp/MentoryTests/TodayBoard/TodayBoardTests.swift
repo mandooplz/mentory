@@ -294,7 +294,7 @@ struct TodayBoardTests {
             await todayBoard.loadSuggestions()
             
             let suggestions = await todayBoard.suggestions.map {
-                $0.target.rawValue
+                $0.suggestionID.id
             }
             
             #expect(suggestions.count == 3)
@@ -304,7 +304,7 @@ struct TodayBoardTests {
             
             // then
             let newSuggestions = await todayBoard.suggestions.map {
-                $0.target.rawValue
+                $0.suggestionID.id
             }
             
             #expect(

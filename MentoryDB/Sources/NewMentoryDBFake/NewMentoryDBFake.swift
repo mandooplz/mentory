@@ -16,7 +16,6 @@ import Collections
 public final class NewMentoryDBFake: NewMentoryDBInterface {
     // MARK: core
     private let logger = Logger()
-    
     public init() { }
 
     

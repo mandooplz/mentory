@@ -43,7 +43,10 @@ struct StatBoardTests {
             
             // 새로운 Record의 생성
             let testSnapshot = RecordSnapshot(
+                objectID: .init(),
+                recordID: .random,
                 recordDate: .now,
+                createdAt: .now,
                 analyzedResult: "SAMPLE_ANALYSIS",
                 emotion: .neutral
             )

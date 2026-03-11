@@ -13,7 +13,10 @@ struct NewMentoryDBFakeTests {
             self.newMentoryDBFake = await NewMentoryDBFake()
             
             self.testSnapshot = RecordSnapshot(
+                objectID: .init(),
+                recordID: .random,
                 recordDate: .now,
+                createdAt: .now,
                 analyzedResult: "TEST_RESULT",
                 emotion: .neutral
             )

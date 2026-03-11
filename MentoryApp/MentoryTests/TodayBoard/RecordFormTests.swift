@@ -43,7 +43,10 @@ struct RecordFormTests {
             let randomDateAtSameDay = targetDate.randomTimeInSameDay()
             
             let testSnapshot = RecordSnapshot(
+                objectID: .init(),
+                recordID: .random,
                 recordDate: .now,
+                createdAt: .now,
                 analyzedResult: "TEST_RESULT",
                 emotion: .neutral
             )
