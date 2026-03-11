@@ -32,21 +32,21 @@ final class NewDailySuggestionModel {
         self.status = status
     }
 
-    convenience init(data: SuggestionData) {
+    convenience init(data: SuggestionSnapshot) {
         self.init(
             id: data.objectID,
-            target: data.target.id,
+            target: data.suggestionID.id,
             parentRecord: data.parentRecord.id,
             content: data.content,
             status: data.isDone
         )
     }
 
-    func toData() -> SuggestionData {
-        SuggestionData(
-            id: id,
+    func toData() -> SuggestionSnapshot {
+        SuggestionSnapshot(
+            objectID: self.id,
+            suggestionID: SuggestionID(id: target),
             parentRecord: .init(id: self.parentRecord),
-            target: SuggestionID(id: target),
             content: content,
             isDone: status
         )

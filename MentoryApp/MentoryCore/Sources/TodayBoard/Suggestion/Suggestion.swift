@@ -19,13 +19,13 @@ public final class Suggestion: Sendable, ObservableObject {
     public init(
         owner: TodayBoard,
         parentRecord: RecordID,
-        target: SuggestionID,
+        suggestionID: SuggestionID,
         content: String,
         isDone: Bool
     ) {
         self.owner = owner
         self.parentRecord = parentRecord
-        self.target = target
+        self.target = suggestionID
         self.content = content
         self.isDone = isDone
     }

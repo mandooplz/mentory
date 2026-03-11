@@ -104,7 +104,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         // process - MentoryDB
         // DailyRecord & DailySuggestion 생성
-        let snapshot = RecordSnapshot(
+        let recordSnapshot = RecordSnapshot(
             objectID: .init(),
             recordDate: targetDate,
             createdAt: .now,
@@ -114,17 +114,20 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         let suggestionDatas = analysis.actionKeywords
             .map { actionText in
-                SuggestionData(
-                    parentRecord: snapshot.recordID,
-                    content: actionText
+                SuggestionSnapshot(
+                    objectID: .init(),
+                    suggestionID: .random,
+                    parentRecord: recordSnapshot.recordID,
+                    content: actionText,
+                    isDone: false
                 )
             }
 
-        await newMentoryDB.registerRecordSnapshot(snapshot)
+        await newMentoryDB.registerRecordSnapshot(recordSnapshot)
         await newMentoryDB.createDailyRecords()
         
-        guard let record = await newMentoryDB.getRecord(recordID: snapshot.recordID) else {
-            logger.error("\(snapshot.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
+        guard let record = await newMentoryDB.getRecord(recordID: recordSnapshot.recordID) else {
+            logger.error("\(recordSnapshot.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
             return
         }
         await record.addSuggestions(suggestionDatas)
@@ -170,7 +173,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             .map { Suggestion(
                 owner: todayBoard,
                 parentRecord: $0.parentRecord,
-                target: $0.target,
+                suggestionID: $0.suggestionID,
                 content: $0.content,
                 isDone: $0.isDone
             )

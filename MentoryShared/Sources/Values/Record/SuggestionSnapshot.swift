@@ -1,5 +1,5 @@
 //
-//  SuggestionData.swift
+//  SuggestionSnapshot.swift
 //  Mentory
 //
 //  Created by 김민우 on 12/2/25.
@@ -9,24 +9,20 @@ import Foundation
 
 // MARK: Value
 nonisolated
-public struct SuggestionData: Sendable, Hashable, Codable {
+public struct SuggestionSnapshot: Sendable, Hashable, Codable {
     // MARK: core
     public let objectID: UUID
+    public let suggestionID: SuggestionID
     
     public let parentRecord: RecordID
-    public let target: SuggestionID
     
     public let content: String
     public let isDone: Bool
     
-    public init(id: UUID = .init(),
-                parentRecord: RecordID,
-                target: SuggestionID = .random,
-                content: String,
-                isDone: Bool = false) {
-        self.objectID = id
+    public init(objectID: UUID, suggestionID: SuggestionID, parentRecord: RecordID, content: String, isDone: Bool) {
+        self.objectID = objectID
+        self.suggestionID = suggestionID
         self.parentRecord = parentRecord
-        self.target = target
         self.content = content
         self.isDone = isDone
     }

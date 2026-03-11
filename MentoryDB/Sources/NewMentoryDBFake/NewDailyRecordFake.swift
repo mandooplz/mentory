@@ -43,16 +43,16 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
     public var analyzedContent: String
     public var emotion: Emotion
 
-    public var suggestionDatas: [SuggestionData] = []
+    public var suggestionDatas: [SuggestionSnapshot] = []
     public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestionFake? {
         fatalError()
     }
-    public func addSuggestions(_ suggestionDatas: [SuggestionData]) async {
+    public func addSuggestions(_ suggestionDatas: [SuggestionSnapshot]) async {
         self.suggestionDatas.append(contentsOf: suggestionDatas)
     }
 
-    public var createSuggestionQueue: [SuggestionData] = []
-    public func insertTicket(_: [SuggestionData]) async {
+    public var createSuggestionQueue: [SuggestionSnapshot] = []
+    public func insertTicket(_: [SuggestionSnapshot]) async {
         fatalError()
     }
 

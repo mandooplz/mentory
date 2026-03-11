@@ -180,9 +180,10 @@ public final class TodayBoard: Sendable, ObservableObject {
                 Suggestion(
                     owner: self,
                     parentRecord: recordID,
-                    target: $0.target,
+                    suggestionID: $0.suggestionID,
                     content: $0.content,
-                    isDone: $0.isDone)
+                    isDone: $0.isDone
+                )
             }
 
         self.recentSuggestionUpdate = currentDate

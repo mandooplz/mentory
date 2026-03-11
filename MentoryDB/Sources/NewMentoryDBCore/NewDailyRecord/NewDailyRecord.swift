@@ -124,7 +124,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         }
     }
 
-    public var suggestionDatas: [SuggestionData] {
+    public var suggestionDatas: [SuggestionSnapshot] {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
@@ -158,7 +158,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             return nil
         }
     }
-    public func addSuggestions(_ suggestionDatas: [SuggestionData]) async {
+    public func addSuggestions(_ suggestionDatas: [SuggestionSnapshot]) async {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
@@ -182,12 +182,12 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         }
     }
 
-    public var createSuggestionQueue: [SuggestionData] {
+    public var createSuggestionQueue: [SuggestionSnapshot] {
         get {
             []
         }
     }
-    public func insertTicket(_ suggestionDatas: [SuggestionData]) async {
+    public func insertTicket(_ suggestionDatas: [SuggestionSnapshot]) async {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
