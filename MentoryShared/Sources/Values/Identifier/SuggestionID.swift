@@ -11,12 +11,9 @@ import Foundation
 public nonisolated struct SuggestionID: ObjectIdentifier {
     // MARK: core
     public let id: UUID
+    
     public init(_ id: UUID) {
         self.id = id
-    }
-    
-    public static var random: SuggestionID {
-        self.init(UUID())
     }
 }
 

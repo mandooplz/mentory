@@ -37,4 +37,10 @@ public extension ObjectIdentifier {
     init(from other: some ObjectIdentifier) {
         self.init(other.id)
     }
+    
+    
+    /// 무작위 UUID를 기반으로 새로운 식별자 인스턴스를 생성합니다.
+    ///
+    /// 테스트 데이터 생성이나 임시 식별자가 필요한 상황에서 사용할 수 있습니다.
+    static var random: Self { .init(UUID()) }
 }
