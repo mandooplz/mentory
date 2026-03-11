@@ -27,22 +27,12 @@ final class NewDailyRecordModel {
     init(data: RecordSnapshot,
          suggestions: [NewDailySuggestionModel] = []) {
         self.ticketId = data.objectID
-        self.recordID = data.recordID
+        self.recordID = data.recordID.id
         self.recordDate = data.recordDate.rawValue
         self.createdAt = data.createdAt.rawValue
         self.analyzedResult = data.analyzedResult
         self.emotion = data.emotion
         self.suggestions = suggestions
-    }
-
-    func toRecordData() -> RecordSnapshot {
-        .init(
-            objectID: ticketId,
-            recordDate: .init(recordDate),
-            createdAt: .init(createdAt),
-            analyzedResult: analyzedResult,
-            emotion: emotion
-        )
     }
     
     // MARK: value

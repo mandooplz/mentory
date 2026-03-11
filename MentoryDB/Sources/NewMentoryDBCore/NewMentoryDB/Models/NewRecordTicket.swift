@@ -10,6 +10,8 @@ import Foundation
 import SwiftData
 import Values
 
+
+
 @Model
 final class NewRecordTicket {
     @Attribute(.unique) var id: UUID
@@ -27,14 +29,16 @@ final class NewRecordTicket {
         self.analyzedResult = data.analyzedResult
         self.emotion = data.emotion
     }
+}
 
-    func toRecordData() -> RecordSnapshot {
+
+extension NewRecordTicket {
+    func toRecordSnapshot() -> RecordSnapshot {
         .init(
-            objectID: id,
-            recordDate: .init(recordDate),
-            createdAt: .init(createdAt),
-            analyzedResult: analyzedResult,
-            emotion: emotion
+            objectID: self.id,
+            recordDate: .init(self.recordDate),
+            analyzedResult: self.analyzedResult,
+            emotion: self.emotion
         )
     }
 }

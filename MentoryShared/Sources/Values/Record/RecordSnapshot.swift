@@ -9,10 +9,10 @@ import Foundation
 
 // MARK: Value
 nonisolated
-public struct RecordSnapshot: Sendable, Hashable, Codable, Equatable {
+public struct RecordSnapshot: Sendable {
     // MARK: core
     public let objectID: UUID
-    public let recordID: UUID
+    public let recordID: RecordID
     
     public let recordDate: MentoryDate
     public let createdAt: MentoryDate
@@ -21,8 +21,8 @@ public struct RecordSnapshot: Sendable, Hashable, Codable, Equatable {
     public let emotion: Emotion
     
     
-    public init(objectID: UUID = .init(),
-                recordID: UUID = .init(),
+    public init(objectID: UUID,
+                recordID: RecordID = .random,
                 recordDate: MentoryDate,
                 createdAt: MentoryDate = .now,
                 analyzedResult: String,

@@ -12,7 +12,7 @@ public nonisolated struct SuggestionID: ObjectIdentifier {
     // MARK: core
     public let id: UUID
     
-    public init(_ id: UUID) {
+    public init(id: UUID) {
         self.id = id
     }
 }

@@ -113,7 +113,7 @@ struct OnboardingTests {
             await onboarding.submitForm()
             
             // then
-            await #expect(mentory.todayBoard?.id == oldTodayBoard.id)
+            await #expect(mentory.todayBoard?.objectID == oldTodayBoard.objectID)
             await #expect(mentory.settingBoard?.id == oldSettingBoard.id)
         }
         

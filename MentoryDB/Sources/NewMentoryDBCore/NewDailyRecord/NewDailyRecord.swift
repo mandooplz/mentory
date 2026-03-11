@@ -39,7 +39,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             }
         }
     }
-    public var recordID: UUID {
+    public var recordID: RecordID {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
@@ -48,10 +48,9 @@ public actor NewDailyRecord: NewDailyRecordInterface {
                 throw NewMentoryDBError.recordNotFound
             }
 
-            return record.recordID
+            return .init(id: record.recordID)
         } catch {
-            logger.fault("getTicketID 실패: \(error.localizedDescription, privacy: .public)")
-            return UUID()
+            fatalError("getTicketID 실패: \(error.localizedDescription)")
         }
     }
 

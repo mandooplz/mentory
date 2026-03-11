@@ -17,7 +17,7 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
     // MARK: core
     internal init(id: UUID,
                   owner: NewMentoryDBFake,
-                  recordID: UUID,
+                  recordID: RecordID,
                   recordDate: MentoryDate,
                   createAt: MentoryDate,
                   analyzedContent: String,
@@ -34,7 +34,7 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
 
     // MARK: state
     public nonisolated let objectID: UUID
-    public var recordID: UUID
+    public var recordID: RecordID
     internal weak var owner: NewMentoryDBFake?
 
     public nonisolated let recordDate: MentoryDate

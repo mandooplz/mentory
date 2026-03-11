@@ -8,7 +8,7 @@ import Foundation
 import Values
 import Combine
 import OSLog
-import FirebaseLLMAdapter
+import NewFirebaseLLM
 
 
 // MARK: Object
@@ -104,7 +104,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         // process - MentoryDB
         // DailyRecord & DailySuggestion 생성
-        let recordData = RecordSnapshot(
+        let snapshot = RecordSnapshot(
             objectID: .init(),
             recordDate: targetDate,
             createdAt: .now,
@@ -115,16 +115,16 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         let suggestionDatas = analysis.actionKeywords
             .map { actionText in
                 SuggestionData(
-                    parentRecord: recordData.recordID,
+                    parentRecord: snapshot.recordID,
                     content: actionText
                 )
             }
 
-        await newMentoryDB.registerRecordSnapshot(recordData)
+        await newMentoryDB.registerRecordSnapshot(snapshot)
         await newMentoryDB.createDailyRecords()
         
-        guard let record = await newMentoryDB.getRecord(recordID: recordData.recordID) else {
-            logger.error("\(recordData.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
+        guard let record = await newMentoryDB.getRecord(recordID: snapshot.recordID) else {
+            logger.error("\(snapshot.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
             return
         }
         await record.addSuggestions(suggestionDatas)

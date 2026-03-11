@@ -13,7 +13,7 @@ public nonisolated struct RecordID: ObjectIdentifier {
     // MARK: core
     public nonisolated let id: UUID
     
-    public init(_ id: UUID) {
+    public init(id: UUID) {
         self.id = id
     }
 }

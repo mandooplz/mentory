@@ -12,11 +12,13 @@ import Values
 
 // MARK: object
 @MainActor
-public final class Suggestion: Sendable, ObservableObject, Identifiable {
+public final class Suggestion: Sendable, ObservableObject {
     // MARK: core
+    private nonisolated let logger = Logger()
+    
     public init(
         owner: TodayBoard,
-        parentRecord: UUID,
+        parentRecord: RecordID,
         target: SuggestionID,
         content: String,
         isDone: Bool
@@ -28,14 +30,14 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
         self.isDone = isDone
     }
 
-    nonisolated private let logger = Logger(subsystem: "Suggestion", category: "Domain")
+    
 
     // MARK: state
-    public nonisolated let id: UUID = UUID()
+    public nonisolated let objectID: ObjectID = .random
 
     public weak var owner: TodayBoard?
 
-    public nonisolated let parentRecord: UUID
+    public nonisolated let parentRecord: RecordID
     public nonisolated let target: SuggestionID
     public nonisolated let content: String
 
@@ -65,5 +67,14 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
         }
 
         await newDailySuggestion.setDone(isDone)
+    }
+    
+    
+    // MARK: value
+    public nonisolated struct ObjectID: ObjectIdentifier {
+        public let id: UUID
+        public init(id: UUID) {
+            self.id = id
+        }
     }
 }

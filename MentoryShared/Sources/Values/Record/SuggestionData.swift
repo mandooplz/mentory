@@ -13,14 +13,14 @@ public struct SuggestionData: Sendable, Hashable, Codable {
     // MARK: core
     public let objectID: UUID
     
-    public let parentRecord: UUID
+    public let parentRecord: RecordID
     public let target: SuggestionID
     
     public let content: String
     public let isDone: Bool
     
     public init(id: UUID = .init(),
-                parentRecord: UUID,
+                parentRecord: RecordID,
                 target: SuggestionID = .random,
                 content: String,
                 isDone: Bool = false) {

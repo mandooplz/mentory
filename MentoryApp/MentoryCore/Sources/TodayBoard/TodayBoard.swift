@@ -21,7 +21,7 @@ public final class TodayBoard: Sendable, ObservableObject {
     }
 
     // MARK: state
-    public nonisolated let id = UUID()
+    public nonisolated let objectID = ObjectID.random
     public weak var owner: Mentory?
 
     @Published public var mentorMessage: MentorMessage? = nil
@@ -199,5 +199,14 @@ public final class TodayBoard: Sendable, ObservableObject {
 
         // mutate
         self.recordCount = recordCount
+    }
+    
+    
+    // MARK: value
+    public nonisolated struct ObjectID: ObjectIdentifier {
+        public let id: UUID
+        public init(id: UUID) {
+            self.id = id
+        }
     }
 }

@@ -17,9 +17,7 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     // MARK: core
     private let logger = Logger()
     
-    public init() {
-        
-    }
+    public init() { }
 
     
     // MARK: state
@@ -61,7 +59,7 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         return self._records
             .max(by: { $0.recordDate < $1.recordDate })
     }
-    public func getRecord(recordID: UUID) async -> NewDailyRecordFake? {
+    public func getRecord(recordID: RecordID) async -> NewDailyRecordFake? {
         self._records.first(where: { $0.recordID == recordID })
     }
     public func isSameDayRecordExist(for date: MentoryDate) -> Bool {

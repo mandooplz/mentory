@@ -6,7 +6,7 @@
 //
 
 import Combine
-import FirebaseLLMAdapter
+import NewFirebaseLLM
 import Foundation
 import OSLog
 import Values

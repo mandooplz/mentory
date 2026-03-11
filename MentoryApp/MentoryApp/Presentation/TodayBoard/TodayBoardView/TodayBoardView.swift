@@ -387,7 +387,7 @@ private struct SuggestionFrontCard: View {
                         SuggestionEmptyState()
                     } else {
                         VStack(spacing: 10) {
-                            ForEach(todayBoard.suggestions, id: \.self.id) { suggestion in
+                            ForEach(todayBoard.suggestions, id: \.self.objectID) { suggestion in
                                 SuggestionView(suggestion: suggestion)
                             }
                         }

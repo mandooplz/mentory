@@ -18,7 +18,7 @@ public protocol NewDailyRecordInterface: Sendable {
 
     // MARK: state
     var objectID: UUID { get }
-    var recordID: UUID { get async }
+    var recordID: RecordID { get async }
 
     var recordDate: MentoryDate { get async }
     var createdAt: MentoryDate { get async }

@@ -1,6 +1,6 @@
 //
 //  NewDailySuggestionModel.swift
-//  MentoryDB
+//  : DB
 //
 //  Created by 김민우 on 3/7/26.
 //
@@ -36,7 +36,7 @@ final class NewDailySuggestionModel {
         self.init(
             id: data.objectID,
             target: data.target.id,
-            parentRecord: data.parentRecord,
+            parentRecord: data.parentRecord.id,
             content: data.content,
             status: data.isDone
         )
@@ -45,8 +45,8 @@ final class NewDailySuggestionModel {
     func toData() -> SuggestionData {
         SuggestionData(
             id: id,
-            parentRecord: parentRecord,
-            target: SuggestionID(target),
+            parentRecord: .init(id: self.parentRecord),
+            target: SuggestionID(id: target),
             content: content,
             isDone: status
         )

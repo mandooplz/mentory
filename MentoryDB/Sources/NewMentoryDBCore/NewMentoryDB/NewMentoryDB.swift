@@ -173,12 +173,12 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             return false
         }
     }
-    public func getRecord(recordID: UUID) -> NewDailyRecord? {
+    public func getRecord(recordID: RecordID) -> NewDailyRecord? {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            guard let dailyRecord = db.records.first(where: { $0.recordID == recordID }) else {
+            guard let dailyRecord = db.records.first(where: { $0.recordID == recordID.id }) else {
                 return nil
             }
 
@@ -245,7 +245,12 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                     continue
                 }
 
-                db.records.append(NewDailyRecordModel(data: ticket.toRecordData()))
+                // ticket으로부터 RecordSnapshot을 넎는다.
+                db.records.append(
+                    NewDailyRecordModel(
+                        data: ticket.toRecordSnapshot()
+                    )
+                )
                 existingTicketIDs.insert(ticketId)
                 createdCount += 1
             }
