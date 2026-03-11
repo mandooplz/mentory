@@ -212,43 +212,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             logger.error("insertTicket 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
-//    public func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async {
-//        guard suggestions.isEmpty == false else {
-//            return
-//        }
-//
-//        do {
-//            let context = try NewMentoryDBConfig.default.makeContext()
-//            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
-//
-//            guard let record = db.records.first(where: { $0.ticketId == ticketId }) else {
-//                throw NewMentoryDBError.recordNotFound
-//            }
-//
-//            var existingIDs = Set(record.suggestions.map { $0.id })
-//            var insertedCount = 0
-//
-//            for suggestion in suggestions {
-//                guard existingIDs.insert(suggestion.objectID).inserted else {
-//                    continue
-//                }
-//
-//                record.suggestions.append(NewDailySuggestionModel(data: suggestion))
-//                insertedCount += 1
-//            }
-//
-//            if insertedCount > 0 {
-//                try context.save()
-//            }
-//
-//            logger.debug(
-//                "insertSuggestions 완료 (inserted: \(insertedCount), skipped: \(suggestions.count - insertedCount))"
-//            )
-//        } catch {
-//            logger.error("insertSuggestions 실패: \(error.localizedDescription, privacy: .public)")
-//        }
-//    }
-
+    
     
     // MARK: action
     public func createDailyRecords() async {

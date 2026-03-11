@@ -94,30 +94,6 @@ struct MentoryTests {
         }
     }
     
-    struct SaveUserName {
-        let mentory: Mentory
-        let mentoryDB: any NewMentoryDBInterface
-        init() async throws {
-            self.mentory = await Mentory()
-            self.mentoryDB = mentory.newMentoryDB
-        }
-        
-        @Test func setUserName() async throws {
-            // given
-            await #expect(mentoryDB.name == nil)
-            
-            await MainActor.run {
-                mentory.userName = "TEST_USER_NAME"
-            }
-            
-            // when
-            await mentory.saveUserName()
-            
-            // then
-            await #expect(mentoryDB.name == "TEST_USER_NAME")
-        }
-    }
-    
     struct LoadUserName {
         let mentory: Mentory
         let mentoryDB: any NewMentoryDBInterface

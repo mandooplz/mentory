@@ -5,12 +5,14 @@
 //  Created by 김민우 on 11/13/25.
 //
 import Foundation
-import NewMentoryDBCore
 import OSLog
 import Values
-import iOSReminder
 import Combine
-import FirebaseLLMAdapter
+import iOSReminder
+import NewMentoryDBCore
+import NewMentoryDBFake
+import NewFirebaseLLM
+import NewFirebaseLLMFake
 
 
 // MARK: object
@@ -25,20 +27,20 @@ public final class Mentory: Sendable, ObservableObject {
     public init(_ mode: SystemMode = .test) {
         switch mode {
         case .real:
+            do {
+                try NewMentoryDBConfig.default.createOnce()
+            } catch {
+                logger.fault("\(error)")
+            }
+            
             self.firebaseLLM = NewFirebaseLLM()
             self.reminderCenter = RemindManager()
+            self.newMentoryDB = NewMentoryDB(id: NewMentoryDBConfig.default.rootID)
         case .test:
             self.firebaseLLM = NewFirebaseLLMFake()
             self.reminderCenter = RemindManagerFake()
+            self.newMentoryDB = NewMentoryDBFake()
         }
-
-        do {
-            try NewMentoryDBConfig.default.createOnce()
-        } catch {
-            logger.error("\(error)")
-        }
-
-        self.newMentoryDB = NewMentoryDB(id: NewMentoryDBConfig.default.rootID)
     }
 
     // MARK: state
@@ -60,6 +62,7 @@ public final class Mentory: Sendable, ObservableObject {
     @Published public var settingBoard: SettingBoard? = nil
     @Published public var statBoard: StatBoard? = nil
 
+    
     // MARK: action
     public func setUp() {
         // capture
@@ -111,6 +114,7 @@ public final class Mentory: Sendable, ObservableObject {
         await newMentoryDB.setName(userName)
     }
 
+    
     // MARK: value
     public struct URL: Sendable, Hashable {
         // MARK: core

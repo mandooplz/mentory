@@ -8,6 +8,7 @@ import NewMentoryDBCore
 import Values
 import Foundation
 import OSLog
+import Collections
 
 
 // MARK: fake
@@ -15,6 +16,10 @@ import OSLog
 public final class NewMentoryDBFake: NewMentoryDBInterface {
     // MARK: core
     private let logger = Logger()
+    
+    public init() {
+        
+    }
 
     
     // MARK: state
@@ -65,7 +70,7 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         }
     }
 
-    internal var recordCreationQueue: [RecordSnapshot] = []
+    internal var recordCreationQueue: Deque<RecordSnapshot> = []
     public func insertTicket(_ recordData: RecordSnapshot) {
         self.recordCreationQueue.append(recordData)
     }
@@ -74,6 +79,19 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
 
     // MARK: action
     public func createDailyRecords() async {
-        fatalError()
+        // recordCreationQueue에서 RecordSnapshot을 하나 꺼내옴
+        // 이를 통해 NewDailyRecordFake름 만듬
+        while let snapshot = recordCreationQueue.popFirst() {
+            let newRecord = NewDailyRecordFake(
+                owner: self,
+                recordID: self.id,
+                recordDate: snapshot.recordDate,
+                createAt: snapshot.createdAt,
+                analyzedContent: snapshot.analyzedResult,
+                emotion: snapshot.emotion
+            )
+            
+            self._records.append(newRecord)
+        }
     }
 }
