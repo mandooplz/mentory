@@ -21,7 +21,7 @@ public final class Onboarding: Sendable, ObservableObject {
     
     
     // MARK: state
-    public nonisolated let id = UUID()
+    public nonisolated let objectID = UUID()
     public weak var owner: Mentory?
     
     @Published public var nameInput: String = ""
@@ -33,6 +33,7 @@ public final class Onboarding: Sendable, ObservableObject {
     }
     
     @Published public var validationResult: ValidationResult = .none
+    
     @Published public private(set) var isUsed: Bool = false
     
     

@@ -77,7 +77,7 @@ struct MentoryTests {
             await mentory.setUp()
             
             // then
-            await #expect(mentory.onboarding?.id == testOnboarding.id)
+            await #expect(mentory.onboarding?.objectID == testOnboarding.objectID)
         }
         @Test func doNothingWhenOnboardingAlreadyFinished() async throws {
             // given
@@ -91,7 +91,7 @@ struct MentoryTests {
             await mentory.setUp()
             
             // then
-            await #expect(mentory.onboarding?.id == testOnboarding.id)
+            await #expect(mentory.onboarding?.objectID == testOnboarding.objectID)
         }
     }
     

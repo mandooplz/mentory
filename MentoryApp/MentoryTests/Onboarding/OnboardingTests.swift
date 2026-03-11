@@ -20,7 +20,14 @@ struct OnboardingTests {
             self.onboarding = try await getOnboardingForTest(mentory)
         }
         
-        @Test func set
+        @Test func initNameInputEmptyString() async throws {
+            // then
+            await #expect(onboarding.nameInput == "")
+        }
+        @Test func initValidationResultNone() async throws {
+            // then
+            await #expect(onboarding.validationResult == .none)
+        }
         
         @Test func whenNameInputIsEmpty() async throws {
             // given
@@ -87,7 +94,7 @@ struct OnboardingTests {
             await onboarding.submitForm()
             
             // then
-            await #expect(mentory.onboarding?.id == onboardingFormMentory.id)
+            await #expect(mentory.onboarding?.objectID == onboardingFormMentory.objectID)
             await #expect(mentory.isOnboardingFinished == false)
             await #expect(mentory.todayBoard == nil)
             await #expect(mentory.settingBoard == nil)
