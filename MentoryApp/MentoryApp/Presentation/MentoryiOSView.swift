@@ -23,7 +23,7 @@ struct MentoryiOSView: View {
         ZStack {
             MentoryBackdrop()
 
-            if mentory.onboardingFinished {
+            if mentory.isOnboardingFinished {
                 TabView(selection: $selectedTab) {
                     TodayBoardTab
                         .tabItem {

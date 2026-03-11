@@ -18,10 +18,10 @@ struct MentoryTests {
             self.mentory = await Mentory()
         }
         
-        @Test func isOnboardingBoardIsNil() async throws {
+        @Test func onboardingShouldBeNilOnInit() async throws {
             await #expect(mentory.onboarding == nil)
         }
-        @Test func isStatBoardIsNil() async throws {
+        @Test func statBoardShouldBeNilOnInit() async throws {
             await #expect(mentory.statBoard == nil)
         }
     }
@@ -42,7 +42,7 @@ struct MentoryTests {
             // then
             await #expect(mentory.onboarding != nil)
         }
-        @Test func setStatisticsBoardNil() async throws {
+        @Test func keepStatBoardNil() async throws {
             // given
             try await #require(mentory.statBoard == nil)
             
@@ -52,8 +52,9 @@ struct MentoryTests {
             // then
             await #expect(mentory.statBoard == nil)
         }
+
         
-        @Test func whenUserNameAlreadySet() async throws {
+        @Test func doNothingWhenUserNameAlreadySet() async throws {
             // given
             await MainActor.run {
                 mentory.userName = "TEST_USERNAME"
@@ -65,7 +66,7 @@ struct MentoryTests {
             // then
             await #expect(mentory.onboarding == nil)
         }
-        @Test func whenOnboardingAlreadySet() async throws {
+        @Test func keepExistingOnboarding_WhenOnboardingAlreadyExists() async throws {
             // given
             let testOnboarding = await Onboarding(owner: mentory)
             await MainActor.run {
@@ -78,11 +79,11 @@ struct MentoryTests {
             // then
             await #expect(mentory.onboarding?.id == testOnboarding.id)
         }
-        @Test func whenOnboardingFinished() async throws {
+        @Test func doNothingWhenOnboardingAlreadyFinished() async throws {
             // given
             let testOnboarding = await Onboarding(owner: mentory)
             await MainActor.run {
-                mentory.onboardingFinished = true
+                mentory.isOnboardingFinished = true
                 mentory.onboarding = testOnboarding
             }
             
@@ -102,7 +103,7 @@ struct MentoryTests {
             self.mentoryDB = mentory.newMentoryDB
         }
         
-        @Test func setOnboardingNil() async throws {
+        @Test func keepOnboardingNil() async throws {
             // given
             await mentoryDB.setName("TEST_USER_NAME")
             
@@ -116,13 +117,13 @@ struct MentoryTests {
             // given
             await mentoryDB.setName("TEST_USER_NAME")
             
-            try await #require(mentory.onboardingFinished == false)
+            try await #require(mentory.isOnboardingFinished == false)
             
             // when
             await mentory.loadUserName()
             
             // then
-            await #expect(mentory.onboardingFinished == true)
+            await #expect(mentory.isOnboardingFinished == true)
         }
         
         @Test func createSettingBoard() async throws {
@@ -137,7 +138,6 @@ struct MentoryTests {
             // then
             await #expect(mentory.settingBoard != nil)
         }
-
         @Test func createStatBoard() async throws {
             // given
             await mentoryDB.setName("TEST_USER_NAME")

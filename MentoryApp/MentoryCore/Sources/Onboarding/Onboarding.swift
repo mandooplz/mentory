@@ -66,7 +66,7 @@ public final class Onboarding: Sendable, ObservableObject {
         
         
         // mutate
-        mentoryiOS.onboardingFinished = true
+        mentoryiOS.isOnboardingFinished = true
         mentoryiOS.userName = nameInput
 
         mentoryiOS.onboarding = nil

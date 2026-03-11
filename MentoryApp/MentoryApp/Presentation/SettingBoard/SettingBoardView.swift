@@ -118,7 +118,7 @@ struct SettingBoardView: View {
                 }
             }
             .sheet(isPresented: $settingBoardViewModel.isShowingInformationView) {
-                WebView(url: settingBoard.owner!.informationURL.rawValue)
+                WebView(url: settingBoard.owner!.infoURL.rawValue)
             }
             .task {
                 await settingBoardViewModel.onAppear(settingBoard: settingBoard)

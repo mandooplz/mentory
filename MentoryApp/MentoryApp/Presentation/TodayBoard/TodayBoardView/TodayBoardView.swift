@@ -18,7 +18,7 @@ struct TodayBoardView: View {
     var body: some View {
         TodayBoardLayout(
             navDestination: {
-                WebView(url: todayBoard.owner!.informationURL.rawValue)
+                WebView(url: todayBoard.owner!.infoURL.rawValue)
             }
         ) {
             DashboardHeroHeader(

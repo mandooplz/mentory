@@ -20,6 +20,8 @@ struct OnboardingTests {
             self.onboarding = try await getOnboardingForTest(mentory)
         }
         
+        @Test func set
+        
         @Test func whenNameInputIsEmpty() async throws {
             // given
             try await #require(onboarding.nameInput.isEmpty)
@@ -77,7 +79,7 @@ struct OnboardingTests {
             // given
             let onboardingFormMentory = try #require(await mentory.onboarding)
             try await #require(mentory.onboarding != nil)
-            try await #require(mentory.onboardingFinished == false)
+            try await #require(mentory.isOnboardingFinished == false)
             try await #require(mentory.todayBoard == nil)
             try await #require(mentory.settingBoard == nil)
             
@@ -86,7 +88,7 @@ struct OnboardingTests {
             
             // then
             await #expect(mentory.onboarding?.id == onboardingFormMentory.id)
-            await #expect(mentory.onboardingFinished == false)
+            await #expect(mentory.isOnboardingFinished == false)
             await #expect(mentory.todayBoard == nil)
             await #expect(mentory.settingBoard == nil)
         }
@@ -152,7 +154,7 @@ struct OnboardingTests {
         }
         @Test func Mentory_setOnBoardingFinished() async throws {
             // given
-            try await #require(mentory.onboardingFinished == false)
+            try await #require(mentory.isOnboardingFinished == false)
             
             let testUserName = "TEST_USER_NAME"
             await onboarding.setName(testUserName)
@@ -162,7 +164,7 @@ struct OnboardingTests {
             await onboarding.submitForm()
             
             // then
-            await #expect(mentory.onboardingFinished == true)
+            await #expect(mentory.isOnboardingFinished == true)
         }
         
         @Test func Mentory_createTodayBoard() async throws {

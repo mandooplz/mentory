@@ -60,7 +60,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         
-        let firebaseLLM = mentoryiOS.firebaseLLM
+        let firebaseLLM = mentoryiOS.newFirebaseLLM
         let newMentoryDB = mentoryiOS.newMentoryDB
         
         let targetDate = recordForm.targetDate
