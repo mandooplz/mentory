@@ -81,7 +81,7 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         // 이를 통해 NewDailyRecordFake름 만듬
         while let snapshot = recordCreationQueue.popFirst() {
             let newRecord = NewDailyRecordFake(
-                id: snapshot.objectID,
+                objectID: snapshot.objectID,
                 owner: self,
                 recordID: snapshot.recordID,
                 recordDate: snapshot.recordDate,

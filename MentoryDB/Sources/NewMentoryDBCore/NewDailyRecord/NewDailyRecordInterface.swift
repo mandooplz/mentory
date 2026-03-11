@@ -26,12 +26,11 @@ public protocol NewDailyRecordInterface: Sendable {
     var analyzedContent: String { get async }
     var emotion: Emotion { get async }
 
-    var suggestionDatas: [SuggestionSnapshot] { get async }
+    var suggestionSnapshots: [SuggestionSnapshot] { get async }
     func getSuggestion(suggestionID: SuggestionID) async -> SuggestionObject?
-    func addSuggestions(_: [SuggestionSnapshot]) async
 
     var createSuggestionQueue: [SuggestionSnapshot] { get async }
-    func insertTicket(_: [SuggestionSnapshot]) async
+    func registerSnapshots(_: [SuggestionSnapshot]) async
 
 
     // MARK: action

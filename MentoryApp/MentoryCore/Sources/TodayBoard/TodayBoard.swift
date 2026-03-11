@@ -171,7 +171,7 @@ public final class TodayBoard: Sendable, ObservableObject {
 
         // process - MentoryDB에서 Suggestion 가져오기
         let recordID = await recentRecord.recordID
-        let suggestionDatas = await recentRecord.suggestionDatas
+        let suggestionDatas = await recentRecord.suggestionSnapshots
 
         // mutate
         self.suggestions =

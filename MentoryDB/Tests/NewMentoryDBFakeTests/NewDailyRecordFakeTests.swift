@@ -17,19 +17,35 @@ struct NewDailyRecordFakeTests {
     struct CreateDailySuggestions {
         let mentoryDBFake: NewMentoryDBFake
         let dailyRecordFake: NewDailyRecordFake
+        let testSnapshot: SuggestionSnapshot
         
         init() async throws {
             self.mentoryDBFake = await NewMentoryDBFake()
             self.dailyRecordFake = try await getDailyRecordFakeForTests(mentoryDBFake)
+            self.testSnapshot = SuggestionSnapshot(
+                objectID: .init(),
+                suggestionID: .random,
+                parentRecord: .random,
+                content: "TEST_CONTENT",
+                isDone: false
+            )
         }
         
+        @Test func createDailySuggestion() async throws {
+            
+        }
         @Test func clearSuggestionQueue() async throws {
             // given
+            await dailyRecordFake.registerSnapshots([testSnapshot])
             
+            try await #require(dailyRecordFake.createSuggestionQueue.isEmpty == false)
             
             // when
+            await dailyRecordFake.createDailySuggestions()
+            
             
             // then
+            await #expect(dailyRecordFake.createSuggestionQueue.isEmpty == true)
         }
     }
 }

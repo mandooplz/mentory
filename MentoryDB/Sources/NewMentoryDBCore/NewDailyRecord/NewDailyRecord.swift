@@ -124,7 +124,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         }
     }
 
-    public var suggestionDatas: [SuggestionSnapshot] {
+    public var suggestionSnapshots: [SuggestionSnapshot] {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
@@ -155,7 +155,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
                 }
             
             if let dailySuggesion {
-                return NewDailySuggestion(objectID: dailyRecord.objectID)
+                return NewDailySuggestion(objectID: dailySuggesion.objectID)
             } else {
                 return nil
             }
@@ -164,36 +164,13 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             return nil
         }
     }
-    public func addSuggestions(_ suggestionDatas: [SuggestionSnapshot]) async {
-        do {
-            let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
-            
-            guard let record = try context.fetch(descriptor).first else {
-                logger.error("일치하는 NewDailyRecord를 데이터베이스에서 찾지 못했습니다.")
-                return
-            }
-            
-            let suggestions = suggestionDatas
-                .map {
-                    NewDailySuggestionModel(data: $0)
-                }
-            
-            record.suggestions = suggestions
-            
-            try context.save()
-        } catch {
-            logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
-            return
-        }
-    }
 
     public var createSuggestionQueue: [SuggestionSnapshot] {
         get {
             []
         }
     }
-    public func insertTicket(_ suggestionDatas: [SuggestionSnapshot]) async {
+    public func registerSnapshots(_ suggestionDatas: [SuggestionSnapshot]) async {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)

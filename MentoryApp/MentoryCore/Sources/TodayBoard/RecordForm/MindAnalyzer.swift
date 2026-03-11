@@ -113,7 +113,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             emotion: analysis.mindType
         )
         
-        let suggestionDatas = analysis.actionKeywords
+        let suggestionSnapshots = analysis.actionKeywords
             .map { actionText in
                 SuggestionSnapshot(
                     objectID: .init(),
@@ -127,11 +127,14 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         await newMentoryDB.registerRecordSnapshot(recordSnapshot)
         await newMentoryDB.createDailyRecords()
         
-        guard let record = await newMentoryDB.getRecord(recordID: recordSnapshot.recordID) else {
+        guard let dailyRecord = await newMentoryDB.getRecord(recordID: recordSnapshot.recordID) else {
             logger.error("\(recordSnapshot.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
             return
         }
-        await record.addSuggestions(suggestionDatas)
+        
+        
+        await dailyRecord.registerSnapshots(suggestionSnapshots)
+        await dailyRecord.createDailySuggestions()
         
         
         if mentoryiOS.statBoard == nil {
@@ -166,7 +169,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             return
         }
         
-        let suggestionDatas = await recentRecord.suggestionDatas
+        let suggestionDatas = await recentRecord.suggestionSnapshots
 
         
         // mutate
