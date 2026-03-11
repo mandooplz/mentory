@@ -201,7 +201,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             record.suggestions.append(contentsOf: suggestionModels)
             try context.save()
         } catch {
-            logger.error("insertTicket 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("registerRecordSnapshot 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
 

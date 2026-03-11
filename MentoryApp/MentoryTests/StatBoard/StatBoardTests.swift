@@ -42,15 +42,15 @@ struct StatBoardTests {
             try await #require(statBoard.allRecords.isEmpty == true)
             
             // 새로운 Record의 생성
-            let sampleRecordData = RecordSnapshot(
+            let testSnapshot = RecordSnapshot(
                 recordDate: .now,
                 analyzedResult: "SAMPLE_ANALYSIS",
-                emotion: .neutral)
+                emotion: .neutral
+            )
             
-//            await mentoryDB.submitAnalysis(
-//                recordData: sampleRecordData,
-//                suggestionData: []
-//            )
+            await mentoryDB.registerRecordSnapshot(testSnapshot)
+            await mentoryDB.createDailyRecords()
+            
             
             // when
             await statBoard.loadRecords()

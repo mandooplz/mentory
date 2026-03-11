@@ -41,15 +41,15 @@ struct RecordFormTests {
             let targetDate = recordForm.targetDate
             
             let randomDateAtSameDay = targetDate.randomTimeInSameDay()
-            let recordData = RecordSnapshot(
-                objectID: .init(),
-                recordDate: randomDateAtSameDay,
-                createdAt: .now,
-                analyzedResult: "SAMPLE_RESULT",
+            
+            let testSnapshot = RecordSnapshot(
+                recordDate: .now,
+                analyzedResult: "TEST_RESULT",
                 emotion: .neutral
             )
             
-//            await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
+            await mentoryDB.registerRecordSnapshot(testSnapshot)
+            await mentoryDB.createDailyRecords()
             
             await #expect(mentoryDB.recordCount == 1)
             

@@ -189,27 +189,27 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         }
     }
 
-    public func insertTicket(_ recordData: RecordSnapshot) {
+    public func registerRecordSnapshot(_ recordData: RecordSnapshot) {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
             let ticketId = recordData.objectID
             guard db.records.contains(where: { $0.ticketId == ticketId }) == false else {
-                logger.debug("insertTicket 중복 스킵(records): \(ticketId.uuidString, privacy: .public)")
+                logger.debug("registerRecordSnapshot 중복 스킵(records): \(ticketId.uuidString, privacy: .public)")
                 return
             }
 
             guard db.recordCreationQueue.contains(where: { $0.id == ticketId }) == false else {
-                logger.debug("insertTicket 중복 스킵(queue): \(ticketId.uuidString, privacy: .public)")
+                logger.debug("registerRecordSnapshot 중복 스킵(queue): \(ticketId.uuidString, privacy: .public)")
                 return
             }
 
             db.recordCreationQueue.append(NewRecordTicket(data: recordData))
             try context.save()
-            logger.debug("insertTicket 완료")
+            logger.debug("registerRecordSnapshot 완료")
         } catch {
-            logger.error("insertTicket 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("registerRecordSnapshot 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
     

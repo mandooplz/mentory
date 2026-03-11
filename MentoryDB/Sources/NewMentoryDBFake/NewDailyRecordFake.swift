@@ -15,7 +15,7 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
 
 
     // MARK: core
-    internal init(id: UUID = UUID(),
+    internal init(id: UUID,
                   owner: NewMentoryDBFake,
                   recordID: UUID,
                   recordDate: MentoryDate,

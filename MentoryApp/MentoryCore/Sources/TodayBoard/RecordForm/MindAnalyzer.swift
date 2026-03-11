@@ -120,14 +120,14 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
                 )
             }
 
-        await newMentoryDB.insertTicket(recordData)
+        await newMentoryDB.registerRecordSnapshot(recordData)
         await newMentoryDB.createDailyRecords()
         
-        // await newMentoryDB.insertSuggestions(ticketId: recordData.objectID, suggestions: suggestionDatas)
-        // Record를 만들고 insertSuggestions를 통해 Suggestion을 추가한다.
-        // RecordData.objectID를 통해 생성된 Record의 ID를 알 수 있다.
-        let record = await newMentoryDB.getRecord(recordID: recordData.objectID)
-        await record?.addSuggestions(suggestionDatas)
+        guard let record = await newMentoryDB.getRecord(recordID: recordData.recordID) else {
+            logger.error("\(recordData.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
+            return
+        }
+        await record.addSuggestions(suggestionDatas)
         
         
         if mentoryiOS.statBoard == nil {
@@ -175,6 +175,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
                 isDone: $0.isDone
             )
             }
+        
         todayBoard.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")
     }

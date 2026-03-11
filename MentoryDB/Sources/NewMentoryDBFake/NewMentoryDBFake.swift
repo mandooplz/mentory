@@ -40,7 +40,7 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         self.mentorMessage = newValue
     }
 
-    private var _records: [NewDailyRecordFake] = []
+    internal var _records: [NewDailyRecordFake] = []
     public var records: [RecordSnapshot] {
         self._records
             .sorted(by: { $0.recordDate > $1.recordDate })
@@ -64,14 +64,14 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     public func getRecord(recordID: UUID) async -> NewDailyRecordFake? {
         self._records.first(where: { $0.recordID == recordID })
     }
-    public func isSameDayRecordExist(for date: Values.MentoryDate) -> Bool {
+    public func isSameDayRecordExist(for date: MentoryDate) -> Bool {
         self._records.contains { record in
             record.recordDate.isSameDate(as: date)
         }
     }
 
     internal var recordCreationQueue: Deque<RecordSnapshot> = []
-    public func insertTicket(_ recordData: RecordSnapshot) {
+    public func registerRecordSnapshot(_ recordData: RecordSnapshot) {
         self.recordCreationQueue.append(recordData)
     }
 
@@ -83,8 +83,9 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         // 이를 통해 NewDailyRecordFake름 만듬
         while let snapshot = recordCreationQueue.popFirst() {
             let newRecord = NewDailyRecordFake(
+                id: snapshot.objectID,
                 owner: self,
-                recordID: self.id,
+                recordID: snapshot.recordID,
                 recordDate: snapshot.recordDate,
                 createAt: snapshot.createdAt,
                 analyzedContent: snapshot.analyzedResult,
