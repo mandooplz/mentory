@@ -20,3 +20,4 @@ public struct SuggestionID: Sendable, Hashable, Codable {
         self.init(UUID())
     }
 }
+
