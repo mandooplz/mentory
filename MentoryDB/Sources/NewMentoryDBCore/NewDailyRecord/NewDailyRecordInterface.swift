@@ -29,6 +29,7 @@ public protocol NewDailyRecordInterface: Sendable {
 
     var suggestionDatas: [SuggestionData] { get async }
     func getSuggestion(suggestionID: UUID) async -> SuggestionObject?
+    func addSuggestions(_: [SuggestionData]) async
 
     var createSuggestionQueue: [SuggestionData] { get async }
     func insertTicket(_: [SuggestionData]) async

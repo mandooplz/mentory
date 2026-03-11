@@ -15,13 +15,19 @@ final class NewDailySuggestionModel {
     @Attribute(.unique) var id: UUID
 
     var target: UUID
+    var parentRecord: UUID
 
     var content: String
     var status: Bool
 
-    init(id: UUID = UUID(), target: UUID, content: String, status: Bool) {
+    init(id: UUID = UUID(),
+         target: UUID,
+         parentRecord: UUID,
+         content: String,
+         status: Bool) {
         self.id = id
         self.target = target
+        self.parentRecord = parentRecord
         self.content = content
         self.status = status
     }
@@ -30,12 +36,13 @@ final class NewDailySuggestionModel {
         self.init(
             id: data.objectID,
             target: data.target.rawValue,
+            parentRecord: data.parentRecord,
             content: data.content,
             status: data.isDone
         )
     }
 
-    func toData(parentRecord: UUID) -> SuggestionData {
+    func toData() -> SuggestionData {
         SuggestionData(
             id: id,
             parentRecord: parentRecord,

@@ -134,7 +134,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
                 throw NewMentoryDBError.recordNotFound
             }
 
-            return record.suggestions.map { $0.toData(parentRecord: record.recordID) }
+            return record.suggestions.map { $0.toData() }
         } catch {
             logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
             return []
@@ -157,6 +157,29 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         } catch {
             logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
             return nil
+        }
+    }
+    public func addSuggestions(_ suggestionDatas: [SuggestionData]) async {
+        do {
+            let context = try NewMentoryDBConfig.default.makeContext()
+            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            
+            guard let record = try context.fetch(descriptor).first else {
+                logger.error("일치하는 NewDailyRecord를 데이터베이스에서 찾지 못했습니다.")
+                return
+            }
+            
+            let suggestions = suggestionDatas
+                .map {
+                    NewDailySuggestionModel(data: $0)
+                }
+            
+            record.suggestions = suggestions
+            
+            try context.save()
+        } catch {
+            logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
+            return
         }
     }
 

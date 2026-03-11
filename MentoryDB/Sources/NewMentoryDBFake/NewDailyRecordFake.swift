@@ -51,6 +51,9 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
     public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestionFake? {
         fatalError()
     }
+    public func addSuggestions(_ suggestionDatas: [SuggestionData]) async {
+        self.suggestionDatas.append(contentsOf: suggestionDatas)
+    }
 
     public var createSuggestionQueue: [SuggestionData] = []
     public func insertTicket(_: [SuggestionData]) async {
