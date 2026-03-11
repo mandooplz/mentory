@@ -48,7 +48,7 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
         let mentoryiOS = todayBoard.owner!
         let newMentoryDB = mentoryiOS.newMentoryDB
 
-        let suggestionID = self.target.rawValue
+        let suggestionID = self.target.id
         let isDone = self.isDone
 
         logger.debug("markDone 호출: isDone=\(isDone)")

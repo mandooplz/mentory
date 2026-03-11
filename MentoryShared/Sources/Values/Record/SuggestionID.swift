@@ -8,12 +8,11 @@ import Foundation
 
 
 // MARK: Value
-nonisolated
-public struct SuggestionID: Sendable, Hashable, Codable {
+public nonisolated struct SuggestionID: ObjectIdentifier {
     // MARK: core
-    public let rawValue: UUID
-    public init(_ rawValue: UUID) {
-        self.rawValue = rawValue
+    public let id: UUID
+    public init(_ id: UUID) {
+        self.id = id
     }
     
     public static var random: SuggestionID {

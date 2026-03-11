@@ -35,7 +35,7 @@ final class NewDailySuggestionModel {
     convenience init(data: SuggestionData) {
         self.init(
             id: data.objectID,
-            target: data.target.rawValue,
+            target: data.target.id,
             parentRecord: data.parentRecord,
             content: data.content,
             status: data.isDone
