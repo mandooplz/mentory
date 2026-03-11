@@ -200,19 +200,4 @@ public final class TodayBoard: Sendable, ObservableObject {
     // mutate
     self.recordCount = recordCount
   }
-
-  public func fetchEarnedBadges() async {
-    // capture
-    let mentoryiOS = self.owner!
-    let newMentoryDB = mentoryiOS.newMentoryDB
-
-    // process
-    let completedCount = await newMentoryDB.completedSuggestionCount
-
-    // mutate
-    self.completedSuggestionsCount = completedCount
-    self.earnedBadges = BadgeType.earnedBadges(completedCount: completedCount)
-    logger.debug("완료된 제안: \(completedCount)개, 획득한 뱃지: \(self.earnedBadges.count)개")
-  }
-
 }

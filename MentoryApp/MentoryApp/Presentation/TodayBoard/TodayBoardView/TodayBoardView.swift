@@ -335,56 +335,19 @@ private struct RecordAvailabilityPill: View {
 
 private struct SuggestionSection: View {
     @ObservedObject var todayBoard: TodayBoard
-    @State private var isFlipped = false
-    @State private var initialBadgeCount: Int = 0
-
-    private var hasNewBadge: Bool {
-        todayBoard.earnedBadges.count > initialBadgeCount
-    }
 
     var body: some View {
         Group {
-            if isFlipped {
-                BadgeBackCard(
-                    todayBoard: todayBoard,
-                    onClose: {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) {
-                            isFlipped = false
-                        }
-                    }
-                )
-            } else {
-                SuggestionFrontCard(
-                    todayBoard: todayBoard,
-                    hasNewBadge: hasNewBadge,
-                    onOpenBadge: {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) {
-                            isFlipped = true
-                        }
-                    }
-                )
-            }
+            SuggestionFrontCard(todayBoard: todayBoard)
         }
         .task {
-            await todayBoard.fetchEarnedBadges()
             await todayBoard.loadSuggestions()
-
-            if initialBadgeCount == 0 {
-                initialBadgeCount = todayBoard.earnedBadges.count
-            }
-        }
-        .task(id: isFlipped) {
-            if isFlipped {
-                initialBadgeCount = todayBoard.earnedBadges.count
-            }
         }
     }
 }
 
 private struct SuggestionFrontCard: View {
     @ObservedObject var todayBoard: TodayBoard
-    let hasNewBadge: Bool
-    let onOpenBadge: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -397,22 +360,6 @@ private struct SuggestionFrontCard: View {
                         : "하나씩 완료하면서 오늘의 흐름을 정리해보세요."
                 )
 
-                Button(action: onOpenBadge) {
-                    ZStack(alignment: .topTrailing) {
-                        Image(systemName: "trophy.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 34, height: 34)
-
-                        if hasNewBadge {
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 8, height: 8)
-                                .offset(x: 4, y: -4)
-                        }
-                    }
-                }
-                .buttonStyle(MentoryIconButtonStyle())
-                .accessibilityLabel("획득한 뱃지 보기")
             }
 
             MentorySectionCard(cornerRadius: 32, contentPadding: 20) {

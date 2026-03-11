@@ -65,9 +65,6 @@ public final class Suggestion: Sendable, ObservableObject, Identifiable {
     }
 
     await newDailySuggestion.setDone(isDone)
-
-    // 뱃지 갱신
-    await todayBoard.fetchEarnedBadges()
   }
 
   // MARK: value

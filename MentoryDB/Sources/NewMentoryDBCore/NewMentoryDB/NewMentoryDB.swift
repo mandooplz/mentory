@@ -189,21 +189,6 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
         }
     }
 
-    public var completedSuggestionCount: Int {
-        do {
-            let context = try NewMentoryDBConfig.default.makeContext()
-            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
-
-            return db.records.reduce(0) { total, record in
-                total + record.suggestions.filter { $0.status }.count
-            }
-        } catch {
-            logger.error("getCompletedSuggestionsCount 실패: \(error.localizedDescription, privacy: .public)")
-            return 0
-        }
-    }
-
-
     public func insertTicket(_ recordData: RecordSnapshot) {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
