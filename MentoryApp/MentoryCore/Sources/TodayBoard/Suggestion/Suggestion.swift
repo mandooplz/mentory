@@ -25,7 +25,7 @@ public final class Suggestion: Sendable, ObservableObject {
     ) {
         self.owner = owner
         self.parentRecord = parentRecord
-        self.target = suggestionID
+        self.suggestionID = suggestionID
         self.content = content
         self.isDone = isDone
     }
@@ -34,13 +34,12 @@ public final class Suggestion: Sendable, ObservableObject {
 
     // MARK: state
     public nonisolated let objectID: ObjectID = .random
-
+    public nonisolated let suggestionID: SuggestionID
     public weak var owner: TodayBoard?
 
     public nonisolated let parentRecord: RecordID
-    public nonisolated let target: SuggestionID
+    
     public nonisolated let content: String
-
     @Published public var isDone: Bool
 
     // MARK: action
@@ -49,8 +48,7 @@ public final class Suggestion: Sendable, ObservableObject {
         let todayBoard = self.owner!
         let mentoryiOS = todayBoard.owner!
         let newMentoryDB = mentoryiOS.newMentoryDB
-
-        let suggestionID = self.target.id
+        let suggestionID = self.suggestionID
         let isDone = self.isDone
 
         logger.debug("markDone 호출: isDone=\(isDone)")
@@ -60,6 +58,7 @@ public final class Suggestion: Sendable, ObservableObject {
             logger.error("NewMentoryDB에서 DailyRecord가 검색되지 않았습니다.")
             return
         }
+        
         guard let newDailySuggestion = await newDailyRecord.getSuggestion(suggestionID: suggestionID)
         else {
             logger.error("NewDailyRecord에서 일치하는 Suggestion 객체를 찾을 수 없습니다.")

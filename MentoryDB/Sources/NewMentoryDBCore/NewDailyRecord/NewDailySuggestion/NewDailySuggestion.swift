@@ -16,21 +16,20 @@ public actor NewDailySuggestion: NewDailySuggestionInterface {
     // MARK: core
     private nonisolated let logger = Logger()
 
-    public init(id: UUID) {
-        self.id = id
+    public init(objectID: UUID) {
+        self.objectID = objectID
     }
 
 
     // MARK: state
-    public nonisolated let id: UUID
-
-    public var target: SuggestionID {
+    public nonisolated let objectID: UUID
+    public var suggestionID: SuggestionID {
         fatalError()
     }
+    
     public var content: String {
         fatalError()
     }
-
     public var isDone: Bool {
         fatalError()
     }

@@ -45,6 +45,7 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
             .map {
                 RecordSnapshot(
                     objectID: $0.objectID,
+                    recordID: $0.recordID,
                     recordDate: $0.recordDate,
                     createdAt: $0.createdAt,
                     analyzedResult: $0.analyzedContent,

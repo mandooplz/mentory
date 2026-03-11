@@ -22,9 +22,9 @@ public struct RecordSnapshot: Sendable {
     
     
     public init(objectID: UUID,
-                recordID: RecordID = .random,
+                recordID: RecordID,
                 recordDate: MentoryDate,
-                createdAt: MentoryDate = .now,
+                createdAt: MentoryDate,
                 analyzedResult: String,
                 emotion: Emotion) {
         self.objectID = objectID

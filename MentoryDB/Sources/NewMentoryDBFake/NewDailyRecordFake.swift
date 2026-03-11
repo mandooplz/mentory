@@ -35,6 +35,7 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
     // MARK: state
     public nonisolated let objectID: UUID
     public var recordID: RecordID
+    
     internal weak var owner: NewMentoryDBFake?
 
     public nonisolated let recordDate: MentoryDate
@@ -44,8 +45,17 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
     public var emotion: Emotion
 
     public var suggestionDatas: [SuggestionSnapshot] = []
-    public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestionFake? {
-        fatalError()
+    public func getSuggestion(suggestionID: SuggestionID) async -> NewDailySuggestionFake? {
+        let suggestionData = suggestionDatas
+            .first {
+                $0.suggestionID == suggestionID
+            }
+        
+        if let suggestionData {
+            return NewDailySuggestionFake(objectID: suggestionData.objectID)
+        } else {
+            return nil
+        }
     }
     public func addSuggestions(_ suggestionDatas: [SuggestionSnapshot]) async {
         self.suggestionDatas.append(contentsOf: suggestionDatas)

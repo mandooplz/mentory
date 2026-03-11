@@ -106,6 +106,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         // DailyRecord & DailySuggestion 생성
         let recordSnapshot = RecordSnapshot(
             objectID: .init(),
+            recordID: .random,
             recordDate: targetDate,
             createdAt: .now,
             analyzedResult: analysis.empathyMessage,

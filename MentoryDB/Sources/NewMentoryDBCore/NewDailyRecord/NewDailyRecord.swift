@@ -14,8 +14,8 @@ import Values
 public actor NewDailyRecord: NewDailyRecordInterface {
 
     // MARK: Core
-    init(id: UUID) {
-        self.objectID = id
+    init(objectID: UUID) {
+        self.objectID = objectID
     }
     nonisolated public let objectID: UUID
     nonisolated private let logger = Logger()
@@ -32,7 +32,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
                     throw NewMentoryDBError.recordNotFound
                 }
 
-                return record.ticketId
+                return record.objectID
             } catch {
                 logger.fault("getTicketID 실패: \(error.localizedDescription, privacy: .public)")
                 return UUID()
@@ -139,22 +139,28 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             return []
         }
     }
-    public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestion? {
+    public func getSuggestion(suggestionID: SuggestionID) async -> NewDailySuggestion? {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
-            guard let record = try context.fetch(descriptor).first else {
+            guard let dailyRecord = try context.fetch(descriptor).first else {
+                logger.error("DailyRecord를 데이터베이스에서 찾지 못했습니다.")
                 return nil
             }
 
-            guard let suggestion = record.suggestions.first(where: { $0.target == suggestionID }) else {
+            let dailySuggesion = dailyRecord.suggestions
+                .first {
+                    $0.suggestionID == suggestionID.id
+                }
+            
+            if let dailySuggesion {
+                return NewDailySuggestion(objectID: dailyRecord.objectID)
+            } else {
                 return nil
             }
-
-            return NewDailySuggestion(id: suggestion.id)
         } catch {
-            logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("getSuggestionDatas 실패")
             return nil
         }
     }

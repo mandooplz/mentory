@@ -13,12 +13,17 @@ import Foundation
 // MARK: fake
 @MainActor
 public final class NewDailySuggestionFake: NewDailySuggestionInterface {
+    // MARK: core
+    public init(objectID: UUID) {
+        self.objectID = objectID
+    }
+    
     // MARK: state
-    public nonisolated let id: UUID = UUID()
-
-    public var target: SuggestionID {
+    public nonisolated let objectID: UUID
+    public var suggestionID: SuggestionID {
         fatalError()
     }
+    
     public var content: String {
         fatalError()
     }
