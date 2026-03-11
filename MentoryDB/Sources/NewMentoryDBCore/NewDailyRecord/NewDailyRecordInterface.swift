@@ -17,11 +17,11 @@ public protocol NewDailyRecordInterface: Sendable {
     associatedtype SuggestionObject: NewDailySuggestionInterface
 
     // MARK: state
-    var id: UUID { get }
+    var objectID: UUID { get }
     var recordID: UUID { get async }
 
     var recordDate: MentoryDate { get async }
-    var createAt: MentoryDate { get async }
+    var createdAt: MentoryDate { get async }
 
     var analyzedContent: String { get async }
     var emotion: Emotion { get async }

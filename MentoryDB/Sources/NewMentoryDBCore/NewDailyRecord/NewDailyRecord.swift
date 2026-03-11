@@ -15,9 +15,9 @@ public actor NewDailyRecord: NewDailyRecordInterface {
 
     // MARK: Core
     init(id: UUID) {
-        self.id = id
+        self.objectID = id
     }
-    nonisolated public let id: UUID
+    nonisolated public let objectID: UUID
     nonisolated private let logger = Logger()
 
 
@@ -26,7 +26,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -42,7 +42,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
     public var recordID: UUID {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 throw NewMentoryDBError.recordNotFound
@@ -59,7 +59,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -72,11 +72,11 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             }
         }
     }
-    public var createAt: MentoryDate {
+    public var createdAt: MentoryDate {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -94,7 +94,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -111,7 +111,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -128,7 +128,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
     public var suggestionDatas: [SuggestionData] {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 throw NewMentoryDBError.recordNotFound
@@ -143,7 +143,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
     public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestion? {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 return nil
@@ -162,7 +162,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
     public func addSuggestions(_ suggestionDatas: [SuggestionData]) async {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
             
             guard let record = try context.fetch(descriptor).first else {
                 logger.error("일치하는 NewDailyRecord를 데이터베이스에서 찾지 못했습니다.")
@@ -191,7 +191,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
     public func insertTicket(_ suggestionDatas: [SuggestionData]) async {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 throw NewMentoryDBError.recordNotFound

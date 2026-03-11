@@ -46,9 +46,9 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
             .sorted(by: { $0.recordDate > $1.recordDate })
             .map {
                 RecordSnapshot(
-                    objectID: $0.id,
+                    objectID: $0.objectID,
                     recordDate: $0.recordDate,
-                    createdAt: $0.createAt,
+                    createdAt: $0.createdAt,
                     analyzedResult: $0.analyzedContent,
                     emotion: $0.emotion
                 )

@@ -22,23 +22,23 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
                   createAt: MentoryDate,
                   analyzedContent: String,
                   emotion: Emotion) {
-        self.id = id
+        self.objectID = id
         self.owner = owner
         self.recordID = recordID
         self.recordDate = recordDate
-        self.createAt = createAt
+        self.createdAt = createAt
         self.analyzedContent = analyzedContent
         self.emotion = emotion
     }
 
 
     // MARK: state
-    public nonisolated let id: UUID
+    public nonisolated let objectID: UUID
     public var recordID: UUID
     internal weak var owner: NewMentoryDBFake?
 
     public nonisolated let recordDate: MentoryDate
-    public nonisolated let createAt: MentoryDate
+    public nonisolated let createdAt: MentoryDate
 
     public var analyzedContent: String
     public var emotion: Emotion
