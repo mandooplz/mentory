@@ -35,7 +35,6 @@ public protocol NewMentoryDBInterface: Sendable {
     func getRecord(recordID: UUID) async -> DailyRecordObject?
 
     func insertTicket(_ recordData: RecordSnapshot) async
-    func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async
     
     
     // MARK: action

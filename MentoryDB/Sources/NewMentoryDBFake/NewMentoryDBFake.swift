@@ -7,14 +7,16 @@
 import NewMentoryDBCore
 import Values
 import Foundation
+import OSLog
 
 
 // MARK: fake
 @MainActor
 public final class NewMentoryDBFake: NewMentoryDBInterface {
     // MARK: core
+    private let logger = Logger()
 
-
+    
     // MARK: state
     public nonisolated let id: UUID = UUID()
 
@@ -36,10 +38,12 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     private var _records: [NewDailyRecordFake] = []
     public var records: [RecordSnapshot] {
         self._records
+            .sorted(by: { $0.recordDate > $1.recordDate })
             .map {
                 RecordSnapshot(
                     objectID: $0.id,
                     recordDate: $0.recordDate,
+                    createdAt: $0.createAt,
                     analyzedResult: $0.analyzedContent,
                     emotion: $0.emotion
                 )
@@ -52,22 +56,20 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         return self._records
             .max(by: { $0.recordDate < $1.recordDate })
     }
-    public func getRecord(ticketId: UUID) -> NewDailyRecordFake? {
-        fatalError()
-    }
     public func getRecord(recordID: UUID) async -> NewDailyRecordFake? {
-        fatalError()
+        self._records.first(where: { $0.recordID == recordID })
     }
     public func isSameDayRecordExist(for date: Values.MentoryDate) -> Bool {
-        fatalError()
+        self._records.contains { record in
+            record.recordDate.isSameDate(as: date)
+        }
     }
 
-    public func insertTicket(_ recordData: Values.RecordSnapshot) {
-        fatalError()
+    internal var recordCreationQueue: [RecordSnapshot] = []
+    public func insertTicket(_ recordData: RecordSnapshot) {
+        self.recordCreationQueue.append(recordData)
     }
-    public func insertSuggestions(ticketId: UUID, suggestions: [Values.SuggestionData]) async {
-        fatalError()
-    }
+
 
 
     // MARK: action
