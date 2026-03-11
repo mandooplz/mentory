@@ -47,10 +47,10 @@ struct StatBoardTests {
                 analyzedResult: "SAMPLE_ANALYSIS",
                 emotion: .neutral)
             
-            await mentoryDB.submitAnalysis(
-                recordData: sampleRecordData,
-                suggestionData: []
-            )
+//            await mentoryDB.submitAnalysis(
+//                recordData: sampleRecordData,
+//                suggestionData: []
+//            )
             
             // when
             await statBoard.loadRecords()

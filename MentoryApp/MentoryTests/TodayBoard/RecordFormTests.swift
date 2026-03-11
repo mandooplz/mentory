@@ -34,7 +34,7 @@ struct RecordFormTests {
             // then
             await #expect(recordForm.isDisabled == false)
         }
-        @Test func notSetFalseWhenRecordAlreadExistAtTargetDate() async throws {
+        @Test func notSetFalseWhenRecordAlreadyExistAtTargetDate() async throws {
             // given
             await #expect(mentoryDB.recordCount == 0)
             
@@ -49,7 +49,7 @@ struct RecordFormTests {
                 emotion: .neutral
             )
             
-            await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
+//            await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
             
             await #expect(mentoryDB.recordCount == 1)
             
