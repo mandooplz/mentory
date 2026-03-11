@@ -52,26 +52,19 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         return self._records
             .max(by: { $0.recordDate < $1.recordDate })
     }
-
     public func getRecord(ticketId: UUID) -> NewDailyRecordFake? {
         fatalError()
     }
     public func getRecord(recordID: UUID) async -> NewDailyRecordFake? {
         fatalError()
     }
-
     public func isSameDayRecordExist(for date: Values.MentoryDate) -> Bool {
         fatalError()
-    }
-
-    func seedRecords(_ records: [NewDailyRecordFake]) {
-        self._records = records
     }
 
     public func insertTicket(_ recordData: Values.RecordSnapshot) {
         fatalError()
     }
-
     public func insertSuggestions(ticketId: UUID, suggestions: [Values.SuggestionData]) async {
         fatalError()
     }
@@ -81,6 +74,4 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
     public func createDailyRecords() async {
         fatalError()
     }
-
-
 }
