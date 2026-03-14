@@ -26,13 +26,13 @@ struct RecordFormView: View {
                 }
 
                 ToolbarItem(id: "recordForm.next", placement: .topBarTrailing) {
-                    Button("분석하기") {
+                    Button("정리 보기") {
                         Task {
                             recordForm.validateInput()
                             await recordForm.submit()
                         }
                     }
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .foregroundStyle(recordForm.canProceed ? Color.mentoryAccentPrimary : .secondary)
                     .disabled(!recordForm.canProceed)
                     .navigationDestination(item: $recordForm.mindAnalyzer) { mindAnalyzer in
@@ -44,16 +44,16 @@ struct RecordFormView: View {
                 RecordFormHeader(recordForm: recordForm)
             },
             main: {
-                TitleField(
-                    recordForm: recordForm,
-                    prompt: "제목을 입력해 주세요",
-                    text: $recordForm.titleInput
-                )
-
                 BodyField(
                     recordForm: recordForm,
-                    prompt: "오늘 있었던 일을 차분히 적어보세요.",
+                    prompt: "오늘 가장 오래 남아 있는 장면이나 감정부터 적어보세요.",
                     text: $recordForm.textInput
+                )
+
+                TitleField(
+                    recordForm: recordForm,
+                    prompt: "짧은 제목을 남기고 싶다면",
+                    text: $recordForm.titleInput
                 )
 
                 AttachmentSection(model: recordForm)
@@ -100,37 +100,20 @@ fileprivate struct RecordFormHeader: View {
     @ObservedObject var recordForm: RecordForm
 
     var body: some View {
-        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
-            VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "기록", systemImage: "square.and.pencil")
+        VStack(alignment: .leading, spacing: MentorySpacing.large) {
+            MentoryInfoChip(text: dateTitle, systemImage: "square.and.pencil")
 
-                Text(dateTitle)
-                    .font(.system(size: 22, weight: .semibold, design: .rounded))
+            VStack(alignment: .leading, spacing: 8) {
+                Text("지금 떠오르는 마음부터 적어보세요.")
+                    .mentoryDisplayTitle()
                     .foregroundStyle(.primary)
 
-                Text("먼저 텍스트로 정리하고, 필요하면 사진이나 음성을 함께 남길 수 있어요.")
+                Text("설명보다 느낌부터 적어도 충분해요. 사진이나 음성은 필요할 때만 덧붙이세요.")
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-
-                HStack(spacing: 10) {
-                    MentoryMetricPill(
-                        title: "텍스트 상태",
-                        value: recordForm.textInput.isEmpty ? "작성 전" : "작성 중"
-                    )
-                    MentoryMetricPill(
-                        title: "첨부 자료",
-                        value: "\(attachmentCount)개"
-                    )
-                }
             }
         }
-    }
-
-    private var attachmentCount: Int {
-        [recordForm.imageInput != nil, recordForm.voiceInput != nil]
-            .filter { $0 }
-            .count
     }
 
     private var dateTitle: String {
@@ -143,29 +126,29 @@ fileprivate struct RecordFormHeader: View {
     }
 }
 
-fileprivate struct LiquidGlassIconButtonLabel: View {
+fileprivate struct AttachmentButtonLabel: View {
     let systemName: String
     let label: String
-    var isEnabled: Bool = true
+    var isEnabled: Bool = false
     var accessibilityLabel: String?
 
     var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: systemName)
-                .font(.system(size: 16, weight: .semibold))
-                .frame(width: 36, height: 36)
-                .foregroundStyle(isEnabled ? Color.mentoryAccentPrimary : .secondary)
-                .background(
-                    Circle()
-                        .fill(isEnabled ? Color.mentoryAccentPrimary.opacity(0.12) : Color.clear)
-                )
+        VStack(spacing: 6) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(isEnabled ? Color.mentoryAccentPrimary.opacity(0.16) : Color.mentorySubCard.opacity(0.92))
+                    .frame(width: 40, height: 40)
+
+                Image(systemName: systemName)
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(isEnabled ? Color.mentoryAccentPrimary : .primary)
+            }
 
             Text(label)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
-                .foregroundStyle(isEnabled ? .primary : .secondary)
+                .mentoryEyebrow()
+                .foregroundStyle(.secondary)
         }
         .frame(minWidth: 64)
-        .padding(.vertical, 4)
         .accessibilityLabel(accessibilityLabel ?? label)
     }
 }
@@ -176,12 +159,12 @@ fileprivate struct TitleField: View {
     @Binding var text: String
 
     var body: some View {
-        MentorySectionCard(cornerRadius: 28, contentPadding: 18) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
-                fieldHeader(title: "제목", helper: "오늘 기록을 한 줄로 요약해보세요.")
+                fieldHeader(title: "짧은 제목", helper: "선택 사항")
 
                 TextField(prompt, text: $text)
-                    .font(.system(size: 18, weight: .medium, design: .rounded))
+                    .font(.system(.body, design: .rounded, weight: .medium))
                     .foregroundStyle(.primary)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -199,23 +182,23 @@ fileprivate struct BodyField: View {
     @Binding var text: String
 
     var body: some View {
-        MentorySectionCard(cornerRadius: 30, contentPadding: 18) {
-            VStack(alignment: .leading, spacing: 12) {
-                fieldHeader(title: "본문", helper: "감정, 상황, 떠오른 생각을 순서대로 적으면 분석이 더 자연스러워져요.")
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
+            VStack(alignment: .leading, spacing: 14) {
+                fieldHeader(title: "오늘의 기록", helper: "길지 않아도 괜찮아요")
 
                 ZStack(alignment: .topLeading) {
                     if text.isEmpty {
                         Text(prompt)
-                            .foregroundStyle(.secondary.opacity(0.7))
+                            .foregroundStyle(.secondary.opacity(0.76))
                             .padding(.horizontal, 4)
-                            .padding(.top, 8)
+                            .padding(.top, 10)
                             .allowsHitTesting(false)
                     }
 
                     TextEditor(text: $text)
                         .scrollContentBackground(.hidden)
-                        .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .frame(minHeight: 260)
+                        .font(.system(.body, design: .rounded, weight: .regular))
+                        .frame(minHeight: 280)
                 }
             }
         }
@@ -228,11 +211,11 @@ fileprivate struct BodyField: View {
 fileprivate func fieldHeader(title: String, helper: String) -> some View {
     VStack(alignment: .leading, spacing: 4) {
         Text(title)
-            .font(.system(size: 14, weight: .medium, design: .rounded))
+            .font(.system(.subheadline, design: .rounded, weight: .semibold))
             .foregroundStyle(.primary)
 
         Text(helper)
-            .font(.system(size: 13, weight: .regular, design: .rounded))
+            .mentoryEyebrow()
             .foregroundStyle(.secondary)
     }
 }
@@ -242,28 +225,15 @@ fileprivate struct AttachmentSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            MentorySectionHeader(
-                eyebrow: "첨부",
-                title: "첨부 자료",
-                subtitle: "필요한 경우 사진이나 음성을 함께 남길 수 있습니다."
-            )
+            Text("사진이나 음성은 필요할 때만 더해도 충분해요.")
+                .mentorySupportText()
+                .foregroundStyle(.secondary)
 
-            if model.imageInput == nil, model.voiceInput == nil {
-                MentorySectionCard(cornerRadius: 28, contentPadding: 18) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("아직 첨부된 자료가 없어요")
-                            .font(.system(size: 15, weight: .medium, design: .rounded))
-                            .foregroundStyle(.primary)
-
-                        Text("하단 버튼으로 사진, 카메라, 음성 기록을 추가할 수 있습니다.")
-                            .mentorySupportText()
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            if model.imageInput != nil || model.voiceInput != nil {
+                VStack(spacing: 12) {
+                    ImagePreviewCard(model: model)
+                    VoicePreviewCard(model: model)
                 }
-            } else {
-                ImagePreviewCard(model: model)
-                VoicePreviewCard(model: model)
             }
         }
     }
@@ -277,9 +247,9 @@ fileprivate struct ImageButton: View {
         Button(action: {
             showImagePicker = true
         }) {
-            LiquidGlassIconButtonLabel(
+            AttachmentButtonLabel(
                 systemName: "photo",
-                label: "앨범",
+                label: "사진",
                 isEnabled: model.imageInput != nil,
                 accessibilityLabel: "앨범에서 사진 선택"
             )
@@ -298,7 +268,7 @@ fileprivate struct CameraButton: View {
         Button(action: {
             showCameraSheet = true
         }) {
-            LiquidGlassIconButtonLabel(
+            AttachmentButtonLabel(
                 systemName: "camera",
                 label: "카메라",
                 isEnabled: model.imageInput != nil,
@@ -319,7 +289,7 @@ fileprivate struct AudioButton: View {
         Button(action: {
             showingAudioRecorder = true
         }) {
-            LiquidGlassIconButtonLabel(
+            AttachmentButtonLabel(
                 systemName: "waveform",
                 label: "음성",
                 isEnabled: model.voiceInput != nil,
@@ -347,11 +317,11 @@ fileprivate struct ImagePreviewCard: View {
         Group {
             if let imageData = model.imageInput,
                let uiImage = UIImage(data: imageData) {
-                MentorySectionCard(cornerRadius: 28, contentPadding: 16) {
+                MentorySectionCard(cornerRadius: 24, contentPadding: 16) {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Label("첨부된 이미지", systemImage: "photo")
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                            Text("첨부한 사진")
+                                .mentoryEyebrow()
                                 .foregroundStyle(.secondary)
 
                             Spacer()
@@ -381,24 +351,17 @@ fileprivate struct VoicePreviewCard: View {
     var body: some View {
         Group {
             if let voiceInput = model.voiceInput {
-                MentorySectionCard(cornerRadius: 28, contentPadding: 16) {
+                MentorySectionCard(cornerRadius: 24, contentPadding: 16) {
                     HStack(spacing: 14) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.mentoryAccentPrimary.opacity(0.12))
-                                .frame(width: 42, height: 42)
-
-                            Image(systemName: "waveform")
-                                .foregroundStyle(Color.mentoryAccentPrimary)
-                        }
+                        MentoryToneMark(character: .cool, size: 40)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("음성 메모 첨부됨")
-                                .font(.system(size: 14, weight: .medium, design: .rounded))
+                            Text("음성 메모가 첨부되어 있어요")
+                                .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                 .foregroundStyle(.primary)
 
                             Text(voiceInput.lastPathComponent)
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .mentorySupportText()
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
                         }

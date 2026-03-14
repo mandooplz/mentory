@@ -15,7 +15,7 @@ struct MentoryiOSView: View {
     
     
     // MARK: viewModel
-    @State private var selectedTab: Tab = .record
+    @State private var selectedTab: Tab = .today
     
     
     // MARK: body
@@ -27,30 +27,30 @@ struct MentoryiOSView: View {
                 TabView(selection: $selectedTab) {
                     TodayBoardTab
                         .tabItem {
-                            Label("기록", systemImage: "square.and.pencil")
+                            Label("오늘", systemImage: "square.and.pencil")
                         }
-                        .tag(Tab.record)
+                        .tag(Tab.today)
 
-                    StaticTab
+                    ArchiveTab
                         .tabItem {
-                            Label("통계", systemImage: "chart.xyaxis.line")
+                            Label("아카이브", systemImage: "calendar")
                         }
-                        .tag(Tab.statistics)
+                        .tag(Tab.archive)
 
                     SettingTab
                         .tabItem {
                             Label("설정", systemImage: "gearshape")
                         }
-                        .tag(Tab.setting)
+                        .tag(Tab.settings)
                 }
                 .tint(.mentoryAccentPrimary)
-                .toolbarBackground(Color.mentoryCard.opacity(0.96), for: .tabBar)
+                .toolbarBackground(Color.mentoryCard.opacity(0.98), for: .tabBar)
                 .toolbarBackground(.visible, for: .tabBar)
                 .onOpenURL { url in
                     guard url.scheme == "mentory" else { return }
 
                     if url.host == "record" {
-                        selectedTab = .record
+                        selectedTab = .today
                     }
                 }
             } else {
@@ -66,9 +66,9 @@ struct MentoryiOSView: View {
     
     // MARK: value
     enum Tab {
-        case record
-        case statistics
-        case setting
+        case today
+        case archive
+        case settings
     }
     
     
@@ -90,14 +90,14 @@ struct MentoryiOSView: View {
     }
     
     @ViewBuilder
-    private var StaticTab: some View {
+    private var ArchiveTab: some View {
         if let statBoard = mentory.statBoard {
             StatBoardView(board: statBoard)
         } else {
             MentoryStatusCard(
-                systemImage: "chart.xyaxis.line",
-                title: "통계 화면을 준비 중입니다",
-                message: "기록 데이터를 불러오면 월별 흐름을 확인할 수 있어요."
+                systemImage: "calendar",
+                title: "기록을 모아보고 있어요",
+                message: "조금만 기다리면 지난 마음의 흐름을 차분히 다시 볼 수 있어요."
             )
         }
     }
@@ -109,8 +109,8 @@ struct MentoryiOSView: View {
         } else {
             MentoryStatusCard(
                 systemImage: "gearshape",
-                title: "설정 화면을 준비 중입니다",
-                message: "앱 설정과 안내 정보를 가져오고 있어요."
+                title: "조정할 항목을 불러오는 중이에요",
+                message: "이름과 알림, 안내 정보를 곧 확인할 수 있어요."
             )
         }
     }
@@ -122,8 +122,8 @@ struct MentoryiOSView: View {
         } else {
             MentoryStatusCard(
                 systemImage: "sparkles",
-                title: "시작 화면을 준비 중입니다",
-                message: "Mentory를 시작하기 위한 초기 데이터를 불러오고 있어요."
+                title: "조용히 시작을 준비하고 있어요",
+                message: "Mentory가 오늘의 첫 화면을 열고 있습니다."
             )
             .padding(.horizontal, 20)
         }

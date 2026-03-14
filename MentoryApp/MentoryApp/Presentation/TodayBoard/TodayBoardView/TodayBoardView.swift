@@ -1,4 +1,3 @@
-import Combine
 import MentoryCore
 //
 //  TodayBoardView.swift
@@ -21,26 +20,20 @@ struct TodayBoardView: View {
                 WebView(url: todayBoard.owner!.infoURL.rawValue)
             }
         ) {
-            DashboardHeroHeader(
+            TodayOpening(
                 todayBoard: todayBoard,
-                userName: mentoryiOS.userName ?? "익명"
+                userName: mentoryiOS.userName ?? "당신"
             )
 
-            VStack(alignment: .leading, spacing: 12) {
-                MentorySectionHeader(
-                    eyebrow: "멘토 메시지",
-                    title: "오늘의 멘토 한마디",
-                    subtitle: "기록을 시작하기 전에 짧게 확인해보세요."
-                )
+            RecordInvitationSection(todayBoard: todayBoard)
 
-                MessageView(mentorMessage: todayBoard.mentorMessage)
-            }
-
-            RecordComposerSection(todayBoard: todayBoard)
+            CompanionNoteSection(todayBoard: todayBoard)
 
             SuggestionSection(todayBoard: todayBoard)
         }
         .task {
+            await todayBoard.fetchUserRecordCount()
+
             if todayBoard.mentorMessage == nil {
                 await todayBoard.setUpMentorMessage()
             }
@@ -84,72 +77,172 @@ private struct TodayBoardPreview: View {
 }
 
 // MARK: Component
-private struct DashboardHeroHeader: View {
+private struct TodayOpening: View {
     @ObservedObject var todayBoard: TodayBoard
     let userName: String
 
     var body: some View {
-        MentorySectionCard(cornerRadius: 34, contentPadding: 24) {
-            VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "오늘 기록", systemImage: "heart.text.square")
+        VStack(alignment: .leading, spacing: MentorySpacing.large) {
+            MentoryInfoChip(text: todayLabel, systemImage: "sun.max")
 
-                Text("\(userName)님의 오늘 기록")
+            VStack(alignment: .leading, spacing: 10) {
+                Text("오늘 마음은 어땠나요?")
                     .mentoryTitle()
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(greetingCopy)
+                Text(summaryCopy)
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-
-                HStack(spacing: 10) {
-                    MentoryMetricPill(
-                        title: "오늘",
-                        value: todayBoard.currentDate.formatted()
-                    )
-                    MentoryMetricPill(
-                        title: "누적 기록",
-                        value: recordCountLabel
-                    )
-                    MentoryMetricPill(
-                        title: "추천 진행",
-                        value: suggestionProgressLabel
-                    )
-                }
             }
-        }
-        .task {
-            await todayBoard.fetchUserRecordCount()
         }
     }
 
-    private var greetingCopy: String {
+    private var todayLabel: String {
+        todayBoard.currentDate.formatted()
+    }
+
+    private var summaryCopy: String {
         guard let recordCount = todayBoard.recordCount else {
-            return "기록과 추천 행동을 불러오고 있습니다."
+            return "잠시 숨을 고르고, 지금 가장 오래 남아 있는 장면부터 적어보세요."
         }
 
         if recordCount == 0 {
-            return "첫 기록을 남기면 감정 리포트와 행동 제안이 함께 정리됩니다."
+            return "첫 기록은 길지 않아도 괜찮아요. 지금 떠오르는 마음 한 줄이면 충분해요."
         }
 
-        return "지금까지 \(recordCount)개의 기록이 저장되어 있어요. 오늘 기록도 이어서 정리해보세요."
+        return "\(userName)님이 남긴 \(recordCount)개의 기록이 있어요. 오늘의 마음도 이어서 남겨볼까요?"
+    }
+}
+
+private struct RecordInvitationSection: View {
+    @ObservedObject var todayBoard: TodayBoard
+    @State private var showDateSelectionSheet = false
+
+    var body: some View {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(recordCardTitle)
+                        .mentoryHeadline()
+                        .foregroundStyle(.primary)
+
+                    Text(recordCardDescription)
+                        .mentorySupportText()
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                if todayBoard.recordForms.isEmpty == false {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(todayBoard.recordForms) { recordForm in
+                                RecordAvailabilityChip(recordForm: recordForm)
+                            }
+                        }
+                    }
+                }
+
+                Button {
+                    Task {
+                        if todayBoard.recordForms.isEmpty {
+                            await todayBoard.setUpRecordForms()
+                        }
+
+                        for recordForm in todayBoard.recordForms {
+                            await recordForm.checkDisability()
+                        }
+
+                        showDateSelectionSheet = true
+                    }
+                } label: {
+                    Text(availableRecordCount == 0 ? "열린 날짜 다시 보기" : "지금 기록하기")
+                }
+                .buttonStyle(MentoryPrimaryButtonStyle())
+            }
+        }
+        .sheet(isPresented: $showDateSelectionSheet) {
+            DateSelectionSheet(todayBoard: todayBoard)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
-    private var recordCountLabel: String {
-        guard let recordCount = todayBoard.recordCount else {
-            return "불러오는 중"
-        }
-
-        return "\(recordCount)회"
+    private var availableRecordCount: Int {
+        todayBoard.recordForms.filter { $0.isDisabled == false }.count
     }
 
-    private var suggestionProgressLabel: String {
-        guard todayBoard.suggestions.isEmpty == false else {
-            return "대기"
+    private var recordCardTitle: String {
+        switch availableRecordCount {
+        case 0:
+            return "최근 기록은 모두 남겨두었어요."
+        case 1:
+            return "지금 열려 있는 기록이 하나 있어요."
+        default:
+            return "지금 열려 있는 기록이 \(availableRecordCount)개 있어요."
         }
+    }
 
-        return todayBoard.getSuggestionIndicator()
+    private var recordCardDescription: String {
+        switch availableRecordCount {
+        case 0:
+            return "오늘, 어제, 그제의 기록을 모두 마쳤어요. 다음 날짜가 열리기 전까지는 지난 흐름을 천천히 돌아볼 수 있어요."
+        case 1:
+            return "짧게라도 남겨두면 오늘의 분석과 제안이 자연스럽게 이어져요."
+        default:
+            return "오늘, 어제, 그제 중 마음이 가장 선명한 날부터 골라 적어보세요."
+        }
+    }
+}
+
+private struct RecordAvailabilityChip: View {
+    @ObservedObject var recordForm: RecordForm
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(relativeLabel)
+                .mentoryCaption()
+                .foregroundStyle(.primary)
+
+            Text(recordForm.isDisabled ? "기록 완료" : "지금 적을 수 있어요")
+                .mentoryEyebrow()
+                .foregroundStyle(recordForm.isDisabled ? .secondary : Color.mentoryAccentPrimary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(recordForm.isDisabled ? Color.mentorySubCard.opacity(0.65) : Color.mentorySubCard.opacity(0.92))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(
+                    recordForm.isDisabled ? Color.mentoryBorder.opacity(0.7) : Color.mentoryAccentPrimary.opacity(0.28),
+                    lineWidth: 1
+                )
+        )
+    }
+
+    private var relativeLabel: String {
+        let relativeDay = recordForm.targetDate.relativeDay(from: .now)
+        return relativeDay == .unknown ? recordForm.targetDate.formatted() : relativeDay.rawValue
+    }
+}
+
+private struct CompanionNoteSection: View {
+    @ObservedObject var todayBoard: TodayBoard
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            MentorySectionHeader(
+                eyebrow: "한 문장",
+                title: "오늘의 짧은 문장",
+                subtitle: "시작 전에 잠깐 읽고 지나가면 충분해요."
+            )
+
+            MessageView(mentorMessage: todayBoard.mentorMessage)
+        }
     }
 }
 
@@ -167,169 +260,24 @@ struct MessageView: View {
 
 struct MentorMessageDefaultView: View {
     var body: some View {
-        PopupCard(
-            image: nil,
-            defaultImage: "greeting",
-            title: nil,
-            defaultTitle: "오늘의 멘토 메시지를 준비하고 있어요",
-            content: nil,
-            defaultContent: "잠시 후 오늘 기록에 맞는 멘토 메시지가 표시됩니다.\n기록을 시작하기 전에 가볍게 확인해보세요."
-        )
-    }
-}
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 12) {
+                    MentoryToneMark(character: .warm, size: 40)
 
-private struct RecordComposerSection<Content: View>: View {
-    @ObservedObject var todayBoard: TodayBoard
-    @State private var showDateSelectionSheet = false
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("오늘의 문장을 준비하고 있어요")
+                            .mentoryHeadline()
+                            .foregroundStyle(.primary)
 
-    @ViewBuilder let navDestination: (RecordForm) -> Content
-
-    init(
-        todayBoard: TodayBoard,
-        @ViewBuilder navDestination: @escaping (RecordForm) -> Content = { recordForm in
-            RecordFormView(recordForm: recordForm)
-        }
-    ) {
-        self.todayBoard = todayBoard
-        self.navDestination = navDestination
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            MentorySectionHeader(
-                eyebrow: "기록",
-                title: "기록 작성",
-                subtitle: "최근 3일 중 작성 가능한 날짜를 선택할 수 있습니다."
-            )
-
-            MentorySectionCard(cornerRadius: 32, contentPadding: 22) {
-                VStack(alignment: .leading, spacing: 20) {
-                    HStack(alignment: .center, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text(recordCardTitle)
-                                .font(.system(size: 20, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.primary)
-
-                            Text(recordCardDescription)
-                                .mentorySupportText()
-                                .foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        Spacer(minLength: 0)
-
-                        Image("greeting")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 110, height: 110)
+                        Text("조금만 기다리면 오늘의 톤에 맞는 짧은 문장이 도착해요.")
+                            .mentorySupportText()
+                            .foregroundStyle(.secondary)
                     }
-
-                    if todayBoard.recordForms.isEmpty == false {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 10) {
-                                ForEach(todayBoard.recordForms) { recordForm in
-                                    RecordAvailabilityPill(recordForm: recordForm)
-                                }
-                            }
-                        }
-                    }
-
-                    Button {
-                        Task {
-                            if todayBoard.recordForms.isEmpty {
-                                await todayBoard.setUpRecordForms()
-                            }
-
-                            for recordForm in todayBoard.recordForms {
-                                await recordForm.checkDisability()
-                            }
-
-                            showDateSelectionSheet = true
-                        }
-                    } label: {
-                        Text(availableRecordCount == 0 ? "작성 가능한 날짜 확인" : "기록 시작하기")
-                    }
-                    .buttonStyle(MentoryPrimaryButtonStyle())
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .sheet(isPresented: $showDateSelectionSheet) {
-            DateSelectionSheet(todayBoard: todayBoard)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-        }
-        .fullScreenCover(
-            item: $todayBoard.recordFormSelection,
-            content: { recordForm in
-                navDestination(recordForm)
-            }
-        )
-    }
-
-    private var availableRecordCount: Int {
-        todayBoard.recordForms.filter { $0.isDisabled == false }.count
-    }
-
-    private var recordCardTitle: String {
-        switch availableRecordCount {
-        case 0:
-            return "최근 기록을 모두 작성했어요"
-        case 1:
-            return "작성 가능한 기록이 1개 남아 있어요"
-        default:
-            return "작성 가능한 기록이 \(availableRecordCount)개 남아 있어요"
-        }
-    }
-
-    private var recordCardDescription: String {
-        switch availableRecordCount {
-        case 0:
-            return "오늘, 어제, 그제의 작성 상태를 다시 확인할 수 있습니다."
-        case 1:
-            return "남은 기록을 작성하면 오늘의 흐름을 정리할 수 있습니다."
-        default:
-            return "필요하면 사진과 음성을 함께 남겨 기록 맥락을 보완해보세요."
-        }
-    }
-}
-
-private struct RecordAvailabilityPill: View {
-    @ObservedObject var recordForm: RecordForm
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(relativeLabel)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(.primary)
-
-            Text(recordForm.isDisabled ? "작성 완료" : "작성 가능")
-                .font(.system(size: 11, weight: .medium, design: .rounded))
-                .foregroundStyle(recordForm.isDisabled ? .secondary : Color.mentoryAccentPrimary)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(recordForm.isDisabled ? Color.mentoryCard.opacity(0.7) : Color.mentoryAccentPrimary.opacity(0.1))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(
-                    recordForm.isDisabled
-                        ? Color.white.opacity(0.16)
-                        : Color.mentoryAccentPrimary.opacity(0.18),
-                    lineWidth: 1
-                )
-        )
-    }
-
-    private var relativeLabel: String {
-        let relativeDay = recordForm.targetDate.relativeDay(from: .now)
-        if relativeDay == .unknown {
-            return recordForm.targetDate.formatted()
-        }
-
-        return relativeDay.rawValue
     }
 }
 
@@ -337,181 +285,39 @@ private struct SuggestionSection: View {
     @ObservedObject var todayBoard: TodayBoard
 
     var body: some View {
-        Group {
-            SuggestionFrontCard(todayBoard: todayBoard)
+        VStack(alignment: .leading, spacing: 12) {
+            MentorySectionHeader(
+                eyebrow: "이어서",
+                title: "오늘의 작은 제안",
+                subtitle: todayBoard.suggestions.isEmpty
+                    ? "기록을 마치면 지금 해볼 수 있는 한두 가지 제안이 이어져요."
+                    : progressSummary
+            )
+
+            if todayBoard.suggestions.isEmpty {
+                MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
+                    Text("아직 비어 있어요. 오늘의 기록을 남기면 부담 없는 한 걸음이 여기에 정리됩니다.")
+                        .mentorySupportText()
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(todayBoard.suggestions, id: \.self.objectID) { suggestion in
+                        SuggestionView(suggestion: suggestion)
+                    }
+                }
+            }
         }
         .task {
             await todayBoard.loadSuggestions()
         }
     }
-}
-
-private struct SuggestionFrontCard: View {
-    @ObservedObject var todayBoard: TodayBoard
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                MentorySectionHeader(
-                    eyebrow: "추천 행동",
-                    title: "오늘의 행동 제안",
-                    subtitle: todayBoard.suggestions.isEmpty
-                        ? "기록을 마치면 오늘 해볼 행동이 여기에 표시됩니다."
-                        : "하나씩 완료하면서 오늘의 흐름을 정리해보세요."
-                )
-
-            }
-
-            MentorySectionCard(cornerRadius: 32, contentPadding: 20) {
-                VStack(alignment: .leading, spacing: 16) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(todayBoard.suggestions.isEmpty ? "대기 중" : "진행 현황")
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
-                                .foregroundStyle(.secondary)
-                            Text(progressSummary)
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundStyle(.primary)
-                        }
-
-                        Spacer()
-
-                        Text(progressIndicator)
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.secondary)
-                    }
-
-                    progressBar
-
-                    if todayBoard.suggestions.isEmpty {
-                        SuggestionEmptyState()
-                    } else {
-                        VStack(spacing: 10) {
-                            ForEach(todayBoard.suggestions, id: \.self.objectID) { suggestion in
-                                SuggestionView(suggestion: suggestion)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private var progressSummary: String {
-        if todayBoard.suggestions.isEmpty {
-            return "기록을 제출하면 행동 제안이 생성됩니다."
-        }
-
-        return "\(Int(todayBoard.suggestionProgress * 100))% 완료"
-    }
-
-    private var progressIndicator: String {
-        guard todayBoard.suggestions.isEmpty == false else {
-            return "아직 없음"
-        }
-
-        return todayBoard.getSuggestionIndicator()
-    }
-
-    private var progressBar: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Color.mentoryProgressTrack)
-                    .frame(height: 12)
-
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.mentoryAccentPrimary,
-                                Color.mentoryAccentSecondary.opacity(0.92),
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(
-                        width: geometry.size.width * max(todayBoard.suggestionProgress, 0.04),
-                        height: 12
-                    )
-                    .animation(.spring(response: 0.42, dampingFraction: 0.8), value: todayBoard.suggestionProgress)
-            }
-        }
-        .frame(height: 12)
-    }
-}
-
-private struct SuggestionEmptyState: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("아직 추천 행동이 없어요")
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(.primary)
-
-            Text("감정 기록을 마치면 분석 결과를 바탕으로 행동 제안이 정리됩니다.")
-                .mentorySupportText()
-                .foregroundStyle(.secondary)
-
-            VStack(alignment: .leading, spacing: 8) {
-                SuggestionHintRow(text: "감정 상태에 맞는 행동을 제안합니다.")
-                SuggestionHintRow(text: "완료 여부를 바로 표시할 수 있습니다.")
-                SuggestionHintRow(text: "완료 횟수에 따라 뱃지가 쌓입니다.")
-            }
-            .padding(.top, 4)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(18)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.mentorySubCard.opacity(0.82))
-        )
-    }
-}
-
-private struct SuggestionHintRow: View {
-    let text: String
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(Color.mentoryAccentPrimary)
-            Text(text)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-                .foregroundStyle(.secondary)
-        }
-    }
-}
-
-private struct BadgeBackCard: View {
-    @ObservedObject var todayBoard: TodayBoard
-    let onClose: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                MentorySectionHeader(
-                    eyebrow: "뱃지",
-                    title: "획득한 뱃지",
-                    subtitle: "추천 행동 완료 수에 따라 뱃지가 쌓입니다."
-                )
-
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 15, weight: .semibold))
-                        .frame(width: 34, height: 34)
-                }
-                .buttonStyle(MentoryIconButtonStyle())
-                .accessibilityLabel("뱃지 화면 닫기")
-            }
-
-            MentorySectionCard(cornerRadius: 32, contentPadding: 20) {
-                BadgeGridView(
-                    earnedBadges: todayBoard.earnedBadges,
-                    completedCount: todayBoard.completedSuggestionsCount
-                )
-            }
-        }
+        let completed = todayBoard.suggestions.filter { $0.isDone }.count
+        let total = todayBoard.suggestions.count
+        return "\(completed)개를 마쳤고, \(max(total - completed, 0))개가 남아 있어요."
     }
 }
 
@@ -525,30 +331,28 @@ private struct DateSelectionSheet: View {
             MentoryScrollScreen(spacing: 18, topPadding: 20, bottomPadding: 24) {
                 MentorySectionHeader(
                     eyebrow: "날짜 선택",
-                    title: "작성할 날짜를 선택하세요",
-                    subtitle: "최근 3일 중 아직 작성하지 않은 날짜를 선택할 수 있습니다."
+                    title: "어느 날의 기록을 열까요?",
+                    subtitle: "최근 3일 중 열려 있는 날짜를 고를 수 있어요."
                 )
 
                 if todayBoard.recordForms.isEmpty {
                     MentoryStatusCard(
                         systemImage: "checkmark.circle.fill",
-                        title: "모든 기록이 완료되었어요",
-                        message: "최근 3일의 기록을 모두 작성했습니다. 다음 기록은 새로운 날짜가 열리면 이어서 남길 수 있어요.",
+                        title: "지금은 새로 열려 있는 기록이 없어요",
+                        message: "최근 3일의 기록을 모두 마쳤습니다. 다음 날짜가 열리면 다시 이어서 적을 수 있어요.",
                         tint: .green
                     )
                 } else {
-                    MentorySectionCard(cornerRadius: 28, contentPadding: 16) {
-                        VStack(spacing: 12) {
-                            ForEach(todayBoard.recordForms) { recordForm in
-                                DateButton(
-                                    recordForm: recordForm,
-                                    date: recordForm.targetDate,
-                                    action: {
-                                        todayBoard.recordFormSelection = recordForm
-                                        dismiss()
-                                    }
-                                )
-                            }
+                    VStack(spacing: 12) {
+                        ForEach(todayBoard.recordForms) { recordForm in
+                            DateButton(
+                                recordForm: recordForm,
+                                date: recordForm.targetDate,
+                                action: {
+                                    todayBoard.recordFormSelection = recordForm
+                                    dismiss()
+                                }
+                            )
                         }
                     }
                 }
@@ -581,45 +385,44 @@ private struct DateButton: View {
         } label: {
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(date.relativeDay(from: .now).rawValue.isEmpty ? date.formatted() : date.relativeDay(from: .now).rawValue)
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    Text(relativeLabel)
+                        .mentoryHeadline()
                         .foregroundStyle(.primary)
 
-                    Text(recordForm.isDisabled ? "이미 작성한 날짜예요" : date.formatted())
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                    Text(recordForm.isDisabled ? "이미 남겨 둔 날이에요" : date.formatted())
+                        .mentorySupportText()
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                Text(recordForm.isDisabled ? "완료" : "작성")
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                Text(recordForm.isDisabled ? "완료" : "기록하기")
+                    .mentoryEyebrow()
                     .foregroundStyle(recordForm.isDisabled ? .secondary : Color.mentoryAccentPrimary)
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 18)
-            .padding(.vertical, 16)
+            .padding(.vertical, 18)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(recordForm.isDisabled ? Color.mentoryCard.opacity(0.8) : Color.mentorySubCard.opacity(0.92))
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(recordForm.isDisabled ? Color.mentorySubCard.opacity(0.62) : Color.mentoryCard.opacity(0.98))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .stroke(
-                        recordForm.isDisabled
-                            ? Color.white.opacity(0.15)
-                            : Color.mentoryAccentPrimary.opacity(0.16),
+                        recordForm.isDisabled ? Color.mentoryBorder.opacity(0.7) : Color.mentoryAccentPrimary.opacity(0.22),
                         lineWidth: 1
                     )
             )
-            .opacity(recordForm.isDisabled ? 0.68 : 1.0)
+            .opacity(recordForm.isDisabled ? 0.7 : 1.0)
         }
         .buttonStyle(.plain)
         .task {
             await recordForm.checkDisability()
         }
+    }
+
+    private var relativeLabel: String {
+        let relativeDay = date.relativeDay(from: .now)
+        return relativeDay == .unknown ? date.formatted() : relativeDay.rawValue
     }
 }

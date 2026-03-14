@@ -71,14 +71,10 @@ public final class RecordForm: Sendable, ObservableObject, Identifiable {
     
     public func validateInput() {
         // capture
-        let title = self.titleInput
-        let text = self.textInput
+        let text = self.textInput.trimmingCharacters(in: .whitespacesAndNewlines)
     
         //process
-        let isTitleNotEmpty = !title.isEmpty
-        let isTextNotEmpty = !text.isEmpty
-        
-        let canUserProceed = isTitleNotEmpty && isTextNotEmpty
+        let canUserProceed = !text.isEmpty
         
         // mutate
         self.canProceed = canUserProceed

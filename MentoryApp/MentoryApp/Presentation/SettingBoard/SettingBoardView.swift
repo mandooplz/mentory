@@ -81,28 +81,28 @@ struct SettingBoardView: View {
             MentoryScrollScreen {
                 HeaderSection
 
-                SettingSection(
-                    title: "프로필 및 알림",
-                    subtitle: "닉네임과 알림 설정을 관리할 수 있습니다."
+                SettingGroup(
+                    title: "프로필",
+                    subtitle: "내 이름과 알림을 조용히 맞춰둘 수 있어요."
                 ) {
                     EditingNameRow
-                    AppSettingsRow
-                    ReminderStatusRow
                     ReminderTimeRow
+                    ReminderStatusRow
                 }
 
-                SettingSection(
-                    title: "정책 및 안내",
-                    subtitle: "서비스 이용에 필요한 문서를 확인할 수 있습니다."
+                SettingGroup(
+                    title: "앱과 안내",
+                    subtitle: "필요할 때만 열어보면 되는 항목이에요."
                 ) {
+                    AppSettingsRow
                     PrivacyPolicyRow
                     LicenseInfoRow
                     TermsOfServiceRow
                 }
 
-                SettingSection(
-                    title: "데이터 관리",
-                    subtitle: "앱 데이터를 초기화하는 작업은 되돌릴 수 없습니다."
+                SettingGroup(
+                    title: "데이터",
+                    subtitle: "되돌릴 수 없는 작업은 마지막에 한 번 더 확인해요."
                 ) {
                     DataDeletionRow
                 }
@@ -129,34 +129,34 @@ struct SettingBoardView: View {
     // MARK: ViewBuilder
     @ViewBuilder
     private var HeaderSection: some View {
-        MentorySectionCard(cornerRadius: 34, contentPadding: 24) {
-            VStack(alignment: .leading, spacing: 18) {
-                MentoryInfoChip(text: "설정", systemImage: "gearshape")
+        VStack(alignment: .leading, spacing: MentorySpacing.large) {
+            MentoryInfoChip(text: "설정", systemImage: "gearshape")
 
-                Text(settingBoard.owner?.greetingText ?? "설정을 준비하고 있어요")
+            VStack(alignment: .leading, spacing: 12) {
+                Text("설정을 조용히 정리해둘게요.")
                     .mentoryTitle()
                     .foregroundStyle(.primary)
 
-                Text("이름, 알림, 안내 문서를 한 곳에서 관리할 수 있습니다.")
+                Text(headerCopy)
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-
-                HStack(spacing: 10) {
-                    MentoryMetricPill(title: "알림 상태", value: settingBoardViewModel.notificationStatusText)
-                    MentoryMetricPill(title: "알림 시간", value: settingBoard.formattedReminderTime())
-                }
             }
         }
+    }
+
+    private var headerCopy: String {
+        let reminder = settingBoard.formattedReminderTime()
+        let status = settingBoardViewModel.notificationStatusText
+        return "이름은 \(settingBoard.owner?.userName ?? "미설정"), 알림은 \(status), 현재 시간은 \(reminder)로 맞춰져 있어요."
     }
 
     @ViewBuilder
     private var EditingNameRow: some View {
         SettingRow(
-            iconName: "person.text.rectangle",
-            iconBackground: .orange,
-            title: "이름 변경",
-            subtitle: "멘토 메시지와 안내 문구에 표시되는 이름을 수정합니다."
+            title: "이름",
+            detail: settingBoard.owner?.userName ?? "미설정",
+            helper: "메시지에 반영돼요"
         ) {
             Task {
                 settingBoard.setUpEditingName()
@@ -175,10 +175,9 @@ struct SettingBoardView: View {
     @ViewBuilder
     private var AppSettingsRow: some View {
         SettingRow(
-            iconName: "app.badge.fill",
-            iconBackground: .blue,
-            title: "앱 설정",
-            subtitle: "시스템 권한과 세부 옵션을 iOS 설정에서 관리합니다."
+            title: "iOS 설정 열기",
+            detail: nil,
+            helper: "권한과 세부 옵션"
         ) {
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
             UIApplication.shared.open(url)
@@ -187,12 +186,10 @@ struct SettingBoardView: View {
 
     @ViewBuilder
     private var ReminderStatusRow: some View {
-        SettingValueRow(
-            iconName: "bell.fill",
-            iconBackground: .red,
-            title: "알림 상태",
-            subtitle: "권한 상태를 확인하고 필요하면 설정 앱으로 이동합니다.",
-            value: settingBoardViewModel.notificationStatusText
+        SettingRow(
+            title: "알림 권한",
+            detail: settingBoardViewModel.notificationStatusText,
+            helper: "필요하면 설정 앱으로 이동"
         ) {
             Task {
                 await settingBoardViewModel.didTapReminderStatus(settingBoard: settingBoard)
@@ -202,12 +199,10 @@ struct SettingBoardView: View {
 
     @ViewBuilder
     private var ReminderTimeRow: some View {
-        SettingValueRow(
-            iconName: "clock.fill",
-            iconBackground: .purple,
+        SettingRow(
             title: "알림 시간",
-            subtitle: "감정 기록을 떠올리기 좋은 시간으로 조정합니다.",
-            value: settingBoard.formattedReminderTime()
+            detail: settingBoard.formattedReminderTime(),
+            helper: "기록이 떠오르는 시간"
         ) {
             settingBoardViewModel.isShowingReminderPickerSheet = true
         }
@@ -219,10 +214,9 @@ struct SettingBoardView: View {
     @ViewBuilder
     private var PrivacyPolicyRow: some View {
         SettingRow(
-            iconName: "lock.fill",
-            iconBackground: .gray,
             title: "개인정보 처리방침",
-            subtitle: "수집 항목과 이용 목적, 보관 기준을 확인합니다."
+            detail: nil,
+            helper: "개인정보 이용 안내"
         ) {
             settingBoardViewModel.isShowingPrivacyPolicyView = true
         }
@@ -234,10 +228,9 @@ struct SettingBoardView: View {
     @ViewBuilder
     private var LicenseInfoRow: some View {
         SettingRow(
-            iconName: "doc.text.fill",
-            iconBackground: .green,
             title: "라이선스 정보",
-            subtitle: "Mentory에 사용된 오픈소스와 라이선스를 확인합니다."
+            detail: nil,
+            helper: "오픈소스 사용 내역"
         ) {
             settingBoardViewModel.isShowingLicenseInfoView = true
         }
@@ -249,10 +242,9 @@ struct SettingBoardView: View {
     @ViewBuilder
     private var TermsOfServiceRow: some View {
         SettingRow(
-            iconName: "book.fill",
-            iconBackground: .blue.opacity(0.85),
             title: "이용 약관",
-            subtitle: "서비스 이용 조건과 책임 범위를 안내합니다."
+            detail: nil,
+            helper: "서비스 이용 안내"
         ) {
             settingBoardViewModel.isShowingTermsOfServiceView = true
         }
@@ -264,16 +256,15 @@ struct SettingBoardView: View {
     @ViewBuilder
     private var DataDeletionRow: some View {
         SettingRow(
-            iconName: "trash.fill",
-            iconBackground: .red.opacity(0.9),
             title: "데이터 삭제",
-            subtitle: "앱 데이터가 모두 제거되며 이 작업은 되돌릴 수 없습니다.",
+            detail: nil,
+            helper: "되돌릴 수 없어요",
             titleColor: .red
         ) {
             settingBoardViewModel.isShowingDataDeletionAlert = true
         }
         .alert(
-            "데이터를 삭제하시겠습니까?",
+            "데이터를 삭제하시겠어요?",
             isPresented: $settingBoardViewModel.isShowingDataDeletionAlert,
             actions: {
                 Button("삭제", role: .destructive) {
@@ -284,7 +275,7 @@ struct SettingBoardView: View {
                 }
             },
             message: {
-                Text("삭제를 누르면 앱 데이터가 모두 제거됩니다.")
+                Text("삭제를 누르면 저장된 기록과 설정이 모두 사라집니다.")
             }
         )
     }
@@ -294,14 +285,14 @@ struct SettingBoardView: View {
             ZStack {
                 MentoryBackdrop()
 
-                VStack(spacing: 20) {
+                VStack(alignment: .leading, spacing: 20) {
                     MentorySectionHeader(
                         eyebrow: "알림 시간",
-                        title: "알림 시간을 조정하세요",
-                        subtitle: "기록을 떠올리기 좋은 시간으로 설정할 수 있습니다."
+                        title: "기록이 떠오르는 시간으로 맞춰둘까요?",
+                        subtitle: "억지로 바꾸지 않아도 괜찮아요. 편한 시간만 정하면 됩니다."
                     )
 
-                    MentorySectionCard(cornerRadius: 28, contentPadding: 16) {
+                    MentorySectionCard(cornerRadius: 24, contentPadding: 14) {
                         DatePicker(
                             "알림 시간",
                             selection: $settingBoardViewModel.selectedDate,
@@ -318,7 +309,7 @@ struct SettingBoardView: View {
                         settingBoard.changeReminderTime(to: settingBoardViewModel.selectedDate)
                         settingBoardViewModel.isShowingReminderPickerSheet = false
                     } label: {
-                        Text("알림 시간 저장")
+                        Text("이 시간으로 저장")
                     }
                     .buttonStyle(MentoryPrimaryButtonStyle())
                 }
@@ -343,22 +334,24 @@ struct SettingBoardView: View {
 }
 
 // MARK: SettingBoard Components
-struct SettingSection<Content: View>: View {
+struct SettingGroup<Content: View>: View {
     let title: String
     let subtitle: String
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(.primary)
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .mentoryHeadline()
+                    .foregroundStyle(.primary)
 
-            Text(subtitle)
-                .font(.system(size: 14, weight: .regular, design: .rounded))
-                .foregroundStyle(.secondary)
+                Text(subtitle)
+                    .mentorySupportText()
+                    .foregroundStyle(.secondary)
+            }
 
-            MentorySectionCard(cornerRadius: 28, contentPadding: 8) {
+            MentorySectionCard(cornerRadius: 22, contentPadding: 4) {
                 VStack(spacing: 0) {
                     content()
                 }
@@ -368,110 +361,45 @@ struct SettingSection<Content: View>: View {
 }
 
 struct SettingRow: View {
-    var iconName: String
-    var iconBackground: Color
     var title: String
-    var subtitle: String?
+    var detail: String?
+    var helper: String?
     var titleColor: Color = .primary
     var action: () -> Void = {}
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
-                SettingIcon(systemName: iconName, background: iconBackground)
-
-                VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 14) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(title)
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(titleColor)
 
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.system(size: 12, weight: .regular, design: .rounded))
+                    if let helper {
+                        Text(helper)
+                            .mentoryEyebrow()
                             .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.secondary)
-                    .font(.system(size: 12, weight: .medium))
-            }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 12)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-struct SettingValueRow: View {
-    var iconName: String
-    var iconBackground: Color
-    var title: String
-    var subtitle: String?
-    var value: String
-    var action: () -> Void = {}
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 16) {
-                SettingIcon(systemName: iconName, background: iconBackground)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 15, weight: .medium, design: .rounded))
-                        .foregroundStyle(.primary)
-
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.system(size: 12, weight: .regular, design: .rounded))
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                if let detail {
+                    Text(detail)
+                        .font(.system(.subheadline, design: .rounded, weight: .medium))
+                        .foregroundStyle(Color.mentoryAccentPrimary)
+                        .multilineTextAlignment(.trailing)
                 }
 
-                Spacer()
-
-                Text(value)
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color.mentoryAccentPrimary)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(Color.mentoryAccentPrimary.opacity(0.08))
-                    )
-
                 Image(systemName: "chevron.right")
+                    .font(.system(.caption, design: .rounded, weight: .medium))
                     .foregroundStyle(.secondary)
-                    .font(.system(size: 12, weight: .medium))
             }
             .padding(.vertical, 14)
-            .padding(.horizontal, 12)
+            .padding(.horizontal, 14)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-    }
-}
-
-struct SettingIcon: View {
-    var systemName: String
-    var background: Color
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(background)
-                .frame(width: 40, height: 40)
-
-            Image(systemName: systemName)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(.white)
-        }
-        .frame(width: 44)
     }
 }
 

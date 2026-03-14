@@ -18,7 +18,7 @@ struct TodayBoardLayout<Content: View, navDestination: View>: View {
     
     var body: some View {
         NavigationStack {
-            MentoryScrollScreen(spacing: 24, topPadding: 18, bottomPadding: 40) {
+            MentoryScrollScreen(spacing: 28, topPadding: 24, bottomPadding: 44) {
                 self.content()
             }
             .toolbar {

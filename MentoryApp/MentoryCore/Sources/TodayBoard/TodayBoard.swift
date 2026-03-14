@@ -85,6 +85,8 @@ public final class TodayBoard: Sendable, ObservableObject {
 
         // mutate
         let mentorMessage = MentorMessage(owner: self)
+        let preferredCharacter = await self.owner?.newMentoryDB.character ?? .warm
+        mentorMessage.setCharacterOnce(to: preferredCharacter)
         self.mentorMessage = mentorMessage
         logger.debug("mentorMessage 객체가 생성되었습니다.")
     }

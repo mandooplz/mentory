@@ -22,8 +22,8 @@ public enum MentoryCharacter: String, Sendable, Hashable, CaseIterable, Codable 
     // MARK: operator
     public var title: String {
         switch self {
-        case .cool: return "냉철이가 전하는 오늘의 현실 조언"
-        case .warm: return "구름이의 따뜻한 한마디"
+        case .cool: return "명료한 시선의 한마디"
+        case .warm: return "다정한 시선의 한마디"
         }
     }
     
@@ -36,24 +36,24 @@ public enum MentoryCharacter: String, Sendable, Hashable, CaseIterable, Codable 
     
     public var displayName: String {
         switch self {
-        case .cool: return "냉스 처리스키"
-        case .warm: return "알렉산더 구름스"
+        case .cool: return "명료한 시선"
+        case .warm: return "다정한 시선"
         }
     }
-    
+
     public var description: String {
         switch self {
-        case .cool: return "논리적인 분석가 냉철이가 해석을 도와드릴게요!"
-        case .warm: return "감성적인 조력자 구름이가 따뜻하게 답해드릴게요!"
+        case .cool: return "조금 떨어져 바라보며 상황과 감정을 또렷하게 정리해드릴게요."
+        case .warm: return "마음을 먼저 살피며 부드럽고 따뜻한 언어로 되짚어드릴게요."
         }
     }
     
     public var messageDescription: String {
         switch self {
         case .cool:
-            return "상황을 객관적인 시선으로 정리하고, 사용자의 감정과 행동, 패턴과 주요 요인을 냉정하게 해석해줘. 감정적인 위로는 최소화하고, 상황을 논리적으로 해석해주었으면 좋겠어. 음성이 첨부된 경우, 말투, 톤, 말하는 속도 등에서 드러나는 감정 상태도 객관적으로 분석해줘. 이미지가 첨부된 경우, 이미지 속 장소, 사물, 분위기가 사용자의 감정과 상황에 어떤 영향을 미치는지 논리적으로 파악해줘."
+            return "상황을 한 걸음 떨어져 바라보며 감정의 흐름과 원인을 또렷하게 정리해줘. 과장된 위로보다 명료한 해석을 우선하고, 사용자가 스스로 상황을 이해할 수 있도록 짧고 단정한 문장으로 설명해줘. 음성이 첨부된 경우 말투와 속도에서 드러나는 긴장감이나 안정감을 함께 반영하고, 이미지가 첨부된 경우 공간과 분위기가 감정에 준 영향을 차분하게 짚어줘."
         case .warm:
-            return "따뜻한 톤으로 이모티콘을 활용해 감정과 상황을 최대한 나이스하게 설명해줘. 사용자가 느낀 감정의 뿌리, 상황적 요인, 스트레스가 높아진 이유 등을 따뜻한 시각으로 풀어주어야 해. 사용자의 감정을 정당화하고 '이런 감정이 드는 건 충분히 그럴 수 있다'는 메시지를 자연스럽게 담아야 해. 음성이 첨부된 경우, 말투나 톤에서 느껴지는 감정도 따뜻하게 공감해주고, 이미지가 첨부된 경우 이미지 속 상황이나 분위기도 감정에 공감하는 근거로 활용해줘."
+            return "따뜻하고 안정적인 톤으로 감정의 결을 먼저 살펴줘. 사용자가 왜 그런 감정을 느꼈는지 상황적 맥락을 부드럽게 풀어주고, 충분히 그럴 수 있다는 안도감을 자연스럽게 담아줘. 음성이 첨부된 경우 말투와 호흡에 담긴 감정을 다정하게 짚어주고, 이미지가 첨부된 경우 장면의 분위기와 감정의 연결을 섬세하게 설명해줘."
         }
     }
     
@@ -61,10 +61,9 @@ public enum MentoryCharacter: String, Sendable, Hashable, CaseIterable, Codable 
     public var question: String {
         switch self {
         case .cool:
-            return "동기부여가 될만한 짧은 현실조언을 저번과 다르게 말해줘. 냉정한 태도로 말해줘. 표정 말고 어울리는 이모티콘 하나를 문장 중간에, 어울리는 표정 이모티콘은 맨뒤에 한개 넣어줘"
+            return "오늘을 차분히 돌아보게 하는 짧은 문장을 한국어로 한 문장만 작성해줘. 단정하고 또렷한 어조로 말하고, 과장된 표현이나 이모티콘은 넣지 마."
         case .warm:
-            return "마음을 보살펴주는 짧은 위로격려를 저번과 다르게 말해줘. 상냥한 말투로 말해줘. 표정 말고 어울리는 이모티콘 하나를 문장 중간에, 어울리는 표정 이모티콘은 맨뒤에 한개 넣어줘"
+            return "오늘의 마음을 다독여주는 짧은 문장을 한국어로 한 문장만 작성해줘. 부드럽고 따뜻한 어조로 말하고, 과장된 표현이나 이모티콘은 넣지 마."
         }
     }
 }
-

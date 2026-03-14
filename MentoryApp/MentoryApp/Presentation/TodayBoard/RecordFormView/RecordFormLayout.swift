@@ -7,32 +7,31 @@
 import SwiftUI
 import UIKit
 
-
 // MARK: Layout
 struct RecordFormLayout<ToolBar: CustomizableToolbarContent, TodayDate: View, Main: View, BottomBar: View>: View {
     @ToolbarContentBuilder let topBar: () -> ToolBar
     @ViewBuilder let todayDate: () -> TodayDate
     @ViewBuilder let main: () -> Main
     @ViewBuilder let bottomBar: () -> BottomBar
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 MentoryBackdrop()
 
                 VStack(spacing: 0) {
-                    self.todayDate()
+                    todayDate()
                         .padding(.horizontal, MentorySpacing.screenHorizontal)
-                        .padding(.top, 10)
-                        .padding(.bottom, 4)
+                        .padding(.top, 18)
+                        .padding(.bottom, 12)
 
                     ScrollView(showsIndicators: false) {
-                        VStack(spacing: 16) {
-                            self.main()
+                        VStack(spacing: 18) {
+                            main()
                         }
                         .padding(.horizontal, MentorySpacing.screenHorizontal)
-                        .padding(.top, 16)
-                        .padding(.bottom, 88)
+                        .padding(.top, 10)
+                        .padding(.bottom, 120)
                     }
                     .scrollDismissesKeyboard(.interactively)
                     .onTapGesture {
@@ -45,15 +44,28 @@ struct RecordFormLayout<ToolBar: CustomizableToolbarContent, TodayDate: View, Ma
                     }
                 }
             }
-            .toolbar {
-                self.topBar()
-
-                ToolbarItemGroup(placement: .bottomBar) {
-                    self.bottomBar()
+            .safeAreaInset(edge: .bottom) {
+                HStack(spacing: 18) {
+                    bottomBar()
                 }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .fill(Color.mentoryCard.opacity(0.96))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                                .stroke(Color.mentoryBorder.opacity(0.82), lineWidth: 1)
+                        )
+                )
+                .padding(.horizontal, MentorySpacing.screenHorizontal)
+                .padding(.bottom, 10)
+                .background(Color.clear)
             }
-            .toolbarBackground(Color.mentoryCard.opacity(0.96), for: .bottomBar)
-            .toolbarBackground(.visible, for: .bottomBar)
+            .toolbar {
+                topBar()
+            }
+            .toolbarBackground(.hidden, for: .navigationBar)
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }

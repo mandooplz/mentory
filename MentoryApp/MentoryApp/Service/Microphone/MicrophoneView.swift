@@ -20,11 +20,11 @@ struct MicrophoneView: View {
             // MARK: - Header & Timer
             VStack(spacing: 10) {
                 Text("STT Tester")
-                    .font(.headline)
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(.gray)
                 
                 Text(formatTime(microphone.recordingTime))
-                    .font(.system(size: 50, weight: .bold, design: .monospaced))
+                    .font(.system(.largeTitle, design: .monospaced, weight: .bold))
                     .contentTransition(.numericText(value: microphone.recordingTime))
                     .animation(.default, value: microphone.recordingTime)
                     .foregroundStyle(microphone.isListening ? .red : .primary)
@@ -118,7 +118,7 @@ struct MicrophoneView: View {
                             Image(systemName: microphone.isListening ? "stop.fill" : "mic.fill")
                             Text(microphone.isListening ? "녹음 중지" : "녹음 시작")
                         }
-                        .font(.title3.bold())
+                        .font(.system(.title3, design: .rounded, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(microphone.isListening ? Color.red : Color.green)

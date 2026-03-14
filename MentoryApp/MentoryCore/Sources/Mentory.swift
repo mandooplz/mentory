@@ -46,10 +46,10 @@ public final class Mentory: Sendable, ObservableObject {
     @Published public var userName: String? = nil
     public var greetingText: String {
         guard let userName else {
-            return "반가워요!"
+            return "오늘도 천천히 살펴볼까요?"
         }
 
-        return "반가워요, \(userName)님!"
+        return "\(userName)님, 오늘도 반가워요."
     }
 
     @Published public var onboarding: Onboarding? = nil

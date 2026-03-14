@@ -18,18 +18,18 @@ struct BadgeGridView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("완료된 제안")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .mentoryCaption()
                         .foregroundStyle(.secondary)
 
                     Text("\(completedCount)개")
-                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .font(.system(.title3, design: .rounded, weight: .semibold))
                         .foregroundStyle(.primary)
                 }
 
                 Spacer()
 
                 Text("\(earnedBadges.count)/\(BadgeType.allCases.count)")
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .mentoryEyebrow()
                     .foregroundStyle(Color.mentoryAccentPrimary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
@@ -88,12 +88,12 @@ fileprivate struct BadgeItemView: View {
                     )
 
                 Image(systemName: badgeType.iconName)
-                    .font(.system(size: 28, weight: .semibold))
+                    .font(.system(.title2, design: .rounded, weight: .semibold))
                     .foregroundColor(isEarned ? .white : .secondary.opacity(0.55))
             }
 
             Text(badgeType.rawValue)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .mentoryCaption()
                 .foregroundStyle(isEarned ? .primary : .secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)

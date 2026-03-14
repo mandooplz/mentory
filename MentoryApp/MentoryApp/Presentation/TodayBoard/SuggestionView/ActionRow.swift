@@ -26,7 +26,7 @@ struct ActionRow: View {
                         .frame(width: 20, height: 20)
                         .overlay(
                             Image(systemName: "checkmark")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(.caption2, design: .rounded, weight: .semibold))
                                 .foregroundColor(.white)
                         )
                         .transition(.scale.combined(with: .opacity))
@@ -36,7 +36,7 @@ struct ActionRow: View {
             .frame(width: 20, height: 20)
             
             Text(text.isEmpty ? " " : text)
-                .font(.system(size: 15, weight: .regular, design: .rounded))
+                .mentoryBody()
                 .foregroundColor(checked ? .secondary : .primary)
                 .strikethrough(checked, color: .secondary)
             
@@ -46,23 +46,13 @@ struct ActionRow: View {
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.20),
-                            Color.white.opacity(0.10)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .fill(Color.mentoryCard.opacity(0.96))
         )
         .overlay(
-            // Glass stroke (더 진하게)
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.35), lineWidth: 1.2)
+                .stroke(Color.mentoryBorder.opacity(0.78), lineWidth: 1)
         )
-        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 3)
+        .shadow(color: .black.opacity(0.04), radius: 6, x: 0, y: 3)
         .onTapGesture {
             withAnimation {
                 checked.toggle()
@@ -82,4 +72,3 @@ struct ActionRow: View {
     
     ActionRow(checked: $row2, text: "체크되지 않은 ActionRow입니다.")
 }
-

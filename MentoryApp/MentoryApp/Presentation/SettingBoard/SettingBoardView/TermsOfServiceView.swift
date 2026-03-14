@@ -137,7 +137,7 @@ struct TermsOfServiceView: View {
     }
 
     private var header: some View {
-        MentorySectionCard(cornerRadius: 30, contentPadding: 22) {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 MentorySectionHeader(
                     eyebrow: "이용 약관",
@@ -146,7 +146,7 @@ struct TermsOfServiceView: View {
                 )
 
                 Text("최종 업데이트: 2025. 11. 18")
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .mentoryCaption()
                     .foregroundStyle(.secondary)
             }
         }
@@ -160,16 +160,14 @@ private struct TermsSectionView: View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(section.title)
-                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .mentoryHeadline()
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(section.lines, id: \.self) { line in
                         Text(line)
                             .font(
-                                .system(
-                                    size: line.hasPrefix("•") || line.hasPrefix("  -") ? 14 : 13,
-                                    weight: line.hasPrefix("•") || line.hasPrefix("  -") ? .regular : .medium,
-                                    design: .rounded
-                                )
+                                line.hasPrefix("•") || line.hasPrefix("  -")
+                                    ? .system(.subheadline, design: .rounded, weight: .regular)
+                                    : .system(.caption, design: .rounded, weight: .medium)
                             )
                             .foregroundStyle(line.hasPrefix("•") || line.hasPrefix("  -") ? Color.primary : Color.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
