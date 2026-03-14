@@ -46,6 +46,9 @@ struct TodayBoardView: View {
                 await recordForm.checkDisability()
             }
         }
+        .fullScreenCover(item: $todayBoard.recordFormSelection) { recordForm in
+            RecordContainerView(recordForm: recordForm)
+        }
     }
 }
 

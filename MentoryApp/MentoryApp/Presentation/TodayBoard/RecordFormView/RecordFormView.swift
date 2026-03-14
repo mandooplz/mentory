@@ -15,31 +15,6 @@ struct RecordFormView: View {
 
     var body: some View {
         RecordFormLayout(
-            topBar: {
-                ToolbarItem(id: "recordForm.finish", placement: .topBarLeading) {
-                    MentoryToolbarIconButton(
-                        systemName: "xmark",
-                        accessibilityLabel: "기록 작성 닫기"
-                    ) {
-                        recordForm.finish()
-                    }
-                }
-
-                ToolbarItem(id: "recordForm.next", placement: .topBarTrailing) {
-                    Button("정리 보기") {
-                        Task {
-                            recordForm.validateInput()
-                            await recordForm.submit()
-                        }
-                    }
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(recordForm.canProceed ? Color.mentoryAccentPrimary : .secondary)
-                    .disabled(!recordForm.canProceed)
-                    .navigationDestination(item: $recordForm.mindAnalyzer) { mindAnalyzer in
-                        MindAnalyzerView(mindAnalyzer: mindAnalyzer)
-                    }
-                }
-            },
             todayDate: {
                 RecordFormHeader(recordForm: recordForm)
             },

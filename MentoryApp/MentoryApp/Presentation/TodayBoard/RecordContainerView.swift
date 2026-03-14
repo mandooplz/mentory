@@ -8,79 +8,63 @@ import Foundation
 import SwiftUI
 import Combine
 import MentoryCore
+import Values
 
 
 // MARK: View
 struct RecordContainerView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var navigationPath = NavigationPath()
-    @State private var isSubmitEnabled = false
     @ObservedObject var recordForm: RecordForm
     
     
     // MARK: - Body
     var body: some View {
-        NavigationStack(path: $navigationPath) {
+        NavigationStack {
             RecordFormView(recordForm: recordForm)
-                .navigationDestination(for: String.self) { value in
-                    if value == "MindAnalyzerView" {
-                        MindAnalyzerView(mindAnalyzer: recordForm.mindAnalyzer!)
-                    }
+                .navigationDestination(item: $recordForm.mindAnalyzer) { mindAnalyzer in
+                    MindAnalyzerView(mindAnalyzer: mindAnalyzer)
                 }
-            
                 .toolbar {
-                    // MARK: 취소 버튼
-                    ToolbarItem(placement: .navigationBarLeading) {
-                            Button {
-                                if navigationPath.isEmpty {
-                                    recordForm.finish()
-                                    dismiss()
-                                } else {
-                                    // 현재 화면 = MindAnalyzer
-                                    navigationPath.removeLast() // MindAnalyzerView → RecordFormView
-                                }
-                            } label: {
-                                Image(systemName: "xmark")
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(recordForm.mindAnalyzer == nil ? "닫기" : "뒤로") {
+                            if recordForm.mindAnalyzer == nil {
+                                recordForm.finish()
+                                dismiss()
+                            } else {
+                                recordForm.mindAnalyzer = nil
                             }
-                        //}
+                        }
                     }
-                    
-                    // MARK: 완료 버튼 (RecordFormView에서만 보임)
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        if navigationPath.isEmpty {
-                            // 현재 화면 = RecordFormView
+
+                    ToolbarItem(placement: .principal) {
+                        Text(toolbarTitle)
+                            .mentoryCaption()
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if recordForm.mindAnalyzer == nil {
                             Button {
                                 Task {
                                     recordForm.validateInput()
-                                    if recordForm.canProceed {
-                                        await recordForm.submit()
-                                        if recordForm.mindAnalyzer != nil {
-                                            navigationPath.append("MindAnalyzerView")
-                                        }
-                                    }
+                                    await recordForm.submit()
                                 }
                             } label: {
-                                Image(systemName: "checkmark")
+                                Text("정리 보기")
                             }
-                            .disabled(!isSubmitEnabled)
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(recordForm.canProceed ? Color.mentoryAccentPrimary : .secondary)
+                            .disabled(!recordForm.canProceed)
                         }
                     }
                 }
-            // MARK: 입력 변경 감지 → validateInput() 호출
-            .onReceive(recordForm.$titleInput) { _ in
-                recordForm.validateInput()
-            }
-            .onReceive(recordForm.$textInput) { _ in
-                recordForm.validateInput()
-            }
-            
-            // MARK: canProceed 변경 감지 → 완료버튼 활성화 반영
-            .task {
-                for await canProceed in recordForm.$canProceed.values {
-                    self.isSubmitEnabled = canProceed
-                }
-            }
+                .toolbarBackground(.hidden, for: .navigationBar)
         }
+    }
+
+    private var toolbarTitle: String {
+        let relativeDay = recordForm.targetDate.relativeDay(from: .now)
+        return relativeDay == .unknown ? recordForm.targetDate.formatted() : "\(relativeDay.rawValue) 기록"
     }
 }
 
