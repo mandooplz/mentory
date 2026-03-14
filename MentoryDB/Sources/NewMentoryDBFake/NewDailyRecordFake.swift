@@ -6,6 +6,7 @@
 //
 import NewMentoryDBCore
 import Values
+import Collections
 import Foundation
 
 
@@ -68,14 +69,18 @@ public final class NewDailyRecordFake: NewDailyRecordInterface {
         }
     }
 
-    public var createSuggestionQueue: [SuggestionSnapshot] = []
-    public func registerSnapshots(_: [SuggestionSnapshot]) async {
-        fatalError()
+    public var createSuggestionQueue: Deque<SuggestionSnapshot> = []
+    public func registerSnapshots(_ snapshots: [SuggestionSnapshot]) async {
+        self.createSuggestionQueue.append(contentsOf: snapshots)
     }
 
 
     // MARK: action
     public func createDailySuggestions() async {
-        fatalError()
+        while let snapshot = createSuggestionQueue.popFirst() {
+            let newSuggestion = NewDailySuggestionFake(snapshot: snapshot)
+            
+            self._suggestions.append(newSuggestion)
+        }
     }
 }

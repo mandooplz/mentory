@@ -29,7 +29,6 @@ public protocol NewDailyRecordInterface: Sendable {
     var suggestionSnapshots: [SuggestionSnapshot] { get async }
     func getSuggestion(suggestionID: SuggestionID) async -> SuggestionObject?
 
-    var createSuggestionQueue: [SuggestionSnapshot] { get async }
     func registerSnapshots(_: [SuggestionSnapshot]) async
 
 
