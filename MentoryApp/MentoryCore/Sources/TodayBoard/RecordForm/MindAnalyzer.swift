@@ -8,7 +8,7 @@ import Foundation
 import Values
 import Combine
 import OSLog
-import FirebaseLLMAdapter
+import NewFirebaseLLM
 
 
 // MARK: Object
@@ -60,7 +60,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         let todayBoard = recordForm.owner!
         let mentoryiOS = todayBoard.owner!
         
-        let firebaseLLM = mentoryiOS.firebaseLLM
+        let firebaseLLM = mentoryiOS.newFirebaseLLM
         let newMentoryDB = mentoryiOS.newMentoryDB
         
         let targetDate = recordForm.targetDate
@@ -104,27 +104,39 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
         
         // process - MentoryDB
         // DailyRecord & DailySuggestion 생성
-        let recordData = RecordSnapshot(
+        let recordSnapshot = RecordSnapshot(
             objectID: .init(),
+            recordID: .random,
             recordDate: targetDate,
             createdAt: .now,
             analyzedResult: analysis.empathyMessage,
             emotion: analysis.mindType
         )
         
-        let suggestionDatas = analysis.actionKeywords
+        let suggestionSnapshots = analysis.actionKeywords
             .map { actionText in
-                SuggestionData(
-                    parentRecord: recordData.recordID,
-                    content: actionText
+                SuggestionSnapshot(
+                    objectID: .init(),
+                    suggestionID: .random,
+                    parentRecord: recordSnapshot.recordID,
+                    content: actionText,
+                    isDone: false
                 )
             }
 
-        await newMentoryDB.insertTicket(recordData)
+        await newMentoryDB.registerRecordSnapshot(recordSnapshot)
         await newMentoryDB.createDailyRecords()
-
-        await newMentoryDB.insertSuggestions(ticketId: recordData.objectID, suggestions: suggestionDatas)
-
+        
+        guard let dailyRecord = await newMentoryDB.getRecord(recordID: recordSnapshot.recordID) else {
+            logger.error("\(recordSnapshot.objectID.uuidString.prefix(8))의 Record를 찾을 수 없습니다.")
+            return
+        }
+        
+        
+        await dailyRecord.registerSnapshots(suggestionSnapshots)
+        await dailyRecord.createDailySuggestions()
+        
+        
         if mentoryiOS.statBoard == nil {
             mentoryiOS.statBoard = StatBoard(owner: mentoryiOS)
         }
@@ -157,7 +169,7 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             return
         }
         
-        let suggestionDatas = await recentRecord.suggestionDatas
+        let suggestionDatas = await recentRecord.suggestionSnapshots
 
         
         // mutate
@@ -165,15 +177,15 @@ public final class MindAnalyzer: Sendable, ObservableObject, Distinguishable {
             .map { Suggestion(
                 owner: todayBoard,
                 parentRecord: $0.parentRecord,
-                target: $0.target,
+                suggestionID: $0.suggestionID,
                 content: $0.content,
                 isDone: $0.isDone
             )
             }
+        
         todayBoard.recentSuggestionUpdate = currentDate
         logger.debug("추천행동가져오기\(suggestionDatas)")
     }
-    
     public func finish() {
         //capture
         let recordForm = self.owner!

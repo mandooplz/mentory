@@ -12,11 +12,10 @@ import OSLog
 
 public protocol NewDailySuggestionInterface: Sendable {
     // MARK: state
-    var id: UUID { get }
+    var objectID: UUID { get }
+    var suggestionID: SuggestionID { get async }
     
-    var target: SuggestionID { get async }
     var content: String { get async }
-    
     var isDone: Bool { get async }
     func setDone(_: Bool) async
 }

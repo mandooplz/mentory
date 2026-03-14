@@ -6,7 +6,7 @@
 //
 
 import Combine
-import FirebaseLLMAdapter
+import NewFirebaseLLM
 import Foundation
 import OSLog
 import Values
@@ -64,7 +64,7 @@ public final class MentorMessage: Sendable, ObservableObject {
 
         let mentoryiOS = self.owner!.owner!
         let newMentoryDB = mentoryiOS.newMentoryDB
-        let firebaseLLM = mentoryiOS.firebaseLLM
+        let firebaseLLM = mentoryiOS.newFirebaseLLM
 
         // process
         let messageFromDB = await newMentoryDB.mentorMessage

@@ -6,60 +6,81 @@
 //
 import NewMentoryDBCore
 import Values
+import Collections
 import Foundation
 
 
 // MARK: fake
 @MainActor
 public final class NewDailyRecordFake: NewDailyRecordInterface {
-
-
     // MARK: core
-    internal init(id: UUID,
+    internal init(objectID: UUID,
                   owner: NewMentoryDBFake,
-                  recordID: UUID,
-                  ticketID: UUID,
+                  recordID: RecordID,
                   recordDate: MentoryDate,
                   createAt: MentoryDate,
                   analyzedContent: String,
                   emotion: Emotion) {
-        self.id = id
+        self.objectID = objectID
         self.owner = owner
         self.recordID = recordID
-        self.ticketID = ticketID
         self.recordDate = recordDate
-        self.createAt = createAt
+        self.createdAt = createAt
         self.analyzedContent = analyzedContent
         self.emotion = emotion
     }
 
 
     // MARK: state
-    public nonisolated let id: UUID
-    public var recordID: UUID
+    public nonisolated let objectID: UUID
+    public nonisolated let recordID: RecordID
+    
     internal weak var owner: NewMentoryDBFake?
 
-    public nonisolated let ticketID: UUID
-
     public nonisolated let recordDate: MentoryDate
-    public nonisolated let createAt: MentoryDate
+    public nonisolated let createdAt: MentoryDate
 
     public var analyzedContent: String
     public var emotion: Emotion
 
-    public var suggestionDatas: [SuggestionData] = []
-    public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestionFake? {
-        fatalError()
+    internal var _suggestions: [NewDailySuggestionFake] = []
+    public var suggestionSnapshots: [SuggestionSnapshot] {
+        self._suggestions
+            .map {
+                SuggestionSnapshot(
+                    objectID: $0.objectID,
+                    suggestionID: $0.suggestionID,
+                    parentRecord: $0.parentRecord,
+                    content: $0.content,
+                    isDone: $0.isDone
+                )
+            }
+    }
+    public func getSuggestion(suggestionID: SuggestionID) async -> NewDailySuggestionFake? {
+        let suggestionSnapsho = suggestionSnapshots
+            .first {
+                $0.suggestionID == suggestionID
+            }
+        
+        if let suggestionSnapsho {
+            return NewDailySuggestionFake(snapshot: suggestionSnapsho)
+        } else {
+            return nil
+        }
     }
 
-    public var createSuggestionQueue: [SuggestionData] = []
-    public func insertTicket(_: [SuggestionData]) async {
-        fatalError()
+    public var createSuggestionQueue: Deque<SuggestionSnapshot> = []
+    public func registerSnapshots(_ snapshots: [SuggestionSnapshot]) async {
+        self.createSuggestionQueue.append(contentsOf: snapshots)
     }
 
 
     // MARK: action
     public func createDailySuggestions() async {
-        fatalError()
+        while let snapshot = createSuggestionQueue.popFirst() {
+            let newSuggestion = NewDailySuggestionFake(snapshot: snapshot)
+            
+            self._suggestions.append(newSuggestion)
+        }
     }
 }

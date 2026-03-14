@@ -7,14 +7,18 @@
 import NewMentoryDBCore
 import Values
 import Foundation
+import OSLog
+import Collections
 
 
 // MARK: fake
 @MainActor
 public final class NewMentoryDBFake: NewMentoryDBInterface {
     // MARK: core
+    private let logger = Logger()
+    public init() { }
 
-
+    
     // MARK: state
     public nonisolated let id: UUID = UUID()
 
@@ -33,13 +37,16 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         self.mentorMessage = newValue
     }
 
-    private var _records: [NewDailyRecordFake] = []
+    internal var _records: [NewDailyRecordFake] = []
     public var records: [RecordSnapshot] {
         self._records
+            .sorted(by: { $0.recordDate > $1.recordDate })
             .map {
                 RecordSnapshot(
-                    objectID: $0.id,
+                    objectID: $0.objectID,
+                    recordID: $0.recordID,
                     recordDate: $0.recordDate,
+                    createdAt: $0.createdAt,
                     analyzedResult: $0.analyzedContent,
                     emotion: $0.emotion
                 )
@@ -52,37 +59,38 @@ public final class NewMentoryDBFake: NewMentoryDBInterface {
         return self._records
             .max(by: { $0.recordDate < $1.recordDate })
     }
-
-    public func getRecord(ticketId: UUID) -> NewDailyRecordFake? {
-        fatalError()
+    public func getRecord(recordID: RecordID) async -> NewDailyRecordFake? {
+        self._records.first(where: { $0.recordID == recordID })
     }
-    public func getRecord(recordID: UUID) async -> NewDailyRecordFake? {
-        fatalError()
-    }
-
-    public func isSameDayRecordExist(for date: Values.MentoryDate) -> Bool {
-        fatalError()
+    public func isSameDayRecordExist(for date: MentoryDate) -> Bool {
+        self._records.contains { record in
+            record.recordDate.isSameDate(as: date)
+        }
     }
 
-    public var completedSuggestionCount: Int = 0
-
-    func seedRecords(_ records: [NewDailyRecordFake]) {
-        self._records = records
+    internal var recordCreationQueue: Deque<RecordSnapshot> = []
+    public func registerRecordSnapshot(_ recordData: RecordSnapshot) {
+        self.recordCreationQueue.append(recordData)
     }
 
-    public func insertTicket(_ recordData: Values.RecordSnapshot) {
-        fatalError()
-    }
-
-    public func insertSuggestions(ticketId: UUID, suggestions: [Values.SuggestionData]) async {
-        fatalError()
-    }
 
 
     // MARK: action
     public func createDailyRecords() async {
-        fatalError()
+        // recordCreationQueue에서 RecordSnapshot을 하나 꺼내옴
+        // 이를 통해 NewDailyRecordFake름 만듬
+        while let snapshot = recordCreationQueue.popFirst() {
+            let newRecord = NewDailyRecordFake(
+                objectID: snapshot.objectID,
+                owner: self,
+                recordID: snapshot.recordID,
+                recordDate: snapshot.recordDate,
+                createAt: snapshot.createdAt,
+                analyzedContent: snapshot.analyzedResult,
+                emotion: snapshot.emotion
+            )
+            
+            self._records.append(newRecord)
+        }
     }
-
-
 }

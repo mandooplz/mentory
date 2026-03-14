@@ -34,22 +34,25 @@ struct RecordFormTests {
             // then
             await #expect(recordForm.isDisabled == false)
         }
-        @Test func notSetFalseWhenRecordAlreadExistAtTargetDate() async throws {
+        @Test func notSetFalseWhenRecordAlreadyExistAtTargetDate() async throws {
             // given
             await #expect(mentoryDB.recordCount == 0)
             
             let targetDate = recordForm.targetDate
             
             let randomDateAtSameDay = targetDate.randomTimeInSameDay()
-            let recordData = RecordSnapshot(
+            
+            let testSnapshot = RecordSnapshot(
                 objectID: .init(),
-                recordDate: randomDateAtSameDay,
+                recordID: .random,
+                recordDate: .now,
                 createdAt: .now,
-                analyzedResult: "SAMPLE_RESULT",
+                analyzedResult: "TEST_RESULT",
                 emotion: .neutral
             )
             
-            await mentoryDB.submitAnalysis(recordData: recordData, suggestionData: [])
+            await mentoryDB.registerRecordSnapshot(testSnapshot)
+            await mentoryDB.createDailyRecords()
             
             await #expect(mentoryDB.recordCount == 1)
             

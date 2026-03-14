@@ -23,8 +23,8 @@ final class NewMentoryDBModel {
     var messageContent: String? = nil
     var messageCharacter: MentoryCharacter? = nil
 
-    @Relationship var recordCreationQueue: [NewRecordTicket] = []
     @Relationship var records: [NewDailyRecordModel] = []
+    @Relationship var recordCreationQueue: [NewRecordTicket] = []
 
     init(id: UUID, userName: String? = nil) {
         self.id = id

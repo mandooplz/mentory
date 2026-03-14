@@ -109,13 +109,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
 
             return db.records
                 .sorted(by: { $0.recordDate > $1.recordDate })
-                .map { .init(
-                    objectID: $0.id,
-                    recordDate: MentoryDate($0.recordDate),
-                    createdAt: MentoryDate($0.createdAt),
-                    analyzedResult: $0.analyzedResult,
-                    emotion: $0.emotion)
-                }
+                .map { $0.snapshot }
         } catch {
             logger.error("getRecords 실패: \(error.localizedDescription, privacy: .public)")
             return []
@@ -139,22 +133,22 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 return nil
             }
 
-            return NewDailyRecord(id: latest.id)
+            return NewDailyRecord(objectID: latest.objectID)
         } catch {
             logger.error("getRecentRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }
-    public func getRecord(ticketId: UUID) -> NewDailyRecord? {
+    public func getRecord(objectID: UUID) -> NewDailyRecord? {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            guard let target = db.records.first(where: { $0.ticketId == ticketId }) else {
+            guard let dailyRecord = db.records.first(where: { $0.objectID == objectID }) else {
                 return nil
             }
 
-            return NewDailyRecord(id: target.id)
+            return NewDailyRecord(objectID: dailyRecord.objectID)
         } catch {
             logger.error("getRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
@@ -173,97 +167,45 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             return false
         }
     }
-    public func getRecord(recordID: UUID) -> NewDailyRecord? {
+    public func getRecord(recordID: RecordID) -> NewDailyRecord? {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            guard let dailyRecord = db.records.first(where: { $0.recordID == recordID }) else {
+            guard let dailyRecord = db.records.first(where: { $0.recordID == recordID.id }) else {
                 return nil
             }
 
-            return NewDailyRecord(id: dailyRecord.id)
+            return NewDailyRecord(objectID: dailyRecord.objectID)
         } catch {
             logger.error("getRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
         }
     }
 
-    public var completedSuggestionCount: Int {
+    public func registerRecordSnapshot(_ snapshot: RecordSnapshot) {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            return db.records.reduce(0) { total, record in
-                total + record.suggestions.filter { $0.status }.count
-            }
-        } catch {
-            logger.error("getCompletedSuggestionsCount 실패: \(error.localizedDescription, privacy: .public)")
-            return 0
-        }
-    }
-
-
-    public func insertTicket(_ recordData: RecordSnapshot) {
-        do {
-            let context = try NewMentoryDBConfig.default.makeContext()
-            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
-
-            let ticketId = recordData.objectID
-            guard db.records.contains(where: { $0.ticketId == ticketId }) == false else {
-                logger.debug("insertTicket 중복 스킵(records): \(ticketId.uuidString, privacy: .public)")
+            guard db.records.contains(where: { $0.objectID == snapshot.objectID }) == false else {
+                logger.debug("registerRecordSnapshot 중복 스킵(records)")
                 return
             }
 
-            guard db.recordCreationQueue.contains(where: { $0.id == ticketId }) == false else {
-                logger.debug("insertTicket 중복 스킵(queue): \(ticketId.uuidString, privacy: .public)")
+            guard db.recordCreationQueue.contains(where: { $0.objectID == snapshot.objectID }) == false else {
+                logger.debug("registerRecordSnapshot 중복 스킵(queue)")
                 return
             }
 
-            db.recordCreationQueue.append(NewRecordTicket(data: recordData))
+            db.recordCreationQueue.append(NewRecordTicket(snapshot: snapshot))
             try context.save()
-            logger.debug("insertTicket 완료")
+            logger.debug("registerRecordSnapshot 완료")
         } catch {
-            logger.error("insertTicket 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("registerRecordSnapshot 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
-    public func insertSuggestions(ticketId: UUID, suggestions: [SuggestionData]) async {
-        guard suggestions.isEmpty == false else {
-            return
-        }
-
-        do {
-            let context = try NewMentoryDBConfig.default.makeContext()
-            let db = try NewMentoryDBConfig.default.fetchDB(in: context)
-
-            guard let record = db.records.first(where: { $0.ticketId == ticketId }) else {
-                throw NewMentoryDBError.recordNotFound
-            }
-
-            var existingIDs = Set(record.suggestions.map { $0.id })
-            var insertedCount = 0
-
-            for suggestion in suggestions {
-                guard existingIDs.insert(suggestion.objectID).inserted else {
-                    continue
-                }
-
-                record.suggestions.append(NewDailySuggestionModel(data: suggestion))
-                insertedCount += 1
-            }
-
-            if insertedCount > 0 {
-                try context.save()
-            }
-
-            logger.debug(
-                "insertSuggestions 완료 (inserted: \(insertedCount), skipped: \(suggestions.count - insertedCount))"
-            )
-        } catch {
-            logger.error("insertSuggestions 실패: \(error.localizedDescription, privacy: .public)")
-        }
-    }
-
+    
     
     // MARK: action
     public func createDailyRecords() async {
@@ -276,28 +218,33 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 return
             }
 
-            let queuedTickets = db.recordCreationQueue
-            var existingTicketIDs = Set(db.records.map { $0.ticketId })
+            let tickets = db.recordCreationQueue
+            var existingTicketIDs = Set(db.records.map { $0.objectID })
             var batchTicketIDs: Set<UUID> = []
 
             var createdCount = 0
             var skippedCount = 0
 
-            for ticket in queuedTickets {
-                let ticketId = ticket.id
+            for ticket in tickets {
+                let objectID = ticket.objectID
 
-                guard existingTicketIDs.contains(ticketId) == false else {
+                guard existingTicketIDs.contains(objectID) == false else {
                     skippedCount += 1
                     continue
                 }
 
-                guard batchTicketIDs.insert(ticketId).inserted else {
+                guard batchTicketIDs.insert(objectID).inserted else {
                     skippedCount += 1
                     continue
                 }
 
-                db.records.append(NewDailyRecordModel(data: ticket.toRecordData()))
-                existingTicketIDs.insert(ticketId)
+                // ticket으로부터 RecordSnapshot을 넎는다.
+                db.records.append(
+                    NewDailyRecordModel(
+                        data: ticket.toRecordSnapshot()
+                    )
+                )
+                existingTicketIDs.insert(objectID)
                 createdCount += 1
             }
 

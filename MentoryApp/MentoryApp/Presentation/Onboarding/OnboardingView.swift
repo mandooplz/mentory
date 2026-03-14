@@ -178,7 +178,7 @@ fileprivate struct OnboardingPreview: View {
     var body: some View {
         if let onboarding = mentoryiOS.onboarding {
             OnboardingView(onboarding)
-        } else if mentoryiOS.onboardingFinished {
+        } else if mentoryiOS.isOnboardingFinished {
             Text("Onboarding이 종료되었습니다.")
         } else {
             ProgressView()

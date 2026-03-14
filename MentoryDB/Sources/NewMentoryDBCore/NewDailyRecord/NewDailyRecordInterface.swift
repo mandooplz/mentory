@@ -17,21 +17,19 @@ public protocol NewDailyRecordInterface: Sendable {
     associatedtype SuggestionObject: NewDailySuggestionInterface
 
     // MARK: state
-    var id: UUID { get }
-    var ticketID: UUID { get async }
-    var recordID: UUID { get async }
+    var objectID: UUID { get }
+    var recordID: RecordID { get async }
 
     var recordDate: MentoryDate { get async }
-    var createAt: MentoryDate { get async }
+    var createdAt: MentoryDate { get async }
 
     var analyzedContent: String { get async }
     var emotion: Emotion { get async }
 
-    var suggestionDatas: [SuggestionData] { get async }
-    func getSuggestion(suggestionID: UUID) async -> SuggestionObject?
+    var suggestionSnapshots: [SuggestionSnapshot] { get async }
+    func getSuggestion(suggestionID: SuggestionID) async -> SuggestionObject?
 
-    var createSuggestionQueue: [SuggestionData] { get async }
-    func insertTicket(_: [SuggestionData]) async
+    func registerSnapshots(_: [SuggestionSnapshot]) async
 
 
     // MARK: action

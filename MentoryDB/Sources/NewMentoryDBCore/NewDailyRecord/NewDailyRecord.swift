@@ -14,10 +14,10 @@ import Values
 public actor NewDailyRecord: NewDailyRecordInterface {
 
     // MARK: Core
-    init(id: UUID) {
-        self.id = id
+    init(objectID: UUID) {
+        self.objectID = objectID
     }
-    nonisolated public let id: UUID
+    nonisolated public let objectID: UUID
     nonisolated private let logger = Logger()
 
 
@@ -26,32 +26,31 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
                 }
 
-                return record.ticketId
+                return record.objectID
             } catch {
                 logger.fault("getTicketID 실패: \(error.localizedDescription, privacy: .public)")
                 return UUID()
             }
         }
     }
-    public var recordID: UUID {
+    public var recordID: RecordID {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 throw NewMentoryDBError.recordNotFound
             }
 
-            return record.recordID
+            return .init(id: record.recordID)
         } catch {
-            logger.fault("getTicketID 실패: \(error.localizedDescription, privacy: .public)")
-            return UUID()
+            fatalError("getTicketID 실패: \(error.localizedDescription)")
         }
     }
 
@@ -59,7 +58,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -72,11 +71,11 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             }
         }
     }
-    public var createAt: MentoryDate {
+    public var createdAt: MentoryDate {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -94,7 +93,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -111,7 +110,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         get {
             do {
                 let context = try NewMentoryDBConfig.default.makeContext()
-                let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+                let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
                 guard let record = try context.fetch(descriptor).first else {
                     throw NewMentoryDBError.recordNotFound
@@ -125,50 +124,56 @@ public actor NewDailyRecord: NewDailyRecordInterface {
         }
     }
 
-    public var suggestionDatas: [SuggestionData] {
+    public var suggestionSnapshots: [SuggestionSnapshot] {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 throw NewMentoryDBError.recordNotFound
             }
 
-            return record.suggestions.map { $0.toData(parentRecord: record.recordID) }
+            return record.suggestions.map { $0.toData() }
         } catch {
             logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
             return []
         }
     }
-    public func getSuggestion(suggestionID: UUID) async -> NewDailySuggestion? {
+    public func getSuggestion(suggestionID: SuggestionID) async -> NewDailySuggestion? {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
-            guard let record = try context.fetch(descriptor).first else {
+            guard let dailyRecord = try context.fetch(descriptor).first else {
+                logger.error("DailyRecord를 데이터베이스에서 찾지 못했습니다.")
                 return nil
             }
 
-            guard let suggestion = record.suggestions.first(where: { $0.target == suggestionID }) else {
+            let dailySuggesion = dailyRecord.suggestions
+                .first {
+                    $0.suggestionID == suggestionID.id
+                }
+            
+            if let dailySuggesion {
+                return NewDailySuggestion(objectID: dailySuggesion.objectID)
+            } else {
                 return nil
             }
-
-            return NewDailySuggestion(id: suggestion.id)
         } catch {
-            logger.error("getSuggestionDatas 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("getSuggestionDatas 실패")
             return nil
         }
     }
 
-    public var createSuggestionQueue: [SuggestionData] {
+    public var createSuggestionQueue: [SuggestionSnapshot] {
         get {
             []
         }
     }
-    public func insertTicket(_ suggestionDatas: [SuggestionData]) async {
+    public func registerSnapshots(_ suggestionDatas: [SuggestionSnapshot]) async {
         do {
             let context = try NewMentoryDBConfig.default.makeContext()
-            let descriptor = NewDailyRecordModel.descriptor(for: self.id)
+            let descriptor = NewDailyRecordModel.descriptor(for: self.objectID)
 
             guard let record = try context.fetch(descriptor).first else {
                 throw NewMentoryDBError.recordNotFound
@@ -178,7 +183,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
             record.suggestions.append(contentsOf: suggestionModels)
             try context.save()
         } catch {
-            logger.error("insertTicket 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("registerRecordSnapshot 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
 
