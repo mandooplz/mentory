@@ -221,7 +221,6 @@ struct MentoryToolbarIconButton: View {
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .frame(width: 36, height: 36)
         }
-        .buttonStyle(MentoryIconButtonStyle())
         .accessibilityLabel(accessibilityLabel)
     }
 }

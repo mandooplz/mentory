@@ -94,10 +94,6 @@ private struct TodayOpening: View {
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(summaryCopy)
-                    .mentorySupportText()
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -106,17 +102,6 @@ private struct TodayOpening: View {
         todayBoard.currentDate.formatted()
     }
 
-    private var summaryCopy: String {
-        guard let recordCount = todayBoard.recordCount else {
-            return "잠시 숨을 고르고, 지금 가장 오래 남아 있는 장면부터 적어보세요."
-        }
-
-        if recordCount == 0 {
-            return "첫 기록은 길지 않아도 괜찮아요. 지금 떠오르는 마음 한 줄이면 충분해요."
-        }
-
-        return "\(userName)님이 남긴 \(recordCount)개의 기록이 있어요. 오늘의 마음도 이어서 남겨볼까요?"
-    }
 }
 
 private struct RecordInvitationSection: View {

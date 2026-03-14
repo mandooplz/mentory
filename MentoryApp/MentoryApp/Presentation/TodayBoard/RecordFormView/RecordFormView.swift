@@ -19,17 +19,18 @@ struct RecordFormView: View {
                 RecordFormHeader(recordForm: recordForm)
             },
             main: {
-                BodyField(
-                    recordForm: recordForm,
-                    prompt: "오늘 가장 오래 남아 있는 장면이나 감정부터 적어보세요.",
-                    text: $recordForm.textInput
-                )
-
                 TitleField(
                     recordForm: recordForm,
                     prompt: "짧은 제목을 남기고 싶다면",
                     text: $recordForm.titleInput
                 )
+                
+                BodyField(
+                    recordForm: recordForm,
+                    prompt: "오늘 가장 오래 남아 있는 장면이나 감정을 적어보세요.",
+                    text: $recordForm.textInput
+                )
+                
 
                 AttachmentSection(model: recordForm)
             },
@@ -79,14 +80,14 @@ fileprivate struct RecordFormHeader: View {
             MentoryInfoChip(text: dateTitle, systemImage: "square.and.pencil")
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("지금 떠오르는 마음부터 적어보세요.")
-                    .mentoryDisplayTitle()
-                    .foregroundStyle(.primary)
+                HStack {
+                    Text("지금 떠오르는 마음부터 적어보세요.")
+                        .mentoryDisplayTitle()
+                        .foregroundStyle(.primary)
+                    
+                    Spacer()
+                }
 
-                Text("설명보다 느낌부터 적어도 충분해요. 사진이나 음성은 필요할 때만 덧붙이세요.")
-                    .mentorySupportText()
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -136,7 +137,7 @@ fileprivate struct TitleField: View {
     var body: some View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 12) {
-                fieldHeader(title: "짧은 제목", helper: "선택 사항")
+                fieldHeader(title: "짧은 제목")
 
                 TextField(prompt, text: $text)
                     .font(.system(.body, design: .rounded, weight: .medium))
@@ -159,7 +160,7 @@ fileprivate struct BodyField: View {
     var body: some View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 14) {
-                fieldHeader(title: "오늘의 기록", helper: "길지 않아도 괜찮아요")
+                fieldHeader(title: "오늘의 기록")
 
                 ZStack(alignment: .topLeading) {
                     if text.isEmpty {
@@ -183,15 +184,11 @@ fileprivate struct BodyField: View {
     }
 }
 
-fileprivate func fieldHeader(title: String, helper: String) -> some View {
+fileprivate func fieldHeader(title: String) -> some View {
     VStack(alignment: .leading, spacing: 4) {
         Text(title)
             .font(.system(.subheadline, design: .rounded, weight: .semibold))
             .foregroundStyle(.primary)
-
-        Text(helper)
-            .mentoryEyebrow()
-            .foregroundStyle(.secondary)
     }
 }
 
