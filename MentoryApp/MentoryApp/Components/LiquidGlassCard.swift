@@ -16,7 +16,7 @@ struct LiquidGlassCard<Content: View>: View {
     let content: Content
     
     init(cornerRadius: CGFloat = 28,
-         shadowRadius: CGFloat = 18,
+         shadowRadius: CGFloat = 10,
          @ViewBuilder content: @escaping () -> Content) {
         self.cornerRadius = cornerRadius
         self.shadowRadius = shadowRadius
@@ -28,20 +28,19 @@ struct LiquidGlassCard<Content: View>: View {
     var body: some View {
         content
             .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(Color.mentoryCard.opacity(0.84))
-
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(.ultraThinMaterial)
-                }
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(Color.mentoryCard.opacity(0.96))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(0.28))
+                    .stroke(Color.mentoryBorder.opacity(0.82), lineWidth: 1)
             )
-            .shadow(color: Color.black.opacity(0.08),
-                    radius: shadowRadius, x: 0, y: 12)
+            .shadow(
+                color: Color.black.opacity(0.03),
+                radius: shadowRadius,
+                x: 0,
+                y: 4
+            )
     }
 }
 
@@ -56,7 +55,7 @@ struct LiquidGlassCard<Content: View>: View {
         LiquidGlassCard {
             VStack(spacing: 12) {
                 Text("Liquid Glass Card")
-                    .font(.title3.bold())
+                    .font(.system(.title3, design: .rounded, weight: .bold))
                 Text("샘플 프리뷰입니다.")
             }
             .padding()

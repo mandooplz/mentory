@@ -6,11 +6,20 @@
 //
 
 import SwiftUI
+import Values
 
 enum MentorySpacing {
+    static let tiny: CGFloat = 4
+    static let xSmall: CGFloat = 8
+    static let small: CGFloat = 12
+    static let medium: CGFloat = 16
+    static let large: CGFloat = 20
+    static let xLarge: CGFloat = 28
+    static let xxLarge: CGFloat = 36
+
     static let screenHorizontal: CGFloat = 20
     static let screenVertical: CGFloat = 24
-    static let section: CGFloat = 20
+    static let section: CGFloat = 24
     static let card: CGFloat = 18
     static let compact: CGFloat = 12
     static let mini: CGFloat = 8
@@ -22,24 +31,28 @@ struct MentoryBackdrop: View {
             Color.mentoryBackground
                 .ignoresSafeArea()
 
-            Circle()
-                .fill(Color.mentoryAccentPrimary.opacity(0.11))
-                .frame(width: 300, height: 300)
-                .blur(radius: 20)
-                .offset(x: -130, y: -260)
+            LinearGradient(
+                colors: [
+                    Color.mentoryBackground,
+                    Color.mentoryCard.opacity(0.55),
+                    Color.mentoryBackground,
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
             Circle()
-                .fill(Color.mentoryAccentSecondary.opacity(0.09))
-                .frame(width: 280, height: 280)
-                .blur(radius: 24)
-                .offset(x: 150, y: -160)
+                .fill(Color.mentoryAccentPrimary.opacity(0.05))
+                .frame(width: 220, height: 220)
+                .blur(radius: 48)
+                .offset(x: -140, y: -320)
 
-            RoundedRectangle(cornerRadius: 40, style: .continuous)
-                .fill(Color.white.opacity(0.05))
-                .frame(width: 240, height: 240)
-                .rotationEffect(.degrees(18))
-                .blur(radius: 60)
-                .offset(x: 150, y: 320)
+            Circle()
+                .fill(Color.mentoryAccentSecondary.opacity(0.05))
+                .frame(width: 180, height: 180)
+                .blur(radius: 54)
+                .offset(x: 170, y: -210)
         }
     }
 }
@@ -69,8 +82,8 @@ struct MentoryScrollScreen<Content: View>: View {
 }
 
 struct MentorySectionCard<Content: View>: View {
-    var cornerRadius: CGFloat = 28
-    var contentPadding: CGFloat = 20
+    var cornerRadius: CGFloat = 24
+    var contentPadding: CGFloat = 18
     @ViewBuilder var content: () -> Content
 
     var body: some View {
@@ -103,7 +116,7 @@ struct MentorySectionHeader: View {
             }
 
             Text(title)
-                .mentoryDisplayTitle()
+                .mentoryHeadline()
                 .foregroundStyle(.primary)
 
             if let subtitle, subtitle.isEmpty == false {
@@ -125,18 +138,18 @@ struct MentoryInfoChip: View {
         HStack(spacing: 6) {
             if let systemImage {
                 Image(systemName: systemImage)
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .font(.system(.caption2, design: .rounded, weight: .semibold))
             }
 
             Text(text)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .mentoryEyebrow()
         }
-        .foregroundStyle(Color.mentoryAccentPrimary)
+        .foregroundStyle(.secondary)
         .padding(.horizontal, 9)
         .padding(.vertical, 5)
         .background(
             Capsule(style: .continuous)
-                .fill(Color.mentoryAccentPrimary.opacity(0.08))
+                .fill(Color.mentorySubCard.opacity(0.78))
         )
     }
 }
@@ -148,11 +161,11 @@ struct MentoryMetricPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .mentoryEyebrow()
                 .foregroundStyle(.secondary)
 
             Text(value)
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -160,11 +173,11 @@ struct MentoryMetricPill: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.mentoryCard.opacity(0.72))
+                .fill(Color.mentorySubCard.opacity(0.88))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                .stroke(Color.mentoryBorder.opacity(0.82), lineWidth: 1)
         )
     }
 }
@@ -176,14 +189,14 @@ struct MentoryStatusCard: View {
     var tint: Color = .mentoryAccentPrimary
 
     var body: some View {
-        MentorySectionCard(cornerRadius: 24, contentPadding: 24) {
-            VStack(spacing: 14) {
+        MentorySectionCard(cornerRadius: 22, contentPadding: 22) {
+            VStack(spacing: 12) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 24, weight: .medium))
+                    .font(.system(.title3, design: .rounded, weight: .medium))
                     .foregroundStyle(tint)
 
                 Text(title)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .mentoryHeadline()
                     .foregroundStyle(.primary)
 
                 Text(message)
@@ -205,10 +218,58 @@ struct MentoryToolbarIconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: 15, weight: .semibold))
-                .frame(width: 34, height: 34)
+                .font(.system(.body, design: .rounded, weight: .semibold))
+                .frame(width: 36, height: 36)
         }
         .buttonStyle(MentoryIconButtonStyle())
         .accessibilityLabel(accessibilityLabel)
+    }
+}
+
+struct MentoryToneMark: View {
+    let character: MentoryCharacter?
+    var size: CGFloat = 40
+
+    private var resolvedCharacter: MentoryCharacter {
+        character ?? .warm
+    }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(backgroundColor.opacity(0.18))
+
+            switch resolvedCharacter {
+            case .cool:
+                VStack(spacing: 4) {
+                    Capsule()
+                        .fill(backgroundColor)
+                        .frame(width: size * 0.42, height: 3)
+
+                    Capsule()
+                        .fill(backgroundColor.opacity(0.75))
+                        .frame(width: size * 0.26, height: 3)
+                }
+            case .warm:
+                Circle()
+                    .stroke(backgroundColor, lineWidth: 2)
+                    .frame(width: size * 0.46, height: size * 0.46)
+                    .overlay(
+                        Circle()
+                            .fill(backgroundColor.opacity(0.28))
+                            .frame(width: size * 0.18, height: size * 0.18)
+                    )
+            }
+        }
+        .frame(width: size, height: size)
+    }
+
+    private var backgroundColor: Color {
+        switch resolvedCharacter {
+        case .cool:
+            return .mentoryAccentSecondary
+        case .warm:
+            return .mentoryAccentPrimary
+        }
     }
 }

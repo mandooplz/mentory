@@ -10,27 +10,36 @@ import SwiftUI
 // MARK: - Typography
 public extension View {
     func mentoryDisplayTitle() -> some View {
-        self.font(.system(size: 24, weight: .semibold, design: .rounded))
+        self.font(.system(.title3, design: .rounded, weight: .semibold))
     }
 
     func mentoryTitle() -> some View {
-        self.font(.system(size: 27, weight: .semibold, design: .rounded))
+        self.font(.system(.title, design: .serif, weight: .regular))
     }
-    
+
     func mentorySubtitle() -> some View {
-        self.font(.system(size: 16, weight: .medium, design: .rounded))
+        self.font(.system(.headline, design: .rounded, weight: .semibold))
     }
-    
+
     func mentoryHeadline() -> some View {
-        self.font(.system(size: 18, weight: .semibold, design: .rounded))
+        self.font(.system(.body, design: .rounded, weight: .semibold))
     }
-    
+
     func mentoryBody() -> some View {
-        self.font(.system(size: 15, weight: .medium, design: .rounded))
+        self.font(.system(.body, design: .rounded, weight: .regular))
     }
 
     func mentorySupportText() -> some View {
-        self.font(.system(size: 14, weight: .regular, design: .rounded))
+        self.font(.system(.subheadline, design: .rounded, weight: .regular))
+    }
+
+    func mentoryCaption() -> some View {
+        self.font(.system(.caption, design: .rounded, weight: .medium))
+    }
+
+    func mentoryEyebrow() -> some View {
+        self.font(.system(.caption2, design: .rounded, weight: .semibold))
+            .tracking(0.3)
     }
 }
 
@@ -41,35 +50,26 @@ public struct MentoryPrimaryButtonStyle: ButtonStyle {
     public init(isEnabled: Bool = true) {
         self.isEnabled = isEnabled
     }
-    
+
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 16, weight: .semibold, design: .rounded))
+            .font(.system(.headline, design: .rounded, weight: .semibold))
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 56)
+            .frame(minHeight: 50)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.mentoryAccentPrimary,
-                                Color.mentoryAccentSecondary.opacity(0.92)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.mentoryAccentPrimary)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
             )
-            .shadow(color: Color.mentoryAccentPrimary.opacity(0.26), radius: 16, y: 10)
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .shadow(color: Color.black.opacity(0.05), radius: 10, y: 6)
+            .scaleEffect(configuration.isPressed ? 0.99 : 1.0)
+            .opacity(configuration.isPressed ? 0.94 : 1.0)
             .opacity(isEnabled ? 1.0 : 0.45)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
+            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
     }
 }
 
@@ -82,21 +82,21 @@ public struct MentorySecondaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 15, weight: .medium, design: .rounded))
+            .font(.system(.subheadline, design: .rounded, weight: .semibold))
             .foregroundStyle(.primary)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 52)
+            .frame(minHeight: 44)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color.mentoryCard.opacity(0.88))
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.mentoryCard.opacity(0.82))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.mentoryBorder.opacity(0.32), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.mentoryBorder.opacity(0.8), lineWidth: 1)
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.99 : 1.0)
             .opacity(isEnabled ? 1.0 : 0.42)
-            .animation(.spring(response: 0.25, dampingFraction: 0.74), value: configuration.isPressed)
+            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
     }
 }
 
@@ -107,16 +107,16 @@ public struct MentoryIconButtonStyle: ButtonStyle {
         configuration.label
             .foregroundStyle(.primary)
             .background(
-                Circle()
-                    .fill(Color.mentoryCard.opacity(0.8))
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color.mentoryCard.opacity(0.76))
             )
             .overlay(
-                Circle()
-                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.mentoryBorder.opacity(0.8), lineWidth: 1)
             )
-            .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
-            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
-            .animation(.spring(response: 0.24, dampingFraction: 0.74), value: configuration.isPressed)
+            .shadow(color: .black.opacity(0.03), radius: 6, y: 3)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
     }
 }
 
