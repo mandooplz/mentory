@@ -2,10 +2,11 @@
 //  OnboardingView.swift
 //  Mentory
 //
-//  Created by 구현모 on 11/14/25.
+//  Created by 김민우 on 11/14/25.
 //
 import MentoryCore
 import SwiftUI
+
 
 // MARK: View
 struct OnboardingView: View {
@@ -44,7 +45,7 @@ struct OnboardingView: View {
     // MARK: component
     private var topCopy: some View {
         VStack(alignment: .leading, spacing: MentorySpacing.large) {
-            MentoryInfoChip(text: "시작", systemImage: "sparkles")
+//            MentoryInfoChip(text: "시작", systemImage: "sparkles")
 
             VStack(alignment: .leading, spacing: 10) {
                 Text("어떻게 불러드리면 좋을까요?")
@@ -67,7 +68,7 @@ struct OnboardingView: View {
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: MentorySpacing.small) {
-                TextField("예: 민우", text: $onboarding.nameInput)
+                TextField("예: 김철수", text: $onboarding.nameInput)
                     .font(.system(.title3, design: .rounded, weight: .medium))
                     .foregroundStyle(.primary)
                     .focused($isNameFieldFocused)
@@ -147,7 +148,7 @@ struct OnboardingView: View {
     private var helperCopy: String {
         onboarding.validationResult == .nameInputIsEmpty
             ? "한 글자만 적어도 괜찮아요."
-            : "부를 이름이 정해지면 오늘의 기록이 더 자연스럽게 이어져요."
+            : "이름이 정해지면 오늘의 기록이 더 자연스럽게 이어져요."
     }
 
     private var helperCopyColor: Color {
