@@ -106,7 +106,10 @@ let project = Project.mentory(
             infoPlist: .extendingDefault(
                 with: [
                     "ALAN_API_TOKEN": "$(TOKEN)",
+                    "NSCameraUsageDescription": "기록에 사진을 첨부할 수 있도록 카메라를 사용합니다.",
                     "NSMicrophoneUsageDescription": "음성 기록을 녹음하고 음성을 텍스트로 변환하기 위해 마이크를 사용합니다.",
+                    "NSPhotoLibraryAddUsageDescription": "촬영한 사진을 기록에 첨부할 수 있도록 사진 라이브러리에 저장합니다.",
+                    "NSPhotoLibraryUsageDescription": "기록에 첨부할 사진을 선택하기 위해 사진 라이브러리에 접근합니다.",
                     "NSSpeechRecognitionUsageDescription": "녹음한 음성을 텍스트로 변환해 오늘의 기록 작성에 활용합니다.",
                     "UIApplicationSupportsIndirectInputEvents": true,
                     "UILaunchScreen": [:],
