@@ -106,6 +106,8 @@ let project = Project.mentory(
             infoPlist: .extendingDefault(
                 with: [
                     "ALAN_API_TOKEN": "$(TOKEN)",
+                    "NSMicrophoneUsageDescription": "음성 기록을 녹음하고 음성을 텍스트로 변환하기 위해 마이크를 사용합니다.",
+                    "NSSpeechRecognitionUsageDescription": "녹음한 음성을 텍스트로 변환해 오늘의 기록 작성에 활용합니다.",
                     "UIApplicationSupportsIndirectInputEvents": true,
                     "UILaunchScreen": [:],
                     "CFBundleURLTypes": [

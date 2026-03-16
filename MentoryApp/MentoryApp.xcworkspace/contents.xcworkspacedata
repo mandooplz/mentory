@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:MentoryApp.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../MentoryDB/MentoryDB.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../MentoryDevice/MentoryDevice.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../MentoryLLM/MentoryLLM.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../MentoryShared/MentoryShared.xcodeproj">
+   </FileRef>
+</Workspace>
