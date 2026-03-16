@@ -133,7 +133,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 return nil
             }
 
-            return NewDailyRecord(objectID: latest.objectID)
+            return NewDailyRecord(objectID: latest.id)
         } catch {
             logger.error("getRecentRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
@@ -144,11 +144,11 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            guard let dailyRecord = db.records.first(where: { $0.objectID == objectID }) else {
+            guard let dailyRecord = db.records.first(where: { $0.id == objectID }) else {
                 return nil
             }
 
-            return NewDailyRecord(objectID: dailyRecord.objectID)
+            return NewDailyRecord(objectID: dailyRecord.id)
         } catch {
             logger.error("getRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
@@ -176,7 +176,7 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
                 return nil
             }
 
-            return NewDailyRecord(objectID: dailyRecord.objectID)
+            return NewDailyRecord(objectID: dailyRecord.id)
         } catch {
             logger.error("getRecord 실패: \(error.localizedDescription, privacy: .public)")
             return nil
@@ -188,12 +188,12 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             let context = try NewMentoryDBConfig.default.makeContext()
             let db = try NewMentoryDBConfig.default.fetchDB(in: context)
 
-            guard db.records.contains(where: { $0.objectID == snapshot.objectID }) == false else {
+            guard db.records.contains(where: { $0.id == snapshot.objectID }) == false else {
                 logger.debug("registerRecordSnapshot 중복 스킵(records)")
                 return
             }
 
-            guard db.recordCreationQueue.contains(where: { $0.objectID == snapshot.objectID }) == false else {
+            guard db.recordCreationQueue.contains(where: { $0.id == snapshot.objectID }) == false else {
                 logger.debug("registerRecordSnapshot 중복 스킵(queue)")
                 return
             }
@@ -219,14 +219,14 @@ public actor NewMentoryDB: Sendable, NewMentoryDBInterface {
             }
 
             let tickets = db.recordCreationQueue
-            var existingTicketIDs = Set(db.records.map { $0.objectID })
+            var existingTicketIDs = Set(db.records.map { $0.id })
             var batchTicketIDs: Set<UUID> = []
 
             var createdCount = 0
             var skippedCount = 0
 
             for ticket in tickets {
-                let objectID = ticket.objectID
+                let objectID = ticket.id
 
                 guard existingTicketIDs.contains(objectID) == false else {
                     skippedCount += 1

@@ -12,7 +12,7 @@ import Values
 
 @Model
 final class NewDailySuggestionModel {
-    @Attribute(.unique) var objectID: UUID
+    @Attribute(.unique) var id: UUID
     @Attribute(.unique) var suggestionID: UUID
     
     var parentRecord: UUID
@@ -25,7 +25,7 @@ final class NewDailySuggestionModel {
          parentRecord: UUID,
          content: String,
          status: Bool) {
-        self.objectID = objectID
+        self.id = objectID
         self.suggestionID = suggesitionID
         self.parentRecord = parentRecord
         self.content = content
@@ -44,7 +44,7 @@ final class NewDailySuggestionModel {
 
     func toData() -> SuggestionSnapshot {
         SuggestionSnapshot(
-            objectID: self.objectID,
+            objectID: self.id,
             suggestionID: SuggestionID(id: suggestionID),
             parentRecord: .init(id: self.parentRecord),
             content: content,

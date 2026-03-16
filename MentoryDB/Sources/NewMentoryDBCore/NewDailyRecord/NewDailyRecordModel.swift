@@ -12,7 +12,7 @@ import Values
 
 @Model
 final class NewDailyRecordModel {
-    @Attribute(.unique) var objectID: UUID = UUID()
+    @Attribute(.unique) var id: UUID = UUID()
     @Attribute(.unique) var recordID: UUID
 
     var recordDate: Date
@@ -25,7 +25,7 @@ final class NewDailyRecordModel {
 
     init(data: RecordSnapshot,
          suggestions: [NewDailySuggestionModel] = []) {
-        self.objectID = data.objectID
+        self.id = data.objectID
         self.recordID = data.recordID.id
         self.recordDate = data.recordDate.rawValue
         self.createdAt = data.createdAt.rawValue
@@ -36,7 +36,7 @@ final class NewDailyRecordModel {
     
     static func descriptor(for objectID: UUID) -> FetchDescriptor<NewDailyRecordModel> {
         FetchDescriptor<NewDailyRecordModel>(
-            predicate: #Predicate { $0.objectID == objectID }
+            predicate: #Predicate { $0.id == objectID }
         )
     }
     
@@ -44,7 +44,7 @@ final class NewDailyRecordModel {
     // MARK: operator
     var snapshot: RecordSnapshot {
         .init(
-            objectID: self.objectID,
+            objectID: self.id,
             recordID: RecordID(id: self.recordID),
             recordDate: MentoryDate(self.recordDate),
             createdAt: MentoryDate(self.createdAt),

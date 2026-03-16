@@ -14,7 +14,7 @@ import Values
 
 @Model
 final class NewRecordTicket {
-    @Attribute(.unique) var objectID: UUID
+    @Attribute(.unique) var id: UUID
     @Attribute(.unique) var recordID: UUID
 
     var recordDate: Date
@@ -24,7 +24,7 @@ final class NewRecordTicket {
     var emotion: Emotion
 
     init(snapshot: RecordSnapshot) {
-        self.objectID = snapshot.objectID
+        self.id = snapshot.objectID
         self.recordID = snapshot.recordID.id
         self.recordDate = snapshot.recordDate.rawValue
         self.createdAt = snapshot.createdAt.rawValue
@@ -37,7 +37,7 @@ final class NewRecordTicket {
 extension NewRecordTicket {
     func toRecordSnapshot() -> RecordSnapshot {
         .init(
-            objectID: self.objectID,
+            objectID: self.id,
             recordID: RecordID(id: self.recordID),
             recordDate: MentoryDate(self.recordDate),
             createdAt: MentoryDate(self.createdAt),

@@ -32,7 +32,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
                     throw NewMentoryDBError.recordNotFound
                 }
 
-                return record.objectID
+                return record.id
             } catch {
                 logger.fault("getTicketID 실패: \(error.localizedDescription, privacy: .public)")
                 return UUID()
@@ -155,7 +155,7 @@ public actor NewDailyRecord: NewDailyRecordInterface {
                 }
             
             if let dailySuggesion {
-                return NewDailySuggestion(objectID: dailySuggesion.objectID)
+                return NewDailySuggestion(objectID: dailySuggesion.id)
             } else {
                 return nil
             }
