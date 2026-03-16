@@ -51,4 +51,10 @@ final class NewDailySuggestionModel {
             isDone: status
         )
     }
+
+    static func descriptor(for id: UUID) -> FetchDescriptor<NewDailySuggestionModel> {
+        FetchDescriptor<NewDailySuggestionModel>(
+            predicate: #Predicate { $0.id == id }
+        )
+    }
 }

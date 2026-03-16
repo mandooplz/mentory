@@ -15,4 +15,5 @@ public enum NewMentoryDBError: Error, Sendable {
         case containerUnavailable
         case databaseNotFound
         case recordNotFound
+        case suggestionNotFound
     }
