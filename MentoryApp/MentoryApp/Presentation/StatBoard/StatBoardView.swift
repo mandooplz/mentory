@@ -34,87 +34,77 @@ public struct StatBoardView: View {
                         message: "조금만 기다리면 지난 마음의 흐름을 다시 볼 수 있어요."
                     )
                     .padding(.horizontal, MentorySpacing.screenHorizontal)
-                } else if board.allRecords.isEmpty {
-                    MentoryStatusCard(
-                        systemImage: "book.closed",
-                        title: "아직 쌓인 기록이 없어요",
-                        message: "첫 기록을 남기면 이곳에 날짜별 흐름이 조용히 정리됩니다."
-                    )
-                    .padding(.horizontal, MentorySpacing.screenHorizontal)
                 } else {
-                    MentoryScrollScreen {
-                        ArchiveIntro(
-                            selectedMonth: selectedMonth,
-                            totalCount: board.allRecords.count
-                        )
+                    MentoryScrollScreen(spacing: 18, topPadding: 18, bottomPadding: 32) {
+                        ArchiveHeader()
 
-                        ArchiveSearchField(text: $searchText)
-
-                        EmotionFilterRow(
-                            selectedEmotion: $selectedEmotion
-                        )
-
-                        MonthHeader(
+                        ArchiveCalendarSection(
                             month: selectedMonth,
+                            selectedDate: selectedDate,
+                            monthlyRecordCount: monthRecords.count,
+                            dominantEmotionSummary: dominantEmotionSummary,
+                            selectedSummary: selectedSummary,
+                            recordForDay: { monthRecord(for: $0) },
                             onPrev: { moveMonth(-1) },
                             onNext: { moveMonth(1) },
                             onPickMonth: { setMonth($0) },
-                            onToday: { goToday() }
+                            onToday: { goToday() },
+                            onSelectDate: { selectDate($0) }
                         )
 
-                        MentorySectionCard(cornerRadius: 24, contentPadding: 16) {
-                            VStack(alignment: .leading, spacing: 16) {
-                                Text("월간 흐름")
-                                    .mentoryHeadline()
-                                    .foregroundStyle(.primary)
+                        if board.allRecords.isEmpty {
+                            ArchiveEmptyStateCard()
+                        } else {
+                            ArchiveSearchBar(text: $searchText)
 
-                                CalendarGrid(
-                                    month: selectedMonth,
-                                    selectedDate: selectedDate,
-                                    recordForDay: { record(for: $0) },
-                                    onSelect: { selectDate($0) }
-                                )
-                            }
-                        }
+                            ArchiveEmotionFilterChips(
+                                selectedEmotion: $selectedEmotion
+                            )
 
-                        if let selected = selectedDate,
-                           let record = record(for: selected) {
-                            SelectedDayCard(day: selected, record: record)
-                        } else if let selected = selectedDate {
-                            MentorySectionCard(cornerRadius: 22, contentPadding: 18) {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(selected.formatted(date: .long, time: .omitted))
-                                        .mentoryHeadline()
-                                        .foregroundStyle(.primary)
+                            if let selected = selectedDate,
+                               let record = monthRecord(for: selected) {
+                                SelectedDayCard(day: selected, record: record)
+                            } else if let selected = selectedDate {
+                                MentorySectionCard(cornerRadius: 22, contentPadding: 18) {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text(selected.formatted(date: .long, time: .omitted))
+                                            .mentoryHeadline()
+                                            .foregroundStyle(.primary)
 
-                                    Text("현재 필터 조건에서는 이 날짜에 보이는 기록이 없어요.")
-                                        .mentorySupportText()
-                                        .foregroundStyle(.secondary)
+                                        Text("이 날짜에는 아직 남아 있는 기록이 없어요.")
+                                            .mentorySupportText()
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                        }
 
-                        TimelineSection(
-                            records: filteredRecords,
-                            selectedDate: $selectedDate
-                        )
+                            TimelineSection(
+                                records: visibleRecords,
+                                selectedDate: $selectedDate
+                            )
+                        }
                     }
                 }
             }
-            .navigationTitle("아카이브")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .task {
             isLoading = true
             await board.loadRecords()
+            updateSelection(for: selectedMonth)
             isLoading = false
         }
     }
 
-    private var filteredRecords: [RecordSnapshot] {
+    private var monthRecords: [RecordSnapshot] {
         board.allRecords
             .filter { Calendar.current.isDate($0.recordDate.rawValue, equalTo: selectedMonth, toGranularity: .month) }
+            .sorted { $0.recordDate.rawValue > $1.recordDate.rawValue }
+    }
+
+    private var visibleRecords: [RecordSnapshot] {
+        monthRecords
             .filter { record in
                 selectedEmotion.map { record.emotion == $0 } ?? true
             }
@@ -125,118 +115,252 @@ public struct StatBoardView: View {
 
                 return record.analyzedResult.localizedCaseInsensitiveContains(searchText)
             }
-            .sorted { $0.recordDate.rawValue > $1.recordDate.rawValue }
+    }
+
+    private var selectedSummary: String {
+        guard let selectedDate else {
+            return "날짜 선택"
+        }
+
+        let dayLabel = "\(Calendar.current.component(.day, from: selectedDate))"
+
+        if let record = monthRecord(for: selectedDate) {
+            return "\(dayLabel)일 \(record.emotion.emoji)"
+        }
+
+        return "\(dayLabel)일"
+    }
+
+    private var dominantEmotionSummary: String {
+        guard let dominantEmotion = Dictionary(grouping: monthRecords, by: \.emotion)
+            .max(by: { $0.value.count < $1.value.count })?.key else {
+            return "아직 기록 없음"
+        }
+
+        return "\(dominantEmotion.emoji) \(dominantEmotion.archiveLabel)"
     }
 
     private func moveMonth(_ value: Int) {
         if let newDate = Calendar.current.date(byAdding: .month, value: value, to: selectedMonth) {
             selectedMonth = newDate
+            updateSelection(for: newDate)
         }
     }
 
     private func setMonth(_ date: Date) {
         selectedMonth = date
+        updateSelection(for: date)
     }
 
     private func goToday() {
         selectedMonth = Date()
-        selectedDate = Date()
+        updateSelection(for: Date(), preferToday: true)
     }
 
     private func selectDate(_ date: Date) {
         selectedDate = date
     }
 
-    private func record(for date: Date) -> RecordSnapshot? {
-        filteredRecords.first {
+    private func monthRecord(for date: Date) -> RecordSnapshot? {
+        monthRecords.first {
             Calendar.current.isDate($0.recordDate.rawValue, inSameDayAs: date)
+        }
+    }
+
+    private func updateSelection(for month: Date, preferToday: Bool = false) {
+        let calendar = Calendar.current
+
+        if preferToday,
+           calendar.isDate(month, equalTo: Date(), toGranularity: .month) {
+            selectedDate = Date()
+            return
+        }
+
+        if let latestRecord = board.allRecords
+            .filter({ calendar.isDate($0.recordDate.rawValue, equalTo: month, toGranularity: .month) })
+            .max(by: { $0.recordDate.rawValue < $1.recordDate.rawValue }) {
+            selectedDate = latestRecord.recordDate.rawValue
+            return
+        }
+
+        selectedDate = calendar.date(
+            from: calendar.dateComponents([.year, .month], from: month)
+        )
+    }
+}
+
+private struct ArchiveHeader: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("아카이브")
+                .mentoryTitle()
+                .foregroundStyle(.primary)
+
+            Text("날짜를 눌러 지난 마음의 흐름을 조용히 다시 읽어보세요.")
+                .mentoryCaption()
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
 
-private struct ArchiveIntro: View {
-    let selectedMonth: Date
-    let totalCount: Int
+private struct ArchiveCalendarSection: View {
+    let month: Date
+    let selectedDate: Date?
+    let monthlyRecordCount: Int
+    let dominantEmotionSummary: String
+    let selectedSummary: String
+    let recordForDay: (Date) -> RecordSnapshot?
+    let onPrev: () -> Void
+    let onNext: () -> Void
+    let onPickMonth: (Date) -> Void
+    let onToday: () -> Void
+    let onSelectDate: (Date) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: MentorySpacing.medium) {
-            MentoryInfoChip(text: monthLabel, systemImage: "calendar")
+        MentorySectionCard(cornerRadius: 30, contentPadding: 20) {
+            VStack(alignment: .leading, spacing: 16) {
+                ArchiveMonthNavigation(
+                    month: month,
+                    onPrev: onPrev,
+                    onNext: onNext,
+                    onPickMonth: onPickMonth,
+                    onToday: onToday
+                )
 
+                CalendarGrid(
+                    month: month,
+                    selectedDate: selectedDate,
+                    recordForDay: recordForDay,
+                    onSelect: onSelectDate
+                )
+            }
+        }
+    }
+
+    private var monthTitle: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy년 M월"
+        return formatter.string(from: month)
+    }
+}
+
+private struct ArchiveCompactMetric: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .mentoryEyebrow()
+                .foregroundStyle(.secondary)
+
+            Text(value)
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.mentorySubCard.opacity(0.82))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.mentoryBorder.opacity(0.72), lineWidth: 1)
+        )
+    }
+}
+
+private struct ArchiveSearchBar: View {
+    @Binding var text: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("검색")
+                .mentoryEyebrow()
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+
+                TextField("기록 속 문장을 찾아보세요", text: $text)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+
+                if text.isEmpty == false {
+                    Button {
+                        text = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 46)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.mentoryCard.opacity(0.94))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.mentoryBorder.opacity(0.82), lineWidth: 1)
+            )
+        }
+    }
+}
+
+private struct ArchiveEmptyStateCard: View {
+    var body: some View {
+        MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 10) {
-                Text("지난 기록을 차분히 돌아볼 수 있어요.")
-                    .mentoryTitle()
+                MentoryInfoChip(text: "아직 비어 있어요", systemImage: "book.closed")
+
+                Text("첫 기록을 남기면 이 달력 위에 감정의 흐름이 차분히 쌓입니다.")
+                    .mentoryHeadline()
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("총 \(totalCount)개의 기록을 날짜와 감정의 흐름으로 다시 볼 수 있어요.")
+                Text("지금은 날짜 탐색 중심의 아카이브 구조만 먼저 보여주고 있어요.")
                     .mentorySupportText()
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-    }
-
-    private var monthLabel: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 M월"
-        return formatter.string(from: selectedMonth)
     }
 }
 
-private struct ArchiveSearchField: View {
-    @Binding var text: String
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
-
-            TextField("기록 속 문장을 찾아보세요", text: $text)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-
-            if text.isEmpty == false {
-                Button {
-                    text = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .padding(.horizontal, 16)
-        .frame(minHeight: 48)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.mentoryCard.opacity(0.96))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.mentoryBorder.opacity(0.82), lineWidth: 1)
-        )
-    }
-}
-
-private struct EmotionFilterRow: View {
+private struct ArchiveEmotionFilterChips: View {
     @Binding var selectedEmotion: Emotion?
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                FilterChip(
-                    title: "전체",
-                    isSelected: selectedEmotion == nil
-                ) {
-                    selectedEmotion = nil
-                }
+        VStack(alignment: .leading, spacing: 8) {
+            Text("감정 필터")
+                .mentoryEyebrow()
+                .foregroundStyle(.secondary)
 
-                ForEach(Emotion.allCases, id: \.self) { emotion in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
                     FilterChip(
-                        title: "\(emotion.emoji) \(emotion.archiveLabel)",
-                        isSelected: selectedEmotion == emotion
+                        title: "전체",
+                        isSelected: selectedEmotion == nil
                     ) {
-                        selectedEmotion = emotion
+                        selectedEmotion = nil
+                    }
+
+                    ForEach(Emotion.allCases, id: \.self) { emotion in
+                        FilterChip(
+                            title: "\(emotion.emoji) \(emotion.archiveLabel)",
+                            isSelected: selectedEmotion == emotion
+                        ) {
+                            selectedEmotion = emotion
+                        }
                     }
                 }
             }
@@ -254,8 +378,8 @@ private struct FilterChip: View {
             Text(title)
                 .mentoryEyebrow()
                 .foregroundStyle(isSelected ? Color.mentoryAccentPrimary : .secondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 .background(
                     Capsule(style: .continuous)
                         .fill(isSelected ? Color.mentoryAccentPrimary.opacity(0.12) : Color.mentorySubCard.opacity(0.7))
@@ -281,9 +405,21 @@ private extension Emotion {
         case .veryPleasant: return "활기"
         }
     }
+
+    var calendarTint: Color {
+        switch self {
+        case .veryUnpleasant: return Color.red.opacity(0.78)
+        case .unPleasant: return Color.orange.opacity(0.78)
+        case .slightlyUnpleasant: return Color.yellow.opacity(0.78)
+        case .neutral: return Color.gray.opacity(0.72)
+        case .slightlyPleasant: return Color.mint.opacity(0.76)
+        case .pleasant: return Color.blue.opacity(0.74)
+        case .veryPleasant: return Color.pink.opacity(0.72)
+        }
+    }
 }
 
-private struct MonthHeader: View {
+private struct ArchiveMonthNavigation: View {
     let month: Date
     let onPrev: () -> Void
     let onNext: () -> Void
@@ -308,42 +444,53 @@ private struct MonthHeader: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
-            Button(action: onPrev) {
-                Image(systemName: "chevron.left")
-                    .frame(width: 38, height: 38)
-            }
-            .buttonStyle(MentoryIconButtonStyle())
+        HStack(spacing: 10) {
+            HStack(spacing: 0) {
+                navigationIcon(systemName: "chevron.left", action: onPrev)
 
-            Button {
-                let components = calendar.dateComponents([.year, .month], from: month)
-                tempYear = components.year ?? calendar.component(.year, from: Date())
-                tempMonth = components.month ?? calendar.component(.month, from: Date())
-                isShowingMonthPicker = true
-            } label: {
+                Rectangle()
+                    .fill(Color.mentoryBorder.opacity(0.52))
+                    .frame(width: 1, height: 20)
+
+                Button {
+                    let components = calendar.dateComponents([.year, .month], from: month)
+                    tempYear = components.year ?? calendar.component(.year, from: Date())
+                    tempMonth = components.month ?? calendar.component(.month, from: Date())
+                    isShowingMonthPicker = true
+                } label: {
                     HStack(spacing: 8) {
                         Text(monthFormatter.string(from: month))
                             .font(.system(.headline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.primary)
 
                         Image(systemName: "chevron.down")
                             .font(.system(.caption, design: .rounded, weight: .medium))
+                            .foregroundStyle(.secondary)
                     }
-                .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(MentorySecondaryButtonStyle())
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 46)
+                }
+                .buttonStyle(.plain)
 
-            Button("오늘") {
-                onToday()
-            }
-            .buttonStyle(MentorySecondaryButtonStyle(isEnabled: !isCurrentMonth))
-            .disabled(isCurrentMonth)
-            .frame(width: 74)
+                Rectangle()
+                    .fill(Color.mentoryBorder.opacity(0.52))
+                    .frame(width: 1, height: 20)
 
-            Button(action: onNext) {
-                Image(systemName: "chevron.right")
-                    .frame(width: 38, height: 38)
+                navigationIcon(systemName: "chevron.right", action: onNext)
             }
-            .buttonStyle(MentoryIconButtonStyle())
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.mentoryCard.opacity(0.92))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.mentoryBorder.opacity(0.82), lineWidth: 1)
+            )
+
+            Button("오늘", action: onToday)
+                .buttonStyle(MentorySecondaryButtonStyle(isEnabled: !isCurrentMonth))
+                .disabled(isCurrentMonth)
+                .frame(width: 72)
         }
         .sheet(isPresented: $isShowingMonthPicker) {
             MonthPickerSheet(
@@ -361,6 +508,16 @@ private struct MonthHeader: View {
             )
             .presentationDetents([.height(300)])
         }
+    }
+
+    private func navigationIcon(systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .foregroundStyle(.primary)
+                .frame(width: 42, height: 46)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -454,8 +611,8 @@ private struct CalendarGrid: View {
     private let weekdaySymbols = ["일", "월", "화", "수", "목", "금", "토"]
 
     var body: some View {
-        VStack(spacing: 10) {
-            LazyVGrid(columns: columns, spacing: 8) {
+        VStack(spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 6) {
                 ForEach(weekdaySymbols, id: \.self) { weekday in
                     Text(weekday)
                         .mentoryEyebrow()
@@ -463,11 +620,12 @@ private struct CalendarGrid: View {
                 }
             }
 
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 6) {
                 ForEach(daysInMonthGrid(month), id: \.self) { day in
                     DayCell(
                         day: day,
                         isCurrentMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
+                        isToday: calendar.isDateInToday(day),
                         isSelected: selectedDate.map {
                             calendar.isDate($0, inSameDayAs: day)
                         } ?? false,
@@ -508,6 +666,7 @@ private struct CalendarGrid: View {
 private struct DayCell: View {
     let day: Date
     let isCurrentMonth: Bool
+    let isToday: Bool
     let isSelected: Bool
     let record: RecordSnapshot?
     let onTap: () -> Void
@@ -516,21 +675,26 @@ private struct DayCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 4) {
+            VStack(spacing: 5) {
                 Text("\(calendar.component(.day, from: day))")
-                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .font(.system(.subheadline, design: .rounded, weight: record == nil ? .medium : .semibold))
                     .foregroundStyle(isCurrentMonth ? Color.primary : Color.secondary.opacity(0.42))
 
                 if let record {
-                    Text(record.emotion.emoji)
-                        .font(.system(.body, design: .rounded, weight: .regular))
+                    Circle()
+                        .fill(record.emotion.calendarTint)
+                        .frame(width: 6, height: 6)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.52), lineWidth: 1)
+                        )
                 } else {
                     Circle()
                         .fill(Color.clear)
-                        .frame(width: 16, height: 16)
+                        .frame(width: 6, height: 6)
                 }
             }
-            .frame(height: 56)
+            .frame(height: 54)
             .frame(maxWidth: .infinity)
             .background(backgroundShape)
             .overlay(backgroundOverlay)
@@ -542,8 +706,8 @@ private struct DayCell: View {
         RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(
                 isSelected
-                    ? Color.mentoryAccentPrimary.opacity(0.14)
-                    : record != nil ? Color.mentorySubCard.opacity(0.66) : Color.clear
+                    ? Color.mentoryAccentPrimary.opacity(0.16)
+                    : record.map { $0.emotion.calendarTint.opacity(isCurrentMonth ? 0.14 : 0.06) } ?? Color.clear
             )
     }
 
@@ -552,7 +716,7 @@ private struct DayCell: View {
             .stroke(
                 isSelected
                     ? Color.mentoryAccentPrimary.opacity(0.34)
-                    : Color.clear,
+                    : isToday ? Color.mentoryBorder.opacity(0.5) : Color.clear,
                 lineWidth: 1
             )
     }
@@ -565,26 +729,40 @@ private struct SelectedDayCard: View {
     var body: some View {
         MentorySectionCard(cornerRadius: 24, contentPadding: 18) {
             VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .top, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        MentoryInfoChip(text: "선택한 기록", systemImage: "sparkles")
+
                         Text(day.formatted(date: .long, time: .omitted))
                             .mentoryHeadline()
                             .foregroundStyle(.primary)
 
-                        Text(record.emotion.archiveLabel)
-                            .mentoryEyebrow()
-                            .foregroundStyle(.secondary)
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(record.emotion.calendarTint)
+                                .frame(width: 8, height: 8)
+
+                            Text(record.emotion.archiveLabel)
+                                .mentoryEyebrow()
+                                .foregroundStyle(.secondary)
+                        }
                     }
 
                     Spacer()
 
-                    Text(record.emotion.emoji)
-                        .font(.system(.title, design: .rounded, weight: .regular))
+                    ZStack {
+                        Circle()
+                            .fill(record.emotion.calendarTint.opacity(0.14))
+                            .frame(width: 44, height: 44)
+
+                        Text(record.emotion.emoji)
+                            .font(.system(.title3, design: .rounded, weight: .regular))
+                    }
                 }
 
                 Text(record.analyzedResult)
                     .mentorySupportText()
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary.opacity(0.86))
                     .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -600,9 +778,9 @@ private struct TimelineSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             MentorySectionHeader(
-                eyebrow: "타임라인",
+                eyebrow: "기록",
                 title: "이 달의 기록",
-                subtitle: records.isEmpty ? "지금 보이는 기록이 없어요." : "최근 기록부터 다시 읽을 수 있어요."
+                subtitle: records.isEmpty ? "조건에 맞는 기록이 없어요." : "캘린더 아래에서 기록을 다시 읽어보세요."
             )
 
             if records.isEmpty {
@@ -615,17 +793,33 @@ private struct TimelineSection: View {
             } else {
                 VStack(spacing: 10) {
                     ForEach(records, id: \.recordID) { record in
+                        let isSelected = selectedDate.map {
+                            Calendar.current.isDate($0, inSameDayAs: record.recordDate.rawValue)
+                        } ?? false
+
                         Button {
                             selectedDate = record.recordDate.rawValue
                         } label: {
-                                HStack(alignment: .top, spacing: 14) {
+                            HStack(alignment: .top, spacing: 14) {
+                                ZStack {
+                                    Circle()
+                                        .fill(record.emotion.calendarTint.opacity(0.14))
+                                        .frame(width: 36, height: 36)
+
                                     Text(record.emotion.emoji)
-                                        .font(.system(.title3, design: .rounded, weight: .regular))
+                                        .font(.system(.body, design: .rounded, weight: .regular))
+                                }
 
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text(record.recordDate.rawValue.formatted(date: .abbreviated, time: .omitted))
-                                        .mentoryEyebrow()
-                                        .foregroundStyle(.secondary)
+                                    HStack(spacing: 8) {
+                                        Text(record.recordDate.rawValue.formatted(date: .abbreviated, time: .omitted))
+                                            .mentoryEyebrow()
+                                            .foregroundStyle(.secondary)
+
+                                        Text(record.emotion.archiveLabel)
+                                            .mentoryCaption()
+                                            .foregroundStyle(record.emotion.calendarTint)
+                                    }
 
                                     Text(record.analyzedResult)
                                         .mentorySupportText()
@@ -640,11 +834,20 @@ private struct TimelineSection: View {
                             .padding(.vertical, 12)
                             .background(
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(Color.mentoryCard.opacity(0.96))
+                                    .fill(
+                                        isSelected
+                                            ? Color.mentoryAccentPrimary.opacity(0.09)
+                                            : Color.mentoryCard.opacity(0.96)
+                                    )
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .stroke(Color.mentoryBorder.opacity(0.78), lineWidth: 1)
+                                    .stroke(
+                                        isSelected
+                                            ? Color.mentoryAccentPrimary.opacity(0.24)
+                                            : Color.mentoryBorder.opacity(0.78),
+                                        lineWidth: 1
+                                    )
                             )
                         }
                         .buttonStyle(.plain)
@@ -653,4 +856,29 @@ private struct TimelineSection: View {
             }
         }
     }
+}
+
+
+// MARK: Preview
+fileprivate struct StatBoardPreview: View {
+    @StateObject var mentoryiOS = Mentory()
+
+    var body: some View {
+        if let statBoard = mentoryiOS.statBoard {
+            StatBoardView(board: statBoard)
+        } else {
+            ProgressView("프리뷰 준비 중")
+                .task {
+                    mentoryiOS.setUp()
+
+                    let onboarding = mentoryiOS.onboarding!
+                    onboarding.nameInput = "김철수"
+                    onboarding.submitForm()
+                }
+        }
+    }
+}
+
+#Preview {
+    StatBoardPreview()
 }
